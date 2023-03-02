@@ -61,6 +61,22 @@ def pid_steering_callback(data):
 	pid_steer = steer
 	
 
+def voice_cmd_callback(data):
+    global mode, throttle
+    cmd = data.data
+    print('voice_cmd =', cmd)
+    if cmd == 'stop':
+        throttle = 0
+        mode = 0
+    elif cmd == 'start':
+        mode = 1
+    elif cmd == 'left':
+        print('left -- todo')
+    elif cmd == 'right':
+        print('right -- todo')
+
+
+
 
 
 def main(args=None):
@@ -80,6 +96,7 @@ def main(args=None):
 	subscription_auto_throttle = node.create_subscription(Int64,'auto_throttle', auto_throttle_callback, 1)
 	subscription_mode_switch = node.create_subscription(Int64 , "mode_switch" , mode_switch_callback , 1)	
 	subscription_pid_steering = node.create_subscription(Int64 , 'pid_steering' , pid_steering_callback , 1)
+	subscription_voice_cmd = node.create_subscription(String , "voice_cmd" , voice_cmd_callback , 1)	
 
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
