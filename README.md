@@ -12,7 +12,12 @@ sudo busybox devmem 0x0c303010 w 0x400
 ```
 See [this](https://forums.developer.nvidia.com/t/jetson-orin-can-bus-access/221728/3)
 
-## joy node
+## ZED 2i node
+```shell
+ros2 launch zed_wrapper zed2i.launch.py
 ```
+
+## joy node
+```shell
 ros2 run joy joy_node
 ```
