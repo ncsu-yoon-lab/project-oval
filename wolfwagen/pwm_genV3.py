@@ -19,8 +19,9 @@ throttle = 0
 steer = 0
 mode = 0
 
-pid_steer = 0
-pid_throttle = 23	
+pid_steer = 0	#TODO: change name to audo_steer
+
+auto_throttle = 0	#published (and controller) by xbox_controller	
 
 def pwm(val):
 	#TODO: input range check
@@ -41,9 +42,9 @@ def manual_throttle_callback(data):
 	global throttle
 	throttle = data.data
 
-# def pid_callback_throttle(data):
-# 	global pid_throttle
-# 	pid_throttle = data.data
+def auto_throttle_callback(data):
+	global auto_throttle
+	auto_throttle = data.data
 
 def pid_steering_callback(data):
 	global pid_steer
@@ -75,6 +76,7 @@ def main(args=None):
 	
 	subscription_manual_steering = node.create_subscription(Int64,'manual_steering', manual_steering_callback, 1)
 	subscription_manual_throttle = node.create_subscription(Int64,'manual_throttle', manual_throttle_callback, 1)
+	subscription_auto_throttle = node.create_subscription(Int64,'auto_throttle', auto_throttle_callback, 1)
 	subscription_mode_switch = node.create_subscription(Int64 , "mode_switch" , mode_switch_callback , 1)	
 	subscription_pid_steering = node.create_subscription(Int64 , 'pid_steering' , pid_steering_callback , 1)
 
@@ -89,10 +91,13 @@ def main(args=None):
 			pwm_throttle = pwm(throttle)
 			pwm_steer = pwm(steer)
 		else:
-			pwm_throttle = pwm(pid_throttle)
+			pwm_throttle = pwm(auto_throttle)
 			pwm_steer = pwm(pid_steer)
+		
+		print("mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)" % ("Manual" if mode == 0 else "Auto", throttle, auto_throttle, steer, pid_steer))
+
 				
-		print ('mode: %d, throttle: %d, steer: %d' % (mode, pwm_throttle, pwm_steer))	
+		
 		can_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)
 		new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
 		bus.send(new_msg)
