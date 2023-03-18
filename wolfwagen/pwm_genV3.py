@@ -30,9 +30,10 @@ def pwm(val):
 
 def mode_switch_callback(data):
 	global mode
-	if mode != data.data:
-		mode = data.data
-		print("mode switched")
+	# if mode != data.data:
+	# 	mode = data.data
+	# 	print("mode switched")
+	mode = (mode + 1) % 2
 		
 def manual_steering_callback(data):
 	global steer
