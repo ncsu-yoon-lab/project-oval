@@ -19,5 +19,7 @@ ros2 launch zed_wrapper zed2i.launch.py
 
 ## joy node
 ```shell
-ros2 run joy joy_node
+ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
 ```
+If autorepeat_rate>0, joy topics will be published even when the joystick does not change. 
+See [this](https://index.ros.org/p/joy/)
