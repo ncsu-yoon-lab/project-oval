@@ -30,6 +30,14 @@ See [this](https://index.ros.org/p/joy/)
 ## xbox_controller
 
 ## driver (pwm_gen)
+```shell
+python pwm_genV3.py
+```
+
+## Lane following (detection + PID)
+```shell
+python LaneDetectionV6.py
+```
 
 ## rplidar s2
 ```shell

@@ -274,13 +274,23 @@ def main(args=None):
 			listener_callback,
 			20)
 		
-	lane_publisher = node.create_publisher(Int64, 'lane', 1)
+	lane_img_publisher = node.create_publisher(Image, 'lane_img', 1)
+	pid_steering_publisher = node.create_publisher(Int64, 'pid_steering', 1)
+
 
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
-	# rate = node.create_rate(20, node.get_clock())
-	rate = node.create_rate(20, node.get_clock())
+	FREQ = 20	
+	rate = node.create_rate(FREQ, node.get_clock())
+
+	# For PID control	
+	prev_error = 0
+	Kp = 0.25	
+	Ki = 0.0
+	Kd = 0.01
+	dt = 1/float(FREQ)
+	integral = 0
 	
 	while rclpy.ok():
 		if frame is not None:
@@ -292,6 +302,27 @@ def main(args=None):
 				cv.waitKey(1)
 
 			print("CTE=", CTE)
+
+			####### PID control
+			setpoint = 0    #always want to stay on the center line
+			error = setpoint - CTE
+			integral = integral + error * dt
+			derivative = (error - prev_error) / dt
+			steering_cmd = Kp * error + Ki * integral + Kd * derivative
+			prev_error = error
+
+			m = Int64()
+			m.data = int(steering_cmd)
+			pid_steering_publisher.publish(m)
+
+			print("steering_cmd = ", steering_cmd)
+
+			# Lane image for rviz2 or webviz
+			img_msg = br.cv2_to_imgmsg(final_image, encoding="passthrough")
+			lane_img_publisher.publish(img_msg)
+
+
+
 			
 		rate.sleep()
 
