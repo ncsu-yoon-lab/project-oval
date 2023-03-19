@@ -10,6 +10,31 @@ import math
 import random
 import threading
 
+# Set it to 'False' when driving (True when debugging)
+SHOW_IMAGES = True
+
+DRAW_LINE_IMG = True
+
+
+DOT_COLOR = [61, 217, 108]
+DOT_SIZE = 5
+
+LINE_COLOR = (255, 0, 0)
+LINE_THICKNESS = 2
+
+LANE_COLOR = (0, 0, 255)
+LANE_THICKNESS = 5
+
+LANE_REGION_COLOR = (0, 255, 0)
+LANE_CENTER_COLOR = (255, 0, 0)
+
+CAR_CENTER_COLOR = (180, 180, 0)
+
+
+CAMERA_TOPIC_NAME = '/zed2i/zed_node/stereo/image_rect_color'
+# '/zed2i/zed_node/rgb_raw/image_raw_color'	
+
+# Original image fram
 frame = None
 
 br = CvBridge()
@@ -17,194 +42,221 @@ def listener_callback(msg):
 	global frame
 	frame = br.imgmsg_to_cv2(msg)
 
-lane = Int64()
-lane.data = 0
 
-def publish_lane(direction):
-	global lane
-	lane.data = direction
-	print("THIS IS THE DIRECTION: " , direction)
-	# publisher.publish(lane)
-
-		
+# Use this if image is too dark
 def adjust_gamma(image, gamma=1.0):
     invGamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255
         for i in np.arange(0, 256)]).astype("uint8")
     return cv.LUT(image, table)
 
+
+def get_end_points(rho, theta):
+	# Note: cv.HoughLines return the <rho, theta> of each lines
+	a = math.cos(theta)
+	b = math.sin(theta)
+	x0 = a * rho
+	y0 = b * rho
+
+	x1 = int(x0 + 1000*(-b))
+	y1 = int(y0 + 1000*(a))
+	x2 = int(x0 - 1000*(-b))
+	y2 = int(y0 - 1000*(a))
+
+	return x1, y1, x2, y2
+
+def crop(image, width, height):
+	# Assume: image is a stereo image (=left cam + right cam) from the zed camera
+	
+	# center-cut_width : center+cut_width will be deleted
+	# if not stereo image, comment out this block
+	center = int(width/2)
+	cut_width = int(width/4)
+	image = np.delete(image, slice(center-cut_width, center+cut_width), 1)
+	
+	# cut top half
+	image = image[int(height/2) : height-1, :]
+	
+	return image
+	
+
 def process_img(frame):
+	org_color_frame = frame
+
 	img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-	frame = adjust_gamma(frame, 1)
-	# cv.imshow('aaa', frame)
-	# cv.waitKey(1)
-	# return 
+	
+	# frame = adjust_gamma(frame, 1)
 
-	#print(img.shape)
-	height, width = img.shape	#720, 1280	
-	img = img[360:height-1, :]
+	height, width = img.shape	#720, 2560
+	img = crop(img,width,height)	
+	cropped_color_frame = crop(org_color_frame,width,height)
+		
+	height, width = img.shape	#cropped
 
+	if SHOW_IMAGES:
+		cv.imshow('cropped', img)
+		cv.waitKey(1)
+		
+	# remove noise
 	kernel_size = 7
 	img = cv.GaussianBlur(img, (kernel_size, kernel_size), 0)
 
-	_, img = cv.threshold(img, 150, 180, cv.THRESH_BINARY)
+	# thresholding. If seeing some noise, increase the lower threshold
+	_, img = cv.threshold(img, 100, 255, cv.THRESH_BINARY)
 
-	result = img
+	# Canny Edge Detection
+	edge = cv.Canny(img, 70, 200 ) # you can adjust these min/max values
 
-	edge = cv.Canny(result,100,500) # you can adjust these min/max values
-	lines = cv.HoughLinesP(edge, rho = 1, theta = np.pi/180, threshold = 100 , minLineLength = 20, maxLineGap = 150)
+	# Edges could be too thin (which could make it difficult for Hough Transform to detect lines)
+	# So, make the edges thicker
+	kernel = cv.getStructuringElement(cv.MORPH_RECT, (3,3))
+	edge = cv.dilate(edge, kernel, iterations=1)
+		
+	if SHOW_IMAGES:
+		cv.imshow('canny', edge)
+		cv.waitKey(1)
+	
+	# # Probabilistic Hough Transform
+	# rho = 1
+	# theta = 1*np.pi/180.0
+	# threshold = 15
+	# minLineLength = 30   #The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
+	# maxLineGap = 20      #The maximum gap between two points to be considered in the same line.
+	# lines = cv.HoughLinesP(edge, rho, theta, threshold, minLineLength, maxLineGap)
 
-	horizontal_midpoint = img.shape[1]/2
-	cte = 0 # Cross Track Error
-	cnt_left = 0    # number of left lines
-	cnt_right = 0   # number of right lines
+	# Non-probabilistic Hough Transform (works better)
+	lines = cv.HoughLines(edge, 1, np.pi/180, 150, None, 0, 0)
+		
+	
+
+	# Cross Track Error	
+	CTE = 0
 	
 	if lines is None: 
 		print("No lines detected")
-		cv.waitKey(1) 
+		cv.waitKey(1)
+		return (cropped_color_frame, CTE)
 	else:
-
-		line_img = np.zeros((img.shape[0],img.shape[1],3),dtype=np.uint8)
-		line_color=[0, 255, 0]
-		line_thickness=1
-		dot_color = [61, 217, 108]
-		dot_size = 25
-
 		left_line_x = []    #x-values of left lines 
 		left_line_y = []    #y-values of left lines 
 		right_line_x = []   #x-values of right lines 
 		right_line_y = []   #y-values of right lines
-		filtered_lines = []
-		print(lines)
+
+		cnt_left = 0    # number of left lines
+		cnt_right = 0   # number of right lines
+
+		if DRAW_LINE_IMG:					
+			line_image = np.copy(cropped_color_frame)*0
 
 		for line in lines:
-			new_line = []
-			for x1, y1, x2, y2 in line:
-				if x2 - x1 == 0:
-					print("first if")
+
+			# Note: we are using the standard Hough Transform, not the probabilistic version			
+			rho = line[0][0]
+			theta = line[0][1]
+			x1, y1, x2, y2 = get_end_points(rho, theta)
+			
+			# for x1, y1, x2, y2 in line:	
+			if True:
+				
+				if x2 - x1 == 0:					
 					continue
+
 				slope = (y2 - y1) / float(x2 - x1)
-				if abs(slope)<0.2:
-					print("second if")
+				slope_threshold = 0.2
+				if abs(slope) < slope_threshold:
+					print("slope %f is excluded" % slope)
 					continue
-				line_len = np.linalg.norm(np.array((x1, y1)) - np.array((x2, y2)))
-				if line_len < 20:
-					print("third if")
-					continue
-				new_line.append(x1)
-				new_line.append(y1)
-				new_line.append(x2)
-				new_line.append(y2)
-				print(new_line)
-				filtered_lines.append(new_line)
 
-				# filtered_lines.append(new_line)
+				# line_len = np.sqrt( (x2-x1)**2 + (y2-y1)**2 )
+				# line_len_threshold = 10
+				# if line_len < line_len_threshold:
+				# 	print("line len %f is too short" % line_len)
+				# 	continue
+
+				if DRAW_LINE_IMG:										
+					cv.line(line_image, (x1, y1), (x2, y2), LINE_COLOR, LINE_THICKNESS)
+					cv.circle(line_image, (x1, y1), DOT_SIZE, DOT_COLOR, -1)
+					cv.circle(line_image, (x2, y2), DOT_SIZE, DOT_COLOR, -1)
+		
+				if slope <= 0:
+					left_line_x.extend([x1, x2])
+					left_line_y.extend([y1, y2])					
+					cnt_left += 1										
+				else:
+					right_line_x.extend([x1, x2])
+					right_line_y.extend([y1, y2])					
+					cnt_right += 1
+		
+		
 			
-		time.sleep(0.1) #adjust this to make the camera look at different rates
+		MIN_Y = 0	# <-- top of lane markings
+		MAX_Y = img.shape[0] # <-- bottom of lane markings
 
-		print(filtered_lines)
-		pos_slope = []
-		neg_slope = []
+		left_polyfit = None
+		right_polyfit = None
 
-		for i in filtered_lines:
-			if len(i) != 0:
-				x1, y1, x2, y2= i
-			if ((y2 - y1)/(x2 - x1)) > 0:
-				pos_slope.append(i)
-			else:
-				neg_slope.append(i)
-
-		try:
-				# Positive Lines
-			plines_x1 = []
-			plines_x2 = []
-			plines_y1= []
-			plines_y2 = []
-			if len(pos_slope) == 0:
-				direction = 100
-				publish_lane(100)
-				#continue
-			if len(neg_slope) == 0:
-				direction = -100
-				publish_lane(-100)
-				#continue
-			for pos in pos_slope:
-				x1, y1, x2, y2= pos
-				plines_x1.append(x1)
-				plines_x2.append(x2)
-				plines_y1.append(y1)
-				plines_y2.append(y2)
-			px1 = int(sum(plines_x1)/len(plines_x1))
-			px2 = int(sum(plines_x2)/len(plines_x2))
-			py1 = int(sum(plines_y1)/len(plines_y1))
-			py2 = int(sum(plines_y2)/len(plines_y2))
-				
-				# Negative Lines
-			nlines_x1 = []
-			nlines_x2 = []
-			nlines_y1= []
-			nlines_y2 = []
-			for neg in neg_slope:
-				x1, y1, x2, y2= neg
-				nlines_x1.append(x1)
-				nlines_x2.append(x2)
-				nlines_y1.append(y1)
-				nlines_y2.append(y2)
-				
-
-			nx1 = int(sum(nlines_x1)/len(nlines_x1))
-			nx2 = int(sum(nlines_x2)/len(nlines_x2))
-			ny1 = int(sum(nlines_y1)/len(nlines_y1))
-			ny2 = int(sum(nlines_y2)/len(nlines_y2))
-
-				# average line
-			ax1 = int((px1 + nx2)/2)
-			ax2 = int((px2 + nx1)/2)
-			ay1 = int((py1 + ny2)/2)
-			ay2 = int((py2 + ny1)/2)
-
-				# Positive average slope (FOR X-INT FORM)
-			pos_slope = ((px2 - px1) / (py2 - py1))
-
-				# Negative average slope (FOR X-INT FORM)
-			neg_slope = ((nx2 - nx1) / (ny2 - ny1))
-
-				# Positive x-int
-			px_int = px1 - (py1 * pos_slope)
-
-				# Negative x-int
-			nx_int = nx1 - (ny1 * neg_slope)
-
-				#positive lines
-			cv.line(result, (px1, py1) , (px2, py2) , (67, 31, 115) , 3)
-				
-				#negative lines
-			cv.line(result, (nx1, ny1) , (nx2, ny2) , (0,0,255) , 3)
-				#average lines
-			cv.line(result, (ax1 , ay1) , (ax2 , ay2) , (255,0,0) , 3)
-
-			dleft = int(nx_int - 621)
-			dright = int(621 - px_int)
-
-			direction = 0
-			if (dleft > dright):
-					#print("Too far to the right")
-				direction = abs(dleft)
-			else:
-				direction = dright
-			print("dleft: " , dleft)
-			print("dright: " , dright)
-			print(direction)
-			publish_lane(direction)
-				#self.get_logger().info('Publishing: "%s"' % self.lane)
-		except ZeroDivisionError:
-			pass
+		print("cnt_left, cnt_right = ", cnt_left, cnt_right)
+		
+		if cnt_left > 0:
+			#do 1D fitting
+			left_polyfit = np.polyfit(left_line_y, left_line_x, deg=1)
+			poly_left = np.poly1d(left_polyfit)
+			left_x_start = int(poly_left(MAX_Y))
+			left_x_end = int(poly_left(MIN_Y))
 			
-		cv.imshow('frame', frame)
-		#cv.imshow('mask', mask)
-		cv.imshow('result', result)
+			if DRAW_LINE_IMG:
+				cv.line(line_image, (left_x_start, MAX_Y), (left_x_end, MIN_Y), LANE_COLOR, LANE_THICKNESS)
+			
 
-		cv.waitKey(1) 
+		if cnt_right > 0:
+			#do 1D fitting                
+			right_polyfit = np.polyfit(right_line_y, right_line_x, deg=1)
+			poly_right = np.poly1d(right_polyfit)
+			right_x_start = int(poly_right(MAX_Y))
+			right_x_end = int(poly_right(MIN_Y))
+			
+			if DRAW_LINE_IMG:
+				cv.line(line_image, (right_x_start, MAX_Y), (right_x_end, MIN_Y), LANE_COLOR, LANE_THICKNESS)
+
+		
+		car_center = int(img.shape[1]/2)	#center of camera
+
+		if cnt_left>0 and cnt_right>0:
+			# Find CTE
+			lane_center = (right_x_start+left_x_start)/2
+			CTE = car_center - lane_center
+			
+			
+			if DRAW_LINE_IMG:
+				cv.line(line_image, ( int((left_x_start+right_x_start)/2), MAX_Y), ( int((left_x_end + right_x_end)/2), MIN_Y), LANE_COLOR, 5)
+				cv.line(line_image, (car_center, MAX_Y), (car_center, MIN_Y), (255,255,0), 3)
+				
+				#Draw lane region
+				mask = np.zeros_like(line_image)				
+				vertices = np.array([[(left_x_start,MAX_Y),(left_x_end, MIN_Y), (right_x_end, MIN_Y), (right_x_start, MAX_Y)]], dtype=np.int32)
+				cv.fillPoly(mask, vertices, LANE_REGION_COLOR)
+
+				line_image = cv.addWeighted(line_image, 1, mask, 0.1, 0)				
+
+
+		elif cnt_left+cnt_right == 0:
+			CTE = 0
+			print('cannot find any lane markings')
+		else:
+			if cnt_left==0:
+				CTE = 500
+				print('cannot find left lane marking')
+			else:
+				CTE = -500
+				print('cannot find right lane marking')
+
+
+		final = cropped_color_frame
+		if DRAW_LINE_IMG:
+			final = cv.addWeighted(final, 1, line_image, 1, 0)
+		
+
+		return (final, CTE)
 
 
 
@@ -218,7 +270,7 @@ def main(args=None):
     
 	img_subscription = node.create_subscription(
 			Image,
-			'/zed2i/zed_node/rgb_raw/image_raw_color',			
+			CAMERA_TOPIC_NAME,
 			listener_callback,
 			20)
 		
@@ -227,14 +279,20 @@ def main(args=None):
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
+	# rate = node.create_rate(20, node.get_clock())
 	rate = node.create_rate(20, node.get_clock())
 	
 	while rclpy.ok():
 		if frame is not None:
-			process_img(frame)
-			# cv.imshow('aaa', frame)
-			# cv.waitKey(1)
+			
+			final_image, CTE = process_img(frame)
+			
+			if SHOW_IMAGES:
+				cv.imshow('final', final_image)
+				cv.waitKey(1)
 
+			print("CTE=", CTE)
+			
 		rate.sleep()
 
 	
