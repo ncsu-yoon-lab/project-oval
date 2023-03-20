@@ -3,6 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
+from std_msgs.msg import Float64
 import struct
 import can
 import os
@@ -20,6 +21,10 @@ steer = 0
 mode = 0
 
 pid_steer = 0	#TODO: change name to audo_steer
+
+lidar_min_dist = 1000000
+
+SAFE_DISTANCE = 0.50	#LIDAR-based obstacle detection
 
 auto_throttle = 0	#published (and controller) by xbox_controller	
 
@@ -59,7 +64,12 @@ def pid_steering_callback(data):
 			steer = 99
 	
 	pid_steer = steer
+
+def lidar_min_dist_callback(data):
+	global lidar_min_dist
+	lidar_min_dist = data.data	
 	
+
 
 def voice_cmd_callback(data):
     global mode, throttle
@@ -97,6 +107,7 @@ def main(args=None):
 	subscription_mode_switch = node.create_subscription(Int64 , "mode_switch" , mode_switch_callback , 1)	
 	subscription_pid_steering = node.create_subscription(Int64 , 'pid_steering' , pid_steering_callback , 1)
 	subscription_voice_cmd = node.create_subscription(String , "voice_cmd" , voice_cmd_callback , 1)	
+	subscription_lidar_min_dist = node.create_subscription(Float64 , "lidar_min_dist" , lidar_min_dist_callback , 1)	
 
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
@@ -111,8 +122,14 @@ def main(args=None):
 		else:
 			pwm_throttle = pwm(auto_throttle)
 			pwm_steer = pwm(pid_steer)
-		
+
+		if lidar_min_dist < SAFE_DISTANCE:
+			print("Safe distance violation. Setting throttle to 0")
+			pwm_throttle = pwm(0)
+
 		print("mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)" % ("Manual" if mode == 0 else "Auto", throttle, auto_throttle, steer, pid_steer))
+
+		
 
 				
 		

@@ -1,20 +1,5 @@
 # Wolfwagen
 
-## Enabling CAN
-```shell
-sudo modprobe can_raw
-sudo modprobe can
-sudo modprobe mttcan
-
-sudo ip link set can0 up type can bitrate 250000
-sudo ip link set up can0
-sudo busybox devmem 0x0c303018 w 0x458
-sudo busybox devmem 0x0c303010 w 0x400
-```
-See [this](https://forums.developer.nvidia.com/t/jetson-orin-can-bus-access/221728/3)
-
-It is enabled automatically.
-
 ## ZED 2i node
 ```shell
 ros2 launch zed_wrapper zed2i.launch.py
@@ -28,6 +13,9 @@ If autorepeat_rate>0, joy topics will be published even when the joystick does n
 See [this](https://index.ros.org/p/joy/)
 
 ## xbox_controller
+```shell
+python xbox_controller.py
+```
 
 ## driver (pwm_gen)
 ```shell
@@ -42,5 +30,10 @@ python LaneDetectionV6.py
 ## rplidar s2
 ```shell
 ros2 launch sllidar_ros2  sllidar_s2_launch.py
+```
+
+## Obstacle detector (LIDAR-based)
+```shell
+python obstacle_detector.py 
 ```
 
