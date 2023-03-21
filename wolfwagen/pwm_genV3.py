@@ -56,6 +56,7 @@ def pid_steering_callback(data):
 	global pid_steer
 
 	steer = data.data
+	
 	if steer > 100:
 		steer = 100
 	elif steer < -100:

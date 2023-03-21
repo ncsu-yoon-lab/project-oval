@@ -30,6 +30,8 @@ LANE_CENTER_COLOR = (255, 0, 0)
 
 CAR_CENTER_COLOR = (180, 180, 0)
 
+#GAP_THRESHOLD = 
+
 
 CAMERA_TOPIC_NAME = '/zed2i/zed_node/stereo/image_rect_color'
 # '/zed2i/zed_node/rgb_raw/image_raw_color'	
@@ -74,10 +76,12 @@ def crop(image, width, height):
 	cut_width = int(width/4)
 	image = np.delete(image, slice(center-cut_width, center+cut_width), 1)
 	
+	
 	# cut top half
 	image = image[int(height/2) : height-1, :]
 	
 	return image
+
 	
 
 def process_img(frame):
@@ -102,7 +106,7 @@ def process_img(frame):
 	img = cv.GaussianBlur(img, (kernel_size, kernel_size), 0)
 
 	# thresholding. If seeing some noise, increase the lower threshold
-	_, img = cv.threshold(img, 100, 255, cv.THRESH_BINARY)
+	_, img = cv.threshold(img, 160, 255, cv.THRESH_BINARY)
 
 	# Canny Edge Detection
 	edge = cv.Canny(img, 70, 200 ) # you can adjust these min/max values
@@ -116,6 +120,24 @@ def process_img(frame):
 		cv.imshow('canny', edge)
 		cv.waitKey(1)
 	
+	left_crop = edge[170 :, : 300]
+	right_crop = edge[170 : , 900 :]
+
+	cv.imshow("left_turn" , left_crop)
+	cv.waitKey(1)
+
+	cv.imshow("right_turn" , right_crop)
+	cv.waitKey(1)
+
+	
+	if left_crop.sum() < 1000:
+		print("left turn")
+		return (cropped_color_frame, -500, 1)
+
+	if right_crop.sum() < 1000:
+		print("right turn")
+		return (cropped_color_frame, 500, 2)
+
 	# # Probabilistic Hough Transform
 	# rho = 1
 	# theta = 1*np.pi/180.0
@@ -135,7 +157,7 @@ def process_img(frame):
 	if lines is None: 
 		print("No lines detected")
 		cv.waitKey(1)
-		return (cropped_color_frame, CTE)
+		return (cropped_color_frame, CTE, 0)
 	else:
 		left_line_x = []    #x-values of left lines 
 		left_line_y = []    #y-values of left lines 
@@ -256,8 +278,9 @@ def process_img(frame):
 			final = cv.addWeighted(final, 1, line_image, 1, 0)
 		
 
-		return (final, CTE)
+		return (final, CTE, 0)
 
+# def turns():
 
 
 
@@ -291,11 +314,29 @@ def main(args=None):
 	Kd = 0.01
 	dt = 1/float(FREQ)
 	integral = 0
-	
+	last_turn_time = time.time()
+
 	while rclpy.ok():
 		if frame is not None:
 			
-			final_image, CTE = process_img(frame)
+			final_image, CTE, turn = process_img(frame)
+			
+			if turn > 0:
+				if turn == 1:
+					m = Int64()
+					m.data = CTE
+					pid_steering_publisher.publish(m)
+					last_turn_time = time.time()
+					# left turn
+					pass
+
+				elif turn == 2:
+					# right turn
+					m = Int64()
+					m.data = CTE
+					pid_steering_publisher.publish(m)
+					last_turn_time = time.time()
+				continue
 			
 			if SHOW_IMAGES:
 				cv.imshow('final', final_image)

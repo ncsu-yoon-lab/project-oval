@@ -14,7 +14,7 @@ PI = 3.1415926
 
 bridge = CvBridge()
 
-glob_raw_img = Image()
+glob_raw_img = None
 
 def zed_callback(msg: Image):
     global glob_raw_img
@@ -27,9 +27,9 @@ def main(args=None) -> None:
     
     node.create_subscription(
         Image,
-        "/zed2i/zed_node/rgb_raw/image_raw_color",
+        '/zed2i/zed_node/rgb_raw/image_raw_color',
         zed_callback,
-        10
+        20
     )
 
     publisher = node.create_publisher(
@@ -38,7 +38,7 @@ def main(args=None) -> None:
         10
     )
 
-    model = keras.models.load_model("stop_sign_model")
+    model = keras.models.load_model("./stop_sign_model")
 
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
     thread.start()
@@ -51,11 +51,16 @@ def main(args=None) -> None:
 
         global glob_raw_img
 
+        if glob_raw_img == None:
+            continue
+
         # cache and convert the raw image to openCV format
         raw_img = bridge.imgmsg_to_cv2(glob_raw_img)
+        cv.imshow("initial", raw_img)
+        cv.waitKey(1)
 
         # apply transformations to make it easier to preprocess
-        median_blur_img = cv.medianBlur(raw_img, 3)
+        median_blur_img = cv.medianBlur(raw_img, 7)
         grayscale_img = cv.cvtColor(median_blur_img, cv.COLOR_BGR2GRAY)
         hsv_img = cv.cvtColor(median_blur_img, cv.COLOR_BGR2HSV)
 
@@ -65,9 +70,12 @@ def main(args=None) -> None:
             cv.inRange(hsv_img, (160, 100, 100), (180, 255, 255))
         )
 
+        # mask the raw image with the red mask to set all non-red values to zero
+        masked_img = cv.cvtColor(cv.bitwise_and(median_blur_img, median_blur_img, mask=red_mask), cv.COLOR_BGR2GRAY)
+
         # grab circles from grayscale image
         circles = cv.HoughCircles(
-            image=grayscale_img,
+            image=masked_img,
             method=cv.HOUGH_GRADIENT,
             dp=1,
             minDist=len(grayscale_img) // 5,
@@ -78,21 +86,21 @@ def main(args=None) -> None:
         )
 
         # if there are no circles, publish a value of zero
-        if circles == None:
-            
+        if circles is None:
+            print("none")
             m.data = 0
 
         else:
 
-            # mask the raw image with the red mask to set all non-red values to zero
-            masked_img = cv.cvtColor(cv.bitwise_and(raw_img, raw_img, mask=red_mask), cv.COLOR_BGR2GRAY)
+            cv.imshow("red", masked_img)
+            cv.waitKey(1)
 
             # find the circle with the largest percent area of non-zero values
             # based on the red-masked image
             best_num = 0
-            best = [0, 0, 0]
+            best = [1, 1, 1]
+            empty_mask = np.zeros_like(masked_img)
             for circle in circles[0,:]:
-                empty_mask = np.zeros_like(masked_img)
                 cv.circle(
                     img=empty_mask,
                     center=(int(circle[0]), int(circle[1])),
@@ -101,10 +109,14 @@ def main(args=None) -> None:
                     thickness=-1
                 )
                 double_masked_img = cv.bitwise_and(masked_img, empty_mask)
+                
                 percent_area = cv.countNonZero(double_masked_img) / (PI * (circle[2] ** 2))
                 if percent_area > best_num:
                     best = circle
                     best_num = percent_area
+
+            cv.imshow("circles", empty_mask)
+            cv.waitKey(1)
 
             # crop the image to the detected potential stop sign
             img_y, img_x, chan = raw_img.shape
@@ -117,8 +129,14 @@ def main(args=None) -> None:
 
             cropped_img = raw_img[crop_y1:crop_y2, crop_x1:crop_x2]
 
+            cv.imshow("cropped", cropped_img)
+            cv.waitKey(1)
+
             # resize the image to the size needed by the model
             resized_img = cv.resize(cropped_img, (128, 128))
+
+            cv.imshow("resized", resized_img)
+            cv.waitKey(1)
 
             # format with batch_size dimension
             input_img = np.array([cv.cvtColor(resized_img, cv.COLOR_BGR2RGB)])
@@ -133,6 +151,7 @@ def main(args=None) -> None:
                 m.data = 0
         
         # publish
+        print(m)
         publisher.publish(m)
 
         # maintain rate
