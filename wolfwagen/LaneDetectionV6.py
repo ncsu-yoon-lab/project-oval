@@ -12,7 +12,7 @@ import threading
 from geometry_msgs.msg import PoseStamped
 
 # Set it to 'False' when driving (True when debugging)
-SHOW_IMAGES = True
+SHOW_IMAGES = False
 
 DRAW_LINE_IMG = True
 
@@ -261,7 +261,7 @@ def process_img(frame):
 				slope = (y2 - y1) / float(x2 - x1)
 				slope_threshold = 0.2
 				if abs(slope) < slope_threshold:
-					print("slope %f is excluded" % slope)
+					#print("slope %f is excluded" % slope)
 					continue
 
 				# line_len = np.sqrt( (x2-x1)**2 + (y2-y1)**2 )
@@ -385,12 +385,12 @@ def main(args=None):
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
-	FREQ = 2	
+	FREQ = 20	
 	rate = node.create_rate(FREQ, node.get_clock())
 
 	# For PID control	
 	prev_error = 0
-	Kp = 0.25	
+	Kp = 0.15	
 	Ki = 0.0
 	Kd = 0.01
 	dt = 1/float(FREQ)
@@ -424,8 +424,12 @@ def main(args=None):
 				if (yaw_now < 0):
 					yaw_now += 360.0
 
-
 				print('yaw_now = ', yaw_now)
+			
+			if turning is True and time.time() - last_turn_time > 3.0:
+				turning = False
+				yaw_target = 0
+				prev_error = 0
 
 			if turning is True:
 				#Already in the turning mode
@@ -435,7 +439,7 @@ def main(args=None):
 
 				print("yaw_now = %f, yaw_target = %f, diff = %f" % (yaw_now, yaw_target, diff_yaw))
 
-				if (diff_yaw < 5.0):
+				if (diff_yaw < 10.0):
 					#angle to the target yaw is small enough, so stop the turn?
 					turning = False
 					yaw_target = 0

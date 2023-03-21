@@ -10,7 +10,7 @@ import threading
 
 steering = 0
 throttle = 0
-auto_throttle = 23	#in auto mode
+auto_throttle = 25	#in auto mode
 
 mode = 0
 
@@ -40,10 +40,10 @@ def joy_callback(data):
 	'''
 
 	throttle = int(data.axes[axis_throttle]*100)
-	if throttle>25:
-	    throttle = 25
-	elif throttle<-25:
-		throttle = -25
+	if throttle>28:
+	    throttle = 28
+	elif throttle<-28:
+		throttle = -28
 
 	# LB/RB to decrease/increase auto throttle (=fixed throttle when the car in the auto mode) 
 	# just publish auto_throttle from here. Driver (pwm_gen) will use it. 
