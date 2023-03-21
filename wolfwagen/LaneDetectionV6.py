@@ -9,6 +9,7 @@ import time
 import math
 import random
 import threading
+from geometry_msgs.msg import PoseStamped
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -39,10 +40,48 @@ CAMERA_TOPIC_NAME = '/zed2i/zed_node/stereo/image_rect_color'
 # Original image fram
 frame = None
 
+last_frame_time = time.time()
 br = CvBridge()
 def listener_callback(msg):
-	global frame
+	global frame, last_frame_time
 	frame = br.imgmsg_to_cv2(msg)
+	last_frame_time = time.time()
+
+
+
+last_turn_time = time.time()
+
+pose = None
+def pose_callback(data):
+	global pose
+	pose = data
+
+"""
+Convert a quaternion into euler angles (roll, pitch, yaw)
+roll is rotation around x in radians (counterclockwise)
+pitch is rotation around y in radians (counterclockwise)
+yaw is rotation around z in radians (counterclockwise)
+"""
+def euler_from_quaternion(quat):
+	x = quat.x
+	y = quat.y
+	z = quat.z
+	w = quat.w
+	t0 = +2.0 * (w * x + y * z)
+	t1 = +1.0 - 2.0 * (x * x + y * y)
+	roll_x = math.atan2(t0, t1)
+
+	t2 = +2.0 * (w * y - z * x)
+	t2 = +1.0 if t2 > +1.0 else t2
+	t2 = -1.0 if t2 < -1.0 else t2
+	pitch_y = math.asin(t2)
+
+	t3 = +2.0 * (w * z + x * y)
+	t4 = +1.0 - 2.0 * (y * y + z * z)
+	yaw_z = math.atan2(t3, t4)
+
+	return roll_x, pitch_y, yaw_z # in radians
+
 
 
 # Use this if image is too dark
@@ -85,6 +124,8 @@ def crop(image, width, height):
 	
 
 def process_img(frame):
+	global last_turn_time
+
 	org_color_frame = frame
 
 	img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -120,23 +161,57 @@ def process_img(frame):
 		cv.imshow('canny', edge)
 		cv.waitKey(1)
 	
+	# for intersection
 	left_crop = edge[170 :, : 300]
 	right_crop = edge[170 : , 900 :]
 
-	cv.imshow("left_turn" , left_crop)
-	cv.waitKey(1)
+	# cv.imshow("left_turn" , left_crop)
+	# cv.waitKey(1)
 
-	cv.imshow("right_turn" , right_crop)
-	cv.waitKey(1)
+	# cv.imshow("right_turn" , right_crop)
+	# cv.waitKey(1)
+	
+
+	is_at_intersection = 0	
+	curr_time = time.time()
+	if (curr_time - last_turn_time > 5):
+		# This mean if it's not more than 5 seconds since we did the last turning, don't check the following conditions
+
+		if left_crop.sum() < 1000:
+			print("left is open")
+			is_at_intersection = 1
+			# return (cropped_color_frame, -500, 1)
+
+		if right_crop.sum() < 1000:
+			print("right is open")
+			is_at_intersection += 2
+			# return (cropped_color_frame, 500, 2)
+
+		turning_direction = 0		
+
+		if is_at_intersection > 0:
+			turning = True
+			if is_at_intersection == 1:
+				turning_direction = 1	# left
+			elif is_at_intersection == 2:
+				turning_direction = 2	# right
+			else:
+				#both left and right are open
+				turning_direction = random.randint(1,2)
+			
+			print("turning direction: ", turning_direction)
+			last_turn_time = time.time()
+
+			return (cropped_color_frame, 0, turning_direction)
+
 
 	
-	if left_crop.sum() < 1000:
-		print("left turn")
-		return (cropped_color_frame, -500, 1)
+		
 
-	if right_crop.sum() < 1000:
-		print("right turn")
-		return (cropped_color_frame, 500, 2)
+	
+
+
+
 
 	# # Probabilistic Hough Transform
 	# rho = 1
@@ -296,6 +371,12 @@ def main(args=None):
 			CAMERA_TOPIC_NAME,
 			listener_callback,
 			20)
+	
+	img_subscription = node.create_subscription(
+			PoseStamped,
+			"/zed2i/zed_node/pose",
+			pose_callback,
+			20)
 		
 	lane_img_publisher = node.create_publisher(Image, 'lane_img', 1)
 	pid_steering_publisher = node.create_publisher(Int64, 'pid_steering', 1)
@@ -304,7 +385,7 @@ def main(args=None):
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
-	FREQ = 20	
+	FREQ = 2	
 	rate = node.create_rate(FREQ, node.get_clock())
 
 	# For PID control	
@@ -314,43 +395,121 @@ def main(args=None):
 	Kd = 0.01
 	dt = 1/float(FREQ)
 	integral = 0
-	last_turn_time = time.time()
+	
 
+	yaw_turn_initial = 0
+	yaw_target = 0
+
+	turning = False	#Am i making a turn (left or right)?
+	turning_direction = 0	#1: left, 2: right
+
+	
+	left_turn_cmd = -100	
+	right_turn_cmd = +100
+
+	
 	while rclpy.ok():
 		if frame is not None:
-			
-			final_image, CTE, turn = process_img(frame)
-			
-			if turn > 0:
-				if turn == 1:
-					m = Int64()
-					m.data = CTE
-					pid_steering_publisher.publish(m)
-					last_turn_time = time.time()
-					# left turn
-					pass
+			print("-----")
 
-				elif turn == 2:
-					# right turn
-					m = Int64()
-					m.data = CTE
-					pid_steering_publisher.publish(m)
-					last_turn_time = time.time()
-				continue
+			if time.time() - last_frame_time > 2:
+				print("NOT RECEIVING CAMERA DATA. ")
+				break
+
+			if pose is not None:
+				quat = pose.pose.orientation
+				roll, pitch, yaw_now = euler_from_quaternion(quat)
+
+				yaw_now = yaw_now * 180.0 / np.pi
+				if (yaw_now < 0):
+					yaw_now += 360.0
+
+
+				print('yaw_now = ', yaw_now)
+
+			if turning is True:
+				#Already in the turning mode
+				#Check if we need to stop or continue
+
+				diff_yaw = math.fabs(yaw_now - yaw_target)
+
+				print("yaw_now = %f, yaw_target = %f, diff = %f" % (yaw_now, yaw_target, diff_yaw))
+
+				if (diff_yaw < 5.0):
+					#angle to the target yaw is small enough, so stop the turn?
+					turning = False
+					yaw_target = 0
+					prev_error = 0	#to reset the pid controller
+
+					print("Turning is done")
+
+				else:
+					#just keep turning						
+					print("Still turning")
+
+					if turning_direction == 1:
+						#left turn
+						steering_cmd = left_turn_cmd
+					elif turning_direction == 2:
+						#right turn
+						steering_cmd = right_turn_cmd
+					else:
+						print("CANNOT HAPPEN")
+						steering_cmd = 0
+
+				# just for streaming camera data -- nothing more
+				final_image = crop(frame,frame.shape[1],frame.shape[0])
+
+			else:
+				#Not in the turning mode
+				#Check if we need to start a turning or not
+				
+				final_image, CTE, turning_direction = process_img(frame)
+				
+				if turning_direction > 0:
+
+					if turning is False:
+						# now we start making a turn
+						turning = True
+						yaw_turn_initial = yaw_now	#save the current yaw
+
+						yaw_target = 0
+
+						if turning_direction == 1:
+							# left turn --> yaw increases
+							yaw_target = yaw_turn_initial + 90 
+							yaw_target = yaw_target % 360
+
+							steering_cmd = left_turn_cmd							
+
+						elif turning_direction == 2:
+							# right turn --> yaw decreases
+
+							yaw_target = yaw_turn_initial - 90
+							yaw_target = yaw_target % 360
+
+							steering_cmd = right_turn_cmd
 			
+				else:
+					# Straight
+					####### PID control
+					setpoint = 0    #always want to stay on the center line
+					error = setpoint - CTE
+					integral = integral + error * dt
+					derivative = (error - prev_error) / dt
+					steering_cmd = Kp * error + Ki * integral + Kd * derivative
+					prev_error = error
+					print("CTE=", CTE)
+
+					
+					
 			if SHOW_IMAGES:
 				cv.imshow('final', final_image)
 				cv.waitKey(1)
 
-			print("CTE=", CTE)
 
-			####### PID control
-			setpoint = 0    #always want to stay on the center line
-			error = setpoint - CTE
-			integral = integral + error * dt
-			derivative = (error - prev_error) / dt
-			steering_cmd = Kp * error + Ki * integral + Kd * derivative
-			prev_error = error
+
+			#publish steering command
 
 			m = Int64()
 			m.data = int(steering_cmd)
@@ -359,7 +518,7 @@ def main(args=None):
 			print("steering_cmd = ", steering_cmd)
 
 			# Lane image for rviz2 or webviz
-			img_msg = br.cv2_to_imgmsg(final_image, encoding="passthrough")
+			img_msg = br.cv2_to_imgmsg(final_image, encoding="bgra8")
 			lane_img_publisher.publish(img_msg)
 
 
