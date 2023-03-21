@@ -126,7 +126,8 @@ def main(args=None):
 
 		if lidar_min_dist < SAFE_DISTANCE:
 			print("Safe distance violation. Setting throttle to 0")
-			pwm_throttle = pwm(0)
+			if pwm_throttle > pwm(0):
+				pwm_throttle = pwm(0)
 
 		print("mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)" % ("Manual" if mode == 0 else "Auto", throttle, auto_throttle, steer, pid_steer))
 

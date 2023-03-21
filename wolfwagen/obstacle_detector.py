@@ -6,7 +6,7 @@ import os
 import threading
 import math
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 angle = 2*math.pi 
 
@@ -58,13 +58,13 @@ def main(args=None):
                 else:
                     XY_safe[i,:]=(x,y)                
 
-            plt.cla()
-            plt.plot(XY_safe[:,0], XY_safe[:,1], ".g")
-            plt.plot(XY_unsafe[:,0], XY_unsafe[:,1], ".r")
-            plt.grid(True)
-            plt.xlim(-500,500)
-            plt.ylim(-500,500)
-            plt.pause(0.001)
+            # plt.cla()
+            # plt.plot(XY_safe[:,0], XY_safe[:,1], ".g")
+            # plt.plot(XY_unsafe[:,0], XY_unsafe[:,1], ".r")
+            # plt.grid(True)
+            # plt.xlim(-500,500)
+            # plt.ylim(-500,500)
+            # plt.pause(0.001)
 
 
             print("lidar_min_dist=", min_dist)
