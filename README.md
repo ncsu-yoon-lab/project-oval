@@ -43,3 +43,7 @@ ros2 launch sllidar_ros2  sllidar_s2_launch.py
 python obstacle_detector.py 
 ```
 
+## rosbridge_server 
+```shell
+python ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+```
