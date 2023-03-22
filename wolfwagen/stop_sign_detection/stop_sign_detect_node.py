@@ -69,8 +69,8 @@ def main(args=None) -> None:
             cv.waitKey(1)
 
         # apply transformations to make it easier to preprocess
-        median_blur_img = cv.medianBlur(raw_img, 7)
-        grayscale_img = cv.cvtColor(median_blur_img, cv.COLOR_BGR2GRAY)
+        small_img = cv.resize(raw_img, (1000, 1000))
+        median_blur_img = cv.medianBlur(small_img, 7)
         hsv_img = cv.cvtColor(median_blur_img, cv.COLOR_BGR2HSV)
 
         # obtain red color mask
@@ -87,11 +87,11 @@ def main(args=None) -> None:
             image=masked_img,
             method=cv.HOUGH_GRADIENT,
             dp=1,
-            minDist=len(grayscale_img) // 5,
+            minDist=len(masked_img) // 5,
             param1=200,
             param2=20,
-            minRadius=len(grayscale_img) // 20,
-            maxRadius=len(grayscale_img) // 4
+            minRadius=len(masked_img) // 20,
+            maxRadius=len(masked_img) // 4
         )
 
         # if there are no circles, publish a value of zero
