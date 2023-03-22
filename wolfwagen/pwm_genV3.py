@@ -11,6 +11,11 @@ import os
 import threading
 import time
 
+#distributed ros doesn't work now, so let's use mqtt for now
+import paho.mqtt.client as paho
+broker_ip="eb2-3254-ub01.csc.ncsu.edu"
+broker_port=12345
+
 #os.system('sudo ip link set can0 up type can bitrate 250000')
 
 in_min = -100
@@ -99,13 +104,37 @@ def voice_cmd_callback(data):
         print('right -- todo')
 
 
-
+def on_voice_cmd_mqtt_message(client, userdata, message):
+	global mode, throttle
+	cmd = str(message.payload.decode("utf-8"))
+	print("voice_cmd_received =", cmd )
+	if cmd == 'stop':
+		throttle = 0
+		mode = 0
+	elif cmd == 'start':
+		mode = 1
+	elif cmd == 'left':
+		print('left -- todo')
+	elif cmd == 'right':
+		print('right -- todo')
 
 
 def main(args=None):
 	print("Driver node")
 	rclpy.init(args=args)
 	node = Node("Drive_node")
+
+	try:
+		#to receive voice command over mqtt
+		client= paho.Client("client-orin")
+		client.on_message=on_voice_cmd_mqtt_message		
+		client.connect(broker_ip, broker_port)
+		client.loop_start()
+		client.subscribe("voice_cmd_mqtt")#subscribe
+	except:
+		print("no mqtt")
+		pass
+
 
 	try:
 		bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=250000)
