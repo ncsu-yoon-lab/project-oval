@@ -114,8 +114,7 @@ def crop(image, width, height):
 	# if not stereo image, comment out this block
 	center = int(width/2)
 	cut_width = int(width/4)
-	image = np.delete(image, slice(center-cut_width, center+cut_width), 1)
-	
+	image = np.delete(image, slice(center-cut_width, center+cut_width), 1)	
 	
 	# cut top half
 	image = image[int(height/2) : height-1, :]
@@ -123,7 +122,6 @@ def crop(image, width, height):
 	return image
 
 	
-
 def process_img(frame):
 	global last_turn_time
 
@@ -173,24 +171,24 @@ def process_img(frame):
 	# cv.waitKey(1)
 	
 
-	is_at_intersection = 0	
-	curr_time = time.time()
-	if (curr_time - last_turn_time > 5):
-		# This mean if it's not more than 5 seconds since we did the last turning, don't check the following conditions
+	if (time.time() - last_turn_time > 5):
+		# If it hasn't been more than 5 seconds since we did the last turning, don't check the following conditions
+
+		is_at_intersection = 0	
 
 		if left_crop.sum() < 1000:
 			print("left is open")
-			is_at_intersection = 1
-			# return (cropped_color_frame, -500, 1)
+			is_at_intersection = 1			
 
 		if right_crop.sum() < 1000:
 			print("right is open")
-			is_at_intersection += 2
-			# return (cropped_color_frame, 500, 2)
+			is_at_intersection += 2			
 
-		turning_direction = 0		
+		turning_direction = 0
 
 		if is_at_intersection > 0:
+			#We start a turn
+
 			turning = True
 			if is_at_intersection == 1:
 				turning_direction = 1	# left
@@ -206,12 +204,6 @@ def process_img(frame):
 			return (cropped_color_frame, 0, turning_direction)
 
 
-	
-		
-
-	
-
-
 
 
 	# # Probabilistic Hough Transform
@@ -221,6 +213,8 @@ def process_img(frame):
 	# minLineLength = 30   #The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
 	# maxLineGap = 20      #The maximum gap between two points to be considered in the same line.
 	# lines = cv.HoughLinesP(edge, rho, theta, threshold, minLineLength, maxLineGap)
+
+
 
 	# Non-probabilistic Hough Transform (works better)
 	lines = cv.HoughLines(edge, 1, np.pi/180, 150, None, 0, 0)
@@ -232,8 +226,8 @@ def process_img(frame):
 	
 	if lines is None: 
 		print("No lines detected")
-		cv.waitKey(1)
-		return (cropped_color_frame, CTE, 0)
+		final = cropped_color_frame
+		CTE = 0		
 	else:
 		left_line_x = []    #x-values of left lines 
 		left_line_y = []    #y-values of left lines 
@@ -256,7 +250,7 @@ def process_img(frame):
 			# for x1, y1, x2, y2 in line:	
 			if True:
 				
-				if x2 - x1 == 0:					
+				if x2 - x1 == 0:
 					continue
 
 				slope = (y2 - y1) / float(x2 - x1)
@@ -322,8 +316,7 @@ def process_img(frame):
 		if cnt_left>0 and cnt_right>0:
 			# Find CTE
 			lane_center = (right_x_start+left_x_start)/2
-			CTE = car_center - lane_center
-			
+			CTE = car_center - lane_center			
 			
 			if DRAW_LINE_IMG:
 				cv.line(line_image, ( int((left_x_start+right_x_start)/2), MAX_Y), ( int((left_x_end + right_x_end)/2), MIN_Y), LANE_COLOR, 5)
@@ -335,7 +328,6 @@ def process_img(frame):
 				cv.fillPoly(mask, vertices, LANE_REGION_COLOR)
 
 				line_image = cv.addWeighted(line_image, 1, mask, 0.1, 0)				
-
 
 		elif cnt_left+cnt_right == 0:
 			CTE = 0
@@ -354,12 +346,7 @@ def process_img(frame):
 			final = cv.addWeighted(final, 1, line_image, 1, 0)
 		
 
-		return (final, CTE, 0)
-
-# def turns():
-
-
-
+	return (final, CTE, 0)
 
 def main(args=None):
 		
@@ -371,9 +358,9 @@ def main(args=None):
 			Image,
 			CAMERA_TOPIC_NAME,
 			listener_callback,
-			20)
+			5)
 	
-	img_subscription = node.create_subscription(
+	pose_subscription = node.create_subscription(
 			PoseStamped,
 			"/zed2i/zed_node/pose",
 			pose_callback,
@@ -381,7 +368,6 @@ def main(args=None):
 		
 	lane_img_publisher = node.create_publisher(Image, 'lane_img', 1)
 	pid_steering_publisher = node.create_publisher(Int64, 'pid_steering', 1)
-
 
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
@@ -397,37 +383,29 @@ def main(args=None):
 	dt = 1/float(FREQ)
 	integral = 0
 	
-
-	yaw_turn_initial = 0
-	yaw_target = 0
-
 	turning = False	#Am i making a turn (left or right)?
 	turning_direction = 0	#1: left, 2: right
-
+	yaw_target = 0
 	
 	left_turn_cmd = -100	
 	right_turn_cmd = +100
-
-	loop_start_time = time.time()
 	
 	while rclpy.ok():
-		if frame is not None:
-			loop_start_time = time.time()
+		if frame is not None and pose is not None:
 			print("-----")
 
-			if time.time() - last_frame_time > 2:
+			if time.time() - last_frame_time > 3:
 				print("NOT RECEIVING CAMERA DATA. ")
 				break
+		
+			quat = pose.pose.orientation
+			roll, pitch, yaw_now = euler_from_quaternion(quat)
 
-			if pose is not None:
-				quat = pose.pose.orientation
-				roll, pitch, yaw_now = euler_from_quaternion(quat)
+			yaw_now = yaw_now * 180.0 / np.pi
+			if (yaw_now < 0):
+				yaw_now += 360.0
 
-				yaw_now = yaw_now * 180.0 / np.pi
-				if (yaw_now < 0):
-					yaw_now += 360.0
-
-				print('yaw_now = ', yaw_now)
+			print('yaw_now = ', yaw_now)
 			
 			if turning is True and time.time() - last_turn_time > 3.0:
 				turning = False
@@ -439,11 +417,10 @@ def main(args=None):
 				#Check if we need to stop or continue
 
 				diff_yaw = math.fabs(yaw_now - yaw_target)
-
-				print("yaw_now = %f, yaw_target = %f, diff = %f" % (yaw_now, yaw_target, diff_yaw))
+				# print("yaw_now = %f, yaw_target = %f, diff = %f" % (yaw_now, yaw_target, diff_yaw))
 
 				if (diff_yaw < 10.0):
-					#angle to the target yaw is small enough, so stop the turn?
+					#angle to the target yaw is small enough, so stop the turn
 					turning = False
 					yaw_target = 0
 					prev_error = 0	#to reset the pid controller
@@ -478,23 +455,19 @@ def main(args=None):
 					if turning is False:
 						# now we start making a turn
 						turning = True
-						yaw_turn_initial = yaw_now	#save the current yaw
-
 						yaw_target = 0
 
 						if turning_direction == 1:
 							# left turn --> yaw increases
-							yaw_target = yaw_turn_initial + 90 
+							yaw_target = yaw_now + 90 
 							yaw_target = yaw_target % 360
-
 							steering_cmd = left_turn_cmd							
 
 						elif turning_direction == 2:
 							# right turn --> yaw decreases
 
-							yaw_target = yaw_turn_initial - 90
+							yaw_target = yaw_now - 90
 							yaw_target = yaw_target % 360
-
 							steering_cmd = right_turn_cmd
 			
 				else:
@@ -506,18 +479,15 @@ def main(args=None):
 					derivative = (error - prev_error) / dt
 					steering_cmd = Kp * error + Ki * integral + Kd * derivative
 					prev_error = error
-					print("CTE=", CTE)
 
-					
+					print("CTE=", CTE)					
 					
 			if SHOW_IMAGES:
-				cv.imshow('final', final_image)
+				cv.imshow('Lane following', final_image)
 				cv.waitKey(1)
-
 
 			
 			#publish steering command
-
 			m = Int64()
 			m.data = int(steering_cmd)
 			pid_steering_publisher.publish(m)
@@ -527,9 +497,6 @@ def main(args=None):
 			# Lane image for rviz2 or webviz
 			img_msg = br.cv2_to_imgmsg(final_image, encoding="bgra8")
 			lane_img_publisher.publish(img_msg)
-
-
-
 			
 		rate.sleep()
 
