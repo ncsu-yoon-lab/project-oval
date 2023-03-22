@@ -408,9 +408,11 @@ def main(args=None):
 	left_turn_cmd = -100	
 	right_turn_cmd = +100
 
+	loop_start_time = time.time()
 	
 	while rclpy.ok():
 		if frame is not None:
+			loop_start_time = time.time()
 			print("-----")
 
 			if time.time() - last_frame_time > 2:
@@ -513,7 +515,7 @@ def main(args=None):
 				cv.waitKey(1)
 
 
-
+			
 			#publish steering command
 
 			m = Int64()

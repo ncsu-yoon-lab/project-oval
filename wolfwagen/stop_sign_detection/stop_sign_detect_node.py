@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-# from matplotlib.pyplot import hsv
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from std_msgs.msg import Int64
 import cv2 as cv
 import numpy as np
+# from matplotlib.pyplot import hsv
 from cv_bridge import CvBridge
 import threading
+import time
 import tensorflow as tf
 keras = tf.keras
 
@@ -46,11 +47,13 @@ def main(args=None) -> None:
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
     thread.start()
 
-    rate = node.create_rate(10, node.get_clock())
+    rate = node.create_rate(5, node.get_clock())
 
     m = Int64()
     print("starting...")
     while rclpy.ok():
+
+        loop_start_time = time.time()
 
         if glob_raw_img == None:
             print("no image")
@@ -167,7 +170,9 @@ def main(args=None) -> None:
         
         publisher.publish(m)
 
-        
+        loop_end_time = time.time()
+        print("loop_time", (loop_end_time-loop_start_time))
+
 
         # maintain rate
         rate.sleep()
