@@ -9,13 +9,10 @@ import math
 import numpy as np
 # import matplotlib.pyplot as plt
 
-angle = 2*math.pi 
-
 scan_data = None
 def scan_callback(data):
     global scan_data
     scan_data = data
-	
 
 def main(args=None):
     print("Obstacle detector node")
@@ -31,7 +28,6 @@ def main(args=None):
     rate = node.create_rate(20, node.get_clock())
 
     CAR_WIDTH = 30  # cm
-
     
     while rclpy.ok():
         
@@ -53,11 +49,12 @@ def main(args=None):
                 y = distance * math.cos(angle) * 100        # cm
 
                 if (y>0 and math.fabs(x) < CAR_WIDTH/2):
+                    #within the corridor 
                      XY_unsafe[i,:]=(x,y)
                      if distance < min_dist:
                         min_dist = distance
                 else:
-                    XY_safe[i,:]=(x,y)                
+                    XY_safe[i,:]=(x,y)
 
             # plt.cla()
             # plt.plot(XY_safe[:,0], XY_safe[:,1], ".g")
@@ -67,13 +64,10 @@ def main(args=None):
             # plt.ylim(-500,500)
             # plt.pause(0.001)
 
-
             print("lidar_min_dist=", min_dist)
             m = Float64()
             m.data = float(min_dist)    #because type(min_dist) = numpy.float32
             pub_min_dist.publish(m)
-            
-
 
         rate.sleep()
     
