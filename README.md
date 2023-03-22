@@ -27,6 +27,12 @@ python pwm_genV3.py
 python LaneDetectionV6.py
 ```
 
+## stop sign detection
+```shell
+cd stop_sign_detection
+python stop_sign_detect_node.py 
+```
+
 ## rplidar s2
 ```shell
 ros2 launch sllidar_ros2  sllidar_s2_launch.py

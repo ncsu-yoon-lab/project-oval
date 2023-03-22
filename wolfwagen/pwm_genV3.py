@@ -8,6 +8,7 @@ import struct
 import can
 import os
 import threading
+import time
 
 #os.system('sudo ip link set can0 up type can bitrate 250000')
 
@@ -69,7 +70,17 @@ def pid_steering_callback(data):
 def lidar_min_dist_callback(data):
 	global lidar_min_dist
 	lidar_min_dist = data.data	
+
+stop_sign_detected = False
+last_stop_time = time.time()
+def stop_sign_callback(data):
+	global stop_sign_detected, last_stop_time
 	
+	if time.time() > (last_stop_time + 5):
+		if data.data == 1:
+			stop_sign_detected = True
+			last_stop_time = time.time()
+			print("stop sign detected")
 
 
 def voice_cmd_callback(data):
@@ -109,6 +120,7 @@ def main(args=None):
 	subscription_pid_steering = node.create_subscription(Int64 , 'pid_steering' , pid_steering_callback , 1)
 	subscription_voice_cmd = node.create_subscription(String , "voice_cmd" , voice_cmd_callback , 1)	
 	subscription_lidar_min_dist = node.create_subscription(Float64 , "lidar_min_dist" , lidar_min_dist_callback , 1)	
+	subscription_stop_sign = node.create_subscription(Int64 , 'stop_sign' , stop_sign_callback , 1)
 
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
@@ -126,6 +138,12 @@ def main(args=None):
 
 		if lidar_min_dist < SAFE_DISTANCE:
 			print("Safe distance violation. Setting throttle to 0")
+			if pwm_throttle > pwm(0):
+				pwm_throttle = pwm(0)
+
+		
+		if mode == 1 and stop_sign_detected and time.time() < (last_stop_time + 1.5): 
+			print("Try to stop now!")
 			if pwm_throttle > pwm(0):
 				pwm_throttle = pwm(0)
 

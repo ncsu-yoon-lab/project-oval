@@ -1,4 +1,4 @@
-from matplotlib.pyplot import hsv
+# from matplotlib.pyplot import hsv
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -9,6 +9,8 @@ from cv_bridge import CvBridge
 import threading
 import tensorflow as tf
 keras = tf.keras
+
+SHOW_IMAGES = False
 
 PI = 3.1415926
 
@@ -39,25 +41,26 @@ def main(args=None) -> None:
     )
 
     model = keras.models.load_model("./stop_sign_model")
-
+    print("model loaded")
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
     thread.start()
 
-    rate = node.create_rate(20, node.get_clock())
+    rate = node.create_rate(10, node.get_clock())
 
     m = Int64()
-
+    print("starting...")
     while rclpy.ok():
 
-        global glob_raw_img
-
         if glob_raw_img == None:
+            print("no image")
+            rate.sleep()
             continue
 
         # cache and convert the raw image to openCV format
         raw_img = bridge.imgmsg_to_cv2(glob_raw_img)
-        cv.imshow("initial", raw_img)
-        cv.waitKey(1)
+        if SHOW_IMAGES:
+            cv.imshow("initial", raw_img)
+            cv.waitKey(1)
 
         # apply transformations to make it easier to preprocess
         median_blur_img = cv.medianBlur(raw_img, 7)
@@ -89,11 +92,11 @@ def main(args=None) -> None:
         if circles is None:
             print("none")
             m.data = 0
-
         else:
 
-            cv.imshow("red", masked_img)
-            cv.waitKey(1)
+            if SHOW_IMAGES:
+                cv.imshow("red", masked_img)
+                cv.waitKey(1)
 
             # find the circle with the largest percent area of non-zero values
             # based on the red-masked image
@@ -115,8 +118,9 @@ def main(args=None) -> None:
                     best = circle
                     best_num = percent_area
 
-            cv.imshow("circles", empty_mask)
-            cv.waitKey(1)
+            if SHOW_IMAGES:
+                cv.imshow("circles", empty_mask)
+                cv.waitKey(1)
 
             # crop the image to the detected potential stop sign
             img_y, img_x, chan = raw_img.shape
@@ -129,14 +133,16 @@ def main(args=None) -> None:
 
             cropped_img = raw_img[crop_y1:crop_y2, crop_x1:crop_x2]
 
-            cv.imshow("cropped", cropped_img)
-            cv.waitKey(1)
+            if SHOW_IMAGES:
+                cv.imshow("cropped", cropped_img)
+                cv.waitKey(1)
 
             # resize the image to the size needed by the model
             resized_img = cv.resize(cropped_img, (128, 128))
 
-            cv.imshow("resized", resized_img)
-            cv.waitKey(1)
+            if SHOW_IMAGES:
+                cv.imshow("resized", resized_img)
+                cv.waitKey(1)
 
             # format with batch_size dimension
             input_img = np.array([cv.cvtColor(resized_img, cv.COLOR_BGR2RGB)])
@@ -151,8 +157,16 @@ def main(args=None) -> None:
                 m.data = 0
         
         # publish
-        print(m)
+        # print(m)
+        # publisher.publish(m)
+        if m.data == 1:
+            print("stop sign detected")
+        else:
+            print("no")
+        
         publisher.publish(m)
+
+        
 
         # maintain rate
         rate.sleep()
