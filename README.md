@@ -47,3 +47,6 @@ ros2 launch sllidar_ros2  sllidar_s2_launch.py
 ```shell
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
+
+## voice commander
+Don't forget to run it on mk laptop
