@@ -496,6 +496,9 @@ def main(args=None):
 			print("steering_cmd = ", steering_cmd)
 
 			# Lane image for rviz2 or webviz
+			H, W, _= final_image.shape
+			smaller_dim = ( int(W*0.2), int(H*0.2))
+			final_image = cv.resize(final_image, smaller_dim)
 			img_msg = br.cv2_to_imgmsg(final_image, encoding="bgra8")
 			lane_img_publisher.publish(img_msg)
 			
