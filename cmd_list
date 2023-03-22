@@ -1,3 +1,4 @@
+------------------------
 ros2 launch zed_wrapper zed2i.launch.py
 ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
 python xbox_controller.py
@@ -10,5 +11,6 @@ python stop_sign_detect_node.py
 ------------------------
 ros2 launch sllidar_ros2  sllidar_s2_launch.py
 python obstacle_detector.py 
-
+------------------------
 python ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+------------------------
