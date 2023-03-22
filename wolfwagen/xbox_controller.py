@@ -10,10 +10,10 @@ import threading
 
 steering = 0
 throttle = 0
-auto_throttle = 25	#in auto mode
+auto_throttle = 24	#in auto mode
 
 MAX_MANUAL_THROTTLE = 28
-MAX_AUTO_THROTTLE = 30
+MAX_AUTO_THROTTLE = 28
 
 mode_switch_requested = 0
 

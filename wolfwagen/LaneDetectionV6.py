@@ -24,11 +24,12 @@ DOT_SIZE = 5
 LINE_COLOR = (255, 0, 0)
 LINE_THICKNESS = 2
 
-LANE_COLOR = (0, 0, 255)
+# LANE_COLOR = (0, 0, 255)
+LANE_COLOR = (255, 255, 0)
 LANE_THICKNESS = 5
 
 LANE_REGION_COLOR = (0, 255, 0)
-LANE_CENTER_COLOR = (255, 0, 0)
+LANE_CENTER_COLOR = (0, 0, 255)
 
 CAR_CENTER_COLOR = (180, 180, 0)
 
@@ -319,15 +320,15 @@ def process_img(frame):
 			CTE = car_center - lane_center			
 			
 			if DRAW_LINE_IMG:
-				cv.line(line_image, ( int((left_x_start+right_x_start)/2), MAX_Y), ( int((left_x_end + right_x_end)/2), MIN_Y), LANE_COLOR, 5)
+				cv.line(line_image, ( int((left_x_start+right_x_start)/2), MAX_Y), ( int((left_x_end + right_x_end)/2), MIN_Y), LANE_CENTER_COLOR, 5)
 				cv.line(line_image, (car_center, MAX_Y), (car_center, MIN_Y), (255,255,0), 3)
 				
 				#Draw lane region
 				mask = np.zeros_like(line_image)				
-				vertices = np.array([[(left_x_start,MAX_Y),(left_x_end, MIN_Y), (right_x_end, MIN_Y), (right_x_start, MAX_Y)]], dtype=np.int32)
+				vertices = np.array([[(left_x_start+10,MAX_Y),(left_x_end+10, MIN_Y), (right_x_end-10, MIN_Y), (right_x_start-10, MAX_Y)]], dtype=np.int32)
 				cv.fillPoly(mask, vertices, LANE_REGION_COLOR)
 
-				line_image = cv.addWeighted(line_image, 1, mask, 0.1, 0)				
+				line_image = cv.addWeighted(line_image, 0.8, mask, 0.2, 0)				
 
 		elif cnt_left+cnt_right == 0:
 			CTE = 0
@@ -419,7 +420,7 @@ def main(args=None):
 				diff_yaw = math.fabs(yaw_now - yaw_target)
 				# print("yaw_now = %f, yaw_target = %f, diff = %f" % (yaw_now, yaw_target, diff_yaw))
 
-				if (diff_yaw < 10.0):
+				if (diff_yaw < 15.0):
 					#angle to the target yaw is small enough, so stop the turn
 					turning = False
 					yaw_target = 0

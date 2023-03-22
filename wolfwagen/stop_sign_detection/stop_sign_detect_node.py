@@ -53,12 +53,14 @@ def main(args=None) -> None:
     print("starting...")
     while rclpy.ok():
 
-        loop_start_time = time.time()
+        
 
         if glob_raw_img == None:
             print("no image")
             rate.sleep()
             continue
+
+        loop_start_time = time.time()
 
         # cache and convert the raw image to openCV format
         raw_img = bridge.imgmsg_to_cv2(glob_raw_img)
