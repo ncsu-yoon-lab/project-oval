@@ -42,6 +42,12 @@ def main(args=None) -> None:
         10
     )
 
+    sign_img_publisher = node.create_publisher(
+        Image,
+        "sign_img",
+        10
+    )
+
     model = keras.models.load_model("./stop_sign_model")
     print("model loaded")
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
@@ -69,8 +75,7 @@ def main(args=None) -> None:
             cv.waitKey(1)
 
         # apply transformations to make it easier to preprocess
-        small_img = cv.resize(raw_img, (1000, 1000))
-        median_blur_img = cv.medianBlur(small_img, 7)
+        median_blur_img = cv.medianBlur(raw_img, 7)
         hsv_img = cv.cvtColor(median_blur_img, cv.COLOR_BGR2HSV)
 
         # obtain red color mask
@@ -94,6 +99,8 @@ def main(args=None) -> None:
             maxRadius=len(masked_img) // 4
         )
 
+        best = [0, 0, 0]
+
         # if there are no circles, publish a value of zero
         if circles is None:
             print("none")
@@ -107,7 +114,6 @@ def main(args=None) -> None:
             # find the circle with the largest percent area of non-zero values
             # based on the red-masked image
             best_num = 0
-            best = [1, 1, 1]
             empty_mask = np.zeros_like(masked_img)
             for circle in circles[0,:]:
                 cv.circle(
@@ -171,6 +177,23 @@ def main(args=None) -> None:
             print("no")
         
         publisher.publish(m)
+
+        # Sign img for viz
+        mask = np.zeros_like(raw_img)
+        cv.circle(
+            img=mask,
+            center=(int(best[0]), int(best[1])),
+            radius=int(best[2]),
+            color=(0, 255, 0),
+            thickness=-1
+        )
+        final_image = cv.addWeighted(raw_img, 0.8, mask, 0.2, 0)
+
+        H, W, _ = final_image.shape
+        smaller_dim = (int(W*0.1), int(H*0.1))
+        final_image = cv.resize(final_image, smaller_dim)
+        img_msg = bridge.cv2_to_imgmsg(final_image, encoding="bgra8")
+        sign_img_publisher.publish(img_msg)
 
         loop_end_time = time.time()
         print("loop_time", (loop_end_time-loop_start_time))
