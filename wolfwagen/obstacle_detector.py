@@ -64,7 +64,7 @@ def main(args=None):
             # plt.ylim(-500,500)
             # plt.pause(0.001)
 
-            print("lidar_min_dist=", min_dist)
+            print("Distance to the closest object in front of the car = %f m" % min_dist)
             m = Float64()
             m.data = float(min_dist)    #because type(min_dist) = numpy.float32
             pub_min_dist.publish(m)
