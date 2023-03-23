@@ -10,11 +10,14 @@ import can
 import os
 import threading
 import time
+import curses
 
 #distributed ros doesn't work now, so let's use mqtt for now
 import paho.mqtt.client as paho
 broker_ip="eb2-3254-ub01.csc.ncsu.edu"
 broker_port=12345
+
+stdscr = curses.initscr()
 
 #TODO: pwm should be moved to Teensy microcontroller
 in_min = -100
@@ -81,13 +84,13 @@ def stop_sign_callback(data):
 		if data.data == 1:
 			stop_sign_detected = True
 			last_stop_time = time.time()
-			print("stop sign detected")
+			# print("stop sign detected")
 
 #ROS-based voice command handler
 def voice_cmd_callback(data):
     global mode, throttle
     cmd = data.data
-    print('voice_cmd =', cmd)
+    # print('voice_cmd =', cmd)
     if cmd == 'stop':
         throttle = 0
         mode = 0
@@ -102,7 +105,7 @@ def voice_cmd_callback(data):
 def on_voice_cmd_mqtt_message(client, userdata, message):
 	global mode, throttle
 	cmd = str(message.payload.decode("utf-8"))
-	print("voice_cmd_received =", cmd )
+	# print("voice_cmd_received =", cmd )
 	if cmd == 'stop':
 		throttle = 0
 		mode = 0
@@ -162,20 +165,45 @@ def main(args=None):
 			pwm_throttle = pwm(auto_throttle)
 			pwm_steer = pwm(pid_steer)
 
+		
+		safe_distance_violation = False
 		if lidar_min_dist < SAFE_DISTANCE:
-			print("Safe distance violation. Setting throttle to 0")
+			# print("Safe distance violation. Setting throttle to 0")
+			safe_distance_violation = True
 			if pwm_throttle > pwm(0):
 				pwm_throttle = pwm(0)
-
 		
+		stop_sign_message = None
 		if mode == 1 and stop_sign_detected and time.time() < (last_stop_time + 1.5): 
 			#stop sign (in auto mode) -- stop for 1.5 seconds
-			print("STOP SIGN!")
+			# print("STOP SIGN!")
+			stop_sign_message = "-- Stop sign --"
 			if pwm_throttle > pwm(0):
 				pwm_throttle = pwm(0)
 
 
-		print("mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)" % ("Manual" if mode == 0 else "Auto", throttle, auto_throttle, steer, pid_steer))
+		# print("mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)" % ("Manual" if mode == 0 else "Auto", throttle, auto_throttle, steer, pid_steer))
+
+		th = throttle
+		st = steer
+		if (mode==1):
+			th = auto_throttle
+			st = pid_steer
+
+		stdscr.refresh()
+		stdscr.addstr(1, 5, 'Mode: %s       ' % ("Manual" if mode == 0 else "Auto"))
+		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % th)
+		stdscr.addstr(3, 5, 'Steering: %.2f  ' % st)
+		
+		if safe_distance_violation:
+			stdscr.addstr(4, 5, '-- Safe distance violation (%.2f m)--' % lidar_min_dist)
+		else:
+			stdscr.addstr(4, 5, '                             ')
+		if stop_sign_message:
+			stdscr.addstr(5, 5, stop_sign_message)
+		else:
+			stdscr.addstr(5, 5, '                             ')
+		stdscr.addstr(6,0,'')
 
 		#send actuation command to teensy over CAN bus		
 		can_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)
@@ -187,5 +215,6 @@ def main(args=None):
 	rclpy.spin(node)
 	rclpy.shutdown()
 
+	
 if __name__ == '__main__':
 	main()
