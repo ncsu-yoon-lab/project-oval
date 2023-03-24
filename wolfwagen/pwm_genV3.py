@@ -96,10 +96,11 @@ def voice_cmd_callback(data):
         mode = 0
     elif cmd == 'start':
         mode = 1
-    elif cmd == 'left':
-        print('left -- todo')
-    elif cmd == 'right':
-        print('right -- todo')
+    
+    #elif cmd == 'left':
+    #    print('left -- todo')
+    #elif cmd == 'right':
+    #    print('right -- todo')
 
 #MQTT-based voice command handler
 def on_voice_cmd_mqtt_message(client, userdata, message):

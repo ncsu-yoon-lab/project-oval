@@ -53,6 +53,9 @@ def listener_callback(msg):
 
 last_turn_time = time.time()
 
+left_crop_img = np.zeros((1,1,4))
+right_crop_img = np.zeros((1,1,4))
+
 pose = None
 def pose_callback(data):
 	global pose
@@ -124,7 +127,7 @@ def crop(image, width, height):
 
 	
 def process_img(frame):
-	global last_turn_time
+	global last_turn_time, left_crop_img, right_crop_img
 
 	org_color_frame = frame
 
@@ -165,6 +168,9 @@ def process_img(frame):
 	left_crop = edge[170 :, : 300]
 	right_crop = edge[170 : , 900 :]
 
+	left_crop_img = left_crop
+	right_crop_img = right_crop
+
 	# cv.imshow("left_turn" , left_crop)
 	# cv.waitKey(1)
 
@@ -172,8 +178,8 @@ def process_img(frame):
 	# cv.waitKey(1)
 	
 
-	if (time.time() - last_turn_time > 5):
-		# If it hasn't been more than 5 seconds since we did the last turning, don't check the following conditions
+	if (time.time() - last_turn_time > 3):
+		# If it hasn't been more than 3 seconds since we did the last turning, don't check the following conditions
 
 		is_at_intersection = 0	
 
@@ -370,6 +376,9 @@ def main(args=None):
 	lane_img_publisher = node.create_publisher(Image, 'lane_img', 1)
 	pid_steering_publisher = node.create_publisher(Int64, 'pid_steering', 1)
 
+	left_crop_publisher = node.create_publisher(Image, 'left_crop_lane_img', 1)
+	right_crop_publisher = node.create_publisher(Image, 'right_crop_lane_img', 1)
+
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
@@ -408,7 +417,7 @@ def main(args=None):
 
 			print('yaw_now = ', yaw_now)
 			
-			if turning is True and time.time() - last_turn_time > 3.0:
+			if turning is True and time.time() - last_turn_time > 2.0:
 				turning = False
 				yaw_target = 0
 				prev_error = 0
@@ -420,7 +429,7 @@ def main(args=None):
 				diff_yaw = math.fabs(yaw_now - yaw_target)
 				# print("yaw_now = %f, yaw_target = %f, diff = %f" % (yaw_now, yaw_target, diff_yaw))
 
-				if (diff_yaw < 15.0):
+				if (diff_yaw < 10.0):
 					#angle to the target yaw is small enough, so stop the turn
 					turning = False
 					yaw_target = 0
@@ -501,6 +510,9 @@ def main(args=None):
 			final_image = cv.resize(final_image, smaller_dim)
 			img_msg = br.cv2_to_imgmsg(final_image, encoding="bgra8")
 			lane_img_publisher.publish(img_msg)
+
+			#left_crop_publisher.publish(br.cv2_to_imgmsg(left_crop_img, encoding="bgra8"))
+			#right_crop_publisher.publish(br.cv2_to_imgmsg(right_crop_img, encoding="bgra8"))
 			
 		rate.sleep()
 

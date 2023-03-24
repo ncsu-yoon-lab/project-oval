@@ -53,7 +53,7 @@ def main(args=None) -> None:
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
     thread.start()
 
-    rate = node.create_rate(5, node.get_clock())
+    rate = node.create_rate(10, node.get_clock())
 
     m = Int64()
     print("starting...")
@@ -180,23 +180,24 @@ def main(args=None) -> None:
 
         # Sign img for viz
         mask = np.zeros_like(raw_img)
+        color = (0, 255, 0) if m.data == 1 else (0, 255, 255)
+        thickness = -1 if m.data == 1 else 15
         cv.circle(
             img=mask,
             center=(int(best[0]), int(best[1])),
             radius=int(best[2]),
-            color=(0, 255, 0),
-            thickness=-1
+            color=color,
+            thickness=thickness
         )
-        final_image = cv.addWeighted(raw_img, 0.8, mask, 0.2, 0)
-
+        final_image = cv.addWeighted(raw_img, 0.8, mask, 0.2, gamma=0)
         H, W, _ = final_image.shape
-        smaller_dim = (int(W*0.1), int(H*0.1))
+        smaller_dim = (int(W*0.2), int(H*0.2))
         final_image = cv.resize(final_image, smaller_dim)
         img_msg = bridge.cv2_to_imgmsg(final_image, encoding="bgra8")
         sign_img_publisher.publish(img_msg)
 
-        loop_end_time = time.time()
-        print("loop_time", (loop_end_time-loop_start_time))
+        #loop_end_time = time.time()
+        #print("loop_time", (loop_end_time-loop_start_time))
 
 
         # maintain rate
