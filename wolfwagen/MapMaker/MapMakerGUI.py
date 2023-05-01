@@ -119,19 +119,19 @@ def key(event):
         record(current_x , current_y , past_char)
         past_char = event.char
         print("4 Way Intersection")
-        img = PhotoImage(file = 'c:/Users/malin/Downloads/Coding Projects/Paths/Intersection.png')
+        img = PhotoImage(file = '/MapMaker/Paths/Intersection.png')
         my_image = my_canvas.create_image(current_x , current_y , image = img)
     if event.char == 'v':
         record(current_x , current_y , past_char)
         past_char = event.char
         print("Vertical Road")
-        img = PhotoImage(file = 'c:/Users/malin/Downloads/Coding Projects/Paths/Vertical.png')
+        img = PhotoImage(file = '/MapMaker/Paths/Vertical.png')
         my_image = my_canvas.create_image(current_x , current_y , image = img) 
     if event.char == 'h':
         record(current_x , current_y , past_char)
         past_char = event.char
         print("Horizontal Road")
-        img = PhotoImage(file = 'c:/Users/malin/Downloads/Coding Projects/Paths/Horizontal.png')
+        img = PhotoImage(file = '/MapMaker/Paths/Horizontal.png')
         my_image = my_canvas.create_image(current_x , current_y , image = img)
     if event.char == 's':
         print("Starting Point")
