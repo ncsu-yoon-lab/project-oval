@@ -19,9 +19,8 @@ current_y = 0
 # Keeps track of last type of road placed
 past_char = ''
 
-# Keeping track of the roads placed with location and how many openings it has 
-# (intersection = [1 , 1 , 1] , vertical road = [0 , 1 , 0] , horizontal road = [0 , 1 , 0]) 
-# [x , y , [ 0 or 1 , 0 or 1, 0 or 1,]]
+# Keeping track of the roads placed with location and how many openings it has (0 indicating no opening and 1 indicating opening)
+# [x , y , [N , E , S , W]]
 roads = []
 
 # Storing the start and end locations for finding the best route
@@ -92,11 +91,13 @@ def record(x_pos , y_pos , road_type):
     global roads
     global opens
     if road_type == 'i':
-        opens = [1 , 1 , 1]
-    if road_type == 'v' or road_type == 'h':
-        opens = [0 , 1 , 0]
+        opens = [1 , 1 , 1 , 1]
+    if road_type == 'v':
+        opens = [1 , 0 , 1 , 0]
+    if road_type == 'h':
+        opens = [0 , 1 , 0 , 1]
     if road_type == '':
-        opens = [0 , 0 , 0]
+        opens = [0 , 0 , 0 , 0]
     roads.append([ x_pos , y_pos , opens])
     print(roads)
 
