@@ -4,7 +4,6 @@ from tkinter import *
 # Creating the window
 root = Tk()
 root.title('Map Maker')
-root.iconbitmap('c:/Users/malin/Downloads/plus.ico')
 root.geometry("800x600")
 
 # Setting the w and h and initial x and y
