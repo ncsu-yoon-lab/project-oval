@@ -1,9 +1,12 @@
 import sys
+
 sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')
 import maploader
 import costsloader as cl
+
 sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
 import environment
+import action
 
 """
 Simulation file to test A star with different files but is also an example of a module that we can import to run A Star
@@ -23,14 +26,16 @@ class RunSim:
         # set the number of iterations
         self.iterations = iterations
 
+        # solution stack
+        self.solution = None
+
     # run the simulation
     def run(self):
         # loop through the iterations, we can just set this to true or false later.
         for i in range(self.iterations):
-            # self.env.update_env()
             try:
                 # update env will run robot.get_action() which will give us a path to follow
-                self.env.update_env()
+                self.solution = self.env.update_env()
 
             # catch any exceptions
             except Exception as e:
@@ -38,8 +43,32 @@ class RunSim:
                 print(e)
 
             # if the target is reached, break out of loop
-            if self.env.goal_condition_met():
+            if self.solution is not None:
                 break
+
+        return self.solution
+
+    def get_next_action(self):
+
+        # get the Position on the top
+        curr = self.solution.pop()
+        # get all neighbors of the position
+        neighbors = self.env.get_neighbor_positions(curr)
+        # peek at the next value at the top to see which way to move
+        curr = self.solution[-1]
+        # logic to return the action to get to the next Position
+        if curr.__eq__(neighbors.get("above")):
+            robot_action = action.Action.UP
+        elif curr.__eq__(neighbors.get("below")):
+            robot_action = action.Action.DOWN
+        elif curr.__eq__(neighbors.get("left")):
+            robot_action = action.Action.LEFT
+        elif curr.__eq__(neighbors.get("right")):
+            robot_action = action.Action.RIGHT
+        else:
+            robot_action = action.Action.TURN
+
+        return robot_action
 
     # checks if the goal condition is met for outside functions, such as the unit tests or Lane Detection when we
     # incorporate

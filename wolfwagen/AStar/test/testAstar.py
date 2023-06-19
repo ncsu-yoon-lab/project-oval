@@ -15,7 +15,13 @@ costs = '../files/costs.txt'
 straight_line = '../files/straight_line.txt'
 for trial in range(num_trials):
     sim = runsim.RunSim(map_file, iterations, costs, straight_line, startX, startY, targetX, targetY)
-    sim.run()
+    solution = sim.run()
+
+    print(solution)
+
+    while not sim.goal_condition_met():
+        action = sim.get_next_action()
+        sim.env.actuate_env(action)
     print("----------- trial " + str(trial) + " done ---------------")
     if sim.goal_condition_met():
         successful_trials += 1

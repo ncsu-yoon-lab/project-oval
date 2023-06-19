@@ -212,23 +212,5 @@ class Robot:
 
             return self.solution
 
-            # # get the Position on the top
-            # curr = self.solution.pop()
-            # # get all neighbors of the position
-            # neighbors = self.env.get_neighbor_positions(curr)
-            # # peek at the next value at the top to see which way to move
-            # curr = self.solution[-1]
-            #
-            # # logic to return the action to get to the next Position
-            # if curr.__eq__(neighbors.get("above")):
-            #     return action.Action.UP
-            # if curr.__eq__(neighbors.get("below")):
-            #     return action.Action.DOWN
-            # if curr.__eq__(neighbors.get("left")):
-            #     return action.Action.LEFT
-            # if curr.__eq__(neighbors.get("right")):
-            #     return action.Action.RIGHT
-            # return action.Action.TURN
-
     def get_solved(self):
         return self.solved

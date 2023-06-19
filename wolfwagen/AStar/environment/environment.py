@@ -206,26 +206,25 @@ class Environment:
     # need to update this method to send commands to the lane following code, per action.
     def update_env(self):
         solution_stack = self.robot_agent.get_action()
-        robot_action = action.Action.STOP
+        # robot_action = action.Action.STOP
         if self.robot_agent.get_solved() and solution_stack is not action.Action.STOP:
-            # get the Position on the top
-            curr = solution_stack.pop()
-            # get all neighbors of the position
-            neighbors = self.get_neighbor_positions(curr)
-            # peek at the next value at the top to see which way to move
-            curr = solution_stack[-1]
-            # logic to return the action to get to the next Position
-            if curr.__eq__(neighbors.get("above")):
-                robot_action = action.Action.UP
-            elif curr.__eq__(neighbors.get("below")):
-                robot_action = action.Action.DOWN
-            elif curr.__eq__(neighbors.get("left")):
-                robot_action = action.Action.LEFT
-            elif curr.__eq__(neighbors.get("right")):
-                robot_action = action.Action.RIGHT
-            else:
-                robot_action = action.Action.TURN
 
+            return solution_stack
+
+        else:
+            self.update_robot_pos(self.get_robot_pos().get_row(), self.get_robot_pos().get_col())
+            return None
+
+    # this gets the target position
+    def get_target_pos(self):
+        return self.target_pos
+
+    # this checks if the goal has been met by the robot
+    def goal_condition_met(self):
+        robot_position = self.get_robot_pos()
+        return robot_position == self.target_pos
+
+    def actuate_env(self, robot_action):
         robot_pos = self.get_robot_pos()
         row = robot_pos.get_row()
         col = robot_pos.get_col()
@@ -250,12 +249,3 @@ class Environment:
                 self.update_robot_pos(row - 1, col + 1)
             else:
                 self.update_robot_pos(row + 1, col - 1)
-
-    # this gets the target position
-    def get_target_pos(self):
-        return self.target_pos
-
-    # this checks if the goal has been met by the robot
-    def goal_condition_met(self):
-        robot_position = self.get_robot_pos()
-        return robot_position == self.target_pos
