@@ -3,7 +3,7 @@ sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/simulation')
 import runsim
 
 num_trials = 100
-iterations = 200
+iterations = 20
 successful_trials = 0
 startX = 0
 startY = 2

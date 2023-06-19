@@ -27,14 +27,15 @@ class RunSim:
     def run(self):
         # loop through the iterations, we can just set this to true or false later.
         for i in range(self.iterations):
-            try:
-                # update env will run robot.get_action() which will give us a path to follow
-                self.env.update_env()
-
-            # catch any exceptions
-            except Exception as e:
-                print("error at time step " + str(i))
-                print(e)
+            self.env.update_env()
+        #     try:
+        #         # update env will run robot.get_action() which will give us a path to follow
+        #         self.env.update_env()
+        #
+        #     # catch any exceptions
+        #     except Exception as e:
+        #         print("error at time step " + str(i))
+        #         print(e)
 
             # if the target is reached, break out of loop
             if self.env.goal_condition_met():

@@ -5,10 +5,12 @@ import sys
 import action
 
 # This adds a dir path to the current runtime to import modules in other folders
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/robotAgent')
+# if you need to change this across all files refactor the next line
+path = '/home/sarvesh/Documents/GitHub/wolfwagen'
+sys.path.insert(0, path + '/AStar/robotAgent')
 import robot
 
-sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/utils')
+sys.path.insert(1, path + '/AStar/utils')
 import costsloader as cl
 
 """
@@ -60,13 +62,12 @@ class Environment:
                 tile_val = track_map[i][j]
                 p = pos.Position(i, j)
                 list_pos.append(p)
-                match tile_val:
-                    case "I":
-                        self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.INTERSECTION)
-                        self.num_intersections += 1
-                        self.list_intersections.append(p)
-                    case "C":
-                        self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.CURVE)
+                if tile_val == "I":
+                    self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.INTERSECTION)
+                    self.num_intersections += 1
+                    self.list_intersections.append(p)
+                if tile_val ==  "C":
+                    self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.CURVE)
 
             self.positions.append(list_pos)
 
@@ -204,32 +205,51 @@ class Environment:
     # this updates the environment with the robot's next action, current position, and next position
     # need to update this method to send commands to the lane following code, per action.
     def update_env(self):
-        robot_action = self.robot_agent.get_action()
+        solution_stack = self.robot_agent.get_action()
+        robot_action = action.Action.STOP
+        if self.robot_agent.get_solved() and solution_stack is not action.Action.STOP:
+            # get the Position on the top
+            curr = solution_stack.pop()
+            # get all neighbors of the position
+            neighbors = self.get_neighbor_positions(curr)
+            # peek at the next value at the top to see which way to move
+            curr = solution_stack[-1]
+            # logic to return the action to get to the next Position
+            if curr.__eq__(neighbors.get("above")):
+                robot_action = action.Action.UP
+            elif curr.__eq__(neighbors.get("below")):
+                robot_action = action.Action.DOWN
+            elif curr.__eq__(neighbors.get("left")):
+                robot_action = action.Action.LEFT
+            elif curr.__eq__(neighbors.get("right")):
+                robot_action = action.Action.RIGHT
+            else:
+                robot_action = action.Action.TURN
+
         robot_pos = self.get_robot_pos()
         row = robot_pos.get_row()
         col = robot_pos.get_col()
 
         print(robot_action)
-        match robot_action:
-            case action.Action.LEFT:
-                if self.valid_pos(row, col - 1):
-                    self.update_robot_pos(row, col - 1)
-            case action.Action.RIGHT:
-                if self.valid_pos(row, col + 1):
-                    self.update_robot_pos(row, col + 1)
-            case action.Action.DOWN:
-                if self.valid_pos(row + 1, col):
-                    self.update_robot_pos(row + 1, col)
-            case action.Action.UP:
-                if self.valid_pos(row - 1, col):
-                    self.update_robot_pos(row - 1, col)
-            case action.Action.STOP:
-                self.update_robot_pos(row, col)
-            case action.Action.TURN:
-                if self.valid_pos(row - 1, col + 1):
-                    self.update_robot_pos(row - 1, col + 1)
-                else:
-                    self.update_robot_pos(row + 1, col - 1)
+        if robot_action is action.Action.LEFT:
+            if self.valid_pos(row, col - 1):
+                self.update_robot_pos(row, col - 1)
+        elif robot_action is action.Action.RIGHT:
+            if self.valid_pos(row, col + 1):
+                self.update_robot_pos(row, col + 1)
+        elif robot_action is action.Action.DOWN:
+            if self.valid_pos(row + 1, col):
+                self.update_robot_pos(row + 1, col)
+        elif robot_action is action.Action.UP:
+            if self.valid_pos(row - 1, col):
+                self.update_robot_pos(row - 1, col)
+        elif robot_action is action.Action.STOP:
+            self.update_robot_pos(row, col)
+        elif robot_action is action.Action.TURN:
+            if self.valid_pos(row - 1, col + 1):
+                self.update_robot_pos(row - 1, col + 1)
+            else:
+                self.update_robot_pos(row + 1, col - 1)
 
     # this gets the target position
     def get_target_pos(self):

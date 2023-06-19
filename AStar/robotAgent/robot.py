@@ -1,4 +1,5 @@
 import sys
+
 # add a path to the system to add modules from the environment directory
 sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/environment')
 import position
@@ -17,11 +18,11 @@ distances between intersection in meters for cost values between nodes
 
 
 class Robot:
-
     """
     This is an internal Node class. This is used to wrap a Position object in a comparable Node class
     This class also allows us to calculate the cost to travel between two Position
     """
+
     class Node:
         # initialize Node obj with Position data that is passed in the args the priority is initially set to 0
         def __init__(self, data):
@@ -42,8 +43,11 @@ class Robot:
             pos2 = next_pos.get_position()
             cost_val = costs.get((pos1, pos2)) if costs.get((pos1, pos2)) is not None else costs.get((pos2, pos1))
             if cost_val is None:
-                mod_pos2 = position.Position(next_pos.get_position().get_row() + 1, next_pos.get_position().get_col()) if self.data.get_row() != next_pos.get_position().get_row() + 1 else position.Position(next_pos.get_position().get_row(), next_pos.get_position().get_col() + 1)
-                cost_val = costs.get((pos1, mod_pos2)) if costs.get((pos1, mod_pos2)) is not None else costs.get((mod_pos2, pos1))
+                mod_pos2 = position.Position(next_pos.get_position().get_row() + 1,
+                                             next_pos.get_position().get_col()) if self.data.get_row() != next_pos.get_position().get_row() + 1 else position.Position(
+                    next_pos.get_position().get_row(), next_pos.get_position().get_col() + 1)
+                cost_val = costs.get((pos1, mod_pos2)) if costs.get((pos1, mod_pos2)) is not None else costs.get(
+                    (mod_pos2, pos1))
             return cost_val
 
             # calculate cost here, need measurements
@@ -181,8 +185,7 @@ class Robot:
                         # if the next node is not in the cost so far map or the new cost is less than the current
                         # cost of that node, continue
                         if (self.cost_so_far.get(next_node.get_position()) is None) or (
-                                        new_cost < self.cost_so_far.get(next_node.get_position())):
-
+                                new_cost < self.cost_so_far.get(next_node.get_position())):
                             # update the next node cost to the cost so far map
                             self.cost_so_far[next_node.get_position()] = new_cost
                             # print(new_cost)
@@ -207,20 +210,25 @@ class Robot:
             position as the start position and find a new routs to the target position using A star.
             """
 
-            # get the Position on the top
-            curr = self.solution.pop()
-            # get all neighbors of the position
-            neighbors = self.env.get_neighbor_positions(curr)
-            # peek at the next value at the top to see which way to move
-            curr = self.solution[-1]
+            return self.solution
 
-            # logic to return the action to get to the next Position
-            if curr.__eq__(neighbors.get("above")):
-                return action.Action.UP
-            if curr.__eq__(neighbors.get("below")):
-                return action.Action.DOWN
-            if curr.__eq__(neighbors.get("left")):
-                return action.Action.LEFT
-            if curr.__eq__(neighbors.get("right")):
-                return action.Action.RIGHT
-            return action.Action.TURN
+            # # get the Position on the top
+            # curr = self.solution.pop()
+            # # get all neighbors of the position
+            # neighbors = self.env.get_neighbor_positions(curr)
+            # # peek at the next value at the top to see which way to move
+            # curr = self.solution[-1]
+            #
+            # # logic to return the action to get to the next Position
+            # if curr.__eq__(neighbors.get("above")):
+            #     return action.Action.UP
+            # if curr.__eq__(neighbors.get("below")):
+            #     return action.Action.DOWN
+            # if curr.__eq__(neighbors.get("left")):
+            #     return action.Action.LEFT
+            # if curr.__eq__(neighbors.get("right")):
+            #     return action.Action.RIGHT
+            # return action.Action.TURN
+
+    def get_solved(self):
+        return self.solved
