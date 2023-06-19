@@ -1,8 +1,8 @@
 import sys
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/utils')
+sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')
 import maploader
 import costsloader as cl
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
 import environment
 
 """
