@@ -5,12 +5,12 @@ import sys
 import action
 
 # This adds a dir path to the current runtime to import modules in other folders
-# if you need to change this across all files refactor the next line
-path = '/home/sarvesh/Documents/GitHub/wolfwagen'
-sys.path.insert(0, path + '/AStar/robotAgent')
+# you will need to change this in all files for the robot
+
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/robotAgent')
 import robot
 
-sys.path.insert(1, path + '/AStar/utils')
+sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/utils')
 import costsloader as cl
 
 """
@@ -55,7 +55,7 @@ class Environment:
 
         # next, we fill in the positions list with a list of positions created from the rows and cols
         # the roads map is also filled with positions and road values and an intersections list is created for use in
-        # building costs maps
+        # building costs files
         for i in range(rows):
             list_pos = []
             for j in range(cols):
@@ -85,7 +85,7 @@ class Environment:
                     self.positions[row][col].set_right(self.positions[row][col + 1])
 
         # build a costs map
-        # create a cost_map that maps two positions as tuples to a value that is cost {(pos1, pos2), cost_val}
+        # create a cost_map that files two positions as tuples to a value that is cost {(pos1, pos2), cost_val}
         self.cost_map = dict()
         self.create_cost_map(costs)
         self.straight_line_costs = cl.CostLoader.load_straight_line(straight_line, self.list_intersections)

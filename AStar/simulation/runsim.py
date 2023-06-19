@@ -6,7 +6,7 @@ sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/environment')
 import environment
 
 """
-Simulation file to test A star with different maps but is also an example of a module that we can import to run A Star
+Simulation file to test A star with different files but is also an example of a module that we can import to run A Star
 from by modifying a few things.
 """
 
@@ -27,15 +27,15 @@ class RunSim:
     def run(self):
         # loop through the iterations, we can just set this to true or false later.
         for i in range(self.iterations):
-            self.env.update_env()
-        #     try:
-        #         # update env will run robot.get_action() which will give us a path to follow
-        #         self.env.update_env()
-        #
-        #     # catch any exceptions
-        #     except Exception as e:
-        #         print("error at time step " + str(i))
-        #         print(e)
+            # self.env.update_env()
+            try:
+                # update env will run robot.get_action() which will give us a path to follow
+                self.env.update_env()
+
+            # catch any exceptions
+            except Exception as e:
+                print("error at time step " + str(i))
+                print(e)
 
             # if the target is reached, break out of loop
             if self.env.goal_condition_met():

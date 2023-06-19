@@ -10,9 +10,9 @@ startY = 2
 targetX = 1
 targetY = 0
 
-map_file = '../maps/map01.txt'
-costs = '../maps/costs.txt'
-straight_line = '../maps/straight_line.txt'
+map_file = '../files/map01.txt'
+costs = '../files/costs.txt'
+straight_line = '../files/straight_line.txt'
 for trial in range(num_trials):
     sim = runsim.RunSim(map_file, iterations, costs, straight_line, startX, startY, targetX, targetY)
     sim.run()
