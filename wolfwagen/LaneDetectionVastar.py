@@ -219,107 +219,78 @@ def process_img(frame):
 
     print("img sum: ", img_small.sum())
 
-    # if (time.time() - last_turn_time > 3):
-    #     # If it hasn't been more than 3 seconds since we did the last turning, don't check the following conditions
-    #
-    #     is_at_intersection = 0
-    #     print("sum of front: ", img_small.sum())
-    #     if img_small.sum() < 200000:
-    #         print("front is open")
-    #         is_at_intersection += 1
-    #
-    #     if left_crop.sum() < 1000:
-    #         print("left is open")
-    #         is_at_intersection += 2
-    #
-    #     if right_crop.sum() < 1000:
-    #         print("right is open")
-    #         is_at_intersection += 4
-    #
-    #     turning_direction = 0
-    #
-    #     if is_at_intersection > 1:
-    #         # We start a turn
-    #
-    #         # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
-    #         # is at intersection values are different from teh turning directions
-    #         turning = True
-    #
-    #         # Getting length of previous turns recorded
-    #         length = len(turns)
-    #
-    #         # Percentage of ones and twos in the recorded turns
-    #         ones = turns.count(1) / length
-    #         twos = turns.count(2) / length
-    #
-    #         # Getting a random number between 0 and 1
-    #         rand = random.random()
-    #
-    #         # Max size that the list can get to
-    #         max_size = 20
-    #
-    #         if is_at_intersection == 2:  # left
-    #             turning_direction = 1
-    #         elif is_at_intersection == 3:  # straight or left
-    #             if (rand > ones):
-    #                 turning_direction = 1
-    #             else:
-    #                 turning_direction = 0
-    #
-    #             turns.append(turning_direction)
-    #         elif is_at_intersection == 4:  # right
-    #             turning_direction = 2
-    #         elif is_at_intersection == 5:  # straight or right
-    #             if (rand > twos):
-    #                 turning_direction = 2
-    #             else:
-    #                 turning_direction = 0
-    #             turns.append(turning_direction)
-    #
-    #         elif is_at_intersection == 6:  # right or left
-    #             if (rand > ones):
-    #                 turning_direction = 1
-    #             else:
-    #                 turning_direction = 2
-    #             turns.append(turning_direction)
-    #
-    #         else:  # Any direction
-    #             if (rand > ones):
-    #                 turning_direction = 1
-    #             elif (rand > twos):
-    #                 turning_direction = 2
-    #             else:
-    #                 turning_direction = 0
-    #
-    #             turns.append(turning_direction)
-    #
-    #         # Cuts the turns list if it gets too long
-    #         if length >= max_size:
-    #             # Remove the first fourth of the array
-    #             for x in range(5):
-    #                 turns.pop(0)
-    #
-    #         # # Adds turn_direction to the turns list
-    #         # turns.append(turning_direction)
-    #
-    #         print("turning direction: ", turning_direction)
-    #         last_turn_time = time.time()
-    #
-    #         ## this is testing the turns array so we can see that it is collecting the data
-    #         #
-    #         newlen = len(turns)
-    #         i = 0
-    #         print(" ")
-    #         print("turns: ")
-    #         while i < newlen:
-    #             print(turns[i])
-    #             i += 1
-    #         print(" ")
-    #         #
-    #         #
+    """
+    logic for traversing through the solution array
+        - get first turn value
+        - calculate how to move based on where the robot is
+        - have an array of movements made by the robot
+        - keep traversing through the solution array and adding to the movement array until the solution array is empty
+          or goal condition is met
+        - we may need to add some stuff to figure out how to turn on the spot in case we need to move to a position 
+          that is directly behind or next to the robot
+    """
+    if (time.time() - last_turn_time > 3):
+        # If it hasn't been more than 3 seconds  since we did the last turning, don't check the following conditions
 
-            # return (cropped_color_frame, 0, turning_direction)
-    return cropped_color_frame, 0
+        is_at_intersection = 0
+        print("sum of front: ", img_small.sum())
+        if img_small.sum() < 200000:
+            print("front is open")
+            is_at_intersection += 1
+
+        if left_crop.sum() < 1000:
+            print("left is open")
+            is_at_intersection += 2
+
+        if right_crop.sum() < 1000:
+            print("right is open")
+            is_at_intersection += 4
+
+        turning_direction = 0
+
+        if is_at_intersection > 1:
+            # We start a turn
+
+            # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
+            # is at intersection values are different from teh turning directions
+
+            # Getting a random number between 0 and 1
+            rand = random.random()
+
+            if is_at_intersection == 2:  # left
+                turning_direction = 1
+            elif is_at_intersection == 3:  # straight or left
+                if (rand > ones):
+                    turning_direction = 1
+                else:
+                    turning_direction = 0
+
+                turns.append(turning_direction)
+            elif is_at_intersection == 4:  # right
+                turning_direction = 2
+            elif is_at_intersection == 5:  # straight or right
+                if (rand > twos):
+                    turning_direction = 2
+                else:
+                    turning_direction = 0
+                turns.append(turning_direction)
+
+            elif is_at_intersection == 6:  # right or left
+                if (rand > ones):
+                    turning_direction = 1
+                else:
+                    turning_direction = 2
+                turns.append(turning_direction)
+
+            else:  # Any direction
+                if (rand > ones):
+                    turning_direction = 1
+                elif (rand > twos):
+                    turning_direction = 2
+                else:
+                    turning_direction = 0
+
+            return cropped_color_frame, 0, turning_direction
 
     # # Probabilistic Hough Transform
     # rho = 1
