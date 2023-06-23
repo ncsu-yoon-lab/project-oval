@@ -154,6 +154,7 @@ class Robot:
 
                     iterator = self.target_node.get_position()
                     self.solution = deque()
+                    self.solution.append(None)
                     self.solution.append(self.target_node.get_position())
 
                     while self.came_from.get(iterator) is not None:
@@ -209,7 +210,6 @@ class Robot:
             clear the solution deque, update the map to add the obstacle as an EDGE road type, and set the current
             position as the start position and find a new routs to the target position using A star.
             """
-
             return self.solution
 
     def get_solved(self):
