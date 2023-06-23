@@ -35,6 +35,8 @@ straight_line = './AStar/files/straight_line.txt'
 sim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, START_ROW, START_COL, TARGET_ROW, TARGET_COL)
 solution = sim.run()
 
+movement_array = []
+
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -219,93 +221,93 @@ def process_img(frame):
 
     print("img sum: ", img_small.sum())
 
-    # If it hasn't been more than 3 seconds since we did the last turning, don't check the following conditions
+    # get the next movement if there are any left in the solution stack and make sure we are not currently moving
+    if traverse_solution() is not None:
+        current_action = traverse_solution()
 
-    is_at_intersection = 0
-    print("sum of front: ", img_small.sum())
-    if img_small.sum() < 200000:
-        print("front is open")
-        is_at_intersection += 1
+        # calculations
 
-    if left_crop.sum() < 1000:
-        print("left is open")
-        is_at_intersection += 2
+        # add the move to movement array
 
-    if right_crop.sum() < 1000:
-        print("right is open")
-        is_at_intersection += 4
-
-    turning_direction = 0
-    next_step = traverse_solution()
-    print(next_step)
-    if is_at_intersection > 1:
-        # We start a turn
-
-        # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
-        # is at intersection values are different from teh turning directions
+    else:
+        #do nothing
+        print()
 
 
-        if is_at_intersection == 2:  # left
-            turning_direction = 1
-        elif is_at_intersection == 3:  # straight or left
-            if (rand > ones):
+
+
+    """
+    logic for traversing through the solution array
+        - make a move only if we are not currently moving
+        - get first turn value
+        - calculate how to move based on where the robot is
+        - have an array of movements made by the robot
+        - keep traversing through the solution array and adding to the movement array until the solution array is empty
+          or goal condition is met
+        - we may need to add some stuff to figure out how to turn on the spot in case we need to move to a position 
+          that is directly behind or next to the robot
+        - get the length of the solution stack and check if the movement array is the same length to see when to stop 
+        
+    """
+    if (time.time() - last_turn_time > 3):
+        # If it hasn't been more than 3 seconds  since we did the last turning, don't check the following conditions
+
+        is_at_intersection = 0
+        print("sum of front: ", img_small.sum())
+        if img_small.sum() < 200000:
+            print("front is open")
+            is_at_intersection += 1
+
+        if left_crop.sum() < 1000:
+            print("left is open")
+            is_at_intersection += 2
+
+        if right_crop.sum() < 1000:
+            print("right is open")
+            is_at_intersection += 4
+
+        turning_direction = 0
+
+        if is_at_intersection > 1:
+            # We start a turn
+
+            # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
+            # is at intersection values are different from teh turning directions
+
+            if is_at_intersection == 2:  # left
                 turning_direction = 1
-            else:
-                turning_direction = 0
+            elif is_at_intersection == 3:  # straight or left
+                if (rand > ones):
+                    turning_direction = 1
+                else:
+                    turning_direction = 0
 
-            turns.append(turning_direction)
-        elif is_at_intersection == 4:  # right
-            turning_direction = 2
-        elif is_at_intersection == 5:  # straight or right
-            if (rand > twos):
+                turns.append(turning_direction)
+            elif is_at_intersection == 4:  # right
                 turning_direction = 2
-            else:
-                turning_direction = 0
-            turns.append(turning_direction)
+            elif is_at_intersection == 5:  # straight or right
+                if (rand > twos):
+                    turning_direction = 2
+                else:
+                    turning_direction = 0
+                turns.append(turning_direction)
 
-        elif is_at_intersection == 6:  # right or left
-            if (rand > ones):
-                turning_direction = 1
-            else:
-                turning_direction = 2
-            turns.append(turning_direction)
+            elif is_at_intersection == 6:  # right or left
+                if (rand > ones):
+                    turning_direction = 1
+                else:
+                    turning_direction = 2
+                turns.append(turning_direction)
 
-        else:  # Any direction
-            if (rand > ones):
-                turning_direction = 1
-            elif (rand > twos):
-                turning_direction = 2
-            else:
-                turning_direction = 0
+            else:  # Any direction
+                if (rand > ones):
+                    turning_direction = 1
+                elif (rand > twos):
+                    turning_direction = 2
+                else:
+                    turning_direction = 0
 
-            turns.append(turning_direction)
-
-        # Cuts the turns list if it gets too long
-        if length >= max_size:
-            # Remove the first fourth of the array
-            for x in range(5):
-                turns.pop(0)
-
-        # # Adds turn_direction to the turns list
-        # turns.append(turning_direction)
-
-        print("turning direction: ", turning_direction)
-        last_turn_time = time.time()
-
-        ## this is testing the turns array so we can see that it is collecting the data
-        #
-        newlen = len(turns)
-        i = 0
-        print(" ")
-        print("turns: ")
-        while i < newlen:
-            print(turns[i])
-            i += 1
-        print(" ")
-        #
-        #
-
-        return (cropped_color_frame, 0, turning_direction)
+            return cropped_color_frame, 0, turning_direction
 
     # # Probabilistic Hough Transform
     # rho = 1
@@ -443,7 +445,6 @@ def process_img(frame):
 
 
 def traverse_solution():
-    global sim, solution
     action = sim.get_next_action()
     sim.env.actuate_env(action)
     return action
