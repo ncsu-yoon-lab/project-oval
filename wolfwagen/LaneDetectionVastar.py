@@ -35,6 +35,8 @@ straight_line = './AStar/files/straight_line.txt'
 sim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, START_ROW, START_COL, TARGET_ROW, TARGET_COL)
 solution = sim.run()
 
+movement_array = []
+
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -219,8 +221,24 @@ def process_img(frame):
 
     print("img sum: ", img_small.sum())
 
+    # get the next movement if there are any left in the solution stack and make sure we are not currently moving
+    if traverse_solution() is not None:
+        current_action = traverse_solution()
+
+        # calculations
+
+        # add the move to movement array
+
+    else:
+        #do nothing
+        print()
+
+
+
+
     """
     logic for traversing through the solution array
+        - make a move only if we are not currently moving
         - get first turn value
         - calculate how to move based on where the robot is
         - have an array of movements made by the robot
@@ -228,6 +246,8 @@ def process_img(frame):
           or goal condition is met
         - we may need to add some stuff to figure out how to turn on the spot in case we need to move to a position 
           that is directly behind or next to the robot
+        - get the length of the solution stack and check if the movement array is the same length to see when to stop 
+        
     """
     if (time.time() - last_turn_time > 3):
         # If it hasn't been more than 3 seconds  since we did the last turning, don't check the following conditions
@@ -428,7 +448,6 @@ def process_img(frame):
 
 
 def traverse_solution():
-    global sim, solution
     action = sim.get_next_action()
     sim.env.actuate_env(action)
 

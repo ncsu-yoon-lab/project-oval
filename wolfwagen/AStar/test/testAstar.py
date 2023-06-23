@@ -19,7 +19,7 @@ for trial in range(num_trials):
 
     print(solution)
 
-    while not sim.goal_condition_met():
+    while True:
         action = sim.get_next_action()
         sim.env.actuate_env(action)
     print("----------- trial " + str(trial) + " done ---------------")
