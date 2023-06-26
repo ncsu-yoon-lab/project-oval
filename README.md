@@ -17,6 +17,9 @@ See [this](https://index.ros.org/p/joy/)
 ./xbox_controller.py
 ```
 
+## how to connect controller
+See [this](https://github.com/atar-axis/xpadneo#connection)
+
 ## driver (pwm_gen)
 ```shell
 ./pwm_genV3.py
