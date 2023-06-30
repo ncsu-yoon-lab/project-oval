@@ -14,7 +14,9 @@ from geometry_msgs.msg import PoseStamped
 import sys
 
 sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
+sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
 import runsim
+import action
 
 # AStar pathfinding
 # how long you want the algorithm to search for a solution
@@ -221,19 +223,6 @@ def process_img(frame):
 
     print("img sum: ", img_small.sum())
 
-    # get the next movement if there are any left in the solution stack and make sure we are not currently moving
-    if traverse_solution() is not None:
-        current_action = traverse_solution()
-
-        # calculations
-
-        # add the move to movement array
-
-    else:
-        #do nothing
-        print()
-
-
 
 
     """
@@ -249,9 +238,12 @@ def process_img(frame):
         - get the length of the solution stack and check if the movement array is the same length to see when to stop 
         
     """
-    if (time.time() - last_turn_time > 3):
-        # If it hasn't been more than 3 seconds  since we did the last turning, don't check the following conditions
 
+    curr_action = traverse_solution()
+    # get the next movement if there are any left in the solution stack and make sure we are not currently moving
+    if curr_action is not None:
+
+        ## lets us know what the options are
         is_at_intersection = 0
         print("sum of front: ", img_small.sum())
         if img_small.sum() < 200000:
@@ -265,7 +257,7 @@ def process_img(frame):
         if right_crop.sum() < 1000:
             print("right is open")
             is_at_intersection += 4
-
+        
         turning_direction = 0
 
         if is_at_intersection > 1:
@@ -274,40 +266,31 @@ def process_img(frame):
             # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
             # is at intersection values are different from teh turning directions
 
-            if is_at_intersection == 2:  # left
+            ## we need to write an interpreter because in AStar there is not front or back to the robot ie no forward or backwards
+            ## moving from one node down would just be DOWN not forward or turn right.
+
+            if is_at_intersection == 2 and curr_action is action.Action.LEFT:  # left
                 turning_direction = 1
             elif is_at_intersection == 3:  # straight or left
-                if (rand > ones):
-                    turning_direction = 1
-                else:
+                if curr_action is action.Action.UP:
                     turning_direction = 0
-
-                turns.append(turning_direction)
-            elif is_at_intersection == 4:  # right
+                else:
+                    turning_direction = 1
+            elif is_at_intersection == 4 and curr_action is action.Action.RIGHT:  # right
                 turning_direction = 2
             elif is_at_intersection == 5:  # straight or right
-                if (rand > twos):
+                if curr_action is action.Action.RIGHT:
                     turning_direction = 2
                 else:
                     turning_direction = 0
-                turns.append(turning_direction)
-
             elif is_at_intersection == 6:  # right or left
-                if (rand > ones):
+                if curr_action is action.Action.LEFT:
                     turning_direction = 1
                 else:
                     turning_direction = 2
-                turns.append(turning_direction)
-
-            else:  # Any direction
-                if (rand > ones):
-                    turning_direction = 1
-                elif (rand > twos):
-                    turning_direction = 2
-                else:
-                    turning_direction = 0
 
             return cropped_color_frame, 0, turning_direction
+        # add the move to movement array
 
     # # Probabilistic Hough Transform
     # rho = 1

@@ -49,26 +49,26 @@ class RunSim:
         return self.solution
 
     def get_next_action(self):
+        if self.solution[-1] is not None:
+            # get the Position on the top
+            curr = self.solution.pop()
+            # get all neighbors of the position
+            neighbors = self.env.get_neighbor_positions(curr)
+            # peek at the next value at the top to see which way to move
+            curr = self.solution[-1]
+            # logic to return the action to get to the next Position
+            if curr.__eq__(neighbors.get("above")):
+                robot_action = action.Action.UP
+            elif curr.__eq__(neighbors.get("below")):
+                robot_action = action.Action.DOWN
+            elif curr.__eq__(neighbors.get("left")):
+                robot_action = action.Action.LEFT
+            elif curr.__eq__(neighbors.get("right")):
+                robot_action = action.Action.RIGHT
+            else:
+                robot_action = action.Action.TURN
 
-        # get the Position on the top
-        curr = self.solution.pop()
-        # get all neighbors of the position
-        neighbors = self.env.get_neighbor_positions(curr)
-        # peek at the next value at the top to see which way to move
-        curr = self.solution[-1]
-        # logic to return the action to get to the next Position
-        if curr.__eq__(neighbors.get("above")):
-            robot_action = action.Action.UP
-        elif curr.__eq__(neighbors.get("below")):
-            robot_action = action.Action.DOWN
-        elif curr.__eq__(neighbors.get("left")):
-            robot_action = action.Action.LEFT
-        elif curr.__eq__(neighbors.get("right")):
-            robot_action = action.Action.RIGHT
-        else:
-            robot_action = action.Action.TURN
-
-        return robot_action
+            return robot_action
 
     # checks if the goal condition is met for outside functions, such as the unit tests or Lane Detection when we
     # incorporate
