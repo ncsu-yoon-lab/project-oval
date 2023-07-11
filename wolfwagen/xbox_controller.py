@@ -18,7 +18,7 @@ MAX_AUTO_THROTTLE = 28
 mode_switch_requested = 0
 
 axis_throttle = 1
-axis_steering = 2
+axis_steering = 3
 axis_mode = 0
 
 topic_manual_steering = "manual_steering"
@@ -26,12 +26,13 @@ topic_manual_throttle = "manual_throttle"
 topic_auto_throttle = "auto_throttle"
 topic_mode_switch = "mode_switch"
 
+sensitivity = 40 #used to be 100 on old motor
 
 
 def joy_callback(data):
 	global steering, throttle, auto_throttle, mode_switch_requested
 
-	throttle = int(data.axes[axis_throttle]*100)
+	throttle = int(data.axes[axis_throttle]*sensitivity)
 	if throttle>MAX_MANUAL_THROTTLE:
 	    throttle = MAX_MANUAL_THROTTLE
 	elif throttle<-MAX_MANUAL_THROTTLE:

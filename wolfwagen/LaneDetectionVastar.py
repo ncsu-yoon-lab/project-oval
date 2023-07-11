@@ -271,6 +271,7 @@ def process_img(frame):
 
             if is_at_intersection == 2 and curr_action is action.Action.LEFT:  # left
                 turning_direction = 1
+
             elif is_at_intersection == 3:  # straight or left
                 if curr_action is action.Action.UP:
                     turning_direction = 0
