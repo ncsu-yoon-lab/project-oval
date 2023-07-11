@@ -8,10 +8,10 @@ import cv2 as cv  # OpenCV library
 import numpy as np
 import time
 import math
-import random
 import threading
 from geometry_msgs.msg import PoseStamped
 import sys
+from wolfwagen.AStar.environment import robot_orientation
 
 sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
 sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
@@ -28,6 +28,8 @@ START_COL = 2
 TARGET_ROW = 1
 TARGET_COL = 0
 
+robot_orientation = robot_orientation.RobotOrientation()
+
 # map and costs file locations
 map_file = './AStar/files/map01.txt'
 costs = './AStar/files/costs.txt'
@@ -38,7 +40,6 @@ sim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, START_ROW, START
 solution = sim.run()
 
 movement_array = []
-
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -241,7 +242,7 @@ def process_img(frame):
 
     curr_action = traverse_solution()
     # get the next movement if there are any left in the solution stack and make sure we are not currently moving
-    if curr_action is not None:
+    if curr_action is not None and curr_action is not action.Action.STOP:
 
         ## lets us know what the options are
         is_at_intersection = 0

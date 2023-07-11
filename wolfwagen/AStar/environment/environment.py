@@ -3,6 +3,7 @@ import positiontype
 import positiontypestatus as pts
 import sys
 import action
+import robot_orientation
 
 # This adds a dir path to the current runtime to import modules in other folders
 # you will need to change this in all files for the robot
@@ -28,7 +29,8 @@ class Environment:
 
     # Initialize the class, like a constructor for java
     # The '*' in the args represents that the following arguments need to be specified by name but are optional
-    def __init__(self, costs, straight_line, track_map, startX, startY, targetX, targetY):
+    def __init__(self, costs, straight_line, track_map, targetX, targetY):
+        self.robot_orientation = robot_orientation.RobotOrientation()
 
         # the rows and cols are set to the respective values from the map
         rows = len(track_map)
@@ -50,26 +52,32 @@ class Environment:
 
         # these functions allow us to set starting and target positions using coordinates provided in the constructor
         # args
-        self.starting_pos = self.set_starting_pos(startX, startY)
+        self.starting_pos = self.set_starting_pos(self.robot_orientation.get_orientation()[1],
+                                                  self.robot_orientation.get_orientation()[2])
         self.target_pos = self.set_target_pos(targetX, targetY)
 
         # next, we fill in the positions list with a list of positions created from the rows and cols
         # the roads map is also filled with positions and road values and an intersections list is created for use in
         # building costs files
-        for i in range(rows):
+        x_val = 0
+        y_val = 0
+        for i in reversed(range(rows)):
             list_pos = []
             for j in range(cols):
                 tile_val = track_map[i][j]
-                p = pos.Position(i, j)
+                p = pos.Position(y_val, x_val)
                 list_pos.append(p)
                 if tile_val == "I":
                     self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.INTERSECTION)
                     self.num_intersections += 1
                     self.list_intersections.append(p)
-                if tile_val ==  "C":
+                if tile_val == "C":
                     self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.CURVE)
-
+            x_val += 1
             self.positions.append(list_pos)
+        y_val += 1
+
+        print(self.positions)
 
         # this nested for loop relates all the positions to each other by setting the above, below, left, and right
         # positions

@@ -16,13 +16,13 @@ from by modifying a few things.
 
 class RunSim:
     # set the map file and iterations when constructing the RunSim object
-    def __init__(self, map_file, iterations, costs, straight_line_costs, startX, startY, targetX, targetY):
+    def __init__(self, map_file, iterations, costs, straight_line_costs, targetX, targetY):
         cost_vals = cl.CostLoader.load_map(costs)
         # load the map_file into a list of strings
         map_string = maploader.MapLoader.load_map(map_file)
         # initialize the environment with the track_map argument set
         self.env = environment.Environment(track_map=map_string, costs=cost_vals, straight_line=straight_line_costs,
-                                           startX=startX, startY=startY, targetX=targetX, targetY=targetY)
+                                           targetX=targetX, targetY=targetY)
         # set the number of iterations
         self.iterations = iterations
 

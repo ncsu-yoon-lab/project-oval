@@ -12,12 +12,11 @@ startY = 0
 targetX = 0
 targetY = 2
 
-print(Path.cwd())
 map_file = '../files/map01.txt'
 costs = '../files/costs.txt'
 straight_line = '../files/straight_line.txt'
 for trial in range(num_trials):
-    sim = runsim.RunSim(map_file, iterations, costs, straight_line, startX, startY, targetX, targetY)
+    sim = runsim.RunSim(map_file, iterations, costs, straight_line, targetX, targetY)
     solution = sim.run()
     action = 0
     print(solution)
