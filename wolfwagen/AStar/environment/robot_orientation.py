@@ -112,34 +112,34 @@ class RobotOrientation:
 
     def movement_interpreter(self, astar_move):
         pos = self.curr_orientation[0]
-        x = int(self.curr_orientation[1])
-        y = int(self.curr_orientation[2])
+        x = int(self.curr_orientation[2])
+        y = int(self.curr_orientation[1])
 
         if pos == "UP":
             if astar_move == action.Action.UP:
-                self.curr_orientation[2] = y + 1
+                self.curr_orientation[1] = y + 1
                 return "straight"
 
             elif astar_move == action.Action.RIGHT:
                 self.curr_orientation[0] = "RIGHT"
-                self.curr_orientation[1] = x + 1
+                self.curr_orientation[2] = x + 1
                 return "right"
 
             elif astar_move == action.Action.LEFT:
                 self.curr_orientation[0] = "LEFT"
-                self.curr_orientation[1] = x - 1
+                self.curr_orientation[2] = x - 1
                 return "left"
 
             elif astar_move == action.Action.TURN:
                 if int(x) == 0 and int(y) == 0:
                     self.curr_orientation[0] = "RIGHT"
-                    self.curr_orientation[1] = x + 1
-                    self.curr_orientation[2] = y + 1
+                    self.curr_orientation[2] = x + 1
+                    self.curr_orientation[1] = y + 1
                     return "straight"
 
                 self.curr_orientation[0] = "DOWN"
-                self.curr_orientation[1] = x - 1
-                self.curr_orientation[2] = y - 1
+                self.curr_orientation[2] = x - 1
+                self.curr_orientation[1] = y - 1
                 return "left"
 
             elif astar_move == action.Action.DOWN:
@@ -148,11 +148,11 @@ class RobotOrientation:
         elif pos == "RIGHT":
             if astar_move == action.Action.UP:
                 self.curr_orientation[0] = "UP"
-                self.curr_orientation[2] = y + 1
+                self.curr_orientation[1] = y + 1
                 return "left"
 
             elif astar_move == action.Action.RIGHT:
-                self.curr_orientation[1] = x + 1
+                self.curr_orientation[2] = x + 1
                 return "straight"
 
             elif astar_move == action.Action.DOWN:
@@ -166,11 +166,11 @@ class RobotOrientation:
         elif pos == "LEFT":
             if astar_move == action.Action.UP:
                 self.curr_orientation[0] = "UP"
-                self.curr_orientation[2] = y + 1
+                self.curr_orientation[1] = y + 1
                 return "right"
 
             elif astar_move == action.Action.LEFT:
-                self.curr_orientation[1] = x - 1
+                self.curr_orientation[2] = x - 1
                 return "straight"
 
             elif astar_move == action.Action.DOWN:
@@ -181,12 +181,12 @@ class RobotOrientation:
             elif astar_move == action.Action.TURN:
                 if int(x) == 0 and int(y) == 0:
                     self.curr_orientation[0] = "RIGHT"
-                    self.curr_orientation[1] = x + 1
-                    self.curr_orientation[2] = y + 1
+                    self.curr_orientation[2] = x + 1
+                    self.curr_orientation[1] = y + 1
                     return "right"
                 self.curr_orientation[0] = "DOWN"
-                self.curr_orientation[1] = x - 1
-                self.curr_orientation[2] = y - 1
+                self.curr_orientation[2] = x - 1
+                self.curr_orientation[1] = y - 1
                 return "straight"
 
             elif astar_move == action.Action.RIGHT:
@@ -195,12 +195,12 @@ class RobotOrientation:
         elif pos == "DOWN":
             if astar_move == action.Action.RIGHT:
                 self.curr_orientation[0] = "RIGHT"
-                self.curr_orientation[1] = x + 1
+                self.curr_orientation[2] = x + 1
                 return "left"
 
             elif astar_move == action.Action.LEFT:
                 self.curr_orientation[0] = "LEFT"
-                self.curr_orientation[1] = x - 1
+                self.curr_orientation[2] = x - 1
                 return "right"
 
             elif astar_move == action.Action.DOWN:

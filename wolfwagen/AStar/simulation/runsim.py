@@ -30,21 +30,31 @@ class RunSim:
         self.solution = None
 
     # run the simulation
-    def run(self):
-        # loop through the iterations, we can just set this to true or false later.
-        for i in range(self.iterations):
-            try:
-                # update env will run robot.get_action() which will give us a path to follow
+    def run(self, test):
+
+        if test:
+            # loop through the iterations, we can just set this to true or false later.
+            for i in range(self.iterations):
                 self.solution = self.env.update_env()
 
-            # catch any exceptions
-            except Exception as e:
-                print("error at time step " + str(i))
-                print(e)
+                # if the target is reached, break out of loop
+                if self.solution is not None:
+                    break
 
-            # if the target is reached, break out of loop
-            if self.solution is not None:
-                break
+        else:
+            for i in range(self.iterations):
+                try:
+                    # update env will run robot.get_action() which will give us a path to follow
+                    self.solution = self.env.update_env()
+
+                # catch any exceptions
+                except Exception as e:
+                    print("error at time step " + str(i))
+                    print(e)
+
+                # if the target is reached, break out of loop
+                if self.solution is not None:
+                    break
 
         return self.solution
 

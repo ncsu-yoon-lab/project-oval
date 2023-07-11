@@ -173,7 +173,7 @@ class Robot:
                 # choice for finding the target position, this is where we use the cost values
                 for value in neighbors.values():
 
-                    if self.robot_orientation.move_check(self.env.get_action(current_node.get_position(), value),curr_orientation):
+                    if self.robot_orientation.move_check(self.env.get_action(current_node.get_position(), value), curr_orientation):
                         continue
 
                     if self.env.get_road_status(value) is pts.PositionTypeStatus.CURVE:

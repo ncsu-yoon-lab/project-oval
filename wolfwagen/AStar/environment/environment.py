@@ -52,8 +52,8 @@ class Environment:
 
         # these functions allow us to set starting and target positions using coordinates provided in the constructor
         # args
-        self.starting_pos = self.set_starting_pos(int(self.robot_orientation.get_orientation()[2]),
-                                                  int(self.robot_orientation.get_orientation()[1]))
+        self.starting_pos = self.set_starting_pos(int(self.robot_orientation.get_orientation()[1]),
+                                                  int(self.robot_orientation.get_orientation()[2]))
         self.target_pos = self.set_target_pos(targetX, targetY)
 
         # next, we fill in the positions list with a list of positions created from the rows and cols
@@ -99,6 +99,8 @@ class Environment:
         # The robot starting position is initialized and set
         self.robot_agent = robot.Robot(self, self.cost_map, self.straight_line_costs, self.robot_orientation)
         self.add_robot(self.get_starting_pos())
+        print(self.positions)
+
 
     """
     These are the traditional getters and setters we need to have for the environment object
