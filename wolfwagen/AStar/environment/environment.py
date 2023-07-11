@@ -8,10 +8,10 @@ import robot_orientation
 # This adds a dir path to the current runtime to import modules in other folders
 # you will need to change this in all files for the robot
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/robotAgent')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/robotAgent')
 import robot
 
-sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')
+sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/utils')
 import costsloader as cl
 
 """
@@ -52,16 +52,16 @@ class Environment:
 
         # these functions allow us to set starting and target positions using coordinates provided in the constructor
         # args
-        self.starting_pos = self.set_starting_pos(self.robot_orientation.get_orientation()[1],
-                                                  self.robot_orientation.get_orientation()[2])
+        self.starting_pos = self.set_starting_pos(int(self.robot_orientation.get_orientation()[2]),
+                                                  int(self.robot_orientation.get_orientation()[1]))
         self.target_pos = self.set_target_pos(targetX, targetY)
 
         # next, we fill in the positions list with a list of positions created from the rows and cols
         # the roads map is also filled with positions and road values and an intersections list is created for use in
         # building costs files
-        x_val = 0
         y_val = 0
         for i in reversed(range(rows)):
+            x_val = 0
             list_pos = []
             for j in range(cols):
                 tile_val = track_map[i][j]
@@ -73,20 +73,18 @@ class Environment:
                     self.list_intersections.append(p)
                 if tile_val == "C":
                     self.roads[p] = positiontype.PositionType(pts.PositionTypeStatus.CURVE)
-            x_val += 1
+                x_val += 1
             self.positions.append(list_pos)
-        y_val += 1
-
-        print(self.positions)
+            y_val += 1
 
         # this nested for loop relates all the positions to each other by setting the above, below, left, and right
         # positions
         for row in range(rows):
             for col in range(cols):
                 if row > 0:
-                    self.positions[row][col].set_above(self.positions[row - 1][col])
+                    self.positions[row][col].set_below(self.positions[row - 1][col])
                 if row < self.rows - 1:
-                    self.positions[row][col].set_below(self.positions[row + 1][col])
+                    self.positions[row][col].set_above(self.positions[row + 1][col])
                 if col > 0:
                     self.positions[row][col].set_left(self.positions[row][col - 1])
                 if col < self.cols - 1:
@@ -97,15 +95,15 @@ class Environment:
         self.cost_map = dict()
         self.create_cost_map(costs)
         self.straight_line_costs = cl.CostLoader.load_straight_line(straight_line, self.list_intersections)
-
         # the robot agent is created using the environment object
         # The robot starting position is initialized and set
-        self.robot_agent = robot.Robot(self, self.cost_map, self.straight_line_costs)
+        self.robot_agent = robot.Robot(self, self.cost_map, self.straight_line_costs, self.robot_orientation)
         self.add_robot(self.get_starting_pos())
 
     """
     These are the traditional getters and setters we need to have for the environment object
     """
+
     # this gets the current road status of a position
     def get_road_status(self, p):
         return self.roads.get(p).get_status()
@@ -178,7 +176,6 @@ class Environment:
                     curr_pos = self.positions[i][j]
                     curr_pos_status = self.get_road_status(curr_pos)
                     neighbors = self.get_neighbor_positions(curr_pos)
-
                     # if the road status is a curve, then join the roads that are to the left and below
                     # we will add logic in A star to say if a curve is encountered use cost values from
                     # the related intersections and treat the curve as a straight line between the two nodes
@@ -186,19 +183,19 @@ class Environment:
                     if curr_pos_status is pts.PositionTypeStatus.CURVE:
                         pos_1 = neighbors.get("right")
                         pos_2 = neighbors.get("below")
-                        self.cost_map[(pos_1, pos_2)] = costs[cost_iterator]
-                        cost_iterator += 1
+                        if self.cost_map.get((pos_1, pos_2)) is None:
+                            self.cost_map[(pos_1, pos_2)] = costs[cost_iterator]
+                            cost_iterator += 1
                     else:
                         # if we are mapping top to bottom, use above values to map
-                        if switch_dir and neighbors.get("above") is not None and \
-                                self.get_road_status(neighbors.get("above")) is not pts.PositionTypeStatus.CURVE:
-                            self.cost_map[(curr_pos, neighbors.get("above"))] = costs[cost_iterator]
+                        if switch_dir and neighbors.get("below") is not None and \
+                                self.get_road_status(neighbors.get("below")) is not pts.PositionTypeStatus.CURVE:
+                            self.cost_map[(curr_pos, neighbors.get("below"))] = costs[cost_iterator]
                             cost_iterator += 1
                         # if we are mapping left to right, use right values to map
                         elif not switch_dir and neighbors.get("right") is not None:
                             self.cost_map[(curr_pos, neighbors.get("right"))] = costs[cost_iterator]
                             cost_iterator += 1
-
             # check if there is more costs to add as well as check if we need to change directions and restart
             # the row
             if cost_iterator < len(costs):
@@ -237,6 +234,8 @@ class Environment:
         row = robot_pos.get_row()
         col = robot_pos.get_col()
 
+        movement_action = self.robot_orientation.movement_interpreter(robot_action)
+
         print(robot_action)
         if robot_action is action.Action.LEFT:
             if self.valid_pos(row, col - 1):
@@ -245,15 +244,33 @@ class Environment:
             if self.valid_pos(row, col + 1):
                 self.update_robot_pos(row, col + 1)
         elif robot_action is action.Action.DOWN:
-            if self.valid_pos(row + 1, col):
-                self.update_robot_pos(row + 1, col)
-        elif robot_action is action.Action.UP:
             if self.valid_pos(row - 1, col):
                 self.update_robot_pos(row - 1, col)
+        elif robot_action is action.Action.UP:
+            if self.valid_pos(row + 1, col):
+                self.update_robot_pos(row + 1, col)
         elif robot_action is action.Action.STOP:
             self.update_robot_pos(row, col)
         elif robot_action is action.Action.TURN:
-            if self.valid_pos(row - 1, col + 1):
-                self.update_robot_pos(row - 1, col + 1)
+            if self.valid_pos(row + 1, col + 1):
+                self.update_robot_pos(row + 1, col + 1)
             else:
-                self.update_robot_pos(row + 1, col - 1)
+                self.update_robot_pos(row - 1, col - 1)
+
+        return movement_action
+
+    def get_action(self, curr, next_pos):
+
+        neighbors = self.get_neighbor_positions(curr)
+        if next_pos.__eq__(neighbors.get("above")):
+            robot_action = action.Action.UP
+        elif next_pos.__eq__(neighbors.get("below")):
+            robot_action = action.Action.DOWN
+        elif next_pos.__eq__(neighbors.get("left")):
+            robot_action = action.Action.LEFT
+        elif next_pos.__eq__(neighbors.get("right")):
+            robot_action = action.Action.RIGHT
+        else:
+            robot_action = action.Action.TURN
+
+        return robot_action

@@ -28,8 +28,6 @@ START_COL = 2
 TARGET_ROW = 1
 TARGET_COL = 0
 
-robot_orientation = robot_orientation.RobotOrientation()
-
 # map and costs file locations
 map_file = './AStar/files/map01.txt'
 costs = './AStar/files/costs.txt'
@@ -38,8 +36,6 @@ straight_line = './AStar/files/straight_line.txt'
 # initialize the simulation and get path
 sim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, START_ROW, START_COL, TARGET_ROW, TARGET_COL)
 solution = sim.run()
-
-movement_array = []
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -240,7 +236,8 @@ def process_img(frame):
         
     """
 
-    curr_action = traverse_solution()
+    curr_movement = traverse_solution()
+    curr_action = curr_movement[0]
     # get the next movement if there are any left in the solution stack and make sure we are not currently moving
     if curr_action is not None and curr_action is not action.Action.STOP:
 
@@ -267,29 +264,37 @@ def process_img(frame):
             # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
             # is at intersection values are different from teh turning directions
 
-            ## we need to write an interpreter because in AStar there is not front or back to the robot ie no forward or backwards
-            ## moving from one node down would just be DOWN not forward or turn right.
-
-            if is_at_intersection == 2 and curr_action is action.Action.LEFT:  # left
+            if is_at_intersection == 2 and curr_movement == 'left':  # left
                 turning_direction = 1
 
             elif is_at_intersection == 3:  # straight or left
-                if curr_action is action.Action.UP:
-                    turning_direction = 0
-                else:
+                if curr_movement == 'left':
                     turning_direction = 1
-            elif is_at_intersection == 4 and curr_action is action.Action.RIGHT:  # right
+                else:
+                    turning_direction = 0
+
+            elif is_at_intersection == 4 and curr_movement == 'right':  # right
                 turning_direction = 2
+
             elif is_at_intersection == 5:  # straight or right
-                if curr_action is action.Action.RIGHT:
+                if curr_movement == 'right':
                     turning_direction = 2
                 else:
                     turning_direction = 0
+
             elif is_at_intersection == 6:  # right or left
-                if curr_action is action.Action.LEFT:
+                if curr_movement == 'left':
                     turning_direction = 1
                 else:
                     turning_direction = 2
+
+            elif is_at_intersection == 7:
+                if curr_movement == 'left':
+                    turning_direction = 1
+                elif curr_movement == 'right':
+                    turning_direction = 2
+                else:
+                    turning_direction = 0
 
             return cropped_color_frame, 0, turning_direction
         # add the move to movement array
@@ -431,8 +436,8 @@ def process_img(frame):
 
 def traverse_solution():
     action = sim.get_next_action()
-    sim.env.actuate_env(action)
-    return action
+    movement = sim.env.actuate_env(action)
+    return (action, movement)
 
 
 def main(args=None):

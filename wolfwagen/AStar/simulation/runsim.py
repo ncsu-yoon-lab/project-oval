@@ -1,10 +1,10 @@
 import sys
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/utils')
 import maploader
 import costsloader as cl
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
 import environment
 import action
 
@@ -56,6 +56,9 @@ class RunSim:
             neighbors = self.env.get_neighbor_positions(curr)
             # peek at the next value at the top to see which way to move
             curr = self.solution[-1]
+            if curr is None:
+                self.env.robot_orientation.save_orientation()
+                return action.Action.STOP
             # logic to return the action to get to the next Position
             if curr.__eq__(neighbors.get("above")):
                 robot_action = action.Action.UP
