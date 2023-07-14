@@ -26,7 +26,7 @@ ITERATIONS = 25
 START_ROW = 0
 START_COL = 2
 TARGET_ROW = 1
-TARGET_COL = 0
+TARGET_COL = 2
 
 # map and costs file locations
 map_file = './AStar/files/map01.txt'
@@ -34,8 +34,8 @@ costs = './AStar/files/costs.txt'
 straight_line = './AStar/files/straight_line.txt'
 
 # initialize the simulation and get path
-sim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, START_ROW, START_COL, TARGET_ROW, TARGET_COL)
-solution = sim.run()
+sim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, TARGET_ROW, TARGET_COL)
+solution = sim.run(False)
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -219,22 +219,6 @@ def process_img(frame):
         cv.waitKey(1)
 
     print("img sum: ", img_small.sum())
-
-
-
-    """
-    logic for traversing through the solution array
-        - make a move only if we are not currently moving
-        - get first turn value
-        - calculate how to move based on where the robot is
-        - have an array of movements made by the robot
-        - keep traversing through the solution array and adding to the movement array until the solution array is empty
-          or goal condition is met
-        - we may need to add some stuff to figure out how to turn on the spot in case we need to move to a position 
-          that is directly behind or next to the robot
-        - get the length of the solution stack and check if the movement array is the same length to see when to stop 
-        
-    """
 
     curr_movement = traverse_solution()
     curr_action = curr_movement[0]
@@ -437,7 +421,7 @@ def process_img(frame):
 def traverse_solution():
     action = sim.get_next_action()
     movement = sim.env.actuate_env(action)
-    return (action, movement)
+    return action, movement
 
 
 def main(args=None):
@@ -462,6 +446,10 @@ def main(args=None):
 
     left_crop_publisher = node.create_publisher(Image, 'left_crop_lane_img', 1)
     right_crop_publisher = node.create_publisher(Image, 'right_crop_lane_img', 1)
+
+    # LOG FILE
+    file_name = "./logfile.csv"
+    f = open(file_name, "w+")
 
     thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
     thread.start()
@@ -501,6 +489,7 @@ def main(args=None):
                 yaw_now += 360.0
 
             print('yaw_now = ', yaw_now)
+            f.write(str(time.time()) + "," + str(yaw_now))
 
             # if turning is True and time.time() - last_turn_time > 2.0:
             #     turning = False
@@ -605,6 +594,7 @@ def main(args=None):
     # when the garbage collector destroys the node object)
     node.destroy_node()
     rclpy.shutdown()
+    f.close()
 
 
 if __name__ == '__main__':

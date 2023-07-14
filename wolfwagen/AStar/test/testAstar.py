@@ -7,7 +7,7 @@ from pathlib import Path
 num_trials = 1
 iterations = 20
 successful_trials = 0
-targetX = 0
+targetX = 1
 targetY = 2
 
 map_file = '../files/map01.txt'
