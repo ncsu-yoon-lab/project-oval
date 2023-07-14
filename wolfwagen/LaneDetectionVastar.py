@@ -448,7 +448,7 @@ def main(args=None):
     right_crop_publisher = node.create_publisher(Image, 'right_crop_lane_img', 1)
 
     # LOG FILE
-    file_name = "./logfile.csv"
+    file_name = "./logfile_lanedetection.csv"
     f = open(file_name, "w+")
 
     thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
