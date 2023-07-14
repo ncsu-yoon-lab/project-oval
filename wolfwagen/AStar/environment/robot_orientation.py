@@ -1,23 +1,21 @@
-'''
+"""
 This is a class that keeps track of the robot orientation and saves to a txt file that can be loaded to save current
 orientation, given that starting from the bottom left of the field is origin and x axis is across and y axis is up
- ___
-/___|
-'''
+"""
 
 import action
-import position
 
 class RobotOrientation:
 
     def __init__(self):
-        '''
-        Initialize by loading text file, if it doesn't exist make one
-        '''
+        # Initialize by loading text file, if it doesn't exist make one
         self.curr_orientation = []
         self.load_orientation()
 
+    # load orientation and position information from the curr_orientation file, if the filename is not specified,
+    # use the default value
     def load_orientation(self, filename="../files/curr_orientation.txt"):
+        # store the orientation information in an array
         curr_orientation = []
         try:
             # open the file, create if it doesn't exist
@@ -26,9 +24,12 @@ class RobotOrientation:
             #              y_coord
             f = open(filename, 'r')
             lines = f.readlines()
+            # add value to the array
             for line in lines:
                 curr_orientation.append(line.strip())
             f.close()
+
+            # if the file is not found, then create the file and add the default values to the orientation and the file
         except FileNotFoundError:
             f = open(filename, 'w+')
             f.write("UP\n0\n0")
@@ -36,6 +37,7 @@ class RobotOrientation:
             f.close()
         self.curr_orientation = curr_orientation
 
+    # this function saves the orientation to the orientation file
     def save_orientation(self, filename='../files/curr_orientation.txt'):
         try:
             # open the file, create if it doesn't exist
@@ -50,16 +52,16 @@ class RobotOrientation:
         except FileNotFoundError:
             print("File cannot be found")
 
-    def update_orientation(self, pos, x, y):
-        new_orientation = [pos, x, y]
-        self.curr_orientation = new_orientation
-
+    # this function gets the current orientation from the object
     def get_orientation(self):
         return self.curr_orientation
 
+    # this function gets the new potential orientation given a astar movement and the current orientation,
+    # x, and y coords
     @staticmethod
     def get_new_orientation(astar_move, pos, x, y):
 
+        # this is logic to figure out the new orientation after a given move
         if pos == "UP":
             if astar_move == action.Action.UP:
                 return "UP"
@@ -110,6 +112,8 @@ class RobotOrientation:
             elif astar_move == action.Action.DOWN:
                 return "DOWN"
 
+    # this function is the movement interpreter, which actually actuates the movement and updates the current
+    # orientation with new coords and new orientations
     def movement_interpreter(self, astar_move):
         pos = self.curr_orientation[0]
         x = int(self.curr_orientation[2])
@@ -210,6 +214,9 @@ class RobotOrientation:
             elif astar_move == action.Action.UP:
                 return "back"
 
+    # this function is used to check if a move is valid, it returns True if the move is invalid and False if the
+    # move is valid. A move is invalid if the current orientation of the robot and the next astar move causes the
+    # robot to move backward, which is not allowed
     @staticmethod
     def move_check(astar_move, pos):
 

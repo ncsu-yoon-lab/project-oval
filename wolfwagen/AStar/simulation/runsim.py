@@ -1,10 +1,10 @@
 import sys
 
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/utils')
+sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')
 import maploader
 import costsloader as cl
 
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
 import environment
 import action
 
@@ -32,6 +32,7 @@ class RunSim:
     # run the simulation
     def run(self, test):
 
+        # if the test boolean is True, we are in testing mode, otherwise run in normal mode
         if test:
             # loop through the iterations, we can just set this to true or false later.
             for i in range(self.iterations):
@@ -58,6 +59,7 @@ class RunSim:
 
         return self.solution
 
+    # this function gets the next action from the solution stack
     def get_next_action(self):
         if self.solution[-1] is not None:
             # get the Position on the top
@@ -67,6 +69,8 @@ class RunSim:
             # peek at the next value at the top to see which way to move
             curr = self.solution[-1]
             if curr is None:
+                # if next action is None, we have reached the end, save the current orientation
+                # and stop Action is returned
                 self.env.robot_orientation.save_orientation()
                 return action.Action.STOP
             # logic to return the action to get to the next Position

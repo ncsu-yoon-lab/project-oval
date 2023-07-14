@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/simulation')
+sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
 import runsim
 from pathlib import Path
 
@@ -8,7 +8,7 @@ num_trials = 1
 iterations = 20
 successful_trials = 0
 targetX = 0
-targetY = 0
+targetY = 2
 
 map_file = '../files/map01.txt'
 costs = '../files/costs.txt'

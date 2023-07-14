@@ -1,7 +1,7 @@
 import sys
 
 # add a path to the system to add modules from the environment directory
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
 import position
 import action
 import positiontypestatus as pts
@@ -113,7 +113,7 @@ class Robot:
     # Node is added to the frontier PQ to be explored in order of most promising to least promising.
     def get_action(self):
 
-        # set the current position and target position
+        # set the current position and target position, and current orientation of the robot
         self_pos = self.env.get_robot_pos()
         target_pos = self.env.get_target_pos()
         curr_orientation = self.robot_orientation.get_orientation()[0]
@@ -141,6 +141,7 @@ class Robot:
             while not self.frontier.empty():
                 # get the node with the highest priority
                 curr = self.frontier.get()
+                # get the current node and also curr orientation
                 current_node = curr[0]
                 curr_orientation = curr[1]
 
@@ -173,6 +174,8 @@ class Robot:
                 # choice for finding the target position, this is where we use the cost values
                 for value in neighbors.values():
 
+                    # check to see if the current orientation and the next action will result in a back move
+                    # if so, ignore that possible move
                     if self.robot_orientation.move_check(self.env.get_action(current_node.get_position(), value), curr_orientation):
                         continue
 
@@ -207,6 +210,8 @@ class Robot:
                             new_orientation = self.robot_orientation.get_new_orientation(next_move, curr_orientation,
                                                                                          current_node.get_position().get_col(),
                                                                                          current_node.get_position().get_row())
+
+                            # add the next node and the new orientation for the frontier
                             self.frontier.put((next_node, new_orientation))
 
                             # set the came from key value pair with the next and curr Nodes
@@ -224,5 +229,6 @@ class Robot:
             """
             return self.solution
 
+    # this function returns the solved status of the AStar
     def get_solved(self):
         return self.solved
