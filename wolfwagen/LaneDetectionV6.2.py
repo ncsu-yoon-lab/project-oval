@@ -6,11 +6,14 @@ from std_msgs.msg import Int64
 from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
 import cv2 as cv # OpenCV library
 import numpy as np
+import curses
 import time
 import math
 import random
 import threading
 from geometry_msgs.msg import PoseStamped
+
+stdscr = curses.initscr()
 
 # Set it to 'False' when driving (True when debugging)
 SHOW_IMAGES = True
@@ -177,10 +180,12 @@ def process_img(frame):
 	
 	# for intersection
 	left_crop = edge[170 :, : 300]
-	right_crop = edge[170 : , 900 :]
+	right_crop = edge[170 : , 700 :]
 
 	left_crop_img = left_crop
 	right_crop_img = right_crop
+
+	#print("leftSUm: " +  str(left_crop.sum()) + " " + "rightSsum: " + str(right_crop.sum()))
 
 	if SHOW_IMAGES:
 		cv.imshow('intersection box' , img_small)
@@ -190,17 +195,17 @@ def process_img(frame):
 		# If it hasn't been more than 3 seconds since we did the last turning, don't check the following conditions
 
 		is_at_intersection = 0
-		print("sum of front: " , img_small.sum())	
+		#print("sum of front: " , img_small.sum())	
 		if img_small.sum() < 500000:
-			print("front is open")
+			#print("front is open")
 			is_at_intersection +=1
 
 		if left_crop.sum() < 1000:
-			print("left is open")
+			#print("left is open")
 			is_at_intersection += 2
 
 		if right_crop.sum() < 1000:
-			print("right is open")
+			#print("right is open")
 			is_at_intersection += 4
 
 		turning_direction = 0
@@ -269,7 +274,7 @@ def process_img(frame):
 			# # Adds turn_direction to the turns list
 			# turns.append(turning_direction)
 
-			print("turning direction: ", turning_direction)
+			#print("turning direction: ", turning_direction)
 			last_turn_time = time.time()
 
 			return (cropped_color_frame, 0, turning_direction)
@@ -296,7 +301,7 @@ def process_img(frame):
 	CTE = 0
 	
 	if lines is None: 
-		print("No lines detected")
+		#print("No lines detected")
 		final = cropped_color_frame
 		CTE = 0		
 	else:
@@ -358,7 +363,7 @@ def process_img(frame):
 		left_polyfit = None
 		right_polyfit = None
 
-		print("cnt_left, cnt_right = ", cnt_left, cnt_right)
+		#print("cnt_left, cnt_right = ", cnt_left, cnt_right)
 		
 		if cnt_left > 0:
 			#do 1D fitting
@@ -402,14 +407,14 @@ def process_img(frame):
 
 		elif cnt_left+cnt_right == 0:
 			CTE = 0
-			print('cannot find any lane markings')
+			#print('cannot find any lane markings')
 		else:
 			if cnt_left==0:
 				CTE = 500
-				print('cannot find left lane marking')
+				#print('cannot find left lane marking')
 			else:
 				CTE = -500
-				print('cannot find right lane marking')
+				#print('cannot find right lane marking')
 
 
 		final = cropped_color_frame
@@ -420,10 +425,14 @@ def process_img(frame):
 	return (final, CTE, 0)
 
 def main(args=None):
-		
+
 	rclpy.init(args=args)
 	node = Node("Lane_detection_node")
-	print("Lane_detection_node")
+	#print("Lane_detection_node")
+	turn = ""
+	direction = ""
+	CTE = 0
+	steering_cmd = 0
     
 	img_subscription = node.create_subscription(
 			Image,
@@ -467,10 +476,10 @@ def main(args=None):
 	
 	while rclpy.ok():
 		if frame is not None and pose is not None:
-			print("-----")
+			#print("-----")
 
 			if time.time() - last_frame_time > 3:
-				print("NOT RECEIVING CAMERA DATA. ")
+				#print("NOT RECEIVING CAMERA DATA. ")
 				break
 		
 			quat = pose.pose.orientation
@@ -480,9 +489,9 @@ def main(args=None):
 			if (yaw_now < 0):
 				yaw_now += 360.0
 
-			print('yaw_now = ', yaw_now)
+			#print('yaw_now = ', yaw_now)
 			
-			if turning is True and time.time() - last_turn_time > 2.0:
+			if turning is True and time.time() - last_turn_time > 1.0:
 				turning = False
 				yaw_target = 0
 				prev_error = 0
@@ -500,11 +509,13 @@ def main(args=None):
 					yaw_target = 0
 					prev_error = 0	#to reset the pid controller
 
-					print("Turning is done")
+					#print("Turning is done")
+					turn = "Turning is done"
 
 				else:
 					#just keep turning						
-					print("Still turning")
+					#print("Still turning")
+					turn = "Still Turning"
 
 					if turning_direction == 1:
 						#left turn
@@ -513,7 +524,8 @@ def main(args=None):
 						#right turn
 						steering_cmd = right_turn_cmd
 					else:
-						print("CANNOT HAPPEN")
+						turn = "CANNOT HAPPEN"
+						#print("CANNOT HAPPEN")
 						steering_cmd = 0
 
 				# just for streaming camera data -- nothing more
@@ -555,7 +567,7 @@ def main(args=None):
 					steering_cmd = Kp * error + Ki * integral + Kd * derivative
 					prev_error = error
 
-					print("CTE=", CTE)					
+					#print("CTE=", CTE)					
 					
 			if SHOW_IMAGES:
 				cv.imshow('Lane following', final_image)
@@ -567,7 +579,7 @@ def main(args=None):
 			m.data = int(steering_cmd)
 			pid_steering_publisher.publish(m)
 
-			print("steering_cmd = ", steering_cmd)
+			#print("steering_cmd = ", steering_cmd)
 
 			# Lane image for rviz2 or webviz
 			H, W, _= final_image.shape
@@ -578,7 +590,21 @@ def main(args=None):
 
 			#left_crop_publisher.publish(br.cv2_to_imgmsg(left_crop_img, encoding="bgra8"))
 			#right_crop_publisher.publish(br.cv2_to_imgmsg(right_crop_img, encoding="bgra8"))
-			
+		
+		if turning_direction == 0:
+			direction = "Straight"
+			turn = "Not"
+		elif turning_direction == 1:
+			direction = "Left"
+		else:
+			direction = "Right"
+
+		stdscr.refresh()
+		stdscr.addstr(1, 5, 'Turning Condition: %s       ' % turn)
+		stdscr.addstr(2 , 5 , 'CTE: %.2f' % CTE)
+		stdscr.addstr(3 , 5 , "Steering Command: %.2f" % steering_cmd)
+		stdscr.addstr(4 , 5 , "Turning Direction: %s" % direction)
+
 		rate.sleep()
 
 	
