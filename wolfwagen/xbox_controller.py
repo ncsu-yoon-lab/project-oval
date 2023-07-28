@@ -10,30 +10,34 @@ import threading
 
 steering = 0
 throttle = 0
-auto_throttle = 24	#in auto mode
+auto_throttle = 15	#in auto mode
 
 MAX_MANUAL_THROTTLE = 28
-MAX_AUTO_THROTTLE = 28
+MAX_AUTO_THROTTLE = 17
 
 mode_switch_requested = 0
+logging_switch_requested = 0
 
 axis_throttle = 1
-axis_steering = 2
+axis_steering = 3
 axis_mode = 0
+x_button = 2
 
 topic_manual_steering = "manual_steering"
 topic_manual_throttle = "manual_throttle"
 topic_auto_throttle = "auto_throttle"
 topic_mode_switch = "mode_switch"
+topic_logging_switch = "logging_switch"
 
+sensitivity = 30 #used to be 100 on old motor
 
 
 def joy_callback(data):
-	global steering, throttle, auto_throttle, mode_switch_requested
+	global steering, throttle, auto_throttle, mode_switch_requested, logging_switch_requested
 
-	throttle = int(data.axes[axis_throttle]*100)
+	throttle = int(data.axes[axis_throttle]*sensitivity)
 	if throttle>MAX_MANUAL_THROTTLE:
-	    throttle = MAX_MANUAL_THROTTLE
+		throttle = MAX_MANUAL_THROTTLE
 	elif throttle<-MAX_MANUAL_THROTTLE:
 		throttle = -MAX_MANUAL_THROTTLE
 
@@ -44,7 +48,7 @@ def joy_callback(data):
 	if data.buttons[5]:
 		auto_throttle += 1
 	if auto_throttle > MAX_AUTO_THROTTLE:
-	    auto_throttle = MAX_AUTO_THROTTLE
+		auto_throttle = MAX_AUTO_THROTTLE
 	elif auto_throttle < -MAX_AUTO_THROTTLE:
 		auto_throttle = -MAX_AUTO_THROTTLE
 
@@ -54,12 +58,17 @@ def joy_callback(data):
 	# Let the mode switch happen in the driver, not here
 	if data.buttons[axis_mode]:
 		mode_switch_requested = 1
+
+	if data.buttons[x_button]:
+		logging_switch_requested = 1
 		 
 	
 
 				
 def main(args=None):
 	global mode_switch_requested
+
+	global logging_switch_requested
 
 	print("xbox_controller")
 	rclpy.init(args=args)
@@ -70,6 +79,8 @@ def main(args=None):
 	pub_manual_throttle = node.create_publisher(Int64, topic_manual_throttle, 1)
 	pub_auto_throttle = node.create_publisher(Int64, topic_auto_throttle, 1)
 	pub_mode_switch = node.create_publisher(Int64 , topic_mode_switch , 1)
+	pub_logging_switch = node.create_publisher(Int64 , topic_logging_switch , 1)
+
 	
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
@@ -78,6 +89,7 @@ def main(args=None):
 
 	while rclpy.ok():
 		m = Int64()
+		log = Int64()
 		m.data = steering
 		pub_manual_steering.publish(m)
 
@@ -92,6 +104,12 @@ def main(args=None):
 			m.data = 1
 			pub_mode_switch.publish(m)
 			mode_switch_requested = 0
+
+		# let the driver node that we want to start logging the throttle and steering angles
+		if logging_switch_requested:
+			log.data = 1
+			pub_logging_switch.publish(log)
+			logging_switch_requested = 0
 
 		print("manual throttle: %d (auto: %d), manual steering: %d" % (throttle, auto_throttle, steering))
 		
