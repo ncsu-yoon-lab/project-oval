@@ -59,6 +59,9 @@ class RunSim:
 
         return self.solution
 
+    def get_solution(self):
+        return self.solution
+
     # this function gets the next action from the solution stack
     def get_next_action(self):
         if self.solution[-1] is not None:
