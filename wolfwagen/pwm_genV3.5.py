@@ -31,8 +31,8 @@ out_max = 13108
 pwm_throttle_max = 2000
 pwm_throttle_min = 1000
 
-pwm_steer_max = 180
-pwm_steer_min = 0
+pwm_steer_max = 140
+pwm_steer_min = 40
 
 throttle = 0
 steer = 0
@@ -69,14 +69,17 @@ def pid_steering_callback(data):
 
 	steer = data.data
 	
-	if steer > 100:
-		steer = 100
-	elif steer < -100:
-		steer = -100
-	if (steer==100):
-			steer = 99
+
+	pid_steer = 0.9 * float(steer) +  90.0
+
+	# if steer > 100:
+	# 	steer = 100
+	# elif steer < -100:
+	# 	steer = -100
+	# if (steer==100):
+	# 		steer = 99
 	
-	pid_steer = steer
+	# pid_steer = steer
 
 def lidar_min_dist_callback(data):
 	global lidar_min_dist
@@ -144,8 +147,7 @@ def main(args=None):
 	node = Node("Drive_node")
 
 	# LOG FILE
-	file_name = "./logfile_pwmgen.csv"
-	f = open(file_name, "w+")
+	#f = open(file_name, "w+")
 
 	try:
 		#to receive voice command over mqtt
@@ -176,11 +178,11 @@ def main(args=None):
 		if mode == 0:
 			# manual mode
 			pwm_throttle = pwm(throttle)
-			pwm_steer = pwm(steer)
+			pwm_steer = int(pwm(steer) * (100.0 / 3277.0) - 210.0)
 		else:
 			# auto mode
 			pwm_throttle = pwm(auto_throttle)
-			pwm_steer = pwm(pid_steer)
+			pwm_steer = int(pid_steer)
 
 		
 		safe_distance_violation = False
@@ -205,9 +207,9 @@ def main(args=None):
 		st = steer
 		if (mode==1):
 			th = auto_throttle
-			st = pid_steer
+			# pwm_steer = pid_steer
 		pwm_throttle = math.floor(pwm_throttle * (500.0 / 3277.0))
-		pwm_steer = math.floor(pwm_steer * (100.0 / 3277.0) - 216.0)
+		#pwm_steer = math.floor(pwm_steer * (100.0 / 3277.0) - 210.0)
 		if pwm_throttle > pwm_throttle_max:
 			pwm_throttle = pwm_throttle_max
 		if pwm_throttle < pwm_throttle_min:
@@ -221,12 +223,14 @@ def main(args=None):
 		stdscr.addstr(1, 5, 'Mode: %s       ' % ("Manual" if mode == 0 else "Auto"))
 		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % pwm_throttle)
 		stdscr.addstr(3, 5, 'Steering: %.2f  ' % pwm_steer)
-		f.write(str(time.time()) + "+" + str(pwm_steer))
+		stdscr.addstr(4 , 5 , 'PID Steering: %.2f' % pid_steer)
+		#f.write(str(time.time()) + "+" + str(pwm_steer))
 
 		pwm_throttle = pwm_throttle // 10
 		#print(pwm_throttle)
-		write_to_teensy(pwm_throttle , abs(pwm_steer))
+		write_to_teensy(pwm_throttle , pwm_steer)
 		
+		print("auto throttle: %d, auto steering: %d" % (auto_throttle, pid_steer))
 		# if safe_distance_violation:
 		# 	stdscr.addstr(4, 5, '-- Safe distance violation (%.2f m)--' % lidar_min_dist)
 		# else:
@@ -243,7 +247,7 @@ def main(args=None):
 
 	rclpy.spin(node)
 	rclpy.shutdown()
-	f.close()
+	#f.close()
 
 	
 if __name__ == '__main__':
