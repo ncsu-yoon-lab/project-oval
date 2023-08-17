@@ -7,10 +7,10 @@ import robot_orientation
 
 # This adds a dir path to the current runtime to import modules in other folders
 # you will need to change this across all AStar files if working on a different machine
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/robotAgent')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/robotAgent')
 import robot
 
-sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')
+sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/utils')
 import costsloader as cl
 
 """

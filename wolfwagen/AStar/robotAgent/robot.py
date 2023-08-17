@@ -1,7 +1,7 @@
 import sys
 
 # add a path to the system to add modules from the environment directory
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
 import position
 import action
 import positiontypestatus as pts

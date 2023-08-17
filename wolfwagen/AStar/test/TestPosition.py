@@ -1,6 +1,6 @@
 import sys
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/environment')
 
 import position
 

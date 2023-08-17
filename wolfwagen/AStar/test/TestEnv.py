@@ -1,10 +1,10 @@
 import sys
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/environment')
 
 import environment
 
-sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/AStar/robotAgent')
+sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/robotAgent')
 import robot
 
 test = environment.Environment()

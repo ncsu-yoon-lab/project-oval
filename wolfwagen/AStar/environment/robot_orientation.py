@@ -14,7 +14,7 @@ class RobotOrientation:
 
     # load orientation and position information from the curr_orientation file, if the filename is not specified,
     # use the default value
-    def load_orientation(self, filename="../files/curr_orientation.txt"):
+    def load_orientation(self, filename="./AStar/files/curr_orientation.txt"):
         # store the orientation information in an array
         curr_orientation = []
         try:
@@ -38,7 +38,7 @@ class RobotOrientation:
         self.curr_orientation = curr_orientation
 
     # this function saves the orientation to the orientation file
-    def save_orientation(self, filename='../files/curr_orientation.txt'):
+    def save_orientation(self, filename='./AStar/files/curr_orientation.txt'):
         try:
             # open the file, create if it doesn't exist
             # file format: ORIENTATION

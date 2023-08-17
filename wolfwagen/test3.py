@@ -3,9 +3,10 @@ from rclpy.node import Node
 from std_msgs.msg import Int64, Int64MultiArray
 import threading
 import sys
+import numpy as np
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
-sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/simulation')
+sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
 import runsim
 import robot_orientation
 import action
@@ -67,7 +68,6 @@ def main(args=None):
     # For AStar
     # initialize the simulation and get path
     solution = sim.run(False)
-    print(solution)
 
     act, move = traverse_solution()
     while act is not None:
@@ -93,8 +93,12 @@ def main(args=None):
             data.data = list_moves
             pub_astar_turnval.publish(data)
             print("signal sent to PWM")
-        astar_signal = 0
+        else:
+            data = Int64MultiArray()
+            data.data = []
+            pub_astar_turnval.publish(data)
         rate.sleep()
+
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically

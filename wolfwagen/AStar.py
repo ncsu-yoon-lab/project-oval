@@ -4,8 +4,8 @@ from std_msgs.msg import Int64
 import threading
 import sys
 
-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
-sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/simulation')
+sys.path.insert(1, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
 import runsim
 import robot_orientation
 import action

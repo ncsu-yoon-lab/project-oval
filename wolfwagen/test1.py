@@ -24,12 +24,12 @@ def turn_processing():
     global solution, inc_val
 
     if solution is not None:
-        print(solution)
+        print(len(solution))
     
     return -1
 
 def main(args=None):
-    global test_val
+    global test_val, solution
     rclpy.init(args=args)
     node = Node("Lane_detection_node")
 
@@ -53,13 +53,16 @@ def main(args=None):
             data = Int64()
             data.data = int(1)
             pub_ld_turnsig.publish(data)
-            got_solution = True
-        data = Int64()
-        data.data = int(1)
-        pub_ld_turnsig.publish(data)
-        intersection_bool = process_img(test_val)
-        if intersection_bool:
-            turning_direction = turn_processing()
+
+            if solution is not None:
+                got_solution = True
+        else:
+            data = Int64()
+            data.data = int(0)
+            pub_ld_turnsig.publish(data)
+            intersection_bool = process_img(test_val)
+            if intersection_bool:
+                turning_direction = turn_processing()
 
         rate.sleep()
 
