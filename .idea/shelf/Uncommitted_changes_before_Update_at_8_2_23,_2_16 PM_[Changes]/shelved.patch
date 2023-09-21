@@ -1,0 +1,276 @@
+Index: wolfwagen/LaneDetectionVastar.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#!/usr/bin/env python\nimport rclpy  # Python Client Library for ROS 2\nfrom rclpy.node import Node  # Handles the creation of nodes\nfrom sensor_msgs.msg import Image  # Image is the message type\nfrom std_msgs.msg import Int64\nfrom cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images\nimport cv2 as cv  # OpenCV library\nimport numpy as np\nimport time\nimport math\nimport threading\nfrom geometry_msgs.msg import PoseStamped\nimport sys\nfrom wolfwagen.AStar.environment import robot_orientation\n\nsys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')\nsys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')\nimport runsim\nimport action\n\n# AStar pathfinding\n# how long you want the algorithm to search for a solution\nITERATIONS = 25\n\n# starting and target coordinates\nSTART_ROW = 0\nSTART_COL = 2\nTARGET_ROW = 1\nTARGET_COL = 2\n\n# map and costs file locations\nmap_file = './AStar/files/map01.txt'\ncosts = './AStar/files/costs.txt'\nstraight_line = './AStar/files/straight_line.txt'\n\n# initialize the simulation and get path\nsim = runsim.RunSim(map_file, ITERATIONS, costs, straight_line, TARGET_ROW, TARGET_COL)\nsolution = sim.run(False)\n\n# Set it to 'False' when driving (True when debugging)\nSHOW_IMAGES = True\n\nDRAW_LINE_IMG = True\n\nDOT_COLOR = [61, 217, 108]\nDOT_SIZE = 5\n\nLINE_COLOR = (255, 0, 0)\nLINE_THICKNESS = 2\n\n# LANE_COLOR = (0, 0, 255)\nLANE_COLOR = (255, 255, 0)\nLANE_THICKNESS = 5\n\nLANE_REGION_COLOR = (0, 255, 0)\nLANE_CENTER_COLOR = (0, 0, 255)\n\nCAR_CENTER_COLOR = (180, 180, 0)\n\n# GAP_THRESHOLD =\n\n# # # USE TO FORCE A TURN VALUE IF IT HAS PICKED THE SAME TURNING SCENARIO CONSISTENTLY WHEN MULTIPLE TURNS ARE OPEN\n# # # Starts at 3, each time a left turn is made, decrease by one, each time a right turn is made, increase by one\n# # # the random num is generated btwn 1-5, so the lower this number is, the higher chance it goes right instead\n# # left_turn_counter = -3\n# # right_turn_counter = 3\n# turns = [0]\n\nCAMERA_TOPIC_NAME = '/zed2i/zed_node/stereo/image_rect_color'\n# '/zed2i/zed_node/rgb_raw/image_raw_color'\t\n\n# Original image fram\nframe = None\n\nlast_frame_time = time.time()\nbr = CvBridge()\n\n\ndef listener_callback(msg):\n    global frame, last_frame_time\n    frame = br.imgmsg_to_cv2(msg)\n    last_frame_time = time.time()\n\n\n# last_turn_time = time.time()\n\nleft_crop_img = np.zeros((1, 1, 4))\nright_crop_img = np.zeros((1, 1, 4))\n\npose = None\n\n\ndef pose_callback(data):\n    global pose\n    pose = data\n\n\n\"\"\"\nConvert a quaternion into euler angles (roll, pitch, yaw)\nroll is rotation around x in radians (counterclockwise)\npitch is rotation around y in radians (counterclockwise)\nyaw is rotation around z in radians (counterclockwise)\n\"\"\"\n\n\ndef euler_from_quaternion(quat):\n    x = quat.x\n    y = quat.y\n    z = quat.z\n    w = quat.w\n    t0 = +2.0 * (w * x + y * z)\n    t1 = +1.0 - 2.0 * (x * x + y * y)\n    roll_x = math.atan2(t0, t1)\n\n    t2 = +2.0 * (w * y - z * x)\n    t2 = +1.0 if t2 > +1.0 else t2\n    t2 = -1.0 if t2 < -1.0 else t2\n    pitch_y = math.asin(t2)\n\n    t3 = +2.0 * (w * z + x * y)\n    t4 = +1.0 - 2.0 * (y * y + z * z)\n    yaw_z = math.atan2(t3, t4)\n\n    return roll_x, pitch_y, yaw_z  # in radians\n\n\n# Use this if image is too dark\ndef adjust_gamma(image, gamma=1.0):\n    invGamma = 1.0 / gamma\n    table = np.array([((i / 255.0) ** invGamma) * 255\n                      for i in np.arange(0, 256)]).astype(\"uint8\")\n    return cv.LUT(image, table)\n\n\ndef get_end_points(rho, theta):\n    # Note: cv.HoughLines return the <rho, theta> of each lines\n    a = math.cos(theta)\n    b = math.sin(theta)\n    x0 = a * rho\n    y0 = b * rho\n\n    x1 = int(x0 + 1000 * (-b))\n    y1 = int(y0 + 1000 * (a))\n    x2 = int(x0 - 1000 * (-b))\n    y2 = int(y0 - 1000 * (a))\n\n    return x1, y1, x2, y2\n\n\ndef crop(image, width, height, num):\n    center = int(width / 2)\n    cut_width = int(width / 4)\n    height_modifier = 0.43  # Use to modify height of small_img between 0.5 and 0.4 seems to work\n    image = np.delete(image, slice(center - cut_width, center + cut_width), 1)\n\n    if num == 1:\n        # cut top half\n        image = image[int(height / 2): height - 1, :]\n        return image\n    # elif num == 2:\n    # \timage = image[int(height/2) : height-1, :]\n    # \treturn image\n    else:\n        # Get small box looking for horizontal line at intersections\n        image = image[int(height * (height_modifier) + 90): height - 1, int(center / 2) - 50:int(center / 2) + 50]\n        return image\n\n\ndef process_img(frame):\n    # global last_turn_time, left_crop_img, right_crop_img\n    global left_crop_img, right_crop_img\n\n    org_color_frame = frame\n\n    img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)\n\n    # frame = adjust_gamma(frame, 1)\n    height, width = img.shape  # 720, 2560\n    img_small = crop(img, width, height, 2)\n    img = crop(img, width, height, 1)\n    cropped_color_frame = crop(org_color_frame, width, height, 1)\n\n    height, width = img.shape  # cropped\n\n    if SHOW_IMAGES:\n        cv.imshow('cropped', img)\n        cv.waitKey(1)\n\n    # remove noise\n    kernel_size = 7\n    img = cv.GaussianBlur(img, (kernel_size, kernel_size), 0)\n    img_small = cv.GaussianBlur(img_small, (kernel_size, kernel_size), 0)\n\n    # thresholding. If seeing some noise, increase the lower threshold\n    _, img = cv.threshold(img, 160, 255, cv.THRESH_BINARY)\n    _, img_small = cv.threshold(img_small, 160, 255, cv.THRESH_BINARY)\n\n    # Canny Edge Detection\n    edge = cv.Canny(img, 70, 200)  # you can adjust these min/max values\n\n    # Edges could be too thin (which could make it difficult for Hough Transform to detect lines)\n    # So, make the edges thicker\n    kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3))\n    edge = cv.dilate(edge, kernel, iterations=1)\n\n    if SHOW_IMAGES:\n        cv.imshow('canny', edge)\n        cv.waitKey(1)\n\n    # for intersection\n    left_crop = edge[170:, : 300]\n    right_crop = edge[170:, 900:]\n\n    left_crop_img = left_crop\n    right_crop_img = right_crop\n\n    if SHOW_IMAGES:\n        cv.imshow('intersection box', img_small)\n        cv.waitKey(1)\n\n    print(\"img sum: \", img_small.sum())\n\n    curr_movement = traverse_solution()\n    curr_action = curr_movement[0]\n    # get the next movement if there are any left in the solution stack and make sure we are not currently moving\n    if curr_action is not None and curr_action is not action.Action.STOP:\n\n        ## lets us know what the options are\n        is_at_intersection = 0\n        print(\"sum of front: \", img_small.sum())\n        if img_small.sum() < 200000:\n            print(\"front is open\")\n            is_at_intersection += 1\n\n        if left_crop.sum() < 1000:\n            print(\"left is open\")\n            is_at_intersection += 2\n\n        if right_crop.sum() < 1000:\n            print(\"right is open\")\n            is_at_intersection += 4\n        \n        turning_direction = 0\n\n        if is_at_intersection > 1:\n            # We start a turn\n\n            # turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2\n            # is at intersection values are different from teh turning directions\n\n            if is_at_intersection == 2 and curr_movement == 'left':  # left\n                turning_direction = 1\n\n            elif is_at_intersection == 3:  # straight or left\n                if curr_movement == 'left':\n                    turning_direction = 1\n                else:\n                    turning_direction = 0\n\n            elif is_at_intersection == 4 and curr_movement == 'right':  # right\n                turning_direction = 2\n\n            elif is_at_intersection == 5:  # straight or right\n                if curr_movement == 'right':\n                    turning_direction = 2\n                else:\n                    turning_direction = 0\n\n            elif is_at_intersection == 6:  # right or left\n                if curr_movement == 'left':\n                    turning_direction = 1\n                else:\n                    turning_direction = 2\n\n            elif is_at_intersection == 7:\n                if curr_movement == 'left':\n                    turning_direction = 1\n                elif curr_movement == 'right':\n                    turning_direction = 2\n                else:\n                    turning_direction = 0\n\n            return cropped_color_frame, 0, turning_direction\n        # add the move to movement array\n\n    # # Probabilistic Hough Transform\n    # rho = 1\n    # theta = 1*np.pi/180.0\n    # threshold = 15\n    # minLineLength = 30   #The minimum number of points that can form a line. Lines with less than this number of points are disregarded.\n    # maxLineGap = 20      #The maximum gap between two points to be considered in the same line.\n    # lines = cv.HoughLinesP(edge, rho, theta, threshold, minLineLength, maxLineGap)\n\n    # Non-probabilistic Hough Transform (works better)\n    lines = cv.HoughLines(edge, 1, np.pi / 180, 150, None, 0, 0)\n\n    # Cross Track Error\n    CTE = 0\n\n    if lines is None:\n        print(\"No lines detected\")\n        final = cropped_color_frame\n        CTE = 0\n    else:\n        left_line_x = []  # x-values of left lines\n        left_line_y = []  # y-values of left lines\n        right_line_x = []  # x-values of right lines\n        right_line_y = []  # y-values of right lines\n\n        cnt_left = 0  # number of left lines\n        cnt_right = 0  # number of right lines\n\n        if DRAW_LINE_IMG:\n            line_image = np.copy(cropped_color_frame) * 0\n\n        for line in lines:\n\n            # Note: we are using the standard Hough Transform, not the probabilistic version\n            rho = line[0][0]\n            theta = line[0][1]\n            x1, y1, x2, y2 = get_end_points(rho, theta)\n\n            # for x1, y1, x2, y2 in line:\n            if True:\n\n                if x2 - x1 == 0:\n                    continue\n\n                slope = (y2 - y1) / float(x2 - x1)\n                slope_threshold = 0.2\n                if abs(slope) < slope_threshold:\n                    # print(\"slope %f is excluded\" % slope)\n                    continue\n\n                # line_len = np.sqrt( (x2-x1)**2 + (y2-y1)**2 )\n                # line_len_threshold = 10\n                # if line_len < line_len_threshold:\n                # \tprint(\"line len %f is too short\" % line_len)\n                # \tcontinue\n\n                if DRAW_LINE_IMG:\n                    cv.line(line_image, (x1, y1), (x2, y2), LINE_COLOR, LINE_THICKNESS)\n                    cv.circle(line_image, (x1, y1), DOT_SIZE, DOT_COLOR, -1)\n                    cv.circle(line_image, (x2, y2), DOT_SIZE, DOT_COLOR, -1)\n\n                if slope <= 0:\n                    left_line_x.extend([x1, x2])\n                    left_line_y.extend([y1, y2])\n                    cnt_left += 1\n                else:\n                    right_line_x.extend([x1, x2])\n                    right_line_y.extend([y1, y2])\n                    cnt_right += 1\n\n        MIN_Y = 0  # <-- top of lane markings\n        MAX_Y = img.shape[0]  # <-- bottom of lane markings\n\n        left_polyfit = None\n        right_polyfit = None\n\n        print(\"cnt_left, cnt_right = \", cnt_left, cnt_right)\n\n        if cnt_left > 0:\n            # do 1D fitting\n            left_polyfit = np.polyfit(left_line_y, left_line_x, deg=1)\n            poly_left = np.poly1d(left_polyfit)\n            left_x_start = int(poly_left(MAX_Y))\n            left_x_end = int(poly_left(MIN_Y))\n\n            if DRAW_LINE_IMG:\n                cv.line(line_image, (left_x_start, MAX_Y), (left_x_end, MIN_Y), LANE_COLOR, LANE_THICKNESS)\n\n        if cnt_right > 0:\n            # do 1D fitting\n            right_polyfit = np.polyfit(right_line_y, right_line_x, deg=1)\n            poly_right = np.poly1d(right_polyfit)\n            right_x_start = int(poly_right(MAX_Y))\n            right_x_end = int(poly_right(MIN_Y))\n\n            if DRAW_LINE_IMG:\n                cv.line(line_image, (right_x_start, MAX_Y), (right_x_end, MIN_Y), LANE_COLOR, LANE_THICKNESS)\n\n        car_center = int(img.shape[1] / 2)  # center of camera\n\n        if cnt_left > 0 and cnt_right > 0:\n            # Find CTE\n            lane_center = (right_x_start + left_x_start) / 2\n            CTE = car_center - lane_center\n\n            if DRAW_LINE_IMG:\n                cv.line(line_image, (int((left_x_start + right_x_start) / 2), MAX_Y),\n                        (int((left_x_end + right_x_end) / 2), MIN_Y), LANE_CENTER_COLOR, 5)\n                cv.line(line_image, (car_center, MAX_Y), (car_center, MIN_Y), (255, 255, 0), 3)\n\n                # Draw lane region\n                mask = np.zeros_like(line_image)\n                vertices = np.array([[(left_x_start + 10, MAX_Y), (left_x_end + 10, MIN_Y), (right_x_end - 10, MIN_Y),\n                                      (right_x_start - 10, MAX_Y)]], dtype=np.int32)\n                cv.fillPoly(mask, vertices, LANE_REGION_COLOR)\n\n                line_image = cv.addWeighted(line_image, 0.8, mask, 0.2, 0)\n\n        elif cnt_left + cnt_right == 0:\n            CTE = 0\n            print('cannot find any lane markings')\n        else:\n            if cnt_left == 0:\n                CTE = 500\n                print('cannot find left lane marking')\n            else:\n                CTE = -500\n                print('cannot find right lane marking')\n\n        final = cropped_color_frame\n        if DRAW_LINE_IMG:\n            final = cv.addWeighted(final, 1, line_image, 1, 0)\n\n    return (final, CTE, 0)\n\n\ndef traverse_solution():\n    action = sim.get_next_action()\n    movement = sim.env.actuate_env(action)\n    return action, movement\n\n\ndef main(args=None):\n    rclpy.init(args=args)\n    node = Node(\"Lane_detection_node\")\n    print(\"Lane_detection_node\")\n\n    img_subscription = node.create_subscription(\n        Image,\n        CAMERA_TOPIC_NAME,\n        listener_callback,\n        5)\n\n    pose_subscription = node.create_subscription(\n        PoseStamped,\n        \"/zed2i/zed_node/pose\",\n        pose_callback,\n        20)\n\n    lane_img_publisher = node.create_publisher(Image, 'lane_img', 1)\n    pid_steering_publisher = node.create_publisher(Int64, 'pid_steering', 1)\n\n    left_crop_publisher = node.create_publisher(Image, 'left_crop_lane_img', 1)\n    right_crop_publisher = node.create_publisher(Image, 'right_crop_lane_img', 1)\n\n    # LOG FILE\n    file_name = \"./logfile_lanedetection.csv\"\n    f = open(file_name, \"w+\")\n\n    thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)\n    thread.start()\n\n    FREQ = 20\n    rate = node.create_rate(FREQ, node.get_clock())\n\n    # For PID control\n    prev_error = 0\n    Kp = 0.15\n    Ki = 0.0\n    Kd = 0.01\n    dt = 1 / float(FREQ)\n    integral = 0\n\n    turning = False  # Am i making a turn (left or right)?\n    turning_direction = 0  # 1: left, 2: right\n    yaw_target = 0\n\n    left_turn_cmd = -100\n    right_turn_cmd = +100\n    straight_cmd = 0\n\n    while rclpy.ok():\n        if frame is not None and pose is not None:\n            print(\"-----\")\n\n            if time.time() - last_frame_time > 3:\n                print(\"NOT RECEIVING CAMERA DATA. \")\n                break\n\n            quat = pose.pose.orientation\n            roll, pitch, yaw_now = euler_from_quaternion(quat)\n\n            yaw_now = yaw_now * 180.0 / np.pi\n            if (yaw_now < 0):\n                yaw_now += 360.0\n\n            print('yaw_now = ', yaw_now)\n            f.write(str(time.time()) + \",\" + str(yaw_now))\n\n            # if turning is True and time.time() - last_turn_time > 2.0:\n            #     turning = False\n            #     yaw_target = 0\n            #     prev_error = 0\n\n            if turning is True:\n                # Already in the turning mode\n                # Check if we need to stop or continue\n\n                diff_yaw = math.fabs(yaw_now - yaw_target)\n                # print(\"yaw_now = %f, yaw_target = %f, diff = %f\" % (yaw_now, yaw_target, diff_yaw))\n\n                if (diff_yaw < 10.0):\n                    # angle to the target yaw is small enough, so stop the turn\n                    turning = False\n                    yaw_target = 0\n                    prev_error = 0  # to reset the pid controller\n\n                    print(\"Turning is done\")\n\n                else:\n                    # just keep turning\n                    print(\"Still turning\")\n\n                    if turning_direction == 1:\n                        # left turn\n                        steering_cmd = left_turn_cmd\n                    elif turning_direction == 2:\n                        # right turn\n                        steering_cmd = right_turn_cmd\n                    else:\n                        print(\"CANNOT HAPPEN\")\n                        steering_cmd = 0\n\n                # just for streaming camera data -- nothing more\n                final_image = crop(frame, frame.shape[1], frame.shape[0], 1)\n\n            else:\n                # Not in the turning mode\n                # Check if we need to start a turning or not\n\n                final_image, CTE, turning_direction = process_img(frame)\n\n                if turning_direction == 1 or turning_direction == 2:\n\n                    if turning is False:\n                        # now we start making a turn\n                        turning = True\n                        yaw_target = 0\n\n                        if turning_direction == 1:\n                            # left turn --> yaw increases\n                            yaw_target = yaw_now + 90\n                            yaw_target = yaw_target % 360\n                            steering_cmd = left_turn_cmd\n\n                        elif turning_direction == 2:\n                            # right turn --> yaw decreases\n\n                            yaw_target = yaw_now - 90\n                            yaw_target = yaw_target % 360\n                            steering_cmd = right_turn_cmd\n\n                else:\n                    # Straight\n                    ####### PID control\n                    setpoint = 0  # always want to stay on the center line\n                    error = setpoint - CTE\n                    integral = integral + error * dt\n                    derivative = (error - prev_error) / dt\n                    steering_cmd = Kp * error + Ki * integral + Kd * derivative\n                    prev_error = error\n\n                    print(\"CTE=\", CTE)\n\n            if SHOW_IMAGES:\n                cv.imshow('Lane following', final_image)\n                cv.waitKey(1)\n\n            # publish steering command\n            m = Int64()\n            m.data = int(steering_cmd)\n            pid_steering_publisher.publish(m)\n\n            print(\"steering_cmd = \", steering_cmd)\n\n            # Lane image for rviz2 or webviz\n            H, W, _ = final_image.shape\n            smaller_dim = (int(W * 0.2), int(H * 0.2))\n            final_image = cv.resize(final_image, smaller_dim)\n            img_msg = br.cv2_to_imgmsg(final_image, encoding=\"bgra8\")\n            lane_img_publisher.publish(img_msg)\n\n        # left_crop_publisher.publish(br.cv2_to_imgmsg(left_crop_img, encoding=\"bgra8\"))\n        # right_crop_publisher.publish(br.cv2_to_imgmsg(right_crop_img, encoding=\"bgra8\"))\n\n        rate.sleep()\n\n    # Destroy the node explicitly\n    # (optional - otherwise it will be done automatically\n    # when the garbage collector destroys the node object)\n    node.destroy_node()\n    rclpy.shutdown()\n    f.close()\n\n\nif __name__ == '__main__':\n    main()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/wolfwagen/LaneDetectionVastar.py b/wolfwagen/LaneDetectionVastar.py
+--- a/wolfwagen/LaneDetectionVastar.py	(revision f80ee039b015f50e2f0ef59c6ae37516c527af0a)
++++ b/wolfwagen/LaneDetectionVastar.py	(date 1689978613523)
+@@ -11,20 +11,18 @@
+ import threading
+ from geometry_msgs.msg import PoseStamped
+ import sys
+-from wolfwagen.AStar.environment import robot_orientation
+ 
+-sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
+-sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
+-import runsim
++sys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')
++sys.path.insert(1, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')
++import robot_orientation
+ import action
++import runsim
+ 
+ # AStar pathfinding
+ # how long you want the algorithm to search for a solution
+ ITERATIONS = 25
+ 
+ # starting and target coordinates
+-START_ROW = 0
+-START_COL = 2
+ TARGET_ROW = 1
+ TARGET_COL = 2
+ 
+@@ -209,7 +207,7 @@
+ 
+     # for intersection
+     left_crop = edge[170:, : 300]
+-    right_crop = edge[170:, 900:]
++    right_crop = edge[170:, 700:]
+ 
+     left_crop_img = left_crop
+     right_crop_img = right_crop
+@@ -220,15 +218,16 @@
+ 
+     print("img sum: ", img_small.sum())
+ 
+-    curr_movement = traverse_solution()
+-    curr_action = curr_movement[0]
++    curr = traverse_solution()
++    curr_action = curr[0]
++    curr_movement = curr[1]
+     # get the next movement if there are any left in the solution stack and make sure we are not currently moving
+     if curr_action is not None and curr_action is not action.Action.STOP:
+ 
+         ## lets us know what the options are
+         is_at_intersection = 0
+         print("sum of front: ", img_small.sum())
+-        if img_small.sum() < 200000:
++        if img_small.sum() < 500000:
+             print("front is open")
+             is_at_intersection += 1
+ 
+@@ -279,9 +278,7 @@
+                     turning_direction = 2
+                 else:
+                     turning_direction = 0
+-
+             return cropped_color_frame, 0, turning_direction
+-        # add the move to movement array
+ 
+     # # Probabilistic Hough Transform
+     # rho = 1
+@@ -533,7 +530,7 @@
+                 # Check if we need to start a turning or not
+ 
+                 final_image, CTE, turning_direction = process_img(frame)
+-
++                print(turning_direction)
+                 if turning_direction == 1 or turning_direction == 2:
+ 
+                     if turning is False:
+@@ -570,6 +567,10 @@
+                 cv.imshow('Lane following', final_image)
+                 cv.waitKey(1)
+ 
++            if sim.goal_condition_met():
++                sim.env.robot_orientation.save_orientation()
++                rclpy.try_shutdown()
++
+             # publish steering command
+             m = Int64()
+             m.data = int(steering_cmd)
+Index: wolfwagen/AStar/simulation/runsim.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sys\n\nsys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/utils')\nimport maploader\nimport costsloader as cl\n\nsys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/environment')\nimport environment\nimport action\n\n\"\"\"\nSimulation file to test A star with different files but is also an example of a module that we can import to run A Star\nfrom by modifying a few things.\n\"\"\"\n\n\nclass RunSim:\n    # set the map file and iterations when constructing the RunSim object\n    def __init__(self, map_file, iterations, costs, straight_line_costs, targetX, targetY):\n        cost_vals = cl.CostLoader.load_map(costs)\n        # load the map_file into a list of strings\n        map_string = maploader.MapLoader.load_map(map_file)\n        # initialize the environment with the track_map argument set\n        self.env = environment.Environment(track_map=map_string, costs=cost_vals, straight_line=straight_line_costs,\n                                           targetX=targetX, targetY=targetY)\n        # set the number of iterations\n        self.iterations = iterations\n\n        # solution stack\n        self.solution = None\n\n    # run the simulation\n    def run(self, test):\n\n        # if the test boolean is True, we are in testing mode, otherwise run in normal mode\n        if test:\n            # loop through the iterations, we can just set this to true or false later.\n            for i in range(self.iterations):\n                self.solution = self.env.update_env()\n\n                # if the target is reached, break out of loop\n                if self.solution is not None:\n                    break\n\n        else:\n            for i in range(self.iterations):\n                try:\n                    # update env will run robot.get_action() which will give us a path to follow\n                    self.solution = self.env.update_env()\n\n                # catch any exceptions\n                except Exception as e:\n                    print(\"error at time step \" + str(i))\n                    print(e)\n\n                # if the target is reached, break out of loop\n                if self.solution is not None:\n                    break\n\n        return self.solution\n\n    # this function gets the next action from the solution stack\n    def get_next_action(self):\n        if self.solution[-1] is not None:\n            # get the Position on the top\n            curr = self.solution.pop()\n            # get all neighbors of the position\n            neighbors = self.env.get_neighbor_positions(curr)\n            # peek at the next value at the top to see which way to move\n            curr = self.solution[-1]\n            if curr is None:\n                # if next action is None, we have reached the end, save the current orientation\n                # and stop Action is returned\n                self.env.robot_orientation.save_orientation()\n                return action.Action.STOP\n            # logic to return the action to get to the next Position\n            if curr.__eq__(neighbors.get(\"above\")):\n                robot_action = action.Action.UP\n            elif curr.__eq__(neighbors.get(\"below\")):\n                robot_action = action.Action.DOWN\n            elif curr.__eq__(neighbors.get(\"left\")):\n                robot_action = action.Action.LEFT\n            elif curr.__eq__(neighbors.get(\"right\")):\n                robot_action = action.Action.RIGHT\n            else:\n                robot_action = action.Action.TURN\n\n            return robot_action\n\n    # checks if the goal condition is met for outside functions, such as the unit tests or Lane Detection when we\n    # incorporate\n    def goal_condition_met(self):\n        return self.env.goal_condition_met()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/wolfwagen/AStar/simulation/runsim.py b/wolfwagen/AStar/simulation/runsim.py
+--- a/wolfwagen/AStar/simulation/runsim.py	(revision f80ee039b015f50e2f0ef59c6ae37516c527af0a)
++++ b/wolfwagen/AStar/simulation/runsim.py	(date 1689972757809)
+@@ -71,7 +71,6 @@
+             if curr is None:
+                 # if next action is None, we have reached the end, save the current orientation
+                 # and stop Action is returned
+-                self.env.robot_orientation.save_orientation()
+                 return action.Action.STOP
+             # logic to return the action to get to the next Position
+             if curr.__eq__(neighbors.get("above")):
+Index: wolfwagen/AStar/test/testAstar.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sys\nsys.path.insert(0, '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/simulation')\nimport runsim\nfrom pathlib import Path\n\n\nnum_trials = 1\niterations = 20\nsuccessful_trials = 0\ntargetX = 1\ntargetY = 2\n\nmap_file = '../files/map01.txt'\ncosts = '../files/costs.txt'\nstraight_line = '../files/straight_line.txt'\nfor trial in range(num_trials):\n    sim = runsim.RunSim(map_file, iterations, costs, straight_line, targetX, targetY)\n    solution = sim.run(False)\n    action = 0\n    print(solution)\n    while action is not None:\n        action = sim.get_next_action()\n        # print(action)\n        sim.env.actuate_env(action)\n    print(\"----------- trial \" + str(trial) + \" done ---------------\")\n    if sim.goal_condition_met():\n        successful_trials += 1\n\nprint(\"test 1 success rate \" + str(successful_trials/(num_trials*1.0)*100) + \" after 100 trials\")\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/wolfwagen/AStar/test/testAstar.py b/wolfwagen/AStar/test/testAstar.py
+--- a/wolfwagen/AStar/test/testAstar.py	(revision f80ee039b015f50e2f0ef59c6ae37516c527af0a)
++++ b/wolfwagen/AStar/test/testAstar.py	(date 1689971196589)
+@@ -7,12 +7,12 @@
+ num_trials = 1
+ iterations = 20
+ successful_trials = 0
+-targetX = 1
++targetX = 0
+ targetY = 2
+-
+-map_file = '../files/map01.txt'
+-costs = '../files/costs.txt'
+-straight_line = '../files/straight_line.txt'
++print(Path.cwd())
++map_file = '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/files/map01.txt'
++costs = '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/files/costs.txt'
++straight_line = '/home/anglia/ros2_ws2/src/wolfwagen/wolfwagen/AStar/files/straight_line.txt'
+ for trial in range(num_trials):
+     sim = runsim.RunSim(map_file, iterations, costs, straight_line, targetX, targetY)
+     solution = sim.run(False)
+Index: wolfwagen/AStar/environment/robot_orientation.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\"\"\"\nThis is a class that keeps track of the robot orientation and saves to a txt file that can be loaded to save current\norientation, given that starting from the bottom left of the field is origin and x axis is across and y axis is up\n\"\"\"\n\nimport action\n\nclass RobotOrientation:\n\n    def __init__(self):\n        # Initialize by loading text file, if it doesn't exist make one\n        self.curr_orientation = []\n        self.load_orientation()\n\n    # load orientation and position information from the curr_orientation file, if the filename is not specified,\n    # use the default value\n    def load_orientation(self, filename=\"../files/curr_orientation.txt\"):\n        # store the orientation information in an array\n        curr_orientation = []\n        try:\n            # open the file, create if it doesn't exist\n            # file format: ORIENTATION\n            #              x_coord\n            #              y_coord\n            f = open(filename, 'r')\n            lines = f.readlines()\n            # add value to the array\n            for line in lines:\n                curr_orientation.append(line.strip())\n            f.close()\n\n            # if the file is not found, then create the file and add the default values to the orientation and the file\n        except FileNotFoundError:\n            f = open(filename, 'w+')\n            f.write(\"UP\\n0\\n0\")\n            curr_orientation = [\"UP\", \"0\", \"0\"]\n            f.close()\n        self.curr_orientation = curr_orientation\n\n    # this function saves the orientation to the orientation file\n    def save_orientation(self, filename='../files/curr_orientation.txt'):\n        try:\n            # open the file, create if it doesn't exist\n            # file format: ORIENTATION\n            #              x_coord\n            #              y_coord\n            f = open(filename, 'w')\n            for val in self.curr_orientation:\n                f.write(str(val))\n                f.write('\\n')\n            f.close()\n        except FileNotFoundError:\n            print(\"File cannot be found\")\n\n    # this function gets the current orientation from the object\n    def get_orientation(self):\n        return self.curr_orientation\n\n    # this function gets the new potential orientation given a astar movement and the current orientation,\n    # x, and y coords\n    @staticmethod\n    def get_new_orientation(astar_move, pos, x, y):\n\n        # this is logic to figure out the new orientation after a given move\n        if pos == \"UP\":\n            if astar_move == action.Action.UP:\n                return \"UP\"\n\n            elif astar_move == action.Action.RIGHT:\n                return \"RIGHT\"\n\n            elif astar_move == action.Action.LEFT:\n                return \"LEFT\"\n\n            elif astar_move == action.Action.TURN:\n                if int(x) == 0 and int(y) == 0:\n                    return \"RIGHT\"\n                return \"DOWN\"\n\n        elif pos == \"RIGHT\":\n            if astar_move == action.Action.UP:\n                return \"UP\"\n\n            elif astar_move == action.Action.RIGHT:\n                return \"RIGHT\"\n\n            elif astar_move == action.Action.DOWN:\n                return \"DOWN\"\n\n        elif pos == \"LEFT\":\n            if astar_move == action.Action.UP:\n                return \"UP\"\n\n            elif astar_move == action.Action.LEFT:\n                return \"LEFT\"\n\n            elif astar_move == action.Action.DOWN:\n                return \"DOWN\"\n\n            elif astar_move == action.Action.TURN:\n                if int(x) == 0 and int(y) == 0:\n                    return \"RIGHT\"\n                return \"DOWN\"\n\n        elif pos == \"DOWN\":\n            if astar_move == action.Action.RIGHT:\n                return \"RIGHT\"\n\n            elif astar_move == action.Action.LEFT:\n                return \"LEFT\"\n\n            elif astar_move == action.Action.DOWN:\n                return \"DOWN\"\n\n    # this function is the movement interpreter, which actually actuates the movement and updates the current\n    # orientation with new coords and new orientations\n    def movement_interpreter(self, astar_move):\n        pos = self.curr_orientation[0]\n        x = int(self.curr_orientation[2])\n        y = int(self.curr_orientation[1])\n\n        if pos == \"UP\":\n            if astar_move == action.Action.UP:\n                self.curr_orientation[1] = y + 1\n                return \"straight\"\n\n            elif astar_move == action.Action.RIGHT:\n                self.curr_orientation[0] = \"RIGHT\"\n                self.curr_orientation[2] = x + 1\n                return \"right\"\n\n            elif astar_move == action.Action.LEFT:\n                self.curr_orientation[0] = \"LEFT\"\n                self.curr_orientation[2] = x - 1\n                return \"left\"\n\n            elif astar_move == action.Action.TURN:\n                if int(x) == 0 and int(y) == 0:\n                    self.curr_orientation[0] = \"RIGHT\"\n                    self.curr_orientation[2] = x + 1\n                    self.curr_orientation[1] = y + 1\n                    return \"straight\"\n\n                self.curr_orientation[0] = \"DOWN\"\n                self.curr_orientation[2] = x - 1\n                self.curr_orientation[1] = y - 1\n                return \"left\"\n\n            elif astar_move == action.Action.DOWN:\n                return \"back\"\n\n        elif pos == \"RIGHT\":\n            if astar_move == action.Action.UP:\n                self.curr_orientation[0] = \"UP\"\n                self.curr_orientation[1] = y + 1\n                return \"left\"\n\n            elif astar_move == action.Action.RIGHT:\n                self.curr_orientation[2] = x + 1\n                return \"straight\"\n\n            elif astar_move == action.Action.DOWN:\n                self.curr_orientation[0] = \"DOWN\"\n                self.curr_orientation[1] = y - 1\n                return \"right\"\n\n            elif astar_move == action.Action.LEFT:\n                return \"back\"\n\n        elif pos == \"LEFT\":\n            if astar_move == action.Action.UP:\n                self.curr_orientation[0] = \"UP\"\n                self.curr_orientation[1] = y + 1\n                return \"right\"\n\n            elif astar_move == action.Action.LEFT:\n                self.curr_orientation[2] = x - 1\n                return \"straight\"\n\n            elif astar_move == action.Action.DOWN:\n                self.curr_orientation[0] = \"DOWN\"\n                self.curr_orientation[1] = y - 1\n                return \"left\"\n\n            elif astar_move == action.Action.TURN:\n                if int(x) == 0 and int(y) == 0:\n                    self.curr_orientation[0] = \"RIGHT\"\n                    self.curr_orientation[2] = x + 1\n                    self.curr_orientation[1] = y + 1\n                    return \"right\"\n                self.curr_orientation[0] = \"DOWN\"\n                self.curr_orientation[2] = x - 1\n                self.curr_orientation[1] = y - 1\n                return \"straight\"\n\n            elif astar_move == action.Action.RIGHT:\n                return \"back\"\n\n        elif pos == \"DOWN\":\n            if astar_move == action.Action.RIGHT:\n                self.curr_orientation[0] = \"RIGHT\"\n                self.curr_orientation[2] = x + 1\n                return \"left\"\n\n            elif astar_move == action.Action.LEFT:\n                self.curr_orientation[0] = \"LEFT\"\n                self.curr_orientation[2] = x - 1\n                return \"right\"\n\n            elif astar_move == action.Action.DOWN:\n                self.curr_orientation[1] = y - 1\n                return \"straight\"\n\n            elif astar_move == action.Action.UP:\n                return \"back\"\n\n    # this function is used to check if a move is valid, it returns True if the move is invalid and False if the\n    # move is valid. A move is invalid if the current orientation of the robot and the next astar move causes the\n    # robot to move backward, which is not allowed\n    @staticmethod\n    def move_check(astar_move, pos):\n\n        if pos == \"UP\":\n            if astar_move == action.Action.DOWN:\n                return True\n\n        elif pos == \"RIGHT\":\n            if astar_move == action.Action.LEFT:\n                return True\n\n        elif pos == \"LEFT\":\n            if astar_move == action.Action.RIGHT:\n                return True\n\n        elif pos == \"DOWN\":\n            if astar_move == action.Action.UP:\n                return True\n\n        return False\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/wolfwagen/AStar/environment/robot_orientation.py b/wolfwagen/AStar/environment/robot_orientation.py
+--- a/wolfwagen/AStar/environment/robot_orientation.py	(revision f80ee039b015f50e2f0ef59c6ae37516c527af0a)
++++ b/wolfwagen/AStar/environment/robot_orientation.py	(date 1690228733563)
+@@ -4,7 +4,7 @@
+ """
+ 
+ import action
+-
++import os
+ class RobotOrientation:
+ 
+     def __init__(self):
+Index: wolfwagen/pwm_genV3.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#!/usr/bin/env python\nimport rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Joy\nfrom std_msgs.msg import String\nfrom std_msgs.msg import Int64\nfrom std_msgs.msg import Float64\nimport struct\nimport can\nimport os\nimport threading\nimport time\nimport curses\n\n#distributed ros doesn't work now, so let's use mqtt for now\nimport paho.mqtt.client as paho\nbroker_ip=\"eb2-3254-ub01.csc.ncsu.edu\"\nbroker_port=12345\n\nstdscr = curses.initscr()\n\n#TODO: pwm should be moved to Teensy microcontroller\nin_min = -100\nin_max = +100\nout_min = 6554\nout_max = 13108\n\nthrottle = 0\nsteer = 0\nmode = 0\n\npid_steer = 0\nauto_throttle = 0\t#published (and controller) by xbox_controller\t\n\nlidar_min_dist = 1000000\t#for LIDAR-based obstacle detection/avoidance\nSAFE_DISTANCE = 0.50\t\n\ndef pwm(val):\n\t#TODO: input range check\n\treturn (val - in_min) * (out_max - out_min) // (in_max - in_min) + out_min\n\ndef mode_switch_callback(data):\n\tglobal mode\n\tmode = (mode + 1) % 2\t#for now we have only two modes: manual and CV-based auto\n\t\t\ndef manual_steering_callback(data):\n\tglobal steer\n\tsteer = data.data\n\ndef manual_throttle_callback(data):\n\tglobal throttle\n\tthrottle = data.data\n\ndef auto_throttle_callback(data):\n\tglobal auto_throttle\n\tauto_throttle = data.data\n\ndef pid_steering_callback(data):\n\tglobal pid_steer\n\n\tsteer = data.data\n\t\n\tif steer > 100:\n\t\tsteer = 100\n\telif steer < -100:\n\t\tsteer = -100\n\tif (steer==100):\n\t\t\tsteer = 99\n\t\n\tpid_steer = steer\n\ndef lidar_min_dist_callback(data):\n\tglobal lidar_min_dist\n\tlidar_min_dist = data.data\t\n\n#stop sign-related\nstop_sign_detected = False\nlast_stop_time = time.time()\ndef stop_sign_callback(data):\n\tglobal stop_sign_detected, last_stop_time\n\t\n\tif time.time() > (last_stop_time + 5):\n\t\t# if it hasn't been 5 seconds since we detected a stop sign, ignore this message (-->to handle \"stop\")\n\t\tif data.data == 1:\n\t\t\tstop_sign_detected = True\n\t\t\tlast_stop_time = time.time()\n\t\t\t# print(\"stop sign detected\")\n\n#ROS-based voice command handler\ndef voice_cmd_callback(data):\n    global mode, throttle\n    cmd = data.data\n    # print('voice_cmd =', cmd)\n    if cmd == 'stop':\n        throttle = 0\n        mode = 0\n    elif cmd == 'start':\n        mode = 1\n    \n    #elif cmd == 'left':\n    #    print('left -- todo')\n    #elif cmd == 'right':\n    #    print('right -- todo')\n\n#MQTT-based voice command handler\ndef on_voice_cmd_mqtt_message(client, userdata, message):\n\tglobal mode, throttle\n\tcmd = str(message.payload.decode(\"utf-8\"))\n\t# print(\"voice_cmd_received =\", cmd )\n\tif cmd == 'stop':\n\t\tthrottle = 0\n\t\tmode = 0\n\telif cmd == 'start':\n\t\tmode = 1\n\telif cmd == 'left':\n\t\tprint('left -- todo')\n\telif cmd == 'right':\n\t\tprint('right -- todo')\n\n\ndef main(args=None):\n\tprint(\"Driver node\")\n\trclpy.init(args=args)\n\tnode = Node(\"Drive_node\")\n\n\ttry:\n\t\t#to receive voice command over mqtt\n\t\tclient= paho.Client(\"client-orin\")\n\t\tclient.on_message=on_voice_cmd_mqtt_message\t\t\n\t\tclient.connect(broker_ip, broker_port)\n\t\tclient.loop_start()\n\t\tclient.subscribe(\"voice_cmd_mqtt\")#subscribe\n\texcept:\n\t\tprint(\"no mqtt\")\n\t\tpass\n\n\n\ttry:\n\t\tbus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=250000)\n\t\tprint (\"Opened CAN bus\")\n\texcept IOError:\n\t\tprint (\"Cannot open CAN bus\")\n\t\treturn \n\t\n\tsubscription_manual_steering = node.create_subscription(Int64,'manual_steering', manual_steering_callback, 1)\n\tsubscription_manual_throttle = node.create_subscription(Int64,'manual_throttle', manual_throttle_callback, 1)\n\tsubscription_auto_throttle = node.create_subscription(Int64,'auto_throttle', auto_throttle_callback, 1)\t\n\tsubscription_pid_steering = node.create_subscription(Int64 , 'pid_steering' , pid_steering_callback , 1)\n\tsubscription_mode_switch = node.create_subscription(Int64 , \"mode_switch\" , mode_switch_callback , 1)\t\n\tsubscription_voice_cmd = node.create_subscription(String , \"voice_cmd\" , voice_cmd_callback , 1)\t\t\n\tsubscription_lidar_min_dist = node.create_subscription(Float64 , \"lidar_min_dist\" , lidar_min_dist_callback , 1)\t\t\n\tsubscription_stop_sign = node.create_subscription(Int64 , 'stop_sign' , stop_sign_callback , 1)\n\tthread = threading.Thread(target=rclpy. spin, args=(node, ), daemon=True)\n\tthread.start()\n\n\trate = node.create_rate(20, node.get_clock())\n\t\n\twhile rclpy.ok():\n\t\t\n\t\tif mode == 0:\n\t\t\t# manual mode\n\t\t\tpwm_throttle = pwm(throttle)\n\t\t\tpwm_steer = pwm(steer)\n\t\telse:\n\t\t\t# auto mode\n\t\t\tpwm_throttle = pwm(auto_throttle)\n\t\t\tpwm_steer = pwm(pid_steer)\n\n\t\t\n\t\tsafe_distance_violation = False\n\t\tif lidar_min_dist < SAFE_DISTANCE:\n\t\t\t# print(\"Safe distance violation. Setting throttle to 0\")\n\t\t\tsafe_distance_violation = True\n\t\t\tif pwm_throttle > pwm(0):\n\t\t\t\tpwm_throttle = pwm(0)\n\t\t\n\t\tstop_sign_message = None\n\t\tif mode == 1 and stop_sign_detected and time.time() < (last_stop_time + 1.5): \n\t\t\t#stop sign (in auto mode) -- stop for 1.5 seconds\n\t\t\t# print(\"STOP SIGN!\")\n\t\t\tstop_sign_message = \"-- Stop sign --\"\n\t\t\tif pwm_throttle > pwm(0):\n\t\t\t\tpwm_throttle = pwm(0)\n\n\n\t\t# print(\"mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)\" % (\"Manual\" if mode == 0 else \"Auto\", throttle, auto_throttle, steer, pid_steer))\n\n\t\tth = throttle\n\t\tst = steer\n\t\tif (mode==1):\n\t\t\tth = auto_throttle\n\t\t\tst = pid_steer\n\n\t\tstdscr.refresh()\n\t\tstdscr.addstr(1, 5, 'Mode: %s       ' % (\"Manual\" if mode == 0 else \"Auto\"))\n\t\tstdscr.addstr(2, 5, 'Throttle: %.2f  ' % th)\n\t\tstdscr.addstr(3, 5, 'Steering: %.2f  ' % st)\n\t\t\n\t\tif safe_distance_violation:\n\t\t\tstdscr.addstr(4, 5, '-- Safe distance violation (%.2f m)--' % lidar_min_dist)\n\t\telse:\n\t\t\tstdscr.addstr(4, 5, '                             ')\n\t\tif stop_sign_message:\n\t\t\tstdscr.addstr(5, 5, stop_sign_message)\n\t\telse:\n\t\t\tstdscr.addstr(5, 5, '                             ')\n\t\tstdscr.addstr(6,0,'')\n\n\t\t#send actuation command to teensy over CAN bus\t\t\n\t\tcan_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)\n\t\tnew_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)\n\t\tbus.send(new_msg)\n\n\t\trate.sleep()\n\n\trclpy.spin(node)\n\trclpy.shutdown()\n\n\t\nif __name__ == '__main__':\n\tmain()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/wolfwagen/pwm_genV3.py b/wolfwagen/pwm_genV3.py
+--- a/wolfwagen/pwm_genV3.py	(revision f80ee039b015f50e2f0ef59c6ae37516c527af0a)
++++ b/wolfwagen/pwm_genV3.py	(date 1690902692871)
+@@ -22,9 +22,9 @@
+ #TODO: pwm should be moved to Teensy microcontroller
+ in_min = -100
+ in_max = +100
+-out_min = 6554
+-out_max = 13108
+ 
++max_throttle = 28
++max_steer = 100
+ throttle = 0
+ steer = 0
+ mode = 0
+@@ -37,8 +37,15 @@
+ 
+ def pwm(val):
+ 	#TODO: input range check
++	out_min = -100
++	out_max = 100
+ 	return (val - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+ 
++# def pwm2(val):
++# 	out_min = 0
++# 	out_max = 180
++# 	return (val - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
++
+ def mode_switch_callback(data):
+ 	global mode
+ 	mode = (mode + 1) % 2	#for now we have only two modes: manual and CV-based auto
+@@ -119,6 +126,8 @@
+ 
+ 
+ def main(args=None):
++	warning = ""
++	can_message = ""
+ 	print("Driver node")
+ 	rclpy.init(args=args)
+ 	node = Node("Drive_node")
+@@ -135,12 +144,12 @@
+ 		pass
+ 
+ 
+-	try:
+-		bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=250000)
+-		print ("Opened CAN bus")
+-	except IOError:
+-		print ("Cannot open CAN bus")
+-		return 
++	# try:
++	# 	bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=250000)
++	# 	print ("Opened CAN bus")
++	# except IOError:
++	# 	print ("Cannot open CAN bus")
++	# 	return 
+ 	
+ 	subscription_manual_steering = node.create_subscription(Int64,'manual_steering', manual_steering_callback, 1)
+ 	subscription_manual_throttle = node.create_subscription(Int64,'manual_throttle', manual_throttle_callback, 1)
+@@ -193,8 +202,12 @@
+ 
+ 		stdscr.refresh()
+ 		stdscr.addstr(1, 5, 'Mode: %s       ' % ("Manual" if mode == 0 else "Auto"))
+-		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % th)
++		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % throttle)
++		stdscr.addstr(3, 5, 'Steering: %.2f  ' % steer)
++		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % (th * (100/max_throttle)))
+ 		stdscr.addstr(3, 5, 'Steering: %.2f  ' % st)
++		stdscr.addstr(7 , 5 , 'Warning: %s              ' % warning)
++		stdscr.addstr(8 , 5 , 'ESC Battery: %s     ' % can_message)
+ 		
+ 		if safe_distance_violation:
+ 			stdscr.addstr(4, 5, '-- Safe distance violation (%.2f m)--' % lidar_min_dist)
+@@ -206,10 +219,28 @@
+ 			stdscr.addstr(5, 5, '                             ')
+ 		stdscr.addstr(6,0,'')
+ 
+-		#send actuation command to teensy over CAN bus		
+-		can_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)
+-		new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
+-		bus.send(new_msg)
++
++		# can_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)
++		# new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
++		# bus.send(new_msg)
++		#send actuation command to teensy over CAN bus
++
++		# CAN does not send negative values properly so I just made the values positive by making them 
++		try:
++			with can.interface.Bus(bustype = 'socketcan' , channel = 'can0' , bitrate = 250000) as bus:
++					can_data = struct.pack('>hhI', pwm_throttle + max_throttle, pwm_steer + max_steer , 0)
++					new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
++					try:
++						bus.send(new_msg)
++						warning = "None"
++					except:
++						warning = "Message not sent"
++					try:
++						can_message = int.from_bytes(bus.recv().data, 'little')
++					except:
++						warning = "Message not received"
++		except IOError:
++			warning = "Failed to find CAN bus"
+ 
+ 		rate.sleep()
+ 
+diff --git a/wolfwagen/AStar/environment/__init__.py b/wolfwagen/AStar/environment/__init__.py
+new file mode 100644
+diff --git a/wolfwagen/AStar/__init__.py b/wolfwagen/AStar/__init__.py
+new file mode 100644
