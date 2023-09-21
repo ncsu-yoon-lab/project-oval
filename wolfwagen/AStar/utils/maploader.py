@@ -1,4 +1,4 @@
-"""gs = []
+"""
 This class loads map files from a filename into a list of strings
 """
 

@@ -45,6 +45,7 @@ class CostLoader:
                     except ValueError:
                         print("error")
                 i += 1
+            straight_line[(positions[i], positions[i])] = 0.0
             f.close()
         except FileNotFoundError:
             print("File not found " + filename)

@@ -1,7 +1,7 @@
 import sys
 
 # add a path to the system to add modules from the environment directory
-sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/AStar/environment')
+sys.path.insert(0, '/home/sarvesh/Documents/GitHub/wolfwagen/wolfwagen/AStar/environment')
 import position
 import action
 import positiontypestatus as pts
@@ -81,9 +81,11 @@ class Robot:
             return False
 
     # construct the robot obj
-    def __init__(self, env, cost_map, straight_line):
+    def __init__(self, env, cost_map, straight_line, robot_orientation):
         # the environment obj
         self.env = env
+        # the orientation module
+        self.robot_orientation = robot_orientation
         # the costs map
         self.cost_map = cost_map
         # straight line costs
@@ -111,9 +113,10 @@ class Robot:
     # Node is added to the frontier PQ to be explored in order of most promising to least promising.
     def get_action(self):
 
-        # set the current position and target position
+        # set the current position and target position, and current orientation of the robot
         self_pos = self.env.get_robot_pos()
         target_pos = self.env.get_target_pos()
+        curr_orientation = self.robot_orientation.get_orientation()[0]
 
         # run A star while a solution is not reached
         if not self.solved:
@@ -124,7 +127,7 @@ class Robot:
             self.target_node = self.Node(target_pos)
 
             # add the first Node with priority 0
-            self.frontier.put(self.start_node)
+            self.frontier.put((self.start_node, curr_orientation))
 
             # initialize the maps for came from and cost so far
             self.came_from = dict()
@@ -137,7 +140,10 @@ class Robot:
             # continue exploring while there are still Nodes to explore in the PQ
             while not self.frontier.empty():
                 # get the node with the highest priority
-                current_node = self.frontier.get()
+                curr = self.frontier.get()
+                # get the current node and also curr orientation
+                current_node = curr[0]
+                curr_orientation = curr[1]
 
                 # if the curr node is at the target node, then the solution is complete
                 if current_node.compare_to(self.target_node) == 0:
@@ -154,6 +160,7 @@ class Robot:
 
                     iterator = self.target_node.get_position()
                     self.solution = deque()
+                    self.solution.append(None)
                     self.solution.append(self.target_node.get_position())
 
                     while self.came_from.get(iterator) is not None:
@@ -166,6 +173,11 @@ class Robot:
                 # for all the values in the neighbors map loop through to determine which of the positions are the best
                 # choice for finding the target position, this is where we use the cost values
                 for value in neighbors.values():
+
+                    # check to see if the current orientation and the next action will result in a back move
+                    # if so, ignore that possible move
+                    if self.robot_orientation.move_check(self.env.get_action(current_node.get_position(), value), curr_orientation):
+                        continue
 
                     if self.env.get_road_status(value) is pts.PositionTypeStatus.CURVE:
                         if list(neighbors.keys())[list(neighbors.values()).index(value)] == 'left':
@@ -194,7 +206,13 @@ class Robot:
 
                             # set the next node's priority then use that priority to add the node into the PQ
                             next_node.set_priority(priority)
-                            self.frontier.put(next_node)
+                            next_move = self.env.get_action(current_node.get_position(), next_node.get_position())
+                            new_orientation = self.robot_orientation.get_new_orientation(next_move, curr_orientation,
+                                                                                         current_node.get_position().get_col(),
+                                                                                         current_node.get_position().get_row())
+
+                            # add the next node and the new orientation for the frontier
+                            self.frontier.put((next_node, new_orientation))
 
                             # set the came from key value pair with the next and curr Nodes
                             self.came_from[next_node.get_position()] = current_node.get_position()
@@ -209,26 +227,8 @@ class Robot:
             clear the solution deque, update the map to add the obstacle as an EDGE road type, and set the current
             position as the start position and find a new routs to the target position using A star.
             """
-
             return self.solution
 
-            # # get the Position on the top
-            # curr = self.solution.pop()
-            # # get all neighbors of the position
-            # neighbors = self.env.get_neighbor_positions(curr)
-            # # peek at the next value at the top to see which way to move
-            # curr = self.solution[-1]
-            #
-            # # logic to return the action to get to the next Position
-            # if curr.__eq__(neighbors.get("above")):
-            #     return action.Action.UP
-            # if curr.__eq__(neighbors.get("below")):
-            #     return action.Action.DOWN
-            # if curr.__eq__(neighbors.get("left")):
-            #     return action.Action.LEFT
-            # if curr.__eq__(neighbors.get("right")):
-            #     return action.Action.RIGHT
-            # return action.Action.TURN
-
+    # this function returns the solved status of the AStar
     def get_solved(self):
         return self.solved

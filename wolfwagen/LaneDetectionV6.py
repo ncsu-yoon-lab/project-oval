@@ -13,7 +13,7 @@ import threading
 from geometry_msgs.msg import PoseStamped
 
 # Set it to 'False' when driving (True when debugging)
-SHOW_IMAGES = False
+SHOW_IMAGES = True
 
 DRAW_LINE_IMG = True
 
@@ -165,17 +165,17 @@ def process_img(frame):
 		cv.waitKey(1)
 	
 	# for intersection
-	left_crop = edge[170 :, : 300]
-	right_crop = edge[170 : , 900 :]
+	left_crop = edge[170 : , : 300]
+	right_crop = edge[170 : , 700 :]
 
 	left_crop_img = left_crop
 	right_crop_img = right_crop
 
-	# cv.imshow("left_turn" , left_crop)
-	# cv.waitKey(1)
+	#cv.imshow("left_turn" , left_crop)
+	#cv.waitKey(1)
 
-	# cv.imshow("right_turn" , right_crop)
-	# cv.waitKey(1)
+	cv.imshow("right_turn" , right_crop)
+	cv.waitKey(1)
 	
 
 	if (time.time() - last_turn_time > 3):
@@ -188,7 +188,7 @@ def process_img(frame):
 			is_at_intersection = 1			
 
 		if right_crop.sum() < 1000:
-			print("right is open")
+			print("right is open: ")
 			is_at_intersection += 2			
 
 		turning_direction = 0
