@@ -1,4 +1,4 @@
-# Wolfwagen Startup
+# Wolfwagen Startup Sequence
 
 ## ZED 2i node
 ```shell
