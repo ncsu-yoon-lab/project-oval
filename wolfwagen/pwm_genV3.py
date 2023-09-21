@@ -22,9 +22,9 @@ stdscr = curses.initscr()
 #TODO: pwm should be moved to Teensy microcontroller
 in_min = -100
 in_max = +100
-out_min = 6554
-out_max = 13108
 
+max_throttle = 28
+max_steer = 100
 throttle = 0
 steer = 0
 mode = 0
@@ -37,7 +37,14 @@ SAFE_DISTANCE = 0.50
 
 def pwm(val):
 	#TODO: input range check
+	out_min = -100
+	out_max = 100
 	return (val - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+
+# def pwm2(val):
+# 	out_min = 0
+# 	out_max = 180
+# 	return (val - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
 def mode_switch_callback(data):
 	global mode
@@ -119,6 +126,8 @@ def on_voice_cmd_mqtt_message(client, userdata, message):
 
 
 def main(args=None):
+	warning = ""
+	can_message = ""
 	print("Driver node")
 	rclpy.init(args=args)
 	node = Node("Drive_node")
@@ -135,12 +144,12 @@ def main(args=None):
 		pass
 
 
-	try:
-		bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=250000)
-		print ("Opened CAN bus")
-	except IOError:
-		print ("Cannot open CAN bus")
-		return 
+	# try:
+	# 	bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=250000)
+	# 	print ("Opened CAN bus")
+	# except IOError:
+	# 	print ("Cannot open CAN bus")
+	# 	return 
 	
 	subscription_manual_steering = node.create_subscription(Int64,'manual_steering', manual_steering_callback, 1)
 	subscription_manual_throttle = node.create_subscription(Int64,'manual_throttle', manual_throttle_callback, 1)
@@ -150,7 +159,7 @@ def main(args=None):
 	subscription_voice_cmd = node.create_subscription(String , "voice_cmd" , voice_cmd_callback , 1)		
 	subscription_lidar_min_dist = node.create_subscription(Float64 , "lidar_min_dist" , lidar_min_dist_callback , 1)		
 	subscription_stop_sign = node.create_subscription(Int64 , 'stop_sign' , stop_sign_callback , 1)
-	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
+	thread = threading.Thread(target=rclpy. spin, args=(node, ), daemon=True)
 	thread.start()
 
 	rate = node.create_rate(20, node.get_clock())
@@ -193,8 +202,12 @@ def main(args=None):
 
 		stdscr.refresh()
 		stdscr.addstr(1, 5, 'Mode: %s       ' % ("Manual" if mode == 0 else "Auto"))
-		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % th)
+		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % throttle)
+		stdscr.addstr(3, 5, 'Steering: %.2f  ' % steer)
+		stdscr.addstr(2, 5, 'Throttle: %.2f  ' % (th * (100/max_throttle)))
 		stdscr.addstr(3, 5, 'Steering: %.2f  ' % st)
+		stdscr.addstr(7 , 5 , 'Warning: %s              ' % warning)
+		stdscr.addstr(8 , 5 , 'ESC Battery: %s     ' % can_message)
 		
 		if safe_distance_violation:
 			stdscr.addstr(4, 5, '-- Safe distance violation (%.2f m)--' % lidar_min_dist)
@@ -206,10 +219,28 @@ def main(args=None):
 			stdscr.addstr(5, 5, '                             ')
 		stdscr.addstr(6,0,'')
 
-		#send actuation command to teensy over CAN bus		
-		can_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)
-		new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
-		bus.send(new_msg)
+
+		# can_data = struct.pack('>hhI', pwm_throttle, pwm_steer, 0)
+		# new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
+		# bus.send(new_msg)
+		#send actuation command to teensy over CAN bus
+
+		# CAN does not send negative values properly so I just made the values positive by making them 
+		try:
+			with can.interface.Bus(bustype = 'socketcan' , channel = 'can0' , bitrate = 250000) as bus:
+					can_data = struct.pack('>hhI', pwm_throttle + max_throttle, pwm_steer + max_steer , 0)
+					new_msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
+					try:
+						bus.send(new_msg)
+						warning = "None"
+					except:
+						warning = "Message not sent"
+					try:
+						can_message = int.from_bytes(bus.recv().data, 'little')
+					except:
+						warning = "Message not received"
+		except IOError:
+			warning = "Failed to find CAN bus"
 
 		rate.sleep()
 

@@ -29,7 +29,8 @@ topic_auto_throttle = "auto_throttle"
 topic_mode_switch = "mode_switch"
 topic_logging_switch = "logging_switch"
 
-sensitivity = 30 #used to be 100 on old motor
+sensitivity = 28 #used to be 100 on old motor
+
 
 
 def joy_callback(data):

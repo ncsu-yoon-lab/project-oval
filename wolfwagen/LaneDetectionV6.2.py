@@ -45,8 +45,12 @@ CAR_CENTER_COLOR = (180, 180, 0)
 # right_turn_counter = 3
 turns = [0]
 
+
+turn_val = None
+
 CAMERA_TOPIC_NAME = '/zed2i/zed_node/stereo/image_rect_color'
-# '/zed2i/zed_node/rgb_raw/image_raw_color'	
+#CAMERA_TOPIC_NAME = '/compml/image'
+# '/zed2i/zed_node/rgb_raw/image_raw_color'
 
 # Original image fram
 frame = None
@@ -70,6 +74,10 @@ pose = None
 def pose_callback(data):
 	global pose
 	pose = data
+
+def ld_signal_callback(data):
+	global turn_val
+	turn_val = data.data
 
 """
 Convert a quaternion into euler angles (roll, pitch, yaw)
@@ -101,7 +109,9 @@ def euler_from_quaternion(quat):
 
 # Use this if image is too dark
 def adjust_gamma(image, gamma=1.0):
-    invGamma = 1.0 / gamma
+    # 7/31 changed from 1.0 to 1.2, hopefully making the image overall brighter, thereby making the darker yellow
+	#of the track light enough to be picked up as white
+    invGamma = 1.2 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255
         for i in np.arange(0, 256)]).astype("uint8")
     return cv.LUT(image, table)
@@ -137,15 +147,89 @@ def crop(image, width, height, num):
 			image = image[int(height*(height_modifier)) : height-1, int(center/2)-100:int(center/2)+100]
 			return image
 
-	
+
+def turn_processing(is_at_intersection, cropped_color_frame):
+	global turn_val
+
+	# turning directions are : 0 = straight/dont turn, 1 = left, and right = 2
+	# is at intersection values are different from teh turning directions
+	turning = True
+
+	if turn_val is not None:
+		return cropped_color_frame, 0, turn_val
+
+	# Getting length of previous turns recorded
+	length = len(turns)
+
+	# Percentage of ones and twos in the recorded turns
+	ones = turns.count(1) / length
+	twos = turns.count(2) / length
+
+	# Getting a random number between 0 and 1
+	rand = random.random()
+
+	# Max size that the list can get to
+	max_size = 10
+
+	if is_at_intersection == 2:  # left
+		turning_direction = 1
+	elif is_at_intersection == 3:  # straight or left
+		if (rand > ones):
+			turning_direction = 1
+		else:
+			turning_direction = 0
+
+		turns.append(turning_direction)
+	elif is_at_intersection == 4:  # right
+		turning_direction = 2
+	elif is_at_intersection == 5:  # straight or right
+		if (rand > twos):
+			turning_direction = 2
+		else:
+			turning_direction = 0
+		turns.append(turning_direction)
+
+	elif is_at_intersection == 6:  # right or left
+		if (rand > ones):
+			turning_direction = 1
+		else:
+			turning_direction = 2
+		turns.append(turning_direction)
+
+	else:  # Any direction
+		if (rand > ones):
+			turning_direction = 1
+		elif (rand > twos):
+			turning_direction = 2
+		else:
+			turning_direction = 0
+
+		turns.append(turning_direction)
+
+	# Cuts the turns list if it gets too long
+	if length >= max_size:
+		# Remove the first half of the array
+		for x in range(5):
+			turns.pop(0)
+
+	# # Adds turn_direction to the turns list
+	# turns.append(turning_direction)
+
+	print("turning direction: ", turning_direction)
+	last_turn_time = time.time()
+
+	return (cropped_color_frame, 0, turning_direction)
+
+
 def process_img(frame):
 	global last_turn_time, left_crop_img, right_crop_img
+
+	frame = adjust_gamma(frame, 1)
 
 	org_color_frame = frame
 
 	img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-	
-	# frame = adjust_gamma(frame, 1)
+
 	height, width = img.shape	#720, 2560
 	img_small = crop(img,width,height,2)
 	img = crop(img,width,height,1)	
@@ -195,7 +279,7 @@ def process_img(frame):
 		# If it hasn't been more than 3 seconds since we did the last turning, don't check the following conditions
 
 		is_at_intersection = 0
-		#print("sum of front: " , img_small.sum())	
+
 		if img_small.sum() < 500000:
 			#print("front is open")
 			is_at_intersection +=1
@@ -212,73 +296,73 @@ def process_img(frame):
 
 		if is_at_intersection > 1:
 			#We start a turn
-
-			# turning directions are : 0 = straight/ dont turn, 1 = left, and right = 2
-			# is at intersection values are different from teh turning directions 
-			turning = True
-
-			# Getting length of previous turns recorded
-			length = len(turns)
-
-			# Percentage of ones and twos in the recorded turns
-			ones = turns.count(1)/length
-			twos = turns.count(2)/length
-
-			# Getting a random number between 0 and 1
-			rand = random.random()
-
-			# Max size that the list can get to
-			max_size = 10
-
-			if is_at_intersection == 2:	   # left
-				turning_direction = 1
-			elif is_at_intersection == 3:  # straight or left	
-				if (rand > ones):
-					turning_direction = 1
-				else:
-					turning_direction = 0	
-
-				turns.append(turning_direction)
-			elif is_at_intersection == 4:  # right
-				turning_direction = 2	
-			elif is_at_intersection == 5:  # straight or right
-				if (rand > twos):
-					turning_direction = 2
-				else:
-					turning_direction = 0
-				turns.append(turning_direction)
-
-			elif is_at_intersection == 6:  # right or left
-				if (rand > ones):
-					turning_direction = 1
-				else:
-					turning_direction = 2
-				turns.append(turning_direction)
-
-			else:  						   # Any direction
-				if (rand > ones):
-					turning_direction = 1
-				elif (rand > twos):
-					turning_direction = 2
-				else:
-					turning_direction = 0
-
-				turns.append(turning_direction)
-
-			# Cuts the turns list if it gets too long
-			if length >= max_size:
-				# Remove the first half of the array 
-				for x in range(5):
-					turns.pop(0)
-			
-			# # Adds turn_direction to the turns list
-			# turns.append(turning_direction)
-
-			#print("turning direction: ", turning_direction)
-			last_turn_time = time.time()
-
-			return (cropped_color_frame, 0, turning_direction)
-
+			return cropped_color_frame, is_at_intersection, True
+			#
+			# # turning directions are : 0 = straight/dont turn, 1 = left, and right = 2
+			# # is at intersection values are different from teh turning directions
+			# turning = True
+			#
+			# # Getting length of previous turns recorded
+			# length = len(turns)
+			#
+			# # Percentage of ones and twos in the recorded turns
+			# ones = turns.count(1)/length
+			# twos = turns.count(2)/length
+			#
+			# # Getting a random number between 0 and 1
+			# rand = random.random()
+			#
+			# # Max size that the list can get to
+			# max_size = 10
+			#
+			# if is_at_intersection == 2:	   # left
+			# 	turning_direction = 1
+			# elif is_at_intersection == 3:  # straight or left
+			# 	if (rand > ones):
+			# 		turning_direction = 1
+			# 	else:
+			# 		turning_direction = 0
+			#
+			# 	turns.append(turning_direction)
+			# elif is_at_intersection == 4:  # right
+			# 	turning_direction = 2
+			# elif is_at_intersection == 5:  # straight or right
+			# 	if (rand > twos):
+			# 		turning_direction = 2
+			# 	else:
+			# 		turning_direction = 0
+			# 	turns.append(turning_direction)
+			#
+			# elif is_at_intersection == 6:  # right or left
+			# 	if (rand > ones):
+			# 		turning_direction = 1
+			# 	else:
+			# 		turning_direction = 2
+			# 	turns.append(turning_direction)
+			#
+			# else:  						   # Any direction
+			# 	if (rand > ones):
+			# 		turning_direction = 1
+			# 	elif (rand > twos):
+			# 		turning_direction = 2
+			# 	else:
+			# 		turning_direction = 0
+			#
+			# 	turns.append(turning_direction)
+			#
+			# # Cuts the turns list if it gets too long
+			# if length >= max_size:
+			# 	# Remove the first half of the array
+			# 	for x in range(5):
+			# 		turns.pop(0)
+			#
+			# # # Adds turn_direction to the turns list
+			# # turns.append(turning_direction)
+			#
+			# print("turning direction: ", turning_direction)
+			# last_turn_time = time.time()
+			#
+			# return (cropped_color_frame, 0, turning_direction)
 
 
 
@@ -452,6 +536,9 @@ def main(args=None):
 	left_crop_publisher = node.create_publisher(Image, 'left_crop_lane_img', 1)
 	right_crop_publisher = node.create_publisher(Image, 'right_crop_lane_img', 1)
 
+	sub_ld_turnval = node.create_subscription(Int64, 'ld_turn_val', ld_signal_callback, 1)
+	pub_ld_turnsig = node.create_publisher(Int64, 'ld_turn_sig', 1)
+
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
@@ -534,8 +621,15 @@ def main(args=None):
 			else:
 				#Not in the turning mode
 				#Check if we need to start a turning or not
-				
-				final_image, CTE, turning_direction = process_img(frame)
+
+				cropped_frame, intersection_num, intersection_bool = process_img(frame)
+				if intersection_bool:
+					pub_ld_turnsig(1)
+					final_image, CTE, turning_direction = turn_processing(intersection_num, cropped_frame)
+				else:
+					final_image = cropped_frame
+					CTE = intersection_num
+					turning_direction = 0
 				
 				if turning_direction == 1 or turning_direction == 2:
 
@@ -567,7 +661,6 @@ def main(args=None):
 					steering_cmd = Kp * error + Ki * integral + Kd * derivative
 					prev_error = error
 
-					#print("CTE=", CTE)					
 					
 			if SHOW_IMAGES:
 				cv.imshow('Lane following', final_image)
@@ -585,12 +678,12 @@ def main(args=None):
 			H, W, _= final_image.shape
 			smaller_dim = ( int(W*0.2), int(H*0.2))
 			final_image = cv.resize(final_image, smaller_dim)
-			img_msg = br.cv2_to_imgmsg(final_image, encoding="bgra8")
+			img_msg = br.cv2_to_imgmsg(final_image, encoding="8UC3")
 			lane_img_publisher.publish(img_msg)
 
 			#left_crop_publisher.publish(br.cv2_to_imgmsg(left_crop_img, encoding="bgra8"))
 			#right_crop_publisher.publish(br.cv2_to_imgmsg(right_crop_img, encoding="bgra8"))
-		
+
 		if turning_direction == 0:
 			direction = "Straight"
 			turn = "Not"
