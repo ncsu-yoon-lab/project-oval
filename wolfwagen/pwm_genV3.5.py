@@ -23,7 +23,6 @@ stdscr = curses.initscr()
 
 teensy = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=.1)
 
-# TODO: pwm should be moved to Teensy microcontroller
 in_min = -100
 in_max = +100
 out_min = 6554
@@ -34,6 +33,7 @@ pwm_throttle_min = 1000
 
 pwm_steer_max = 140
 pwm_steer_min = 40
+
 
 throttle = 0
 steer = 0
@@ -123,7 +123,6 @@ def stop_sign_callback(data):
         # print("stop sign detected")
 
 
-# ROS-based voice command handler
 def voice_cmd_callback(data):
     global mode, throttle
     cmd = data.data
@@ -243,6 +242,7 @@ def main(args=None):
 
         # print("mode: %s, throttle: %d (auto: %d), steering: %d (auto: %d)" % ("Manual" if mode == 0 else "Auto", throttle, auto_throttle, steer, pid_steer))
 
+
 		th = throttle
 		st = steer
 		if (mode==1):
@@ -250,6 +250,7 @@ def main(args=None):
 			# pwm_steer = pid_steer
 		pwm_throttle = math.floor(pwm_throttle * (500.0 / 3277.0))
 		#pwm_steer = math.floor(pwm_steer * (100.0 / 3277.0) - 210.0)
+
 		if pwm_throttle > pwm_throttle_max:
 			pwm_throttle = pwm_throttle_max
 		if pwm_throttle < pwm_throttle_min:
@@ -271,6 +272,7 @@ def main(args=None):
 		write_to_teensy(pwm_throttle , pwm_steer)
 
 		print("auto throttle: %d, auto steering: %d" % (auto_throttle, pid_steer))
+
 		# if safe_distance_violation:
 		# 	stdscr.addstr(4, 5, '-- Safe distance violation (%.2f m)--' % lidar_min_dist)
 		# else:
@@ -292,3 +294,4 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+

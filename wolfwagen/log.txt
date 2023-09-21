@@ -1,0 +1,2922 @@
+(B)0[?1049h[1;24r[m[4l[H[J
+[6GMode: Manual
+[6GThrottle: 1500[4;1H.00  Steering: 90.0[5;1H0    PID Steering:
+0.0090.00900090009000900089.1090.900088.2091.8090.0088.2091.8090.009000Driver node
+no mqtt
+auto throttle: 0, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+9000900090009000900090009000900088.2091.8090.009000900089.1091.8090.00900090009000900090009089.1090.009089.1090.009089.1091.8090.0089.1090.900089.1090.0091.8090.0089.1090.00900088.2090.0089.1090.00900089.1090.009089.1090.0089.1090.0089.1090.0089.1090.00[2;12HAuto  
+74[6;6H[4;17H1
+
+91.80[4;16H89
+
+89.10[4;16H90
+
+90.00[4;16H89
+
+89.10[4;16H90
+
+90.00[4;17H2
+
+92.70[4;17H0
+
+90.90[4;17H4
+
+94.50[4;17H0
+
+90.00[4;17H4
+
+94.50[4;17H2
+
+92.70[4;17H3
+
+93.60[4;17H4
+
+94.50[4;17H3
+
+93.60[3;18H69[6;6H[4;17H9
+
+99.00[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H7
+
+97.20[4;17H9
+
+99.00[4;17H8
+
+98.10[4;17H2
+
+92.70[4;17H6
+
+96.30auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 93
+auto throttle: 14, auto steering: 93
+auto throttle: 14, auto steering: 99
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 99
+auto throttle: 14, auto steering: 98
+auto throttle: 14, auto steering: 92
+auto throttle: 14, auto steering: 96
+[4;17H5
+
+95.40[4;17H8
+
+98.10[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H4
+
+94.50[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H7
+
+97.20[4;17H4
+
+94.50[4;17H9
+
+99.90[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H4
+
+94.50[4;17H8
+
+98.10[4;17H7
+
+97.20[4;17H4
+
+94.50[4;17H7
+
+97.20[4;17H9
+
+99.00[4;17H7
+
+97.20[4;17H1
+
+91.80[3;18H74[4;16H102.[5;2H0
+102.60[4;16H93.0[5;2H 
+93.60[4;17H6
+
+96.30[4;17H8
+
+98.10[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H9
+
+99.00[4;17H4
+
+94.50[4;17H6
+
+96.30[4;17H7
+
+97.20[4;16H101.[5;2H0
+101.70[4;16H96.0[5;2H 
+96.30[4;17H8
+
+98.10[4;17H5
+
+95.40[4;17H4
+
+94.50[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H7
+
+97.20[4;17H3
+
+93.60[4;17H5
+
+95.40[4;17H9
+
+99.00[4;17H6
+
+96.30[4;17H9
+
+99.90[4;17H8
+
+98.10[4;17H9
+
+99.9000[4;17H8
+
+98.10[4;17H1
+
+91.80[4;16H101.[5;2H0
+101.70[4;16H98.0[5;2H 
+98.10[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H8
+
+98.10[4;17H3
+
+93.60[4;17H5
+
+95.40[4;17H3
+
+93.60[4;17H9
+
+99.90[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H2
+
+92.70[4;17H4
+
+94.50[4;17H3
+
+93.60[4;17H4
+
+94.50[4;17H8
+
+98.10[4;17H6
+
+96.30[4;17H8
+
+98.10[4;17H5
+
+95.40[4;16H101.[5;2H0
+101.70[4;16H99.0[5;2H 
+99.00[4;17H5
+
+95.40[4;17H8
+
+98.10[4;17H1
+
+91.80[4;17H5
+
+95.40[4;17H8
+
+98.10[4;17H9
+
+99.00[4;17H8
+
+98.10[4;17H6
+
+96.30[4;17H9
+
+99.90[4;17H4
+
+94.50[4;17H6
+
+96.30[4;17H7
+
+97.20[4;16H103.[5;2H0
+103.50[4;16H95.0[5;2H 
+95.40[4;17H7
+
+97.20[4;17H4
+
+94.50[4;17H1
+
+91.80[4;17H4
+
+94.50[4;17H9
+
+99.00[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H7
+
+97.20[4;17H1
+
+91.80[4;17H4
+
+94.50[4;17H5
+
+95.40[4;17H2
+
+92.70[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H8
+
+98.10[4;17H5
+
+95.40[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H3
+
+93.60[4;17H4
+
+94.50[4;17H6
+
+96.30[4;17H4
+
+94.50[4;17H0
+
+90.90[3;18H69[4;16H140.[5;2H0
+242.10157.50180.00[3;18H74[6;7H[4;16H90.0[5;2H 
+90.00[4;16H140.[5;2H0
+247.50157.50[4;16H40.0[5;2H 
+0.00[4;16H9
+
+90.00[4;16H140.[5;2H0
+247.50157.50[4;16H40.0[5;2H 
+0.00auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 98
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 94
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 95
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 94
+auto throttle: 14, auto steering: 99
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 96
+auto throttle: 14, auto steering: 94
+auto throttle: 14, auto steering: 98
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 94
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 99
+auto throttle: 14, auto steering: 97
+auto throttle: 14, auto steering: 91
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 90
+auto throttle: 14, auto steering: 242
+auto throttle: 14, auto steering: 157
+auto throttle: 14, auto steering: 157
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 14, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+[2;12HManual
+00[4;16H9
+
+[5G247.50157.500.0090.00[4;16H124.[5;2H0
+.00[4;17H40
+
+[6G[4;16H99.0[5;2H 
+.00[3;17H454[4;17H1
+
+[6G[3;18H1
+0
+
+[6G[3;17H359[6;6H[4;16H5
+
+[6G[4;16H4
+
+[6G0.00[4;16H82
+
+[5G[4;17H8
+
+[5G[4;16H90
+
+[5G[3;17H500[4;16H107.[5;2H0
+00[4;17H2
+
+[5G[4;17H40
+
+[5G[3;18H44[6;5H[3;18H79[6;5H[3;18H84[6;5H[3;19H9[6;5H[3;19H4[6;5H[3;18H79[6;5H247.50157.500.00[3;19H4[6;1H90.00[3;18H6[6;6H[4;17H24
+
+[6G[4;16H90.0[5;2H 
+247.500.00[3;18H59[6;1H164.70121.50118.80[3;19H4[6;2H08.90[3;18H39[6;2H16.10[3;18H14[6;3H5.20[3;18H09[6;3H7.90[3;19H4[6;2H08.90[4;16H124.[5;2H0
+24.20[3;19H9[4;17H40
+
+117.90114.30116.10111.60113.40114.30[3;18H14[6;7H[3;18H2[6;7H[3;19H9[6;1H0.00[3;18H44[6;5H[3;18H5[6;5H[3;19H9[6;5H[3;18H9[6;5H[3;17H614[6;5H[3;17H599[6;5H[3;18H7[6;5H[3;18H84[6;5H[3;18H9[6;5H[3;19H9[6;5H[3;19H4[6;5H[3;18H00[4;16H90.0[5;2H 
+0063.9081.90[2;12HAuto  
+74[4;16H81
+
+[6G00[4;17H5
+
+85.50[4;17H1
+
+81.90[4;17H3
+
+83.70[4;17H2
+
+82.80[4;17H3
+
+83.70[4;17H4
+
+84.60[4;17H3
+
+83.70[4;17H4
+
+84.60[4;16H90
+
+90.00[4;16H89
+
+89.10[4;17H7
+
+87.30[4;16H90
+
+90.00[4;16H87
+
+87.30[4;16H94
+
+94.50[4;17H0
+
+90.90[4;16H102.[5;2H0
+102.60[4;18H0
+
+100.80[4;17H1
+
+110.70[4;17H03
+
+103.50[4;16H90.0[5;2H 
+90.90[4;17H3
+
+93.60[4;17H9
+
+99.00[4;17H7
+
+97.20[4;16H104.[5;2H0
+104.40[4;17H26
+
+126.90[4;17H40
+
+217.80157.50[4;16H40.0[5;2H 
+27.00[4;16H106.[5;2H0
+106.20[4;18H3
+
+103.50[4;18H2
+
+102.60[4;16H99.0[5;2H 
+99.900090[4;17H7
+
+97.20[4;16H109.[5;2H0
+109.80[4;18H8
+
+108.00[4;18H5
+
+105.30[4;18H8
+
+108.0090[4;16H99.0[5;2H 
+99.90[4;16H104.[5;2H0
+104.40[4;17H40
+
+227.70[4;16H40.0[5;2H 
+1.60[4;16H113.[5;2H0
+113.40[4;17H05
+
+105.30[4;17H12
+
+112.50[4;17H03
+
+103.50[4;18H4
+
+104.40[4;18H5
+
+105.30[4;17H17
+
+117.00[4;18H2
+
+112.50[4;18H3
+
+113.40[4;18H1
+
+111.60[4;18H2
+
+112.50[4;18H0
+
+110.70[4;17H08
+
+108.90[4;17H10
+
+110.70[4;17H07
+
+107.10[4;18H9
+
+109.80[4;18H2
+
+102.60[4;18H6
+
+106.20[4;16H99.0[5;2H 
+99.00[4;16H102.[5;2H0
+102.60[4;18H1
+
+101.70[4;18H4
+
+104.40[4;18H0
+
+100.80[4;18H1
+
+101.70[4;18H5
+
+105.30[4;18H2
+
+102.60[4;18H3
+
+103.50[4;18H6
+
+106.20[4;16H99.0[5;2H 
+99.90[4;16H100.[5;2H0
+100.80[4;18H1
+
+101.70[4;16H99.0[5;2H 
+99.90[4;16H105.[5;2H0
+105.30[4;17H16
+
+116.10[4;17H08
+
+108.90[4;16H99.0[5;2H 
+99.00[4;16H106.[5;2H0
+106.20[4;18H7
+
+107.10[4;18H5
+
+105.30[4;18H6
+
+106.20[4;17H13
+
+113.40auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 164
+auto throttle: 15, auto steering: 121
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 115
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 124
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 113
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 63
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 85
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 82
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 84
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 84
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 110
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 126
+auto throttle: 15, auto steering: 217
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 27
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 109
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 227
+auto throttle: 15, auto steering: 21
+auto throttle: 15, auto steering: 113
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 112
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 112
+auto throttle: 15, auto steering: 113
+auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 112
+auto throttle: 15, auto steering: 110
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 110
+auto throttle: 15, auto steering: 107
+auto throttle: 15, auto steering: 109
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 107
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 113
+[4;18H1
+
+111.60[4;17H09
+
+109.80[4;18H8
+
+108.90[4;17H11
+
+111.60[4;17H04
+
+104.40[4;18H8
+
+108.00[4;18H5
+
+105.30[4;18H7
+
+107.10[4;17H14
+
+114.30[4;17H09
+
+109.80[4;18H7
+
+107.10[4;18H8
+
+108.90[4;18H2
+
+102.60[4;18H6
+
+106.20[4;18H3
+
+103.50[4;16H99.0[5;2H 
+99.00[4;16H100.[5;2H0
+100.80[4;16H99.0[5;2H 
+99.9000[4;17H6
+
+96.30[4;17H8
+
+98.10[4;17H3
+
+93.60[4;17H6
+
+96.30[4;17H3
+
+93.60[4;17H5
+
+95.40[4;17H0
+
+90.90[4;17H8
+
+98.10[4;17H0
+
+90.90[4;17H3
+
+93.60[4;17H4
+
+94.50[4;16H86
+
+86.40[4;16H94
+
+94.50[4;17H2
+
+92.70[4;16H88
+
+88.20[4;16H100.[5;2H0
+100.80[4;16H96.0[5;2H 
+96.30[4;17H5
+
+95.40[4;17H9
+
+99.00[4;17H6
+
+96.30[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H7
+
+97.20[4;17H3
+
+93.60[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H0
+
+90.90[4;17H4
+
+94.50[4;17H3
+
+93.60[4;17H9
+
+99.90[4;17H6
+
+96.30[4;17H2
+
+92.70[4;17H5
+
+95.40[4;17H2
+
+92.70[4;17H0
+
+90.00[4;17H3
+
+93.60[4;17H2
+
+92.70[4;17H4
+
+94.50[4;17H5
+
+95.40[4;17H4
+
+94.50[4;17H2
+
+92.70[4;16H140.[5;2H0
+241.20157.50180.00247.50157.50[4;16H40.0[5;2H 
+-3.60[4;16H89
+
+89.10[4;16H76
+
+76.50[4;16H67
+
+67.50[4;17H8
+
+68.40[4;16H72
+
+72.90[4;16H66
+
+66.60[4;16H81
+
+81.90[4;16H95
+
+95.40[4;16H84
+
+84.60[4;17H7
+
+87.30[4;16H95
+
+95.40[4;17H0
+
+90.00[4;16H140.[5;2H0
+247.50157.50[4;16H40.0[5;2H 
+27.00[4;16H100.[5;2H0
+100.80[4;17H4
+
+232.20157.50180.00[4;16H90.0[5;2H 
+90.00[4;16H140.[5;2H0
+247.50157.50[2;12HManual
+00[4;16H90.0[5;2H 
+7.500.00247.50157.500.00247.50157.50180.00247.50157.50auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 109
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 107
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 109
+auto throttle: 15, auto steering: 107
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 86
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 241
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: -3
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 76
+auto throttle: 15, auto steering: 67
+auto throttle: 15, auto steering: 68
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 66
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 84
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 27
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 232
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+[3;17H484[6;7H[3;18H29[6;7H[3;17H37[6;7H[3;18H5
+111.[5;2H0
+7.50[4;17H29
+
+[7G[4;17H37
+
+[7G[4;18H9
+
+[7G[4;17H40
+
+[7G0.0090.00180.00[4;17H34
+
+[7G[4;18H2
+
+[7G[4;17H23
+
+[7G[4;17H09
+
+[7G[4;16H97.0[5;2H 
+0.00[3;17H500[4;17H0
+
+[7G[3;18H24[4;16H51
+
+22.50[3;18H49[4;16H40
+
+63.00[3;18H74[6;2H2.10[3;18H99[6;2H0.30[3;17H62
+
+
+63.90[3;18H34[6;2H7.50[4;16H6
+
+64.80[3;17H519[4;16H9
+
+[6G[3;18H00[6;2H5.7074.70[3;18H39[6;1H69.30[3;17H60
+
+
+65.70[3;18H2
+
+
+69.30[3;19H4[6;1H71.10[3;17H50
+
+
+69.30[3;19H0[6;6H72.9071.1064.8073.8070.2067.5069.3072.0069.3071.1070.2068.4070.20[2;12HAuto  
+74[4;16H7
+
+[6G[4;16H65
+
+65.70[4;16H70
+
+70.20[4;16H69
+
+69.30[4;16H73
+
+73.80[4;17H5
+
+75.60[4;17H3
+
+73.80[4;17H7
+
+77.40[4;17H6
+
+76.50[4;17H2
+
+72.00[4;17H3
+
+73.80[4;17H9
+
+79.20[4;16H80
+
+80.10[4;16H78
+
+78.30[4;16H90
+
+90.00[4;16H88
+
+88.20[4;16H90
+
+90.90[4;17H6
+
+96.30[4;17H8
+
+98.10[4;17H4
+
+94.50[4;17H9
+
+99.90[4;16H101.[5;2H0
+101.70[4;16H96.0[5;2H 
+96.30[4;17H8
+
+98.10[4;16H102.[5;2H0
+102.60[4;18H4
+
+104.40[4;16H99.0[5;2H 
+99.90[4;16H100.[5;2H0
+100.80[4;18H3
+
+103.50[4;17H40
+
+230.40157.50[4;16H40.0[5;2H 
+0.00[4;16H9
+
+90.00[2;12HManual
+00[6;6H[3;17H484[6;6H[3;18H09[6;6H[3;17H35[6;6H[4;16H125.[5;2H0
+.00[4;17H40
+
+[6G[4;17H24
+
+[6G[4;16H90.0[5;2H 
+.00[4;16H84
+
+[6G[4;16H40
+
+[6G[4;16H52
+
+[6G[4;16H90
+
+[6G[4;16H140.[5;2H0
+.00[4;17H25
+
+[6G[3;17H500[4;16H90.0[5;2H 
+.00[4;16H4
+
+[6G-67.5022.50[3;18H19[6;6H[3;18H4[6;6H[3;18H64[6;6H[3;19H9[6;6Hauto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 63
+auto throttle: 15, auto steering: 62
+auto throttle: 15, auto steering: 60
+auto throttle: 15, auto steering: 63
+auto throttle: 15, auto steering: 67
+auto throttle: 15, auto steering: 64
+auto throttle: 15, auto steering: 64
+auto throttle: 15, auto steering: 65
+auto throttle: 15, auto steering: 74
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 65
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 71
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 71
+auto throttle: 15, auto steering: 64
+auto throttle: 15, auto steering: 73
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 67
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 71
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 68
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 65
+auto throttle: 15, auto steering: 70
+auto throttle: 15, auto steering: 69
+auto throttle: 15, auto steering: 73
+auto throttle: 15, auto steering: 75
+auto throttle: 15, auto steering: 75
+auto throttle: 15, auto steering: 73
+auto throttle: 15, auto steering: 77
+auto throttle: 15, auto steering: 76
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 73
+auto throttle: 15, auto steering: 79
+auto throttle: 15, auto steering: 80
+auto throttle: 15, auto steering: 78
+auto throttle: 15, auto steering: 78
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 230
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: -67
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+[3;18H74[6;6H[3;18H69[6;6H[3;18H5[6;6H[3;18H4[6;6H[3;18H34[6;6H[3;18H29[6;6H[3;19H4[6;6H[3;18H39[6;6H[3;18H64[6;6H[3;18H79[6;6H[3;18H94[6;6H[3;17H61[6;6H[3;18H2[6;6H[3;19H9[6;6H[3;18H0[6;6H[3;17H57[6;6H[3;18H5[6;6H[3;18H44[6;6H[3;18H29[6;6H[3;18H04[6;6H[3;19H0[6;6H[3;19H9[6;6H[3;18H34[6;1H180.00[3;18H59[6;1H0.00[3;18H74[6;5H[3;19H9[6;5H[3;18H84[6;5H[3;18H79[6;5H[3;19H4[6;5H[3;18H69[6;5H[3;18H74[6;1H-67.5022.50[3;19H9[6;6H[3;18H84[6;6H[3;18H7
+66
+
+[6G[3;18H00[4;16H90
+
+[6G[4;16H121.[5;2H0
+.50[4;17H40
+
+[6G337.50157.50[4;16H90.0[5;2H 
+7.50[2;12HAuto  
+74[4;16H71
+
+71.10[4;16H118.[5;2H0
+118.80[4;17H21
+
+121.50[4;18H3
+
+123.30[4;18H5
+
+125.10[4;18H3
+
+123.30[4;17H19
+
+119.70[4;18H6
+
+116.10[4;18H7
+
+117.0090[4;18H6
+
+116.10[4;18H4
+
+114.30[4;18H5
+
+115.20[4;18H2
+
+112.50[4;18H4
+
+114.30[4;18H1
+
+111.60[4;17H09
+
+109.80[4;17H14
+
+114.30[4;18H2
+
+112.50[4;18H8
+
+118.80[4;18H4
+
+114.30[4;18H5
+
+115.20[4;17H08
+
+108.00[4;18H9
+
+109.80[4;18H5
+
+105.30[4;18H3
+
+103.50[4;18H6
+
+106.20[4;16H98.0[5;2H 
+98.10[4;17H9
+
+99.00[4;16H101.[5;2H0
+101.70[4;16H95.0[5;2H 
+95.40[4;17H6
+
+96.30[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H6
+
+96.30[4;17H4
+
+94.50[4;17H5
+
+95.40[4;17H7
+
+97.20[4;17H0
+
+90.00[4;17H3
+
+93.60[4;17H4
+
+94.50[4;17H2
+
+92.70[4;17H3
+
+93.60[4;17H1
+
+91.80[4;17H7
+
+97.20[4;17H4
+
+94.50[4;17H9
+
+99.90[4;17H6
+
+96.30[4;17H7
+
+97.20[4;17H4
+
+94.50[4;17H5
+
+95.40[4;16H104.[5;2H0
+104.40[4;18H1
+
+101.70[4;16H96.0[5;2H 
+96.30[4;17H8
+
+98.10[4;17H9
+
+99.90[4;17H6
+
+96.30[4;17H8
+
+98.10[4;16H40
+
+-78.3022.50[4;16H140.[5;2H0
+180.00[4;16H40.0[5;2H 
+-67.5022.50[4;16H140.[5;2H0
+180.00[4;16H90.0[5;2H 
+90.00[4;16H4
+
+-67.5022.50[4;16H140.[5;2H0
+169.20[4;16H84.0[5;2H 
+84.60[4;17H5
+
+85.50[4;17H3
+
+83.70[4;16H91
+
+91.80[4;16H82
+
+82.80[4;17H5
+
+85.50[4;17H9
+
+89.10[4;17H7
+
+87.30[4;16H79
+
+79.20[4;16H83
+
+83.70[4;16H76
+
+76.50[4;16H67
+
+67.50[4;17H8
+
+68.40[4;16H72
+
+72.0090[4;17H3
+
+73.80[4;17H7
+
+77.40[4;17H4
+
+74.70[4;16H85
+
+85.50[4;17H8
+
+88.20[4;17H1
+
+81.0090[4;16H96
+
+96.30[4;16H85
+
+85.50[4;16H90
+
+90.90[4;16H89
+
+89.10[4;16H91
+
+91.80[4;17H3
+
+93.60[4;17H1
+
+91.80[4;17H5
+
+95.40[4;17H4
+
+94.50[4;17H5
+
+95.40[4;17H2
+
+92.70[4;17H9
+
+99.00[4;17H6
+
+96.30[4;17H2
+
+92.70[4;17H6
+
+96.30[4;17H0
+
+90.00[4;17H2
+
+92.70[4;17H1
+
+91.80[4;17H4
+
+94.50[4;17H5
+
+95.40[4;17H3
+
+93.60auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: -67
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 337
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 71
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 121
+auto throttle: 15, auto steering: 123
+auto throttle: 15, auto steering: 125
+auto throttle: 15, auto steering: 123
+auto throttle: 15, auto steering: 119
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 115
+auto throttle: 15, auto steering: 112
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 109
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 112
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 115
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 109
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 106
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: -78
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: -67
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: -67
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 169
+auto throttle: 15, auto steering: 84
+auto throttle: 15, auto steering: 85
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 82
+auto throttle: 15, auto steering: 85
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 79
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 76
+auto throttle: 15, auto steering: 67
+auto throttle: 15, auto steering: 68
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 73
+auto throttle: 15, auto steering: 77
+auto throttle: 15, auto steering: 74
+auto throttle: 15, auto steering: 85
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 85
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 93
+[4;17H6
+
+96.30[4;17H9
+
+99.90[4;17H6
+
+96.30[4;17H8
+
+98.10[4;17H5
+
+95.40[4;17H9
+
+99.90[4;17H8
+
+98.10[4;17H9
+
+99.00[4;17H8
+
+98.10[4;17H3
+
+93.60[4;17H6
+
+96.30[4;17H2
+
+92.70[4;16H100.[5;2H0
+100.80[4;16H97.0[5;2H 
+97.20[4;16H40
+
+-77.4022.500.00[4;16H104.[5;2H0
+104.40[4;18H5
+
+105.30[4;16H99.0[5;2H 
+99.90[4;16H111.[5;2H0
+111.60[4;18H7
+
+117.90[4;17H03
+
+103.50[4;18H8
+
+108.00[4;16H92.0[5;2H 
+92.70[4;17H3
+
+93.60[4;16H89
+
+89.10[4;16H93
+
+93.60[4;16H78
+
+78.30[4;16H84
+
+84.60[4;16H75
+
+75.60[4;16H81
+
+81.90[4;16H74
+
+74.70[4;16H80
+
+80.10[4;16H78
+
+78.30[4;16H86
+
+86.40[4;17H2
+
+82.80[4;17H1
+
+81.90[4;17H5
+
+85.50[4;17H3
+
+83.70[4;16H92
+
+92.70[4;16H88
+
+88.20[4;16H91
+
+91.80[4;17H6
+
+96.30[4;17H2
+
+92.70[4;17H8
+
+98.10[4;17H4
+
+94.50[4;17H6
+
+96.30[4;17H5
+
+95.40[4;17H3
+
+93.60[4;17H1
+
+91.80[4;17H4
+
+94.50[4;17H2
+
+92.70[4;17H3
+
+93.60[4;17H1
+
+91.80[4;17H0
+
+90.00[4;17H1
+
+91.80[4;17H5
+
+95.40[4;17H0
+
+90.00[4;17H7
+
+97.20[4;17H3
+
+93.60[4;16H40
+
+-72.9022.500.00[4;16H72
+
+72.00[4;16H88
+
+88.20[4;16H91
+
+91.80[4;16H88
+
+88.20[4;16H96
+
+96.30[4;17H7
+
+97.20[4;17H6
+
+96.30[4;17H3
+
+93.60[4;17H4
+
+94.50[4;17H0
+
+90.00[4;16H87
+
+87.30[4;16H90
+
+90.00[4;16H84
+
+84.60[4;17H7
+
+87.30[4;17H2
+
+82.80[4;16H90
+
+90.00[4;16H86
+
+86.40[4;17H7
+
+87.30[4;16H91
+
+91.80[4;16H89
+
+89.10[4;16H90
+
+90.00[4;17H4
+
+94.50[4;17H0
+
+90.00[4;17H1
+
+91.80[4;17H3
+
+93.60[4;17H2
+
+92.70[4;17H3
+
+93.60[4;16H101.[5;2H0
+101.70[4;16H97.0[5;2H 
+97.20[4;16H100.[5;2H0
+100.80[4;16H92.0[5;2H 
+92.70[4;17H1
+
+91.80[4;17H4
+
+94.50[4;17H8
+
+98.10[4;17H9
+
+99.90[4;16H102.[5;2H0
+102.60[4;16H99.0[5;2H 
+99.90[4;17H3
+
+93.60[4;17H9
+
+99.00[4;17H0
+
+90.00[4;17H4
+
+94.50[4;17H6
+
+96.30[4;17H0
+
+90.90[4;17H7
+
+97.20[4;17H5
+
+95.40[4;17H9
+
+99.00[4;16H140.[5;2H0
+237.60157.50[4;16H40.0[5;2H 
+0.00[4;16H9
+
+90.00[4;16H140.[5;2H0
+180.00247.50157.50[4;16H73.0[5;2H 
+73.80[4;16H116.[5;2H0
+116.10[4;18H8
+
+118.80[4;18H5
+
+115.20[4;18H1
+
+111.60[4;18H3
+
+113.40[4;18H4
+
+114.30[2;12HManual
+00[4;16H90.0[5;2H 
+7.00115.20117.90116.10118.80115.20120.60117.90119.70118.80117.90auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: -77
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 104
+auto throttle: 15, auto steering: 105
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 103
+auto throttle: 15, auto steering: 108
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 78
+auto throttle: 15, auto steering: 84
+auto throttle: 15, auto steering: 75
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 74
+auto throttle: 15, auto steering: 74
+auto throttle: 15, auto steering: 80
+auto throttle: 15, auto steering: 78
+auto throttle: 15, auto steering: 78
+auto throttle: 15, auto steering: 86
+auto throttle: 15, auto steering: 82
+auto throttle: 15, auto steering: 81
+auto throttle: 15, auto steering: 85
+auto throttle: 15, auto steering: 83
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: -72
+auto throttle: 15, auto steering: 22
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 72
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 88
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 84
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 82
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 86
+auto throttle: 15, auto steering: 87
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 89
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 101
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 100
+auto throttle: 15, auto steering: 92
+auto throttle: 15, auto steering: 91
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 98
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 102
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 93
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 94
+auto throttle: 15, auto steering: 96
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 97
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 95
+auto throttle: 15, auto steering: 99
+auto throttle: 15, auto steering: 237
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 0
+auto throttle: 15, auto steering: 90
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 180
+auto throttle: 15, auto steering: 247
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 157
+auto throttle: 15, auto steering: 73
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 115
+auto throttle: 15, auto steering: 111
+auto throttle: 15, auto steering: 113
+auto throttle: 15, auto steering: 114
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 115
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 116
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 115
+auto throttle: 15, auto steering: 120
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 117
+auto throttle: 15, auto steering: 119
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 118
+auto throttle: 15, auto steering: 117
+118.80

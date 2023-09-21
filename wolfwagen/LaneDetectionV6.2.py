@@ -269,6 +269,8 @@ def process_img(frame):
 	left_crop_img = left_crop
 	right_crop_img = right_crop
 
+	#print("leftSUm: " +  str(left_crop.sum()) + " " + "rightSsum: " + str(right_crop.sum()))
+
 	if SHOW_IMAGES:
 		cv.imshow('intersection box' , img_small)
 		cv.waitKey(1)
@@ -277,7 +279,7 @@ def process_img(frame):
 		# If it hasn't been more than 3 seconds since we did the last turning, don't check the following conditions
 
 		is_at_intersection = 0
-		#print("sum of front: " , img_small.sum())
+
 		if img_small.sum() < 500000:
 			#print("front is open")
 			is_at_intersection +=1
@@ -361,7 +363,6 @@ def process_img(frame):
 			# last_turn_time = time.time()
 			#
 			# return (cropped_color_frame, 0, turning_direction)
-
 
 
 
@@ -660,7 +661,6 @@ def main(args=None):
 					steering_cmd = Kp * error + Ki * integral + Kd * derivative
 					prev_error = error
 
-					#print("CTE=", CTE)
 					
 			if SHOW_IMAGES:
 				cv.imshow('Lane following', final_image)
