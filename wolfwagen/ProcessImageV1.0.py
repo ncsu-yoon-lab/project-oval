@@ -5,7 +5,7 @@ Simplified LaneDetection that is constantly running lane detection and intersect
 
 Intersection detection is constantly running:
 - When intersection is detected (within some confidence) it will turn or stay straight
-    - Runs turning or straight command for a set amount of time then checks for new intersection
+	- Runs turning or straight command for a set amount of time then checks for new intersection
 - When intersection is not detected it will stay within the lines detected (within some confidence) using PID
 
 Both will output steering values that will be communicated over CAN to the Teensy
@@ -25,6 +25,7 @@ import math
 import random
 import threading
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import String
 
 stdscr = curses.initscr()
 SHOW_IMAGES = True
@@ -35,6 +36,10 @@ DRAW_LINE_IMG = True
 frame = None # frame is the OpenCV image
 pose = None # pose is the orientation of the ZED
 previous_error = 0 # error for PID
+message = ""
+turning = ""
+steer = 0
+previous_error = 0
 
 last_frame_time = time.time() # Used to compare the times in between frames
 br = CvBridge() # Used to convert ROS2 frames to OpenCV frames
@@ -44,141 +49,164 @@ br = CvBridge() # Used to convert ROS2 frames to OpenCV frames
 ########################### Callbacks ############################
 
 def image_callback(msg):
-    # Receives ROS2 message of frame from ZED and converts it into OpenCV frame and stores last_frame_time
-    global frame, last_frame_time
-    frame = br.imgmsg_to_cv2(msg)
-    last_frame_time = time.time()
-    
+	# Receives ROS2 message of frame from ZED and converts it into OpenCV frame and stores last_frame_time
+	global frame, last_frame_time
+	frame = br.imgmsg_to_cv2(msg)
+	last_frame_time = time.time()
+
+
+def calib_callback(msg):
+	global camera_info
+	camera_info = msg
+	print(type(msg))
+	print(msg)
 
 
 ########################### Image Processing ############################
 
 def adjust_gamma(image , gamma = 1.0):
-    # Adjusts the brightness of frame to make it easier or harder to see colors
-    # Increasing gamma makes it darker, decreasing gamma makes it brighter
-    invGamma = 1.0 / gamma
-    table = np.array([((i / 255.0) ** invGamma) * 255
-                      for i in np.arange(0 , 256)]).astype("uint8")
-    return cv.LUT(image , table)
+	# Adjusts the brightness of frame to make it easier or harder to see colors
+	# Increasing gamma makes it darker, decreasing gamma makes it brighter
+	invGamma = 1.0 / gamma
+	table = np.array([((i / 255.0) ** invGamma) * 255
+					  for i in np.arange(0 , 256)]).astype("uint8")
+	return cv.LUT(image , table)
 
 def crop_main(image , width , height):
-    # Crops the main image to just see the road ahead
-    center = int(width / 2)
-    cut_width = int(width / 4)
-    image = np.delete(image , slice(center - cut_width , center + cut_width) , 1)
+	# Crops the main image to just see the road ahead
+	center = int(width / 0.5)
+	cut_width = int(width / 4)
+	image = np.delete(image , slice(center - cut_width , center + cut_width) , 1)
 
-    image  = image[int(height / 2) : height - 1 , :]
-    return image
+	image  = image[int(height / 2) : height - 1 , :]
+	return image
 
 def crop_front(image , width , height):
-    # Crops the front image to see if there is a line in front at an intersection
-    center = int(width / 2)
-    cut_width = int(width / 4)
-    height_modifier = 0.43 # Use to modify the height of crop_front image to check for going straight at intersection
-    image = np.delete(image , slice(center - cut_width , center + cut_width) , 1)
-    
-    # Maybe crop this exact amount where left and right crop are
-    image = image[int(height * (height_modifier)) : height - 1 , int(center/2)-100:int(center/2)+100]
+	# Crops the front image to see if there is a line in front at an intersection
+	center = int(width / 2)
+	cut_width = int(width / 4)
+	height_modifier = 0.5 # Use to modify the height of crop_front image to check for going straight at intersection
+	image = np.delete(image , slice(center - cut_width , center + cut_width) , 1)
+	
+	# Maybe crop this exact amount where left and right crop are
+	image = image[int(height * (height_modifier)) : height - 1 , int(center/2)-100:int(center/2)+100]
+	return image
 
 def process_img(frame):
-    # Process the images to change the colors and crop them
-    global last_turn_time , left_crop_img , right_crop_img
+	# Process the images to change the colors and crop them
 
-    img = cv.cvtColor(frame , cv.COLOR_BGR2GRAY)
-    height , width = img.shape # 720 , 2560
+	
+	global last_turn_time , left_crop_img , right_crop_img , lane_on_right , lane_on_left , keep_turning
 
-    front_image = crop_front(img , width , height)
-    main_image = crop_main(img , width , height)
+	global gamma
+	global gamma_debug
 
-    color_frame_front = front_image
-    bw_frame_front = cv.cvtColor(front_image , cv.COLOR_BGR2GRAY)
-    color_frame_main = main_image
-    bw_frame_main = cv.cvtColor(main_image , cv.COLOR_BGR2GRAY)
 
-    height , width = main_image.shape  # Cropped size
+	
+	#img = cv.cvtColor(frame , cv.COLOR_BGR2GRAY)
+	img = frame
 
-    # Remove noise
-    kernel_size = 7
-    bw_frame_main = cv.GaussianBlur(bw_frame_main , (kernel_size , kernel_size) , 0)
-    bw_frame_front = cv.GaussianBlur(bw_frame_front , (kernel_size , kernel_size) , 0)
+	if(gamma_debug):
+		img = adjust_gamma(img, gamma)
+		gamma += 0.01
+	
+	height , width , _ = img.shape # 720 , 2560
+	
+	front_image = crop_front(img , width , height)
+	main_image = crop_main(img , width , height)
+	color_frame_main = main_image
 
-    # Thresholding. If seeing some noise, increase the lower threshold
-    lower_threshold = 160
-    upper_threshold = 255
-    _, bw_frame_main = cv.threshold(bw_frame_main , lower_threshold , upper_threshold , cv.THRESH_BINARY)
-    _, bw_frame_front = cv.threshold(bw_frame_front , lower_threshold , upper_threshold , cv.THRESH_BINARY)
+	bw_frame_front = cv.cvtColor(front_image , cv.COLOR_BGR2GRAY)
+	bw_frame_front = front_image
 
-    # Canny edge detection
-    min = 70
-    max = 200
-    edges_frame = cv.Canny(bw_frame_main , min , max)
+	bw_frame_main = cv.cvtColor(main_image , cv.COLOR_BGR2GRAY)
+	bw_frame_main = main_image
 
-    # Edges could be too thin (which could make it difficult for Hough Transform to detect lines)
+	height , width, _ = main_image.shape  # Cropped size
+
+	# Remove noise
+	kernel_size = 7
+	bw_frame_main = cv.GaussianBlur(bw_frame_main , (kernel_size , kernel_size) , 0)
+	bw_frame_front = cv.GaussianBlur(bw_frame_front , (kernel_size , kernel_size) , 0)
+
+	# Thresholding. If seeing some noise, increase the lower threshold
+	lower_threshold = 160
+	upper_threshold = 255
+	_, bw_frame_main = cv.threshold(bw_frame_main , lower_threshold , upper_threshold , cv.THRESH_BINARY)
+	_, bw_frame_front = cv.threshold(bw_frame_front , lower_threshold , upper_threshold , cv.THRESH_BINARY)
+
+	# Canny edge detection
+	min = 70
+	max = 200
+	edges_frame = cv.Canny(bw_frame_main , min , max)
+
+	# Edges could be too thin (which could make it difficult for Hough Transform to detect lines)
 	# So, make the edges thicker
-    kernel = cv.getStructuringElement(cv.MORPH_RECT, (3,3))
-    edges_frame = cv.dilate(edges_frame, kernel, iterations=1)
+	kernel = cv.getStructuringElement(cv.MORPH_RECT, (3,3))
+	edges_frame = cv.dilate(edges_frame, kernel, iterations=1)
 
-    # Cropping to check for intersection openings
-    left_crop_image = edges_frame[170 : , : 300]
-    right_crop_image = edges_frame[170 : , 700 :]
+	# Cropping to check for intersection openings
+	left_crop_image = edges_frame[100 : 300, 0 : 200]
+	right_crop_image = edges_frame[100 : 300, 430 : 630]
 
 	# Getting the values from checking the lanes and intersections
-    intersection_detection , turn , lane_on_left , lane_on_right = check_intersection(left_crop_image , right_crop_image , bw_frame_front)
+	intersection_detection , turn , lane_on_left , lane_on_right = check_intersection(left_crop_image , right_crop_image , bw_frame_front)
 
-    final_frame , CTE , keep_turning = check_lanes(edges_frame , color_frame_main)
+	final_frame , CTE , keep_turning = check_lanes(edges_frame , color_frame_main)
 
 	# Option of showing all the images, can be toggled at top
-    if SHOW_IMAGES:
-        cv.imshow('main color' , color_frame_main)
-        cv.imshow('main black and white' , bw_frame_main)
-        cv.imshow('front color' , color_frame_front)
-        cv.imshow('front black and white' , bw_frame_front)
-        cv.imshow('edges frame' , edges_frame)
-        cv.imshow('right crop' , right_crop_image)
-        cv.imshow('left crop' , left_crop_image)
-        cv.imshow('final frame' , final_frame)
-        cv.waitKey(1)
+	if SHOW_IMAGES:
+		#cv.imshow('main color' , color_frame_main)
+		#cv.imshow('main black and white' , bw_frame_main)
+		#cv.imshow('front color' , color_frame_front)
+		cv.imshow('front black and white' , bw_frame_front)
+		cv.imshow('edges frame' , edges_frame)
+		cv.imshow('right crop' , right_crop_image)
+		cv.imshow('left crop' , left_crop_image)
+		cv.imshow('final frame' , final_frame)
+		cv.waitKey(1)
 	
-    return intersection_detection , turn , CTE , keep_turning , lane_on_left , lane_on_right
+	return intersection_detection , turn , CTE , keep_turning , lane_on_left , lane_on_right
 
 
 
 ########################### Intersection Processing ############################
 
 def check_intersection(left , right , front):
-    openings = np.array([0 , 0 , 0])
-    
-    intersection_check = False
-    lane_on_left = False
-    lane_on_right = False
-    
-    if left.sum() < 1000:
+	openings = np.array([0 , 0 , 0])
+	turn = 0
+	
+	intersection_check = False
+	lane_on_left = True
+	lane_on_right = True
+
+	
+	if left.sum() < 1000:
 		# Lane is not detected on the left frame
-
-        openings[0] = 1
-        lane_on_left = True
-        intersection_check = True
+		openings[0] = 1
+		lane_on_left = False
+		intersection_check = True
 	
-    if right.sum() < 1000:
+	if right.sum() < 1000:
 		# Lane is not detected on the right frame
-        openings[2] = 1
-        lane_on_right = True
-        intersection_check = True
+		openings[2] = 1
+		lane_on_right = False
+		intersection_check = True
 	
-    if front.sum() < 500000:
+	if front.sum() < 500000:
 		# Lane is not detected in the front frame
-        openings[1] = 1
+		openings[1] = 1
 
-    # Random turn chooser
-    if intersection_check:
+	# Random turn chooser
+	if intersection_check:
 
-        # Find available turns
-        possible_turns = np.where(openings == 1)[0]
+		# Find available turns
+		possible_turns = np.where(openings == 1)[0]
 
-        # Choose random turn direction (0 = left , 1 = straight , 2 = right)
-        turn = random.choice(possible_turns)
-    
-    return intersection_check , turn , lane_on_left , lane_on_right
+		# Choose random turn direction (0 = left , 1 = straight , 2 = right)
+		turn = random.choice(possible_turns)
+	
+	return intersection_check , turn , lane_on_left , lane_on_right
 
 
 
@@ -201,23 +229,22 @@ def check_lanes(edges_frame , color_frame_main):
 	
 	lines = cv.HoughLines(edges_frame , 1 , np.pi/180 , 150 , None , 0 , 0)
 
-    # Cross Track Error	
+	# Cross Track Error	
 	CTE = 0
 	
 	if lines is None: 
-		#print("No lines detected")
 		final = color_frame_main
 		CTE = 0		
 		keep_turning = True
 	else:
 		keep_turning = False
 
-		left_line_x = []    #x-values of left lines 
-		left_line_y = []    #y-values of left lines 
+		left_line_x = []	#x-values of left lines 
+		left_line_y = []	#y-values of left lines 
 		right_line_x = []   #x-values of right lines 
 		right_line_y = []   #y-values of right lines
 
-		cnt_left = 0    # number of left lines
+		cnt_left = 0	# number of left lines
 		cnt_right = 0   # number of right lines
 
 		if DRAW_LINE_IMG:					
@@ -276,7 +303,7 @@ def check_lanes(edges_frame , color_frame_main):
 			
 
 		if cnt_right > 0:
-			#do 1D fitting                
+			#do 1D fitting				
 			right_polyfit = np.polyfit(right_line_y, right_line_x, deg=1)
 			poly_right = np.poly1d(right_polyfit)
 			right_x_start = int(poly_right(MAX_Y))
@@ -328,28 +355,29 @@ def check_lanes(edges_frame , color_frame_main):
 		
 
 	return (final, CTE , keep_turning)
-    
+	
 
 def get_end_points(rho , theta):
-    # Gets the two points of the line detected with cv.HoughLines
-    x = math.cos(theta)
-    y = math.sin(theta)
+	# Gets the two points of the line detected with cv.HoughLines
+	x = math.cos(theta)
+	y = math.sin(theta)
 
-    x0 = x * rho
-    y0 = y * rho
+	x0 = x * rho
+	y0 = y * rho
 
-    x1 = int(x0 + 1000 * (-y))
-    y1 = int(y0 + 1000 * (x))
-    x2 = int(x0 - 1000 * (-y))
-    y2 = int(y0 - 1000 * (x))
+	x1 = int(x0 + 1000 * (-y))
+	y1 = int(y0 + 1000 * (x))
+	x2 = int(x0 - 1000 * (-y))
+	y2 = int(y0 - 1000 * (x))
 
-    return x1 , y1 , x2 , y2
+	return x1 , y1 , x2 , y2
 
 
 
 ########################### Controls ############################
 
 def PID(CTE , FREQ):
+	global previous_error
 	Kp = 0.15	
 	Ki = 0.0
 	Kd = 0.01
@@ -369,12 +397,37 @@ def PID(CTE , FREQ):
 ########################### Main ############################
 
 def main(args = None):
+	global message , steer , turning , keep_turning , lane_on_left , lane_on_right
+
+	global gamma
+	global gamma_debug
+	global camera_info
+	camera_info = ""
+
+	# a proper gamma value, given the current thresholds seems to be between 0.7-1.7
+	# Gamma values can differ for right and left frames given small differences in brightness
+	# 
+	gamma = 0.001
+	gamma_debug = False
+
+	lane_on_left = True
+	lane_on_right = True
+	keep_turning = True
 	rclpy.init(args = args)
 	node = Node("Process_image_node")
 	zed_img_subscription = node.create_subscription(
 		Image,
 		'/zed2i/zed_node/stereo/image_rect_color',
 		image_callback,
+		5
+	)
+
+	# this sub is not working. Im not sure what the type would be for this
+
+	zed_right_cam_info = node.create_subscription(
+		String,
+		'/zed2i/zed_node/right/camera_info',
+		calib_callback,
 		5
 	)
 
@@ -412,6 +465,8 @@ def main(args = None):
 
 				# If already turning keep turning or stop turning
 				if turning_mode:
+
+					# If lines are not detected, lane on left is not detected, or lane on right is not detected, continue turning until all 3 criteria are true
 					if keep_turning or not lane_on_left or not lane_on_right:
 						message = "Still turning"
 					else:
@@ -433,6 +488,7 @@ def main(args = None):
 			
 			# If no intersection is detected, correct based on lanes detected
 			else:
+				turning = "PID MODE"
 				steer = PID(CTE , FREQ)
 
 			# Send the steering values to pwm_gen
@@ -444,15 +500,21 @@ def main(args = None):
 
 		# Display of all the important messages
 		stdscr.refresh()
-		stdscr.addstr(1 , 5 , 'Turning Condition: %s           ' % message)
-		stdscr.addstr(2 , 5 , 'Steering: %s      ' % int(steer))
-		stdscr.addstr(3 , 5 , 'Turning Direction: %s          ' % turning)
+		stdscr.addstr(1 , 5 , 'Turning Condition: %s		   ' % message)
+		stdscr.addstr(2 , 5 , 'Steering: %s	  ' % int(steer))
+		stdscr.addstr(3 , 5 , 'Turning Direction: %s		  ' % turning)
+		stdscr.addstr(4 , 5 , 'Left Lane Detected: %s		  ' % lane_on_left)
+		stdscr.addstr(5 , 5 , 'Right Lane Detected: %s		  ' % lane_on_right)
+		stdscr.addstr(6 , 5 , 'Lines Detected: %s		  ' % (not keep_turning))
+		stdscr.addstr(7, 5, "Gamma: %s       " % str(gamma))
+		stdscr.addstr(8, 5, "right cam info: %s       " % str(camera_info))
+
 
 		rate.sleep()
 	
 	# Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
+	# (optional - otherwise it will be done automatically
+	# when the garbage collector destroys the node object)
 	node.destroy_node()
 	rclpy.shutdown()
 
