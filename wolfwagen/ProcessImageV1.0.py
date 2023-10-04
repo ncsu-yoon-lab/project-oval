@@ -55,16 +55,16 @@ def image_callback(msg):
 	last_frame_time = time.time()
 
 
-def calib_callback(msg):
-	global camera_info
-	camera_info = msg
-	print(type(msg))
-	print(msg)
+# def calib_callback(msg):
+# 	global camera_info
+# 	camera_info = msg
+# 	print(type(msg))
+# 	print(msg)
 
 
 ########################### Image Processing ############################
 
-def adjust_gamma(image , gamma = 1.0):
+def adjust_gamma(image , gamma = 8.7):
 	# Adjusts the brightness of frame to make it easier or harder to see colors
 	# Increasing gamma makes it darker, decreasing gamma makes it brighter
 	invGamma = 1.0 / gamma
@@ -74,7 +74,7 @@ def adjust_gamma(image , gamma = 1.0):
 
 def crop_main(image , width , height):
 	# Crops the main image to just see the road ahead
-	center = int(width / 0.5)
+	center = int(width / 2)
 	cut_width = int(width / 4)
 	image = np.delete(image , slice(center - cut_width , center + cut_width) , 1)
 
@@ -156,7 +156,7 @@ def process_img(frame):
 
 	# Option of showing all the images, can be toggled at top
 	if SHOW_IMAGES:
-		#cv.imshow('main color' , color_frame_main)
+		#cv.imshow('main color' , frame)
 		#cv.imshow('main black and white' , bw_frame_main)
 		#cv.imshow('front color' , color_frame_front)
 		cv.imshow('front black and white' , bw_frame_front)
@@ -401,8 +401,8 @@ def main(args = None):
 
 	global gamma
 	global gamma_debug
-	global camera_info
-	camera_info = ""
+	# global camera_info
+	# camera_info = ""
 
 	# a proper gamma value, given the current thresholds seems to be between 0.7-1.7
 	# Gamma values can differ for right and left frames given small differences in brightness
@@ -424,12 +424,12 @@ def main(args = None):
 
 	# this sub is not working. Im not sure what the type would be for this
 
-	zed_right_cam_info = node.create_subscription(
-		String,
-		'/zed2i/zed_node/right/camera_info',
-		calib_callback,
-		5
-	)
+	# zed_right_cam_info = node.create_subscription(
+	# 	String,
+	# 	'/zed2i/zed_node/right/camera_info',
+	# 	calib_callback,
+	# 	5
+	# )
 
 	steering_publisher = node.create_publisher(Int64 , 'pid_steering' , 1)
 
@@ -507,7 +507,7 @@ def main(args = None):
 		stdscr.addstr(5 , 5 , 'Right Lane Detected: %s		  ' % lane_on_right)
 		stdscr.addstr(6 , 5 , 'Lines Detected: %s		  ' % (not keep_turning))
 		stdscr.addstr(7, 5, "Gamma: %s       " % str(gamma))
-		stdscr.addstr(8, 5, "right cam info: %s       " % str(camera_info))
+		#stdscr.addstr(8, 5, "right cam info: %s       " % str(camera_info))
 
 
 		rate.sleep()
