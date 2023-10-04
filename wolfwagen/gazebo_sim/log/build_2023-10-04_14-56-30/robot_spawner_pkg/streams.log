@@ -1,0 +1,49 @@
+[0.304s] Invoking command in '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/robot_spawner_pkg': PYTHONPATH=/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/robot_spawner_pkg build --build-base /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build install --record /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/install.log --install-scripts $base/lib/robot_spawner_pkg --single-version-externally-managed
+[0.403s] running egg_info
+[0.403s] creating ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info
+[0.404s] writing ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/PKG-INFO
+[0.404s] writing dependency_links to ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/dependency_links.txt
+[0.404s] writing entry points to ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/entry_points.txt
+[0.404s] writing requirements to ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/requires.txt
+[0.404s] writing top-level names to ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/top_level.txt
+[0.404s] writing manifest file '../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.420s] reading manifest file '../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.420s] writing manifest file '../build/robot_spawner_pkg/robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.420s] running build
+[0.420s] running build_py
+[0.420s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build
+[0.420s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build/lib
+[0.420s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build/lib/robot_spawner_pkg
+[0.420s] copying robot_spawner_pkg/spawn_demo.py -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build/lib/robot_spawner_pkg
+[0.420s] copying robot_spawner_pkg/__init__.py -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build/lib/robot_spawner_pkg
+[0.420s] running install
+[0.421s] running install_lib
+[0.421s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot_spawner_pkg
+[0.421s] copying /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build/lib/robot_spawner_pkg/spawn_demo.py -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot_spawner_pkg
+[0.421s] copying /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build/lib/robot_spawner_pkg/__init__.py -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot_spawner_pkg
+[0.421s] byte-compiling /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot_spawner_pkg/spawn_demo.py to spawn_demo.cpython-38.pyc
+[0.422s] byte-compiling /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot_spawner_pkg/__init__.py to __init__.cpython-38.pyc
+[0.422s] running install_data
+[0.422s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/ament_index
+[0.422s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/ament_index/resource_index
+[0.422s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/ament_index/resource_index/packages
+[0.422s] copying resource/robot_spawner_pkg -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/ament_index/resource_index/packages
+[0.422s] copying package.xml -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg
+[0.422s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/launch
+[0.423s] copying launch/gazebo_world.launch.py -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/launch
+[0.423s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/worlds
+[0.423s] copying ./worlds/warehouse.world -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/worlds/
+[0.423s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models
+[0.423s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/small_warehouse
+[0.423s] copying ./models/small_warehouse/model.sdf -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/small_warehouse/
+[0.423s] copying ./models/small_warehouse/model.config -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/small_warehouse/
+[0.423s] creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/mobile_robot
+[0.423s] copying ./models/mobile_robot/model.sdf -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/mobile_robot/
+[0.423s] copying ./models/mobile_robot/model.config -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/mobile_robot/
+[0.423s] copying ./worlds/warehouse.world -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/models/
+[0.423s] running install_egg_info
+[0.423s] Copying ../build/robot_spawner_pkg/robot_spawner_pkg.egg-info to /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot_spawner_pkg-0.0.0-py3.8.egg-info
+[0.424s] running install_scripts
+[0.432s] Installing spawn_demo script to /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/robot_spawner_pkg
+[0.432s] writing list of installed files to '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/install.log'
+[0.443s] Invoked command in '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/robot_spawner_pkg' returned '0': PYTHONPATH=/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/robot_spawner_pkg build --build-base /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build install --record /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/install.log --install-scripts $base/lib/robot_spawner_pkg --single-version-externally-managed

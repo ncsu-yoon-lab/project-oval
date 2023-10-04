@@ -1,0 +1,17 @@
+[0.292s] Invoking command in '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg': PYTHONPATH=/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build --no-deps install_data
+[0.396s] running develop
+[0.453s] running egg_info
+[0.453s] writing robot_spawner_pkg.egg-info/PKG-INFO
+[0.453s] writing dependency_links to robot_spawner_pkg.egg-info/dependency_links.txt
+[0.453s] writing entry points to robot_spawner_pkg.egg-info/entry_points.txt
+[0.453s] writing requirements to robot_spawner_pkg.egg-info/requires.txt
+[0.453s] writing top-level names to robot_spawner_pkg.egg-info/top_level.txt
+[0.468s] reading manifest file 'robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.468s] writing manifest file 'robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.483s] running build_ext
+[0.484s] Creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot-spawner-pkg.egg-link (link to .)
+[0.484s] Installing spawn_demo script to /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/robot_spawner_pkg
+[0.484s] 
+[0.484s] Installed /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg
+[0.484s] running install_data
+[0.497s] Invoked command in '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg' returned '0': PYTHONPATH=/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build --no-deps install_data

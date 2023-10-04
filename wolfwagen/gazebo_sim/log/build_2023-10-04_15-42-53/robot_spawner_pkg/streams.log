@@ -1,0 +1,18 @@
+[0.297s] Invoking command in '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg': PYTHONPATH=/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build --no-deps install_data
+[0.407s] running develop
+[0.464s] running egg_info
+[0.464s] writing robot_spawner_pkg.egg-info/PKG-INFO
+[0.464s] writing dependency_links to robot_spawner_pkg.egg-info/dependency_links.txt
+[0.464s] writing entry points to robot_spawner_pkg.egg-info/entry_points.txt
+[0.464s] writing requirements to robot_spawner_pkg.egg-info/requires.txt
+[0.465s] writing top-level names to robot_spawner_pkg.egg-info/top_level.txt
+[0.480s] reading manifest file 'robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.480s] writing manifest file 'robot_spawner_pkg.egg-info/SOURCES.txt'
+[0.495s] running build_ext
+[0.495s] Creating /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages/robot-spawner-pkg.egg-link (link to .)
+[0.495s] Installing spawn_demo script to /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/robot_spawner_pkg
+[0.496s] 
+[0.496s] Installed /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg
+[0.496s] running install_data
+[0.496s] copying launch/gazebo_world.launch.py -> /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/share/robot_spawner_pkg/launch
+[0.509s] Invoked command in '/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg' returned '0': PYTHONPATH=/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/install/robot_spawner_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/jyu34/Documents/wolfwagen/wolfwagen/gazebo_sim/build/robot_spawner_pkg/build --no-deps install_data

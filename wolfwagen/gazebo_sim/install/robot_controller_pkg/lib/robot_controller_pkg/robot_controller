@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+# EASY-INSTALL-ENTRY-SCRIPT: 'robot-controller-pkg','console_scripts','robot_controller'
+__requires__ = 'robot-controller-pkg'
+import re
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(
+        load_entry_point('robot-controller-pkg', 'console_scripts', 'robot_controller')()
+    )
