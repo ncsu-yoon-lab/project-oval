@@ -1,567 +1,507 @@
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-import math
+# header files required 
+import numpy as np
 import random
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
 
-# --------------------------------------Classes--------------------------------------------
-# Environment and Obstacles
-class env3d:
-    # environment class is defined by obstacle vertices and boundaries
-    def __init__(self, x, y, z, xmin, xmax, ymin, ymax, zmin, zmax):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.xmin = xmin
-        self.xmax = xmax
-        self.ymin = ymin
-        self.ymax = ymax
-        self.zmin = zmin
-        self.zmax = zmax
+# define class
+class RRTStar(object):
+    
+    
+    # init function
+    def __init__(self, start, goal):
+        """
+        Inputs:
+        
+        start: this is the start coordinate of the robot. It is a tuple of form (x, y).
+        goal: this is the goal coordinate of the robot. It is a tuple of form (x, y).
+        """
+        
+        # start variable - tuple of of form (x, y)
+        self.start = start
+        
+        # goal variable - tuple of form (x, y)
+        self.goal = goal
+        
+        # the map size along x and y dimensions in cms (map dimension are from -500 to 500 for both x and y direction)
+        # map size is 1000 cm x 1000 cm
+        self.xLength = 500
+        self.yLength = 500
+        
+        # clearance variable - distance of the robot from the obstacle
+        self.clearance = 0.0
+        
+        # radius variable - the radius of the robot (taken from turtlebot datasheet)
+        self.radius = 0.0
+        
+        # wheelDistance - the distance between wheels (taken from turtlebot datasheet)
+        self.wheelDistance = 34.0
+        
+        # wheelRadius - the radius of the wheels (taken from turtlebot datasheet)
+        self.wheelRadius = 3.8
+        
+        # costToCome - hashmap to store the distance of the nodes from the start node
+        self.costToCome = {}
+        
+        # path - hashmap used for backtracking from the goal node to the start node
+        self.path = {}
+        
+        # goalThreshold - threshold from goal node
+        self.goalThreshold = 15
+        
+        # vertices of the graph
+        self.vertices = []
+        
+        # step size
+        self.stepSize = 6
+        
+        # step factor
+        self.stepFactor = 9
+        
+        
+    # move is valid or not
+    def IsValid(self, currX, currY):
+        """
+        Inputs:
+        
+        currX - the current x-position of the robot.
+        currY - the current y-posiiton of the robot.
+        
+        Outputs:
+        
+        True / False depending on whether the nodes lies within the map or not.
+        """
+        
+        nodeInMap = (currX >= (-self.xLength + self.radius + self.clearance) and currX <= (self.xLength - self.radius - self.clearance) and currY >= (-self.yLength + self.radius + self.clearance) and currY <= (self.yLength - self.radius - self.clearance))
+        return nodeInMap
+    
+    
+    # checks for an obstacle in the given map
+    def IsObstacle(self, row, col):
+        """
+        Inputs:
+        
+        row - the current x-position of the robot.
+        col - the current y-posiiton of the robot.
+        
+        Outputs:
+        
+        True / False depending on whether the nodes lies within obstacle or not.
+        """
+        
+        # constants
+        sum_of_c_and_r = self.clearance + self.radius
+        sqrt_of_c_and_r = 1.4142 * sum_of_c_and_r
+        
+        # check circles(obstacles) in the given map
+        dist1 = ((row - 200.0) * (row - 200.0) + (col - 300.0) * (col - 300.0)) - ((100 + sum_of_c_and_r) * (100 + sum_of_c_and_r))
+        dist2 = ((row - 200.0) * (row - 200.0) + (col + 300.0) * (col + 300.0)) - ((100 + sum_of_c_and_r) * (100 + sum_of_c_and_r))
+        dist3 = ((row + 200.0) * (row + 200.0) + (col + 300.0) * (col + 300.0)) - ((100 + sum_of_c_and_r) * (100 + sum_of_c_and_r))
+        dist4 = ((row) * (row) + (col) * (col)) - ((100 + sum_of_c_and_r) * (100 + sum_of_c_and_r))
+        
+        # check first square(obstacle) in the given map
+        (x1, y1) = (325 - sqrt_of_c_and_r, -75 - sqrt_of_c_and_r)
+        (x2, y2) = (325 - sqrt_of_c_and_r, 75 + sqrt_of_c_and_r)
+        (x3, y3) = (475 + sqrt_of_c_and_r, 75 + sqrt_of_c_and_r)
+        (x4, y4) = (475 + sqrt_of_c_and_r, -75 - sqrt_of_c_and_r)
+        first = ((col - y1) * (x2 - x1)) - ((y2 - y1) * (row - x1))
+        second = ((col - y2) * (x3 - x2)) - ((y3 - y2) * (row - x2))
+        third = ((col - y3) * (x4 - x3)) - ((y4 - y3) * (row - x3))
+        fourth = ((col - y4) * (x1 - x4)) - ((y1 - y4) * (row - x4))
+        dist5 = 1
+        dist6 = 1
+        if(first <= 0 and second <= 0 and third <= 0 and fourth <= 0):
+            dist5 = 0
+            dist6 = 0
+        
+        # check second square(obstacle) in the given map
+        (x1, y1) = (-325 + sqrt_of_c_and_r, -75 - sqrt_of_c_and_r)
+        (x2, y2) = (-325 + sqrt_of_c_and_r, 75 + sqrt_of_c_and_r)
+        (x3, y3) = (-475 - sqrt_of_c_and_r, 75 + sqrt_of_c_and_r)
+        (x4, y4) = (-475 - sqrt_of_c_and_r, -75 - sqrt_of_c_and_r)
+        first = ((col - y1) * (x2 - x1)) - ((y2 - y1) * (row - x1))
+        second = ((col - y2) * (x3 - x2)) - ((y3 - y2) * (row - x2))
+        third = ((col - y3) * (x4 - x3)) - ((y4 - y3) * (row - x3))
+        fourth = ((col - y4) * (x1 - x4)) - ((y1 - y4) * (row - x4))
+        dist7 = 1
+        dist8 = 1
+        if(first >= 0 and second >= 0 and third >= 0 and fourth >= 0):
+            dist7 = 0
+            dist8 = 0
 
-    # when obstacles are sensed
-    def obs_add(self, ox, oy, oz):
-        self.x += ox
-        self.y += oy
-        self.z += oz
+        # check third square(obstacle) in the given map
+        (x1, y1) = (-125 + sqrt_of_c_and_r, 375 + sqrt_of_c_and_r)
+        (x2, y2) = (-125 + sqrt_of_c_and_r, 225 - sqrt_of_c_and_r)
+        (x3, y3) = (-275 - sqrt_of_c_and_r, 225 - sqrt_of_c_and_r)
+        (x4, y4) = (-275 - sqrt_of_c_and_r, 375 + sqrt_of_c_and_r)
+        first = ((col - y1) * (x2 - x1)) - ((y2 - y1) * (row - x1))
+        second = ((col - y2) * (x3 - x2)) - ((y3 - y2) * (row - x2))
+        third = ((col - y3) * (x4 - x3)) - ((y4 - y3) * (row - x3))
+        fourth = ((col - y4) * (x1 - x4)) - ((y1 - y4) * (row - x4))
+        dist9 = 1
+        dist10 = 1
+        if(first <= 0 and second <= 0 and third <= 0 and fourth <= 0):
+            dist9 = 0
+            dist10 = 0
+        
+        # return true if obstacle, otherwise false
+        if(dist1 <= 0 or dist2 <= 0 or dist3 <= 0 or dist4 <= 0 or dist5 == 0 or dist6 == 0 or dist7 == 0 or dist8 == 0 or dist9 == 0 or dist10 == 0):
+            return True
+        return False
+    
+    
+    # animate path and show the nodes on map
+    def animate(self, exploredStates, backtrackStates):
+        """
+        Inputs:
+        
+        exploredStates: list of explored states when going from start to  goal node.
+        backtrackStates: list of states to go from start to goal node.
+        """
+        
+        startX = []
+        startY = []
+        endX = []
+        endY = []
+        explored_startX = []
+        explored_startY = []
+        explored_endX = []
+        explored_endY = []
+        fig, ax = plt.subplots()
+        plt.xlabel("x-coordinate(in m)")
+        plt.ylabel("y-coordinate(in m)")
+        plt.grid()
+        ax.set_aspect('equal')
+        plt.xlim(-self.xLength / 100.0, self.xLength / 100.0)
+        plt.ylim(-self.yLength / 100.0, self.yLength / 100.0)
+        count = 0
+        
+        # obstacle space
+        obstacleX = []
+        obstacleY = []
+        size = []
+        for index1 in range(-self.xLength, self.xLength):
+            for index2 in range(-self.yLength, self.yLength):
+                if(self.IsObstacle(index1, index2)):
+                    obstacleX.append(index1 / 100.0)
+                    obstacleY.append(index2 / 100.0)     
+                    size.append(15)      
+        obstacleX = np.array(obstacleX)
+        obstacleY = np.array(obstacleY)
+        plt.scatter(obstacleX, obstacleY, color='b', s=size)
 
-    # Collision checking for a path
-    def inobstacle(self, x1, y1, x2, y2):
-        c = 1  # assume no collision
-        obs_num = int(len(self.x) / 4)  # four vertices for each rectangular obstacle
-        for i in range(1, obs_num + 1):
-            xomin = self.x[4 * (i - 1)]
-            xomax = self.x[4 * (i - 1) + 2]
-            yomin = self.y[4 * (i - 1)]
-            yomax = self.y[4 * (i - 1) + 1]
-            for j in range(0, 101):
-                u = j / 100.0
-                x = x1 * u + x2 * (1 - u)
-                y = y1 * u + y2 * (1 - u)
-                if (x >= xomin) and (x <= xomax) and (y >= yomin) and (y <= yomax):
-                    c = 0
-                    break
-            if c == 0:
-                break
-        return c
+        # explore node space
+        for index in range(1, len(exploredStates)):
+            parentNode = self.path[exploredStates[index]]
+            explored_startX.append(parentNode[0] / 100.0)
+            explored_startY.append(parentNode[1] / 100.0)
+            explored_endX.append((exploredStates[index][0] - parentNode[0]) / 100.0)
+            explored_endY.append((exploredStates[index][1] - parentNode[1]) / 100.0)    
+            #if(count % 2000 == 0):
+            #    plt.quiver(np.array((explored_startX)), np.array((explored_startY)), np.array((explored_endX)), np.array((explored_endY)), units = 'xy', scale = 1, color = 'g', label = 'Explored region')
+            #    plt.savefig("output/phase3/sample" + str(count) + ".png", dpi=1700)
+            count = count + 1
 
-    # check if newly added sample is in the free configuration space
-    def isfree(self):
-        n = G.number_of_nodes() - 1
-        (x, y) = (G.x[n], G.y[n])
-        obs_num = int(len(self.x) / 4)  # four vertices for each rectangular obstacle
-        for i in range(1, obs_num + 1):
-            xomin = self.x[4 * (i - 1)]
-            xomax = self.x[4 * (i - 1) + 2]
-            yomin = self.y[4 * (i - 1)]
-            yomax = self.y[4 * (i - 1) + 1]
-            if (x >= xomin) and (x <= xomax) and (y >= yomin) and (y <= yomax):
-                G.remove_node(n)
-                return 0
-                break
+        # backtrack space
+        if(len(backtrackStates) > 0):
+            for index in range(1, len(backtrackStates)):
+                startX.append(backtrackStates[index-1][0] / 100.0)
+                startY.append(backtrackStates[index-1][1] / 100.0)
+                endX.append((backtrackStates[index][0] - backtrackStates[index-1][0]) / 100.0)
+                endY.append((backtrackStates[index][1] - backtrackStates[index-1][1]) / 100.0)    
+                #if(count % 5 == 0):
+                #    plt.quiver(np.array((startX)), np.array((startY)), np.array((endX)), np.array((endY)), units = 'xy', scale = 1, color = 'r', label = 'Backtrack path')
+                #    plt.savefig("output/phase3/sample" + str(count) + ".png", dpi=1700)
+                count = count + 1
 
-    # check if current node is in goal region
-    def ingoal(self):
-        n = G.number_of_nodes() - 1
-        (x, y, z) = (G.x[n], G.y[n], G.z[n])
-        if (
-            (x >= xgmin)
-            and (x <= xgmax)
-            and (y >= ygmin)
-            and (y <= ygmax)
-            and (z >= zgmin)
-            and (z <= zgmax)
-        ):
-            return 1
+        plt.quiver(np.array((explored_startX)), np.array((explored_startY)), np.array((explored_endX)), np.array((explored_endY)), units = 'xy', scale = 1, color = 'g', label = 'Explored region')
+        if(len(backtrackStates) > 0):
+            plt.quiver(np.array((startX)), np.array((startY)), np.array((endX)), np.array((endY)), units = 'xy', scale = 1, color = 'r', label = 'Backtrack path')
+        #plt.savefig("output.png", dpi=1700)
+        plt.legend()
+        plt.show()
+        plt.close()
+    
+    
+    # eucledian heuristic
+    def euc_heuristic(self, point1, point2):
+        """
+        Inputs:
+        
+        point1: the first position of the robot, tuple (x, y).
+        point2: the second posiiton of the robot, tuple (x, y).
+        
+        Output:
+        
+        Returns the eucledian distance between point1 and point2
+        """
+        
+        return (np.sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)))
+    
+    
+    # random position generator
+    def getRandomPosition(self):
+        """
+        Output:
+        
+        Returns the random node
+        """
+        
+        randX = round(random.uniform((-self.xLength + self.radius + self.clearance), (self.xLength - self.radius - self.clearance)), 2)
+        randY = round(random.uniform((-self.yLength + self.radius + self.clearance), (self.yLength - self.radius - self.clearance)), 2)
+        return (randX, randY)
+    
+    
+    # nearest neighbour in the graph
+    def getNearestNeighbour(self, currX, currY):
+        """
+        Inputs:
+        
+        currX: the current x-position of the robot.
+        currY: the current y-posiiton of the robot.
+        
+        Outputs:
+        
+        nearestVertex: the nearest node in the array of vertices of the graph
+        """
+        
+        # set vertex to -1
+        minDistance = float('inf')
+        nearestVertex = -1
+        
+        # loop through vertices of graph
+        for vertex in self.vertices:
+            distance = self.euc_heuristic(vertex, (currX, currY))
+            if(distance < minDistance):
+                minDistance = distance
+                nearestVertex = vertex
+        
+        # return nearest vertex
+        return nearestVertex
+    
+    
+    # check obstacle between points
+    def checkObstacleBetweenPoints(self, point1, point2):
+        """
+        Inputs:
+        
+        point1: the first position of the robot, tuple (x, y).
+        point2: the second posiiton of the robot, tuple (x, y).
+        
+        Output:
+        
+        Returns True/False, whether an obstacle occurs between point1 and point2 or not
+        """
+        
+        # get diff1 and diff2
+        diff1 = point2[0] - point1[0]
+        diff2 = point2[1] - point1[1]
+        
+        # points to check for obstacle
+        points_to_check = []
+        points_to_check.append(point1)
+        
+        # get value of diff
+        if(np.abs(diff1) > np.abs(diff2)):
+            diff = np.abs(diff1)
         else:
-            return 0
-
-    # check for a specific node
-    def isfree_xy(self, x, y):
-        obs_num = len(self.x) / 4  # four vertices for each rectangular obstacle
-        for i in range(1, obs_num + 1):
-            xomin = self.x[4 * (i - 1)]
-            xomax = self.x[4 * (i - 1) + 2]
-            yomin = self.y[4 * (i - 1)]
-            yomax = self.y[4 * (i - 1) + 1]
-            if (x >= xomin) and (x <= xomax) and (y >= yomin) and (y <= yomax):
-                return 0
-                break
-
-    # draw the edges of a 3d cuboid
-    def cubedraw(self, obsx, obsy, obzl, obzh, k):
-        x = obsx
-        y = obsy
-        zl = [obzl, obzl, obzl, obzl, obzl]
-        zh = [obzh, obzh, obzh, obzh, obzh]
-
-        ax.plot(x, y, zl, k)
-        ax.plot(x, y, zh, k)
-        for i in range(0, len(x) - 1):
-            obx = [x[i], x[i]]
-            oby = [y[i], y[i]]
-            obz = [zl[i], zh[i]]
-            ax.plot(obx, oby, obz, k)
-
-    # Sensing
-    # Check for obstacles given the robot's current position and the sensor
-    # Only hidden obstacles are checked, others are known a-priori
-
-    def sense(self, x, y, r):
-        obs_num = len(hvx) / 4  # four vertices for each rectangular obstacle
-        for i in range(1, obs_num + 1):
-            xomin = hvx[4 * (i - 1)] - r
-            xomax = hvx[4 * (i - 1) + 2] + r
-            yomin = hvy[4 * (i - 1)] - r
-            yomax = hvy[4 * (i - 1) + 1] + r
-            if (x >= xomin) and (x <= xomax) and (y >= yomin) and (y <= yomax):
-                # if the robot is within the sensing range of the obstacle, add it to visibile list
-                hx_i = [
-                    hvx[4 * (i - 1)],
-                    hvx[4 * (i - 1)],
-                    hvx[4 * (i - 1) + 2],
-                    hvx[4 * (i - 1) + 2],
-                ]
-                hy_i = [
-                    hvy[4 * (i - 1)],
-                    hvy[4 * (i - 1) + 1],
-                    hvy[4 * (i - 1) + 1],
-                    hvy[4 * (i - 1)],
-                ]
-
-                self.obs_add(hx_i, hy_i)
-                # add point where new obstacle detected
-                return 1
-
-
-# -----------------------------------------------------------------------------------------
-class RRT3d:
-    def __init__(self, nstart):
-        (x, y, z) = nstart
-        self.x = []
-        self.y = []
-        self.z = []
-        self.parent = []
-        self.x.append(x)
-        self.y.append(y)
-        self.z.append(z)
-        # first node is the only node whose parent is itself
-        self.parent.append(0)
-
-    # get metric value (current metric is euclidean distance)
-    def metric(self, n1, n2):
-        (x1, y1, z1) = (self.x[n1], self.y[n1], self.z[n1])
-        (x2, y2, z2) = (self.x[n2], self.y[n2], self.z[n2])
-        x1 = float(x1)
-        y1 = float(y1)
-        x2 = float(x2)
-        y2 = float(y2)
-        z1 = float(z1)
-        z2 = float(z2)
-        px = (x1 - x2) ** (2)
-        py = (y1 - y2) ** (2)
-        pz = (z1 - z2) ** (2)
-        metric = (px + py + pz) ** (0.5)
-        return metric
-
-    # expand a random point
-    # calls subroutines to find nearest node and connect it
-    def expand(self):
-        # add random node
-        x = random.uniform(E.xmin, E.xmax)
-        y = random.uniform(E.ymin, E.ymax)
-        z = random.uniform(E.zmin, E.zmax)
-        n = self.number_of_nodes()  # new node number
-        self.add_node(n, x, y, z)
-        if E.isfree() != 0:
-            # find nearest node
-            nnear = self.near(n)
-            # find new node based on step size
-            self.step(nnear, n)
-            # connect the random node with its nearest node
-            self.connect(nnear, n)
-
-    def bias(self):
-        # add random node
-        n = self.number_of_nodes()  # new node
-        self.add_node(n, xg, yg, zg)  # test goal region
-        # find nearest node
-        nnear = self.near(n)
-        # find new node based on step size
-        self.step(nnear, n)
-        # connect the random node with its nearest node
-        self.connect(nnear, n)
-
-    # nearest node
-    def near(self, n):
-        # find a near node
-        dmin = self.metric(0, n)
-        nnear = 0
-        for i in range(0, n):
-            if self.metric(i, n) < dmin:
-                dmin = self.metric(i, n)
-                nnear = i
-        return nnear
-
-    # step size
-    def step(self, nnear, nrand):
-        d = self.metric(nnear, nrand)
-        if d > dmax:
-            u = dmax / d
-            (xnear, ynear, znear) = (self.x[nnear], self.y[nnear], self.z[nnear])
-            (xrand, yrand, zrand) = (self.x[nrand], self.y[nrand], self.z[nrand])
-            (px, py, pz) = (xrand - xnear, yrand - ynear, zrand - znear)
-            theta = math.atan2(py, px)
-            x = xnear + dmax * math.cos(theta)
-            y = ynear + dmax * math.sin(theta)
-            alpha = math.atan2(pz, y)
-            z = znear + dmax * math.sin(alpha)
-            self.remove_node(nrand)
-            self.add_node(nrand, x, y, z)  # this is a new node between rand and near
-
-    # connect two nodes (local planner)
-    def connect(self, n1, n2):
-        (x1, y1, z1) = (self.x[n1], self.y[n1], self.z[n1])
-        (x2, y2, z2) = (self.x[n2], self.y[n2], self.z[n2])
-        n = G.number_of_nodes() - 1
-        # subdivide path into 100 small segments and ensure each segment is collision free
-        if E.inobstacle(x1, y1, x2, y2) == 0:
-            self.remove_node(n2)
+            diff = np.abs(diff2)
+        
+        for index in range(1, int(np.abs(diff))):
+            point = (point1[0] + (index * diff1 / np.abs(diff)), point1[1] + (index * diff2 / np.abs(diff)))
+            points_to_check.append(point)
+        
+        # check for obstacle
+        for point in points_to_check:
+            if(self.IsObstacle(point[0], point[1]) or self.IsValid(point[0], point[1]) == False):
+                return True
+        return False
+    
+    
+    # new node
+    def getNewNode(self, x_rand, x_nearest):
+        """
+        Inputs:
+        
+        x_rand: the random node
+        x_nearest: the nearest node to the x_rand
+        
+        Outputs:
+        
+        newNode: the Xnew node at a distance of self.stepSize from x_nearest and in the direction of x_rand
+        """
+        
+        # slope of line joining x_rand and x_nearest
+        slope = (x_rand[1] - x_nearest[1]) / (x_rand[0] - x_nearest[0])
+        factor = self.stepSize * np.sqrt(1.0 / (1.0 + (slope ** 2)))
+        
+        # two points possible
+        point_1 = (round(x_nearest[0] + factor, 2), round(x_nearest[1] + (slope * factor), 2))
+        point_2 = (round(x_nearest[0] - factor, 2), round(x_nearest[1] - (slope * factor), 2))
+        flag1 = False
+        flag2 = False
+        
+        # check for obstacles
+        if(self.checkObstacleBetweenPoints(x_nearest, point_1)):
+            flag1 = True
+        if(self.checkObstacleBetweenPoints(x_nearest, point_2)):
+            flag2 = True
+        
+        # return point with minimum distance to random node
+        distance_1 = self.euc_heuristic(x_rand, point_1)
+        distance_2 = self.euc_heuristic(x_rand, point_2)
+        if(distance_1 < distance_2):
+            return (flag1, point_1)
         else:
-            self.add_edge(n1, n2)
-
-    # connect two trees (Boundary Valued Problem)
-    def BVP_to(self, A):
-        # attempt to connect this node
-        n1 = self.number_of_nodes() - 1
-        (x1, y1, z1) = (self.x[n1], self.y[n1], self.z[n1])
-        c = 0  # assume no connection
-        num = A.number_of_nodes()
-        for i in range(0, num - 1):
-            (x2, y2, z2) = (A.x[n2], A.y[n2], A.z[n2])
-            if E.inobstacle(x1, y1, x2, y2) == 1:
-                self.add_node(n1 + 1, x2, y2)
-                self.add_edge(n1, n1 + 1)
-                self.BVPnode = n1 + 1
-                A.BVPnode = i
-                c = 1
+            return (flag2, point_2)
+    
+    
+    # get neighbourhood
+    def getNeighbourhood(self, x_new):
+        """
+        Inputs:
+        
+        x_new: the new node
+        
+        Outputs:
+        
+        neighbourhood: the list of nodes in the neighbourhood of x_new
+        """
+        
+        # iterate through the vertices and get nodes within a certain radius
+        neighbourhood = []
+        for index in range(0, len(self.vertices)):
+            dist = self.euc_heuristic(x_new, self.vertices[index])
+            if(dist < self.stepFactor):
+                neighbourhood.append(self.vertices[index])
+        return neighbourhood
+    
+    
+    # get neighbourhood parent
+    def getNeighbourhoodParent(self, neighbourhood):
+        """
+        Inputs:
+        
+        neighbourhood: the list of nodes in the neighbourhood of x_new
+        
+        Outputs:
+        
+        parent: the node that is the ideal parent for the x_new node
+        """
+        
+        dist = self.costToCome[neighbourhood[0]]
+        parent = neighbourhood[0]
+        for index in range(1, len(neighbourhood)):
+            curr_dist = self.costToCome[neighbourhood[index]]
+            if(curr_dist < dist):
+                dist = curr_dist
+                parent = neighbourhood[index]
+        return parent
+    
+    
+    # rrt-star algo
+    def search(self):
+        """
+        Outputs:
+        
+        exploredStates: the states explored when moving from start node to goal node.
+        backtrackStates: the path from start node to goal node.
+        actions: list containing the (dvx, dvy) values for each possible node between start and goal node.
+        distance: the total distance between start node and goal node.
+        """
+        
+        # initial steps for rrt-star algo
+        self.costToCome[self.start] = 0
+        self.vertices.append(self.start)
+        backtrackNode = None
+        
+        # run the rrt-star algo
+        for step in range(0, 10000):
+            
+            # get random node
+            (x_rand_x, x_rand_y) = self.getRandomPosition()
+            x_rand = (x_rand_x, x_rand_y)
+            
+            # get nearest node
+            (x_nearest_x, x_nearest_y) = self.getNearestNeighbour(x_rand_x, x_rand_y)
+            x_nearest = (x_nearest_x, x_nearest_y)
+            
+            # check whether x_nearest[0] == x_rand[0] or x_nearest[1] == x_rand[1]
+            if((x_nearest[0] == x_rand[0]) or (x_nearest[1] == x_rand[1])):
+                continue
+    
+            # get new node between x_nearest and x_rand
+            (flag, x_new) = self.getNewNode(x_rand, x_nearest)
+            if(flag == True):
+                continue
+            
+            # get neighbourhood region for x_new
+            neighbourhood = self.getNeighbourhood(x_new)
+            
+            # get parent for the neighbourhood region
+            parent = self.getNeighbourhoodParent(neighbourhood)
+            x_nearest = parent
+            
+            # check obstacle between x_nearest and x_new
+            if(self.checkObstacleBetweenPoints(x_nearest, x_new)):
+                continue
+            
+            # add x_new to graph
+            self.vertices.append(x_new)
+            self.path[x_new] = x_nearest
+            self.costToCome[x_new] = self.costToCome[x_nearest] + self.euc_heuristic(x_nearest, x_new)
+            
+            # rewire graph
+            for index in range(0, len(neighbourhood)):
+                distance_from_start = self.costToCome[x_new] + self.euc_heuristic(x_new, neighbourhood[index])
+                if(distance_from_start < self.costToCome[neighbourhood[index]]):
+                    self.costToCome[neighbourhood[index]] = distance_from_start
+                    self.path[neighbourhood[index]] = x_new
+            
+            # check distance between goal and x_new
+            dist_from_goal = self.euc_heuristic(x_new, self.goal)
+            if(dist_from_goal <= self.goalThreshold):
+                backtrackNode = x_new
                 break
-        return c
-
-    # add node
-    def add_node(self, n, x, y, z):
-        self.x.insert(n, x)
-        self.y.insert(n, y)
-        self.z.insert(n, z)
-
-    # remove node
-    def remove_node(self, n):
-        self.x.pop(n)
-        self.y.pop(n)
-        self.z.pop(n)
-
-    # add edge
-    def add_edge(self, parent, child):
-        self.parent.insert(child, parent)
-
-    # remove node
-    def remove_edge(self, n):
-        self.parent.pop(n)
-
-    # clear
-    def clear(self, nstart):
-        (x, y) = nstart
-        self.x = []
-        self.y = []
-        self.z = []
-        self.parent = []
-        self.x.append(x)
-        self.y.append(y)
-        self.z.append(z)
-        # first node is the only node whose parent is itself
-        self.parent.append(0)
-
-    # number of nodes
-    def number_of_nodes(self):
-        return len(self.x)
-
-    # path to goal
-    def path_to_goal(self):
-        # find goal state
-        for i in range(0, G.number_of_nodes()):
-            (x, y, z) = (self.x[i], self.y[i], self.z[i])
-            if (
-                (x >= xgmin)
-                and (x <= xgmax)
-                and (y >= ygmin)
-                and (y <= ygmax)
-                and (z >= zgmin)
-                and (z <= zgmax)
-            ):
-                self.goalstate = i
-                break
-        # add goal state to and its parent node to the path
-        self.path = []
-        self.path.append(i)
-        newpos = self.parent[i]
-        # keep adding parents
-        while newpos != 0:
-            self.path.append(newpos)
-            newpos = self.parent[newpos]
-        # add start state
-        self.path.append(0)
-
-    def prun(self):
-        # initial query nodes in the path
-        # we already know 0-1 is collision free
-        # start by checking 0-2
-        s = 0
-        e = 2
-        self.tpath = []
-        self.tpath.append(self.path[s])
-        for e in range(len(self.path) - 1):
-            (x1, y1, z1) = (
-                self.x[self.path[s]],
-                self.y[self.path[s]],
-                self.z[self.path[s]],
-            )
-            (x2, y2, z2) = (
-                self.x[self.path[e]],
-                self.y[self.path[e]],
-                self.z[self.path[e]],
-            )
-            if E.inobstacle(x1, y1, x2, y2) == 0:  # CC is detected
-                c = 0
-                self.tpath.append(self.path[e - 1])
-                s = e - 1
-        self.tpath.append(self.path[-1])
-
-    def waypoints(self):
-        # subdivide path into small waypoints
-        # in future can be replaced with B-spline planning
-        self.wayx = []
-        self.wayy = []
-        self.wayz = []
-        self.newstart = []
-        for i in range(0, len(self.tpath) - 1):
-            (x1, y1, z1) = (
-                self.x[self.tpath[i]],
-                self.y[self.tpath[i]],
-                self.z[self.tpath[i]],
-            )
-            (x2, y2, z2) = (
-                self.x[self.tpath[i + 1]],
-                self.y[self.tpath[i + 1]],
-                self.z[self.tpath[i + 1]],
-            )
-            for j in range(0, 101):
-                dt = j / 100.0
-                x = x1 * (dt) + x2 * (1 - dt)
-                y = y1 * (dt) + y2 * (1 - dt)
-                z = z1 * (dt) + z2 * (1 - dt)
-                self.wayx.append(x)
-                self.wayy.append(y)
-                self.wayz.append(z)
-                # measurement update
-                E.sense(x, y, 20)
-                # collision after update
-                if E.isfree_xy(x, y) == 0:
-                    # point before collision is used for generating new plan
-                    self.newstart.append(i * 101 + j - 10)
-                    break
-
-    def sense(self):
-        while len(self.newstart) != 0:
-            # first observation state
-            cn = self.newstart[0]
-            cx = self.wayx[cn]
-            cy = self.wayy[cn]
-            cz = self.wayz[cn]
-            self.clear((cx, cy, cz))
-            # balance between extending and biasing
-            for i in range(0, nmax):
-                if i % 10 != 0:
-                    self.expand()
-                else:
-                    self.bias()
-                # check if sample is in goal, if so STOP!
-                if E.ingoal() == 1:
-                    break
-
-            cn = self.newstart[0]
-            cx = self.wayx[cn]
-            cy = self.wayy[cn]
-            cz = self.wayz[cn]
-            plt.plot(cx, cy, cz, "yo", markersize=75, alpha=0.3)
-
-            # find path in RRT
-            self.path_to_goal()
-            self.prun()
-            # display initial plan under limited sensing
-            draw()
-            # execute
-            self.waypoints()
-
-    # draw tree
-    def showtree(self, k):
-        for i in range(0, self.number_of_nodes()):
-            par = self.parent[i]
-            x = [self.x[i], self.x[par]]
-            y = [self.y[i], self.y[par]]
-            z = [self.z[i], self.z[par]]
-            ax.plot(x, y, z, k, lw=0.5)
-
-    # draw path
-    def showpath(self, k):
-        extend_path = []
-        for i in range(len(self.path) - 1):
-            n1 = self.path[i]
-            n2 = self.path[i + 1]
-            x = [self.x[n1], self.x[n2]]
-            y = [self.y[n1], self.y[n2]]
-            z = [self.z[n1], self.z[n2]]
-            extend_path.append([self.x[n1], self.y[n1], self.z[n1]])
-            ax.plot(x, y, z, k, lw=1, markersize=3)
-        return extend_path
-
-    # draw path to be executed
-    def showtpath(self, k):
-        fetch_path = []
-        for i in range(len(self.tpath) - 1):
-            n1 = self.tpath[i]
-            n2 = self.tpath[i + 1]
-            x = [self.x[n1], self.x[n2]]
-            y = [self.y[n1], self.y[n2]]
-            z = [self.z[n1], self.z[n2]]
-
-            fetch_path.append([self.x[n1], self.y[n1], self.z[n1]])
-            ax.plot(x, y, z, k, lw=2, markersize=5)
-        return fetch_path
+                
+        # backtrack path
+        if(backtrackNode == None):
+            return (self.vertices, [])
+        
+        backtrackStates = []
+        while(backtrackNode != self.start):
+            backtrackStates.append(backtrackNode)
+            backtrackNode = self.path[backtrackNode]
+        backtrackStates.append(self.start)
+        backtrackStates = list(reversed(backtrackStates))
+        return (self.vertices, backtrackStates)
+    
 
 
-# --------------------------------------Global Definitions---------------------------------
-# node limit
-nmax = 5000
-
-# goal region
-xg = -10
-yg = -10
-zg = -10
-epsilon = 0
-xgmin = xg - epsilon
-xgmax = xg + epsilon
-ygmin = yg - epsilon
-ygmax = yg + epsilon
-zgmin = zg - epsilon
-zgmax = zg + epsilon
-
-
-# extend step size
-dmax = 5
-# start the root of the tree
-nstart = (10, 10, 10)
-
-# specify vertices for rectangular obstacles (each object has four vertices)
-# obstacles known a priori
-vx = [-5, -5, 0, 0]
-vy = [0, 5, 5, 0]
-vz = [-5, 5]
-# hidden obstacle
-hvx = [0, 0, 0, 0, 0, 0, 0, 0]
-hvy = [0, 0, 0, 0, 0, 0, 0, 0]
-
-# create an RRT tree with a start node
-G = RRT3d(nstart)
-
-# environment instance
-E = env3d(vx, vy, vz, 0, 10, 0, 10, 0, 10)
-
-# draw setup
-fig = plt.figure()
-ax = plt.axes(projection="3d")
-
-
-# --------------------------------------Functions------------------------------------------
-# draw trees and environment
-def draw():
-    # draw
-
-    # goal region
-    gx = [xgmin, xgmin, xgmax, xgmax, xgmin]
-    gy = [ygmin, ygmax, ygmax, ygmin, ygmin]
-    E.cubedraw(gx, gy, xg - epsilon, xg + epsilon, "g")
-
-    # draw tree
-    G.showtree("0.45")
-
-    # draw path
-    extend_path = G.showpath("ro-")
-
-    fetch_path = G.showtpath("g*-")
-
-    # draw obstacles
-    num = int(len(E.x) / 4)
-    for i in range(1, num + 1):
-        obx = [
-            E.x[4 * (i - 1)],
-            E.x[4 * (i - 1) + 1],
-            E.x[4 * (i - 1) + 2],
-            E.x[4 * (i - 1) + 3],
-            E.x[4 * (i - 1)],
-        ]
-        oby = [
-            E.y[4 * (i - 1)],
-            E.y[4 * (i - 1) + 1],
-            E.y[4 * (i - 1) + 2],
-            E.y[4 * (i - 1) + 3],
-            E.y[4 * (i - 1)],
-        ]
-        E.cubedraw(obx, oby, E.zmin, E.zmax, "k")
-
-    # draw  hidden obstacles (if they exist)
-    obs_num = int(len(hvx) / 4)
-    for i in range(1, obs_num + 1):
-        obsx = [
-            hvx[4 * (i - 1)],
-            hvx[4 * (i - 1) + 1],
-            hvx[4 * (i - 1) + 2],
-            hvx[4 * (i - 1) + 3],
-            hvx[4 * (i - 1)],
-        ]
-        obsy = [
-            hvy[4 * (i - 1)],
-            hvy[4 * (i - 1) + 1],
-            hvy[4 * (i - 1) + 2],
-            hvy[4 * (i - 1) + 3],
-            hvy[4 * (i - 1)],
-        ]
-        E.cubedraw(obx, oby, E.zmin, E.zmax, "k--")
-    plt.show()
-
-    return (fetch_path, extend_path)
-
-
-# --------------------------------------RRT Implementation---------------------------------
-def main():
-    # balance between extending and biasing
-    for i in range(0, nmax):
-        if i % 10 != 0:
-            G.expand()
+start = (-400, -300)
+goal = (400, 300)
+rrt = RRTStar(start, goal)
+if(rrt.IsValid(start[0], start[1])):
+    if(rrt.IsValid(goal[0], goal[1])):
+        if(rrt.IsObstacle(start[0],start[1]) == False):
+            if(rrt.IsObstacle(goal[0], goal[1]) == False):
+                (explored_states, backtrack_states) = rrt.search()
+                
+                # animate the path
+                rrt.animate(explored_states, backtrack_states)
+                
+                print(len(explored_states))
+                print(len(backtrack_states))
+            else:
+                print("The entered goal node is an obstacle ")
+                print("Please check README.md file for running rrt_star.py file.")
         else:
-            G.bias()
-        # check if sample is in goal, if so STOP!
-        if E.ingoal() == 1:
-            print("found")
-            break
-    G.path_to_goal()
-    G.prun()
-
-    # display initial plan under limited sensing
-    fetch_path, extend_path = draw()
-
-    return (fetch_path, extend_path)
-
-
-# run main when RRT is called
-if __name__ == "__main__":
-    main()
+            print("The entered start node is an obstacle ")
+            print("Please check README.md file for running rrt_star.py file.")
+    else:
+        print("The entered goal node outside the map ")
+        print("Please check README.md file for running rrt_star.py file.")
+else:
+    print("The entered start node is outside the map ")
+    print("Please check README.md file for running rrt_star.py file.")
