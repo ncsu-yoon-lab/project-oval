@@ -14,7 +14,7 @@ See [this](https://index.ros.org/p/joy/)
 
 ## xbox_controller
 ```shell
-python3 xbox_controller.py
+python3 node_xbox_controller.py
 ```
 
 ## how to connect controller
@@ -22,18 +22,17 @@ See [this](https://github.com/atar-axis/xpadneo#connection)
 
 ## driver (pwm_gen)
 ```shell
-python3 pwm_genV3.py
+python3 node_motor_act.py
 ```
 
 ## Lane following (detection + PID)
 ```shell
-python3 ProcessImageV1.0.py
+python3 node_process_image.py
 ```
 
 ## stop sign detection
 ```shell
-cd stop_sign_detection
-python3 stop_sign_detect_node.py 
+python3 node_stop_sign_detect.py 
 ```
 
 ## rplidar s2
@@ -43,13 +42,10 @@ ros2 launch sllidar_ros2  sllidar_s2_launch.py
 
 ## Obstacle detector (LIDAR-based)
 ```shell
-python3 obstacle_detector.py 
+python3 node_od.py 
 ```
 
 ## rosbridge_server 
 ```shell
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
-
-## voice commander
-Don't forget to run it on mk laptop
