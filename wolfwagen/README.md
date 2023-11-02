@@ -22,9 +22,14 @@
 ## Subscribing to the Data
 You can also create a subscriber in a different file/node. Create a callback function to handle incoming data:
 ```python
+
+import rclpy
+from geometry_msgs.msg import PoseStamped
+
 def vicon_callback(data):
     # Add your processing logic here
-    # "data" has fields for x, y, z, roll, pitch, yaw, and scalar
+
+    # "data" has fields for x, y, z, roll, pitch, yaw, and magnitude of rotation
     # Access the fields as follows:
     # data.pose.position.x (the x-value)
     # data.pose.position.y (the y-value)
@@ -35,9 +40,6 @@ def vicon_callback(data):
     # data.pose.orientation.w (magnitude of rotation)
 
 ## Creating a Subscription
-import rclpy
-from geometry_msgs.msg import PoseStamped
-
 def main():
     rclpy.init()
     vicon_node = rclpy.create_node('vicon_node')
@@ -51,14 +53,22 @@ def main():
 
 if __name__ == '__main__':
     main()
+```
+## Visualizing the Data in RViz2
 
+Follow these steps to visualize the Vicon data using RViz2:
 
-Visualizing the Data in RViz2
+1. **Run RViz2:** Open a terminal and enter the following command to start RViz2.
+    ```bash
+    rviz2
+    ```
 
-    Run RViz2 in a terminal.
-    Add a Pose display type.
-        Initially, the display type may show an error.
-        Open the dropdown and check the Topic field.
-        If it's empty, click into the empty field or hit the dropdown on the right side of the empty field.
-        Select vicon_pos.
-        Adjust the dimensions of the Pose arrow if it's too small to see clearly.
+2. **Add a Pose Display Type:**
+   - When you first add the Pose display type, it might display an error.
+   - Open the dropdown menu of the Pose display.
+   - **Check the Topic Field:**
+     - If the Topic field is empty, click into the field, or click the dropdown arrow on the right side of the empty field.
+     - **Select the Vicon Topic:**
+       - Choose `vicon_pos` from the available topics.
+     - **Adjust the Dimensions:**
+       - If the Pose arrow is too small to see clearly, adjust its dimensions until the visualization is clear and understandable.
