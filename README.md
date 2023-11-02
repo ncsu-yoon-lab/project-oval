@@ -27,7 +27,7 @@ python3 pwm_genV3.py
 
 ## Lane following (detection + PID)
 ```shell
-python3 LaneDetectionV6.2.py
+python3 ProcessImageV1.0.py
 ```
 
 ## stop sign detection
