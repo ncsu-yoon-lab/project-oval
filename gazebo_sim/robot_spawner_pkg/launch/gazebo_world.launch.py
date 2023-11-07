@@ -46,7 +46,7 @@ def generate_launch_description():
     #                    arguments=['-entity', 'demo', 'x', 'y', 'z'],
     #                    output='screen')
     spawn_entity = Node(package='robot_spawner_pkg', executable='spawn_demo',
-                        arguments=['WarehouseBot', 'demo', '-1.5', '-4.0', '0.0'],
+                        arguments=['WarehouseBot', 'demo', '-1', '-2', '0.0'],
                         output='screen')
 
     return LaunchDescription([

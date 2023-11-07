@@ -1,0 +1,18 @@
+[0.323s] Invoking command in '/home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg': PYTHONPATH=/home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/gazebo_sim/install/robot_controller_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg/build --no-deps install_data
+[0.440s] running develop
+[0.503s] running egg_info
+[0.503s] writing robot_controller_pkg.egg-info/PKG-INFO
+[0.503s] writing dependency_links to robot_controller_pkg.egg-info/dependency_links.txt
+[0.503s] writing entry points to robot_controller_pkg.egg-info/entry_points.txt
+[0.503s] writing requirements to robot_controller_pkg.egg-info/requires.txt
+[0.503s] writing top-level names to robot_controller_pkg.egg-info/top_level.txt
+[0.520s] reading manifest file 'robot_controller_pkg.egg-info/SOURCES.txt'
+[0.520s] writing manifest file 'robot_controller_pkg.egg-info/SOURCES.txt'
+[0.536s] running build_ext
+[0.536s] Creating /home/jyu34/Documents/wolfwagen/gazebo_sim/install/robot_controller_pkg/lib/python3.8/site-packages/robot-controller-pkg.egg-link (link to .)
+[0.537s] Installing robot_controller script to /home/jyu34/Documents/wolfwagen/gazebo_sim/install/robot_controller_pkg/lib/robot_controller_pkg
+[0.537s] Installing robot_estimator script to /home/jyu34/Documents/wolfwagen/gazebo_sim/install/robot_controller_pkg/lib/robot_controller_pkg
+[0.537s] 
+[0.537s] Installed /home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg
+[0.537s] running install_data
+[0.551s] Invoked command in '/home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg' returned '0': PYTHONPATH=/home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg/prefix_override:/home/jyu34/Documents/wolfwagen/gazebo_sim/install/robot_controller_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/jyu34/Documents/wolfwagen/gazebo_sim/build/robot_controller_pkg/build --no-deps install_data

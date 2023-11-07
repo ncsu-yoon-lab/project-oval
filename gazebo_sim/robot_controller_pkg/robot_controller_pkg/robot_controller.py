@@ -92,7 +92,7 @@ class Controller(Node):
     ################### ROBOT CONTROL PARAMETERS ##################
     # Maximum forward speed of the robot in meters per second
     # Any faster than this and the robot risks falling over.
-    self.forward_speed = 0.015
+    self.forward_speed = 0.010
  
     # Current position and orientation of the robot in the global 
     # reference frame
@@ -114,10 +114,10 @@ class Controller(Node):
  
     # Wall following distance threshold.
     # We want to try to keep within this distance from the wall.
-    self.dist_thresh_wf = 0.50 # in meters  
+    self.dist_thresh_wf = 0.75 # in meters  
  
     # We don't want to get too close to the wall though.
-    self.dist_too_close_to_wall = 0.19 # in meters
+    self.dist_too_close_to_wall = 0.4 # in meters
  
   def state_estimate_callback(self, msg):
     """
