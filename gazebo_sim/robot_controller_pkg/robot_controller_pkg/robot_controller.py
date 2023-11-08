@@ -7,9 +7,6 @@ import math
 # ROS client library for Python
 import rclpy
 
-# import msgs that control car movement
-import geometry_msgs.msg
-
 # Enables pauses in the execution of code
 from time import sleep
 
@@ -74,7 +71,7 @@ class Controller(Node):
             LaserScan,
             "/demo/laser/out",
             self.scan_callback,
-            qos_profile=qos_profile_sensor_data,
+            qos_profile=qos_profile_sensor_data
         )
 
         # Create a publisher
@@ -92,10 +89,16 @@ class Controller(Node):
         self.rightfront_dist = 999999.9  # Right-front
         self.right_dist = 999999.9  # Right
 
+        # max sensor reading
+        self.max_dist = 7.0
+
         ################### ROBOT CONTROL PARAMETERS ##################
         # Maximum forward speed of the robot in meters per second
         # Any faster than this and the robot risks falling over.
-        self.forward_speed = 0.015
+        self.forward_speed = 0.05
+
+        # Turning speed of the car
+        self.turning_speed = 1.0
 
         # Current position and orientation of the robot in the global
         # reference frame
@@ -112,14 +115,14 @@ class Controller(Node):
 
         # Set turning speeds (to the left) in rad/s
         # These values were determined by trial and error.
-        self.turning_speed_wf_fast = 2.0  # Fast turn
-        self.turning_speed_wf_slow = 0.05  # Slow turn
+        # self.turning_speed_wf_fast = 2.0  # Fast turn
+        # self.turning_speed_wf_slow = 0.05  # Slow turn
 
         #start state
         self.start = (self.current_x, self.current_y)
 
         #goal state
-        self.goal = (50.0, 50.0)
+        self.goal = (30.0, 30.0)
 
         # Wall following distance threshold.
         # We want to try to keep within this distance from the wall.
@@ -135,7 +138,7 @@ class Controller(Node):
         self.path = {}
         
         # goalThreshold - threshold from goal node
-        self.goalThreshold = 5
+        self.goalThreshold = 2
         
         # vertices of the graph
         self.vertices = []
@@ -144,11 +147,10 @@ class Controller(Node):
         self.stepSize = 3
         
         # step factor
-        self.stepFactor = 5
+        self.stepFactor = 2
 
         # whether or not the goal state was reached
-        global goal_reached
-        goal_reached = False
+        self.goal_reached = False
 
 
     def state_estimate_callback(self, msg):
@@ -163,8 +165,12 @@ class Controller(Node):
         self.current_y = curr_state[1]
         self.current_yaw = curr_state[2]
 
-        # Command the robot to keep following the wall
-        self.follow_wall()
+        self.start = (self.current_x, self.current_y)
+
+        # # Command the robot to keep following the wall
+        # self.follow_path(self.backtrack)
+
+        self.search()
 
     def scan_callback(self, msg):
         """
@@ -185,6 +191,8 @@ class Controller(Node):
         self.rightfront_dist = msg.ranges[45]
         self.right_dist = msg.ranges[0]
 
+        self.max_dist = msg.range_max
+
 
     # beginning of RRT implementation
 
@@ -204,7 +212,7 @@ class Controller(Node):
         return (np.sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)))
 
     # checks if a node is within an obstacle
-    def isObstacle(self, x, y, msg):
+    def isObstacle(self, x, y):
         """
         Inputs:
         
@@ -215,7 +223,7 @@ class Controller(Node):
         
         True / False depending on whether the node lies within obstacle or not.
         """
-        max = msg.range_max
+        # max = LaserScan.range_max
 
         d = self.dist_too_close_to_wall
 
@@ -223,11 +231,11 @@ class Controller(Node):
         curr_y = self.current_y
 
         # if the node is somehow outside of the max laser range
-        if self.euc_heuristic((x, y), (curr_x, curr_y)) > max:
+        if self.euc_heuristic((x, y), (curr_x, curr_y)) > self.max_dist:
             return True
         
         # if laser reading is less than max range, aka there is an obstacle in front in a 90 degree sweep
-        if self.front_dist < max or self.leftfront_dist < max or self.rightfront_dist < max:
+        if self.front_dist < self.max_dist or self.leftfront_dist < self.max_dist or self.rightfront_dist < self.max_dist:
             if self.euc_heuristic((x, y), (curr_x, curr_y)) + d > self.front_dist:
                 return True
             elif self.euc_heuristic((x, y), (curr_x, curr_y)) + d > self.leftfront_dist:
@@ -275,7 +283,7 @@ class Controller(Node):
         return False
     
     # get a sub goal, which is a point in the current sensor window to travel to
-    def getSubGoal(self, curr_pos, goal, msg):
+    def getSubGoal(self, curr_pos, goal):
         """
         Inputs:
 
@@ -291,68 +299,92 @@ class Controller(Node):
         
         """
 
+
         # if final goal is within current window, return final goal
-        if self.euc_heuristic(curr_pos, goal) < self.front_dist or self.euc_heuristic(curr_pos, goal) < self.leftfront_dist or self.euc_heuristic(curr_pos, goal) < self.rightfront_dist:
+        print(self.euc_heuristic(curr_pos, goal))
+        print(self.max_dist)
+
+        if self.euc_heuristic(curr_pos, goal) < self.max_dist:
             return goal
         
         # find intersection between window and line between curr_pos and goal using unit vectors
         vector_to_goal = (goal[0] - curr_pos[0], goal[1] - curr_pos[1])
         norm = math.sqrt(vector_to_goal[0] ** 2 + vector_to_goal[1] ** 2)
-        direction = (vector_to_goal[0] / norm, vector_to_goal[1] / norm)
-        range_intersect = direction * msg.range_max
+        direction = (vector_to_goal[0] / norm, vector_to_goal[1] / norm) # unit vector
 
-        subgoal = curr_pos + range_intersect
+        print("dist = ", self.max_dist)
+
+        # line that leads from current position to the point of intersection -> d*u
+        line_to_intersection = tuple(i * int(self.max_dist) for i in direction)
+
+        print("line = ", line_to_intersection)
+
+        # new point -> (x0,y0) + d*u
+        subgoal = tuple(map(lambda i, j: i + j, curr_pos, line_to_intersection))
+
+        print("subgoal = ", subgoal)
 
         # if subgoal is not inside an obstacle
-        if not self.isObstacle(subgoal):
+        if not self.isObstacle(subgoal[0], subgoal[1]):
             return subgoal
         # if subgoal is inside an obstacle
         else:
             pointleft = subgoal
             pointright = subgoal
             angle = 5 #degrees
-            radius = msg.range_max
+            radius = self.max_dist
             
-            while self.isObstacle(pointleft) and self.isObstacle(pointright):
+            while self.isObstacle(pointleft[0], pointleft[1]) and self.isObstacle(pointright[0], pointright[1]):
                 # move left along the max range of the sensor
-                pointleft[0] = curr_pos[0] + math.cos(math.radians(angle)) * radius
-                pointleft[1] = curr_pos[1] + math.sin(math.radians(angle)) * radius
+                templeft = list(pointleft)
+                templeft[0] = curr_pos[0] + math.cos(math.radians(angle)) * radius
+                templeft[1] = curr_pos[1] + math.sin(math.radians(angle)) * radius
+                pointleft = tuple(templeft)
 
                 # move right along the max range of the sensor
-                pointright[0] = curr_pos[0] - math.cos(math.radians(angle)) * radius
-                pointright[1] = curr_pos[1] - math.sin(math.radians(angle)) * radius
+                tempright = list(pointright)
+                tempright[0] = curr_pos[0] - math.cos(math.radians(angle)) * radius
+                tempright[1] = curr_pos[1] - math.sin(math.radians(angle)) * radius
+                pointright = tuple(pointright)
 
                 angle += 5
             
-            if not self.isObstacle(pointleft):
+            if not self.isObstacle(pointleft[0], pointright[1]):
                 return pointleft
             else:
                 return pointright
     
     # random position generator
-    def getRandomPosition(self, msg):
+    def getRandomPosition(self):
         """
         Output:
         
         Returns the random node inside the current window (sensor range)
         """
-
+        
         subgoal = self.getSubGoal(self.start, self.goal)
 
-        #the distance between the current position and the subgoal. This is the range which any new nodes will get generated for the agent to travel to
+        # This is the range which any random node will be generated
         window = self.euc_heuristic(self.start, subgoal)
+
+        r = window * math.sqrt(random.random())
+        theta = random.random() * 0.5 * math.pi
         
-        randX = round(random.uniform((self.current_x - window), (self.current_x + window)), 2)
-        randY = round(random.uniform((self.current_y - window), (self.current_y + window)), 2)
+        # randX = round(random.uniform((self.current_x - window), (self.current_x + window)), 2)
+        # randY = round(random.uniform((self.current_y - window), (self.current_y + window)), 2)
+
+        randX = self.start[0] + r * math.cos(theta)
+        randY = self.start[1] + r * math.sin(theta)
+
         return (randX, randY)
     
     # nearest neighbour in the graph
-    def getNearestNeighbour(self, currX, currY):
+    def getNearestNeighbour(self, x, y):
         """
         Inputs:
         
-        currX: the current x-position of the robot.
-        currY: the current y-posiiton of the robot.
+        x: x position of the random node we are getting the nearest node of
+        y: y position of the random node we are getting the nearest node of
         
         Outputs:
         
@@ -365,7 +397,7 @@ class Controller(Node):
         
         # loop through vertices of graph
         for vertex in self.vertices:
-            distance = self.euc_heuristic(vertex, (currX, currY))
+            distance = self.euc_heuristic(vertex, (x, y))
             if(distance < minDistance):
                 minDistance = distance
                 nearestVertex = vertex
@@ -379,77 +411,79 @@ class Controller(Node):
         Inputs:
         
         x_rand: the random node
-        x_nearest: the nearest node to the x_rand
+        x_nearest: the nearest node to the random node
         
         Outputs:
         
         newNode: the Xnew node at a distance of self.stepSize from x_nearest and in the direction of x_rand
         """
         
-        # slope of line joining x_rand and x_nearest
-        slope = (x_rand[1] - x_nearest[1]) / (x_rand[0] - x_nearest[0])
-        factor = self.stepSize * np.sqrt(1.0 / (1.0 + (slope ** 2)))
-        
-        # two points possible
-        point_1 = (round(x_nearest[0] + factor, 2), round(x_nearest[1] + (slope * factor), 2))
-        point_2 = (round(x_nearest[0] - factor, 2), round(x_nearest[1] - (slope * factor), 2))
-        flag1 = False
-        flag2 = False
-        
-        # check for obstacles
-        if(self.checkObstacleBetweenPoints(x_nearest, point_1)):
-            flag1 = True
-        if(self.checkObstacleBetweenPoints(x_nearest, point_2)):
-            flag2 = True
-        
-        # return point with minimum distance to random node
-        distance_1 = self.euc_heuristic(x_rand, point_1)
-        distance_2 = self.euc_heuristic(x_rand, point_2)
-        if(distance_1 < distance_2):
-            return (flag1, point_1)
-        else:
-            return (flag2, point_2)
+        # # slope of line joining x_rand and x_nearest
+        # slope = (x_rand[1] - x_nearest[1]) / (x_rand[0] - x_nearest[0])
+        # factor = self.stepSize * np.sqrt(1.0 / (1.0 + (slope ** 2)))
 
-    # get neighbourhood
-    def getNeighbourhood(self, x_new):
-        """
-        Inputs:
+        if self.euc_heuristic(x_nearest, x_rand) <= self.stepFactor:
+            if self.checkObstacleBetweenPoints(x_nearest, x_rand):
+                return (True, x_rand)
+            else:
+                return (False, x_rand)
+            
         
-        x_new: the new node
+        # find node at the step factor on the path from the nearest node to the random node
+        vector = (x_rand[0] - x_nearest[0], x_rand[1] - x_nearest[1])
+        norm = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+        direction = (vector[0] / norm, vector[1] / norm) # unit vector
+        # line that leads from nearest node to random node with a max distance of our step factor -> d*u
+        nearest_to_rand = tuple(i * self.stepFactor for i in direction)
+        # new point -> (x0,y0) + d*u
+        new_node = tuple(map(lambda i, j: i + j, x_nearest, nearest_to_rand))
+
+        if self.checkObstacleBetweenPoints(x_nearest, new_node):
+            return (True, new_node)
+        else:
+            return (False, new_node)
+
+
+    # # get neighbourhood
+    # def getNeighbourhood(self, x_new):
+    #     """
+    #     Inputs:
         
-        Outputs:
+    #     x_new: the new node
         
-        neighbourhood: the list of nodes in the neighbourhood of x_new
-        """
+    #     Outputs:
         
-        # iterate through the vertices and get nodes within a certain radius
-        neighbourhood = []
-        for index in range(0, len(self.vertices)):
-            dist = self.euc_heuristic(x_new, self.vertices[index])
-            if(dist < self.stepFactor):
-                neighbourhood.append(self.vertices[index])
-        return neighbourhood
+    #     neighbourhood: the list of nodes in the neighbourhood of x_new
+    #     """
+        
+    #     # iterate through the vertices and get nodes within a certain radius
+    #     neighbourhood = []
+    #     for index in range(0, len(self.vertices)):
+    #         dist = self.euc_heuristic(x_new, self.vertices[index])
+    #         if(dist < self.stepFactor):
+    #             neighbourhood.append(self.vertices[index])
+    #     return neighbourhood
     
-    # get neighbourhood parent
-    def getNeighbourhoodParent(self, neighbourhood):
-        """
-        Inputs:
+    # # get neighbourhood parent
+    # def getNeighbourhoodParent(self, neighbourhood):
+    #     """
+    #     Inputs:
         
-        neighbourhood: the list of nodes in the neighbourhood of x_new
+    #     neighbourhood: the list of nodes in the neighbourhood of x_new
         
-        Outputs:
+    #     Outputs:
         
-        parent: the node that is the ideal parent for the x_new node
-        """
+    #     parent: the node that is the ideal parent for the x_new node
+    #     """
         
-        dist = self.costToCome[neighbourhood[0]]
-        parent = neighbourhood[0]
-        for index in range(1, len(neighbourhood)):
-            curr_dist = self.costToCome[neighbourhood[index]]
-            if(curr_dist < dist):
-                dist = curr_dist
-                parent = neighbourhood[index]
-        return parent
+    #     dist = self.costToCome[neighbourhood[0]]
+    #     parent = neighbourhood[0]
+    #     for index in range(1, len(neighbourhood)):
+    #         curr_dist = self.costToCome[neighbourhood[index]]
+    #         if(curr_dist < dist):
+    #             dist = curr_dist
+    #             parent = neighbourhood[index]
+    #     return parent
     
 
     # rrt-star algo
@@ -463,71 +497,71 @@ class Controller(Node):
         distance: the total distance between start node and goal node.
         """
 
-        # Clear the graph and backtracking nodes for new window. Essentially there is a new graph for each window
-        self.costToCome.clear()
-        self.vertices.clear()
-        self.path.clear()
-
         subgoal = self.getSubGoal(self.start, self.goal)
+        self.goal_reached = False
+
         
         # initial steps for rrt-star algo
         self.costToCome[self.start] = 0
         self.vertices.append(self.start)
         backtrackNode = None
         
+        
         # run the rrt-star algo
-        for step in range(0, 5000):
-            
+        while(not self.goal_reached):
+            print(self.start)
+            print("subgoal = ", subgoal)
+
             # get random node
-            (x_rand_x, x_rand_y) = self.getRandomPosition()
-            x_rand = (x_rand_x, x_rand_y)
+            x_rand = self.getRandomPosition()
             
             # get nearest node
-            (x_nearest_x, x_nearest_y) = self.getNearestNeighbour(x_rand_x, x_rand_y)
-            x_nearest = (x_nearest_x, x_nearest_y)
+            x_nearest = self.getNearestNeighbour(x_rand[0], x_rand[1])
             
-            # check whether x_nearest[0] == x_rand[0] or x_nearest[1] == x_rand[1]
-            if((x_nearest[0] == x_rand[0]) or (x_nearest[1] == x_rand[1])):
-                continue
+            
+            # # check whether x_nearest[0] == x_rand[0] or x_nearest[1] == x_rand[1]
+            # if((x_nearest[0] == x_rand[0]) or (x_nearest[1] == x_rand[1])):
+            #     continue
     
             # get new node between x_nearest and x_rand
             (flag, x_new) = self.getNewNode(x_rand, x_nearest)
-            if(flag == True):
+            if flag:
                 continue
             
-            # get neighbourhood region for x_new
-            neighbourhood = self.getNeighbourhood(x_new)
+            # # get neighbourhood region for x_new
+            # neighbourhood = self.getNeighbourhood(x_new)
             
-            # get parent for the neighbourhood region
-            parent = self.getNeighbourhoodParent(neighbourhood)
-            x_nearest = parent
+            # # get parent for the neighbourhood region
+            # parent = self.getNeighbourhoodParent(neighbourhood)
+            # x_nearest = parent
             
             # check obstacle between x_nearest and x_new
-            if(self.checkObstacleBetweenPoints(x_nearest, x_new)):
+            if self.checkObstacleBetweenPoints(x_nearest, x_new):
                 continue
             
             # add x_new to graph
             self.vertices.append(x_new)
             self.path[x_new] = x_nearest
             self.costToCome[x_new] = self.costToCome[x_nearest] + self.euc_heuristic(x_nearest, x_new)
-            
-            # rewire graph
-            for index in range(0, len(neighbourhood)):
-                distance_from_start = self.costToCome[x_new] + self.euc_heuristic(x_new, neighbourhood[index])
-                if(distance_from_start < self.costToCome[neighbourhood[index]]):
-                    self.costToCome[neighbourhood[index]] = distance_from_start
-                    self.path[neighbourhood[index]] = x_new
+
+            print("no. of vertices = ", len(self.vertices))
+
+            # # rewire graph
+            # for index in range(0, len(neighbourhood)):
+            #     distance_from_start = self.costToCome[x_new] + self.euc_heuristic(x_new, neighbourhood[index])
+            #     if(distance_from_start < self.costToCome[neighbourhood[index]]):
+            #         self.costToCome[neighbourhood[index]] = distance_from_start
+            #         self.path[neighbourhood[index]] = x_new
             
             # check distance between goal and x_new
             dist_from_goal = self.euc_heuristic(x_new, subgoal)
             if(dist_from_goal <= self.goalThreshold):
                 backtrackNode = x_new
-                break
-                
-        # backtrack path
-        if(backtrackNode == None):
-            return (self.vertices, [])
+                self.goal_reached = True
+                print("goal reached")
         
+                
+        # backtrack path        
         backtrackStates = []
         while(backtrackNode != self.start):
             backtrackStates.append(backtrackNode)
@@ -535,36 +569,49 @@ class Controller(Node):
         backtrackStates.append(self.start)
         backtrackStates = list(reversed(backtrackStates))
 
+
         self.follow_path(backtrackStates)
 
-        return (self.vertices, backtrackStates)
+        # return (self.vertices, backtrackStates)
+
+    
+    # linear velocity of the car
+    def linear_vel(self, goal):
+        return self.forward_speed * self.euc_heuristic((self.current_x, self.current_y), goal)
+    
+    # steering angle for the car's motion
+    def steering_angle(self, goal):
+        return math.atan2(goal[1] - self.current_y, goal[0] - self.current_x)
+    
+    # angular velocity of the car
+    def angular_vel(self, goal):
+        return self.turning_speed * (self.steering_angle(goal) - self.current_yaw)
     
     # commands car to goal state by publishing twist message
-    def move_towards_goal(self, goal):
+    def move_to_goal(self, goal):
         '''
         Inputs:
         
         goal: the goal state to reach
 
         '''
+        cmd = Twist()
         curr_location = (self.current_x, self.current_y)
-        d = self.euc_heuristic(curr_location, goal)
-        theta = self.current_yaw
-        kl = 1
-        ka = 4
-        vx = 0
-        va = 0
-        heading = math.atan2(goal[1] - curr_location[1], goal[0] - curr_location[0])
-        err_theta = heading - theta
-        if (d > 0.01):
-            vx = kl * abs(d)
-            vx = 1
-        if (abs(err_theta) > 0.01):
-            va = ka * err_theta
-        cmd = geometry_msgs.msg.Twist
-        cmd.linear.x = vx
-        cmd.angular.z = va
-        self.publisher_.publish(cmd)
+
+        while self.euc_heuristic(goal, curr_location) > 0.1:
+
+            # linear velocity in the x-axis
+            cmd.linear.x = self.linear_vel(goal)
+            cmd.linear.y = 0.0
+            cmd.linear.z = 0.0
+
+            # angular velocity in the z-axis
+            cmd.angular.x = 0.0
+            cmd.angular.y = 0.0
+            cmd.angular.z = self.angular_vel(goal)
+
+            self.publisher_.publish(cmd)
+
     
     # Follows a given set of path - Reaches all the points in a list in consecutive order
     def follow_path(self, path):
@@ -573,15 +620,18 @@ class Controller(Node):
 
         path: the path to follow
         '''
-        global goal_reached
 
-        curr_location = (self.current_x, self.current_y)
-        cpath = path
-        for loc in cpath:
-            while(self.euc_heuristic(curr_location, loc) > 0.1):
-                self.move_towards_goal([loc[0]/10,loc[1]/10])
-                if (loc == self.goal):
-                    goal_reached = True
+        # print('following path -->', path)
+
+        for loc in path:
+            self.move_to_goal(loc)
+            if self.euc_heuristic(loc, self.goal) <= self.goalThreshold:
+                cmd = Twist()
+                cmd.linear.x = 0.0
+                cmd.angular.x = 0.0
+                self.publisher_.publish(cmd)
+                print("goal reached")
+                break
 
     # end of RRT implementation, just to separate RRT code from everything else for better readability
 
@@ -655,7 +705,7 @@ class Controller(Node):
     #         self.wall_following_state = "turn left"
     #         msg.angular.z = self.turning_speed_wf_fast
 
-    #     elif (
+    #     elif (return (self.vertices, backtrackStates)
     #         self.leftfront_dist < d and self.front_dist > d and self.rightfront_dist < d
     #     ):
     #         self.wall_following_state = "search for wall"

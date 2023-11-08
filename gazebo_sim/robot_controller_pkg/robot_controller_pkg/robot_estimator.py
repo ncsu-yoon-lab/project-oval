@@ -44,13 +44,13 @@ class Estimator(Node):
             Odometry, "/demo/odom", self.odom_callback, 10
         )
 
-        # Create a subscriber
-        # This node subscribes to messages of type
-        # geometry_msgs/Twist.msg. We are listening to the velocity commands here.
-        # The maximum number of queued messages is 10.
-        self.velocity_subscriber = self.create_subscription(
-            Twist, "/demo/cmd_vel", self.velocity_callback, 10
-        )
+        # # Create a subscriber
+        # # This node subscribes to messages of type
+        # # geometry_msgs/Twist.msg. We are listening to the velocity commands here.
+        # # The maximum number of queued messages is 10.
+        # self.velocity_subscriber = self.create_subscription(
+        #     Twist, "/demo/cmd_vel", self.velocity_callback, 10
+        # )
 
         # Create a publisher
         # This node publishes the estimated position (x, y, yaw)

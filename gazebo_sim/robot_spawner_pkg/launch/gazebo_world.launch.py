@@ -28,7 +28,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    world_file_name = 'warehouse.world'
+    world_file_name = 'simple.world'
     pkg_dir = get_package_share_directory('robot_spawner_pkg')
 
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(pkg_dir, 'models')
@@ -46,7 +46,7 @@ def generate_launch_description():
     #                    arguments=['-entity', 'demo', 'x', 'y', 'z'],
     #                    output='screen')
     spawn_entity = Node(package='robot_spawner_pkg', executable='spawn_demo',
-                        arguments=['WarehouseBot', 'demo', '-1', '-2', '0.0'],
+                        arguments=['WarehouseBot', 'demo', '-15', '-15', '0'],
                         output='screen')
 
     return LaunchDescription([
