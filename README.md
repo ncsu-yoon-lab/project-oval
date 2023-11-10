@@ -1,3 +1,7 @@
+### When working on new features, please switch to the development branch and create your feature branch from the development branch until your feature is ready to be merged to the development branch
+
+Steps to do so are [Here]{version_control_guide.md}
+
 # Wolfwagen Startup Sequence
 
 ## ZED 2i node
@@ -14,7 +18,7 @@ See [this](https://index.ros.org/p/joy/)
 
 ## xbox_controller
 ```shell
-python3 xbox_controller.py
+python3 node_xbox_controller.py
 ```
 
 ## how to connect controller
@@ -22,18 +26,17 @@ See [this](https://github.com/atar-axis/xpadneo#connection)
 
 ## driver (pwm_gen)
 ```shell
-python3 pwm_genV3.py
+python3 node_motor_act.py
 ```
 
 ## Lane following (detection + PID)
 ```shell
-python3 LaneDetectionV6.2.py
+python3 node_process_image.py
 ```
 
 ## stop sign detection
 ```shell
-cd stop_sign_detection
-python3 stop_sign_detect_node.py 
+python3 node_stop_sign_detect.py
 ```
 
 ## rplidar s2
@@ -43,7 +46,7 @@ ros2 launch sllidar_ros2  sllidar_s2_launch.py
 
 ## Obstacle detector (LIDAR-based)
 ```shell
-python3 obstacle_detector.py 
+python3 node_od.py
 ```
 
 ## rosbridge_server 
