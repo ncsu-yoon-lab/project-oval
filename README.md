@@ -1,6 +1,6 @@
 ### When working on new features, please switch to the development branch and create your feature branch from the development branch until your feature is ready to be merged to the development branch
 
-Steps to do so are [Here]{version_control_guide.md}
+Steps to do so are [Here](version_control_guide.md)
 
 # Wolfwagen Startup Sequence
 
