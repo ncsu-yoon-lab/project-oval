@@ -1,3 +1,4 @@
+To make your feature branch:
 ```shell
 # first pull latest changes
 git pull
