@@ -1,1 +1,12 @@
+Teensy loader commands for ORIN:
 
+sudo cp 00-teensy.rules /etc/udev/rules.d/
+tar -xvzf teensy_linux64.tar.gz
+
+To use the teensy loader:
+./teensy &
+
+Other resources:
+https://www.pjrc.com/teensy/td_download.html
+
+https://www.pjrc.com/teensy/loader_linux.html
