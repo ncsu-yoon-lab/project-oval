@@ -3,13 +3,15 @@
 
 // Initializing the servo and DC motor
 Servo myServo , myDC;
-int position = 90;
+int position = 95;
 int throttle = 1500;
+int center = 95;
+
 
 // Setting the maximum and minimum PWM values
-// int pwm_lowerlimit = 1000; 
-// int pwm_center_value = 1500;
-// int pwm_upperlimit = 2000;
+int pwm_lowerlimit = 1000; 
+int pwm_center_value = 1500;
+int pwm_upperlimit = 2000;
 // int pwm_lowerlimit = 6554; 
 // int pwm_center_value = 9830;
 // int pwm_upperlimit = 13108;
@@ -19,11 +21,11 @@ int throttle = 1500;
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
 // Freq test
-// int count = 0;
+int count = 0;
 
 void setup() {
   Serial.begin(100000);
-  while (!Serial);
+  //while (!Serial);
 
   // Servo in PIN 18
   myServo.attach(18);
@@ -36,6 +38,8 @@ void setup() {
 
   // Set baud rate
   can1.setBaudRate(250000);
+
+  Serial.println("Upload Complete.");
 }
 
 // void turn_servo(float cmd_pos){
@@ -87,6 +91,13 @@ void loop() {
   // Serial.println("Outside CAN Loop");
   //count = count + 1;
   CAN_message_t msg;
+  CAN_message_t msg2;
+
+  msg2.id = 0x123;
+  msg2.len = 2;
+  msg2.buf[0] = 1;
+  can1.write(msg2);
+  // Serial.print("Message sent: "); Serial.println(msg2.buf[0]);
   //Serial.println(can1.read(msg));
   //Serial.print("Looking for CAN... "); Serial.println(count);
   if (can1.read(msg)) {
@@ -96,23 +107,25 @@ void loop() {
     // Serial.print(msg.id, HEX);
     // Serial.print(" Length: ");
     // Serial.println(msg.len);
-    //Serial.print("Data: ");
+    // Serial.print("Data: ");
 
     // Receiving throttle and position values
-    throttle = word(msg.buf[0] , msg.buf[1]);
-    position = word(msg.buf[2] , msg.buf[3]);
+    throttle = word(msg.buf[0] , msg.buf[1]) - 28;
+    position = word(msg.buf[2] , msg.buf[3]) - 100;
 
-    // Serial.println(throttle);
-    // Serial.println(position);
+    //Serial.print("Throttle Before: "); Serial.println(throttle);
+    //Serial.print("Steering Before: "); Serial.println(position);
+    throttle = floor((7.14)*float(throttle)) + 1500;
+    position = floor(0.5 * float(position)) + center;
+    //Serial.print("Throttle After: "); Serial.println(throttle);
+    //Serial.print("Steering After: "); Serial.println(position);
 
     // Calling pwm_received with throttle and position values
     //pwm_received(throttle , position);
     myServo.write(position);
-    myDC.write(throttle);
+    delay(15);
+    myDC.writeMicroseconds(throttle);
+    delay(15);
   }
-  delay(15);
-  // if (count == 10){
-  //   count = 0;
-  // }
-
+  //delay(15);
 }
