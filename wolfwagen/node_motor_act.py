@@ -124,6 +124,9 @@ def on_voice_cmd_mqtt_message(client, userdata, message):
 	elif cmd == 'right':
 		print('right -- todo')
 
+def pure_pursuit_callback(msg):
+	print(msg)
+
 
 def main(args=None):
 	warning = ""
@@ -159,6 +162,7 @@ def main(args=None):
 	subscription_voice_cmd = node.create_subscription(String , "voice_cmd" , voice_cmd_callback , 1)		
 	subscription_lidar_min_dist = node.create_subscription(Float64 , "lidar_min_dist" , lidar_min_dist_callback , 1)		
 	subscription_stop_sign = node.create_subscription(Int64 , 'stop_sign' , stop_sign_callback , 1)
+	subscription_pure_pursuit = node.create_subscription(Float64, "pure_pursuit", pure_pursuit_callback, 1)
 	thread = threading.Thread(target=rclpy. spin, args=(node, ), daemon=True)
 	thread.start()
 
