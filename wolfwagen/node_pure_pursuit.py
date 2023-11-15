@@ -1,27 +1,41 @@
 import rclpy
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64MultiArray
 import threading
 from rclpy.node import Node
-x_pos = y_pos = 0.0
+import time
+import math
+import numpy as np
+x_pos = y_pos = x_roll = y_pitch = z_yaw = 0.0
+
+x_goal = 2.065
+y_goal = 2.6601
+
+# Measured in meters
+wheel_base = 0.208
 def vicon_callback(data):
-    global x_pos , y_pos , z_pos
+    global x_pos , y_pos , z_yaw
     # Add your processing logic here
 
     # "data" has fields for x, y, z, roll, pitch, yaw, and magnitude of rotation
     # Access the fields as follows:
-    print("In the callback")
     x_pos = data.pose.position.x
     y_pos = data.pose.position.y
     # z_pos = data.data.data.z
-    # data.pose.orientation.x (the roll-value)
-    # data.pose.orientation.y (the pitch-value)
-    # data.pose.orientation.z (the yaw-value)
-    # data.pose.orientation.w (magnitude of rotation)
+    # x_roll = data.pose.orientation.x # (the roll-value)
+    y_pitch = data.pose.orientation.y # (the pitch-value)
+    z_yaw = data.pose.orientation.z # (the yaw-value)
+    w_mag = data.pose.orientation.w # (magnitude of rotation)
+
+    # Converting from quaternion to euler
+    t0 = +2.0 * (w_mag * z_yaw + x_roll * y_pitch)
+    t1 = +1.0 - 2.0 * (y_pitch ** 2 + z_yaw ** 2)
+    
+    z_yaw = math.degrees(math.atan2(t0 , t1)) - 90
 
 ## Creating a Subscription
 def main():
-    global x_pos , y_pos , z_pos
+    global x_pos , y_pos , x_roll , y_pitch , z_yaw , w_mag
     rclpy.init()
     vicon_node = rclpy.create_node('vicon_node')
     subscription = vicon_node.create_subscription(
@@ -31,21 +45,69 @@ def main():
         1  # queue size
     )
 
-    pure_pursuit_pub = vicon_node.create_publisher(Float64, "pure_pursuit", 1) # publishing one value for now as a test, later change the data type and values
+    pure_pursuit_pub = vicon_node.create_publisher(Float64MultiArray, "pure_pursuit", 1) # publishing one value for now as a test, later change the data type and values
 
 
     thread = threading.Thread(target=rclpy.spin, args=(vicon_node, ), daemon=True)
     thread.start()
 
+    FREQ = 10
+    rate = vicon_node.create_rate(FREQ, vicon_node.get_clock())
+
+    # Initializing time
+    new_time = time.time()
+
+
     while rclpy.ok():
-        if x_pos is not None:
-            x_data = Float64()
-            x_data.data = x_pos
-            pure_pursuit_pub.publish(x_data)
-            # print(x_pos)
-        if y_pos is not None:
-            print(y_pos)
-        # print(z_pos)
+
+        # Only getting position and yaw every second and that data is being transferred
+        if time.time() - new_time > 1 and x_pos != 0:
+
+            # Calculating the distance between the current position and target position
+            distance_to_goal = math.sqrt((y_goal - y_pos)**2 + (x_goal - x_pos)**2)
+
+            # The yaw of the robot
+            print(f"z_yaw: {z_yaw:.4f} degrees")
+
+            # The alpha between the current position and the target position
+            # Measured in radians
+            alpha = math.atan((x_goal - x_pos)/(y_goal - y_pos))
+
+            # Path curvature
+            k = (2 * math.sin(alpha))/distance_to_goal
+
+            # Steering angle
+            steering = math.atan(k * wheel_base)
+
+            # Converting steering angle for node_motor_act
+            steering = math.degrees(steering) * 100 / 40
+
+            print(f"Distance to goal: {distance_to_goal}")
+            print(f"Current x_pos: {x_pos}\nCurrent y_pos: {y_pos}")
+            print(f"Alpha: {math.degrees(alpha)}")
+            print(f"Path curvature: {k}")
+            print(f"Steering: {steering}")
+
+            pure_pursuit_data = Float64MultiArray()
+            pure_pursuit_data.data = [distance_to_goal, x_pos, y_pos, alpha, k, steering]
+            pure_pursuit_pub.publish(pure_pursuit_data)
+
+
+            new_time = time.time() 
+
+        # if x_pos is not None:
+        #     x_data = Float64()
+        #     x_data.data = x_pos
+        #     pure_pursuit_pub.publish(x_data)
+
+        # if y_pos is not None:
+        #     print(y_pos)
+        rate.sleep()
+
+    vicon_node.destroy_node()
+    rclpy.shutdown()
+
+
 
 
 
