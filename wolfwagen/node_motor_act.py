@@ -4,13 +4,14 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, Float64MultiArray
 import struct
 import can
 import os
 import threading
 import time
 import curses
+import math
 
 #distributed ros doesn't work now, so let's use mqtt for now
 import paho.mqtt.client as paho
@@ -125,7 +126,11 @@ def on_voice_cmd_mqtt_message(client, userdata, message):
 		print('right -- todo')
 
 def pure_pursuit_callback(msg):
-	print(msg)
+	print(f"Distance to goal: {msg.data[0]}")
+	print(f"Current x_pos: {msg.data[1]}\nCurrent y_pos: {msg.data[2]}")
+	print(f"Alpha: {math.degrees(msg.data[3])}")
+	print(f"Path curvature: {msg.data[4]}")
+	print(f"Steering: {msg.data[5]}")
 
 
 def main(args=None):
@@ -162,7 +167,7 @@ def main(args=None):
 	subscription_voice_cmd = node.create_subscription(String , "voice_cmd" , voice_cmd_callback , 1)		
 	subscription_lidar_min_dist = node.create_subscription(Float64 , "lidar_min_dist" , lidar_min_dist_callback , 1)		
 	subscription_stop_sign = node.create_subscription(Int64 , 'stop_sign' , stop_sign_callback , 1)
-	subscription_pure_pursuit = node.create_subscription(Float64, "pure_pursuit", pure_pursuit_callback, 1)
+	subscription_pure_pursuit = node.create_subscription(Float64MultiArray, "pure_pursuit", pure_pursuit_callback, 1)
 	thread = threading.Thread(target=rclpy. spin, args=(node, ), daemon=True)
 	thread.start()
 
