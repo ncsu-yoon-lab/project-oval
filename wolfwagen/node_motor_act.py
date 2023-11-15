@@ -12,6 +12,7 @@ import threading
 import time
 import curses
 import math
+import numpy as np
 
 #distributed ros doesn't work now, so let's use mqtt for now
 import paho.mqtt.client as paho
@@ -34,7 +35,21 @@ pid_steer = 0
 auto_throttle = 0	#published (and controller) by xbox_controller	
 
 lidar_min_dist = 1000000	#for LIDAR-based obstacle detection/avoidance
-SAFE_DISTANCE = 0.50	
+SAFE_DISTANCE = 0.50
+
+goal_threshold = 0.25
+distance_to_goal = 0
+current_x = 0
+current_y = 0
+alpha = 0
+path_curvature = 0
+steering_angle = 0
+waypoints = []
+
+# Measured in meters
+wheel_base = 0.208
+lookahead = 1.00 #not sure what to set this number to
+
 
 def pwm(val):
 	#TODO: input range check
@@ -126,11 +141,49 @@ def on_voice_cmd_mqtt_message(client, userdata, message):
 		print('right -- todo')
 
 def pure_pursuit_callback(msg):
-	print(f"Distance to goal: {msg.data[0]}")
-	print(f"Current x_pos: {msg.data[1]}\nCurrent y_pos: {msg.data[2]}")
-	print(f"Alpha: {math.degrees(msg.data[3])}")
-	print(f"Path curvature: {msg.data[4]}")
-	print(f"Steering: {msg.data[5]}")
+	global goal_threshold, distance_to_goal, current_x, current_y, alpha, path_curvature, steering_angle, auto_throttle, pid_steer
+
+	distance_to_goal = msg.data[0]
+	current_x = msg.data[1]
+	current_y = msg.data[2]
+	alpha = math.degrees(msg.data[3])
+	path_curvature = msg.data[4]
+	steering_angle = msg.data[5]
+
+	print(f"Distance to goal: {distance_to_goal}")
+	print(f"Current x_pos: {current_x}\nCurrent y_pos: {current_y}")
+	print(f"Alpha: {alpha}")
+	print(f"Path curvature: {path_curvature}")
+	print(f"Steering: {steering_angle}")
+
+	if distance_to_goal <= goal_threshold:
+		auto_throttle = 0
+		pid_steer = 0
+		print("goal reached")   #This is probably in the wrong location but the location but the logic should be super straightforward
+
+
+def find_nearest_waypoint():
+	"""
+	get closest index to the car
+	"""
+	global current_x, current_y, waypoints, wheel_base
+	curr_xy = np.array([current_x, current_y])
+	waypoints_xy = waypoints[:, :2]
+	nearest_idx = np.argmin(np.sum((curr_xy - waypoints_xy)**2, axis=1))
+	return nearest_idx
+
+
+def idx_closest_to_lookahead(idx):
+	"""
+	Get closest index to lookahead that is greater than the lookahead
+	"""
+	global lookahead
+	while distance_to_goal < lookahead:
+		idx += 1
+	return idx - 1
+
+# def pure_pursuit():
+
 
 
 def main(args=None):
