@@ -15,9 +15,9 @@ import math
 import numpy as np
 
 #distributed ros doesn't work now, so let's use mqtt for now
-import paho.mqtt.client as paho
-broker_ip="eb2-3254-ub01.csc.ncsu.edu"
-broker_port=12345
+#import paho.mqtt.client as paho
+#broker_ip="eb2-3254-ub01.csc.ncsu.edu"
+#broker_port=12345
 
 stdscr = curses.initscr()
 
@@ -142,7 +142,6 @@ def on_voice_cmd_mqtt_message(client, userdata, message):
 
 def pure_pursuit_callback(msg):
 	global goal_threshold, distance_to_goal, current_x, current_y, alpha, path_curvature, steering_angle, auto_throttle, pid_steer
-
 	distance_to_goal = msg.data[0]
 	current_x = msg.data[1]
 	current_y = msg.data[2]
@@ -230,8 +229,10 @@ def main(args=None):
 		
 		if mode == 0:
 			# manual mode
-			pwm_throttle = pwm(throttle)
-			pwm_steer = pwm(steer)
+			# pwm_throttle = pwm(throttle)
+			# pwm_steer = pwm(steer)
+			pwm_steer = steering_angle
+			pwm_throttle = 7
 		else:
 			# auto mode
 			pwm_throttle = pwm(auto_throttle)
