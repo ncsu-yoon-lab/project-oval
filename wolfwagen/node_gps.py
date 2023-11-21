@@ -49,6 +49,7 @@ def main():
         writer = csv.writer(file, delimiter='\t', lineterminator='\n',)
         with serial.Serial("/dev/ttyACM0", 115200, timeout = 1) as ser:
             while rclpy.ok():
+                # print(time.time() - new_time)
 
                 # Only getting position and yaw every second and that data is being transferred
                 if time.time() - new_time > 1:
@@ -61,12 +62,15 @@ def main():
                         writer.writerow(row)
                         print(row)
                         gps_data = Float64MultiArray()
-                        gps_data.data = [latitude, longitude, float(heading)]
+                        if heading:
+                            gps_data.data = [latitude, longitude, float(heading)]
+                        else:
+                            gps_data.data = [latitude, longitude, 0.0]
                         gps_pub.publish(gps_data)
                     else:
                         row = ["Empty", "Empty", "Empty"]
                         print(row)
-                        writer.writerow(row)
+                        # writer.writerow(row)
                         gps_data = Float64MultiArray()
                         gps_data.data = [0.0, 0.0, 0.0]
                         gps_pub.publish(gps_data)
