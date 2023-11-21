@@ -1,0 +1,22 @@
+
+
+GPS on /dev/ttyACM0
+
+
+to view: sudo cat /dev/ttyACM0
+
+to run:
+sudo systemctl stop gpsd
+sudo systemctl stop gpsd.socket
+sudo rm /var/run/gpsd.sock 
+sudo gpsd -D 5 -N /dev/ttyACM0
+
+
+After command above in new terminal run: cgps
+
+
+
+Helpful links:
+https://stfn.pl/blog/08-gpsd-linux-ublox/
+https://www.u-blox.com/en/product/u-center
+https://github.com/KumarRobotics/ublox

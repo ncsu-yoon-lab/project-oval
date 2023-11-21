@@ -53,6 +53,8 @@ def add_marker_event(coords):
     # Getting the latitude and longitude from the coordinates
     lat = coords[0]
     lon = coords[1]
+    print(lat)
+    print(lon)
 
     # Creating a new marker at that lat lon
     new_marker = map_widget.set_marker(lat, lon)
