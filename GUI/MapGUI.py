@@ -33,6 +33,9 @@ origin = [35.772101, -78.673756]
 pointY = [35.76926314060246, -78.67596498545836]
 pointX = [35.77099489979461, -78.6714045595808]
 
+# origin = [35.7716591, -78.6740835]
+# pointY = [35.76926314060246, -78.67596498545836]
+# pointX = [35.7716591, -78.6714045595808]
 
 def polar_to_cartesian(radius, theta):
     x = radius * math.cos(theta)
@@ -69,7 +72,7 @@ def add_marker_event(coords):
 
     # Finding the points based on the distance from origin to point and theta found
     x, y = polar_to_cartesian(OP, theta)
-    print(cartesian_distance(x, y, 0, OY), " ", YP)
+    # print(cartesian_distance(x, y, 0, OY), " ", YP)
 
     # Checks if theta is supposed to be positive or negative by checking if the distance from y to the point is the same as the expected y to point distance
     if abs(cartesian_distance(x, y, 0, OY) - YP) <= 10:
@@ -79,7 +82,9 @@ def add_marker_event(coords):
         markerPoint = [x, y]
     
     waypoints.append([lat , lon])
-    #path_maker()
+    path_maker()
+    print( "X" , markerPoint[0] )
+    print( "Y" , markerPoint[1] )
     
 # Left click
 map_widget.add_left_click_map_command(add_marker_event)
@@ -89,5 +94,6 @@ def path_maker():
     global waypoints
     if len(waypoints) > 1:
         path = map_widget.set_path(waypoints)
+        print( path )
 
 root_tk.mainloop()
