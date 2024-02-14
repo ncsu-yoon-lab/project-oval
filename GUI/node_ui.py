@@ -1,4 +1,3 @@
-# Enter the starting point and the destination into terminal when running this node.
 
 from coords_to_cartesian import CoordsToCartesian
 import threading 
@@ -6,8 +5,7 @@ import sys
 from geopy import distance
 import math
 
-# To see the GUI and to not do a ROS2 node for debugging
-SHOW_GUI = False
+SHOW_GUI = True
 
 
 class UI:
@@ -19,12 +17,12 @@ class UI:
         lon = coords[1]
 
         # Creating a new marker at that lat lon
-        new_marker = self.map_widget.set_marker(lat, lon, label)
+        new_marker = self.map_widget.set_marker(lat, lon, text=label, font=("helvetica-bold", 40), text_color="black", marker_color_outside="red")
 
     # Set a path
     def path_maker(self, route_coords):
         if len(route_coords) > 1:
-            path = self.map_widget.set_path(route_coords)
+            path = self.map_widget.set_path(route_coords,width = 15)
 
     # Get inputs
     def get_inputs(self):
@@ -96,11 +94,11 @@ class UI:
         return coord_route
             
     def gui(self):
-        import tkinter
+        import customtkinter
         import tkintermapview
 
         # create tkinter window
-        root_tk = tkinter.Tk()
+        root_tk = customtkinter.CTk()
         root_tk.geometry(f"{1000}x{700}")
         root_tk.title("Centennial Map")
 
@@ -113,7 +111,7 @@ class UI:
 
         # set current position and zoom
         self.map_widget.set_position(35.770743,-78.674817, marker=False)  # Chapel Hill, NC
-        # map_widget.set_zoom(17)
+        self.map_widget.set_zoom(19.8)
 
         # set current position with address
         self.map_widget.set_address("Starting Location", marker=True)
