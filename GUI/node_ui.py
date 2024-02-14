@@ -1,9 +1,13 @@
+# Enter the starting point and the destination into terminal when running this node.
 
 from coords_to_cartesian import CoordsToCartesian
 import threading 
 import sys
 from geopy import distance
 import math
+
+# To see the GUI and to not do a ROS2 node for debugging
+SHOW_GUI = False
 
 
 class UI:
@@ -158,7 +162,6 @@ class UI:
         rclpy.shutdown()
 
     def main(self):
-        SHOW_GUI = True
 
         # Getting user inputs before showing display
         route = self.get_inputs()
