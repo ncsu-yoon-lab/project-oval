@@ -102,6 +102,7 @@ def main():
             # Measured in radians
             alpha = math.atan((x_goal - x_pos)/(y_goal - y_pos))
 
+           
             # Path curvature
             k = (2 * math.sin(alpha))/distance_to_waypoint
 

@@ -201,6 +201,8 @@ class UI:
                 self.route_coords.append(self.rough_route_coords[i][j])
                 self.route_cart.append(plane.get_cartesian(self.rough_route_coords[i][j]))
         
+        # print(self.route_coords)
+        # print(self.route_cart)
 
         if not SHOW_GUI:
             self.ros2_node()
