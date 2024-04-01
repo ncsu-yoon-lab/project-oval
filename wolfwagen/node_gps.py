@@ -45,44 +45,45 @@ def main():
     # Initializing time
     new_time = time.time()
 
-    with open('gps_data.csv', 'w') as file:
-        writer = csv.writer(file, delimiter='\t', lineterminator='\n',)
-        with serial.Serial("/dev/ttyACM0", 115200, timeout = 1) as ser:
-            while rclpy.ok():
-                # print(time.time() - new_time)
+    with serial.Serial("/dev/ttyACM0", 115200, timeout = 1) as ser:
+        while rclpy.ok():
 
-                # Only getting position and yaw every second and that data is being transferred
-                if time.time() - new_time > 1:
+            # Only getting position and yaw every second and that data is being transferred
+            if time.time() - new_time > 0.1:
 
-                    line = ser.readline().decode('utf-8').strip()
-                    latitude, longitude, heading = parse_gpgll(line)
+                line = ser.readline().decode('utf-8').strip()
+                latitude, longitude, heading = parse_gpgll(line)
 
-                    if latitude is not None and longitude is not None:
-                        row = [latitude, longitude, heading]
-                        writer.writerow(row)
-                        print(row)
-                        gps_data = Float64MultiArray()
-                        if heading:
-                            gps_data.data = [latitude, longitude, float(heading)]
-                        else:
-                            gps_data.data = [latitude, longitude, 0.0]
-                        gps_pub.publish(gps_data)
+                if latitude is not None and longitude is not None:
+                    input_csv_file = 'gps_data.csv'
+                    data_array = []
+                    new_row = [latitude, longitude, heading,time.time()]
+                    with open(input_csv_file, 'r') as csv_file:
+                        csv_reader = csv.reader(csv_file)
+                        for row in csv_reader:
+                            data_array.append(row)
+
+                    data_array.append(new_row)
+                    with open(input_csv_file, 'w', newline='') as csv_file:
+                        csv_writer = csv.writer(csv_file)
+                        csv_writer.writerows(data_array)
+                    print(row)
+                    gps_data = Float64MultiArray()
+                    if heading:
+                        gps_data.data = [latitude, longitude, float(heading)]
                     else:
-                        row = ["Empty", "Empty", "Empty"]
-                        print(row)
-                        # writer.writerow(row)
-                        gps_data = Float64MultiArray()
-                        gps_data.data = [0.0, 0.0, 0.0]
-                        gps_pub.publish(gps_data)
+                        gps_data.data = [latitude, longitude, 0.0]
+                    gps_pub.publish(gps_data)
+                else:
+                    row = ["Empty", "Empty", "Empty"]
+                    print(row)
 
+                new_time = time.time() 
+            rate.sleep()
 
-                    new_time = time.time() 
-                rate.sleep()
-
-            gps_node.destroy_node()
-            rclpy.shutdown()
-            ser.close()
-        file.close()
+        gps_node.destroy_node()
+        rclpy.shutdown()
+        ser.close()
 
 
 
