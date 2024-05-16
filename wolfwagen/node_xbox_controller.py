@@ -19,7 +19,7 @@ mode_switch_requested = 0
 logging_switch_requested = 0
 
 axis_throttle = 1
-axis_steering = 3
+axis_steering = 2
 axis_mode = 0
 x_button = 2
 

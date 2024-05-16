@@ -2,6 +2,7 @@ import tkinter
 import tkintermapview
 from geopy import distance
 import math
+import csv
 
 # create tkinter window
 root_tk = tkinter.Tk()
@@ -97,5 +98,23 @@ def path_maker():
     if len(waypoints) > 1:
         path = map_widget.set_path(waypoints)
         print( path )
+input_csv_file1 = "gps_data1.csv"
+data_array1 = []
+with open(input_csv_file1, 'r') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        for row in csv_reader:
+                data_array1.append(row)
+
+for row in data_array1:
+    lat = row[0]
+    long = row[1]
+    add_marker_event([lat, long])
+
+# input_csv_file2 = "gps_data2"
+# data_array2 = []
+# with open(input_csv_file2, 'r') as csv_file:
+#         csv_reader = csv.reader(csv_file)
+#         for row in csv_reader:
+#                 data_array2.append(row)
 
 root_tk.mainloop()

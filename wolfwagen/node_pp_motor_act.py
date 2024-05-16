@@ -5,70 +5,83 @@ from std_msgs.msg import Int64
 import struct
 import can
 import threading
-import time
-import math
+import curses
 from std_msgs.msg import Float64MultiArray
 
-throttle = 0
-steer = 0
+pp_throttle = pp_steer = manual_throttle = manual_steer = mode = 0
 
-def pure_pursuit_callback(msg):
-	global throttle, steer
-      
-	goal_threshold = 4
+steer_offset = 5
 
-	distance_to_goal = msg.data[0]
-	current_x = msg.data[1]
-	current_y = msg.data[2]
-	alpha = math.degrees(msg.data[3])
-	path_curvature = msg.data[4]
-	steering_angle = msg.data[5]
-      
+exception = "None"
 
+stdscr = curses.initscr()
 
+def manual_steering_callback(data):
+    global manual_steer
+    
+    manual_steer = data.data + steer_offset
 
-      
-	steer = int(steering_angle)
-	throttle = 15
+def manual_throttle_callback(data):
+    global manual_throttle
+    manual_throttle = data.data
 
-	print(f"Distance to goal: {distance_to_goal}")
-	print(f"Current x_pos: {current_x}\nCurrent y_pos: {current_y}")
-	print(f"Alpha: {alpha}")
-	print(f"Path curvature: {path_curvature}")
-	print(f"Steering: {steering_angle}")
+def mode_switch_callback(data):
+    global mode
+    mode = (mode + 1) % 2
 
-	if distance_to_goal <= goal_threshold:
-		throttle = 0
-		steer = 0
-		print("goal reached")   #This is probably in the wrong location but the location but the logic should be super straightforward
+def pure_pursuit_callback(data):
+    global pp_throttle, pp_steer
+    
+    pp_throttle = data.data[0]
+    pp_steer = data.data[1] + steer_offset
 
 def main(args=None):
+    global manual_steer, manual_throttle, pp_steer, pp_throttle, exception
     bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate= 250000)
     
     rclpy.init(args=args)
     node = Node("driver")
 
-    subscription_steering = node.create_subscription(Float64MultiArray,'pure_pursuit', pure_pursuit_callback, 1)
+    sub_to_pure_pursuit = node.create_subscription(Float64MultiArray,'pure_pursuit_motor_topic', pure_pursuit_callback, 1)
+    sub_manual_steering = node.create_subscription(Int64,'manual_steering', manual_steering_callback, 1)
+    sub_manual_throttle = node.create_subscription(Int64,'manual_throttle', manual_throttle_callback, 1)
+    sub_mode_switch = node.create_subscription(Int64, 'mode_switch', mode_switch_callback, 1)
 
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
     thread.start()
  
     rate = node.create_rate(20, node.get_clock())
     while rclpy.ok():
-        print('throttle: %d, steering: %d' % (throttle, steer))
+
+        if (mode % 2 == 0):
+            throttle = manual_throttle
+            steer = manual_steer
+            str_mode = "Manual"
+        else:
+            throttle = pp_throttle
+            steer = pp_steer
+            str_mode = "Pure Pursuit"
+
         try:
             can_data = struct.pack('>hhI', throttle, steer, 0)
             msg = can.Message(arbitration_id=0x1,data=can_data, is_extended_id = False)
-            ret = bus.send(msg)
-            print("message sent: ", msg)
+            bus.send(msg)
         except Exception as error:
-            print("An exception occurred:", error)
+            exception = error
         finally:
+
+            stdscr.refresh()
+            stdscr.addstr(1 , 5 , 'MOTOR ACTUATION NODE')
+            stdscr.addstr(3 , 5 , 'Throttle :  %s                 ' % str(throttle))
+            stdscr.addstr(4 , 5 , 'Steer :  %s                    ' % str(steer - steer_offset))
+            stdscr.addstr(5 , 5 , 'Mode :  %s                ' % str_mode)
+            stdscr.addstr(7 , 5 , 'Exceptions :  %s                                                                               ' % exception)
+
             rate.sleep()
 
     rclpy.spin(node)
     rclpy.shutdown()
 
-	
+    
 if __name__ == '__main__':
-	main()
+    main()

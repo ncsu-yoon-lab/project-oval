@@ -130,7 +130,7 @@ def process_img(frame):
 	bw_frame_front = cv.GaussianBlur(bw_frame_front , (kernel_size , kernel_size) , 0)
 
 	# Thresholding. If seeing some noise, increase the lower threshold
-	lower_threshold = 160
+	lower_threshold = 200
 	upper_threshold = 255
 	_, bw_frame_main = cv.threshold(bw_frame_main , lower_threshold , upper_threshold , cv.THRESH_BINARY)
 	_, bw_frame_front = cv.threshold(bw_frame_front , lower_threshold , upper_threshold , cv.THRESH_BINARY)
@@ -147,12 +147,8 @@ def process_img(frame):
 
 	# Cropping to check for intersection openings
 	left_crop_image = edges_frame[100 : 300, 0 : 200]
-	right_crop_image = edges_frame[100 : 300, 430 : 630]
 
-	# Getting the values from checking the lanes and intersections
-	intersection_detection , turn , lane_on_left , lane_on_right = check_intersection(left_crop_image , right_crop_image , bw_frame_front)
-
-	final_frame , CTE , keep_turning = check_lanes(edges_frame , color_frame_main)
+	final_frame , CTE = check_lanes(edges_frame , color_frame_main, width)
 
 	# Option of showing all the images, can be toggled at top
 	if SHOW_IMAGES:
@@ -161,58 +157,17 @@ def process_img(frame):
 		#cv.imshow('front color' , color_frame_front)
 		cv.imshow('front black and white' , bw_frame_front)
 		cv.imshow('edges frame' , edges_frame)
-		cv.imshow('right crop' , right_crop_image)
 		cv.imshow('left crop' , left_crop_image)
 		cv.imshow('final frame' , final_frame)
 		cv.waitKey(1)
 	
-	return intersection_detection , turn , CTE , keep_turning , lane_on_left , lane_on_right
-
-
-
-########################### Intersection Processing ############################
-
-def check_intersection(left , right , front):
-	openings = np.array([0 , 0 , 0])
-	turn = 0
-	
-	intersection_check = False
-	lane_on_left = True
-	lane_on_right = True
-
-	
-	if left.sum() < 1000:
-		# Lane is not detected on the left frame
-		openings[0] = 1
-		lane_on_left = False
-		intersection_check = True
-	
-	if right.sum() < 1000:
-		# Lane is not detected on the right frame
-		openings[2] = 1
-		lane_on_right = False
-		intersection_check = True
-	
-	if front.sum() < 500000:
-		# Lane is not detected in the front frame
-		openings[1] = 1
-
-	# Random turn chooser
-	if intersection_check:
-
-		# Find available turns
-		possible_turns = np.where(openings == 1)[0]
-
-		# Choose random turn direction (0 = left , 1 = straight , 2 = right)
-		turn = random.choice(possible_turns)
-	
-	return intersection_check , turn , lane_on_left , lane_on_right
+	return lane_on_left
 
 
 
 ########################### Lane Processing ############################
 
-def check_lanes(edges_frame , color_frame_main):
+def check_lanes(edges_frame , color_frame_main, width):
 	DOT_COLOR = [61 , 217 , 108]
 	DOT_SIZE = 5
 	
@@ -241,11 +196,8 @@ def check_lanes(edges_frame , color_frame_main):
 
 		left_line_x = []	#x-values of left lines 
 		left_line_y = []	#y-values of left lines 
-		right_line_x = []   #x-values of right lines 
-		right_line_y = []   #y-values of right lines
 
 		cnt_left = 0	# number of left lines
-		cnt_right = 0   # number of right lines
 
 		if DRAW_LINE_IMG:					
 			line_image = np.copy(color_frame_main)*0
@@ -277,10 +229,6 @@ def check_lanes(edges_frame , color_frame_main):
 					left_line_x.extend([x1, x2])
 					left_line_y.extend([y1, y2])					
 					cnt_left += 1										
-				else:
-					right_line_x.extend([x1, x2])
-					right_line_y.extend([y1, y2])					
-					cnt_right += 1
 		
 		
 			
@@ -300,52 +248,32 @@ def check_lanes(edges_frame , color_frame_main):
 			
 			if DRAW_LINE_IMG:
 				cv.line(line_image, (left_x_start, MAX_Y), (left_x_end, MIN_Y), LANE_COLOR, LANE_THICKNESS)
-			
-
-		if cnt_right > 0:
-			#do 1D fitting				
-			right_polyfit = np.polyfit(right_line_y, right_line_x, deg=1)
-			poly_right = np.poly1d(right_polyfit)
-			right_x_start = int(poly_right(MAX_Y))
-			right_x_end = int(poly_right(MIN_Y))
-			
-			if DRAW_LINE_IMG:
-				cv.line(line_image, (right_x_start, MAX_Y), (right_x_end, MIN_Y), LANE_COLOR, LANE_THICKNESS)
 
 		
 		car_center = int(color_frame_main.shape[1]/2)	#center of camera
 
-		if cnt_left > 0 and cnt_right > 0:
+		if cnt_left > 0:
 			# Lines detected on left and right
 
 			# Find CTE
-			lane_center = (right_x_start+left_x_start)/2
+			lane_center = (left_x_start)
 			CTE = car_center - lane_center			
 			
 			if DRAW_LINE_IMG:
-				cv.line(line_image, ( int((left_x_start+right_x_start)/2), MAX_Y), ( int((left_x_end + right_x_end)/2), MIN_Y), LANE_CENTER_COLOR, 5)
+				cv.line(line_image, ( int((lane_center)), MAX_Y), ( int((left_x_end)), MIN_Y), LANE_CENTER_COLOR, 5)
 				cv.line(line_image, (car_center, MAX_Y), (car_center, MIN_Y), (255,255,0), 3)
 				
 				#Draw lane region
 				mask = np.zeros_like(line_image)				
-				vertices = np.array([[(left_x_start+10,MAX_Y),(left_x_end+10, MIN_Y), (right_x_end-10, MIN_Y), (right_x_start-10, MAX_Y)]], dtype=np.int32)
+				vertices = np.array([[(left_x_start+10,MAX_Y),(left_x_end+10, MIN_Y)]], dtype=np.int32)
 				cv.fillPoly(mask, vertices, LANE_REGION_COLOR)
 
 				line_image = cv.addWeighted(line_image, 0.8, mask, 0.2, 0)				
 
-		elif cnt_left + cnt_right == 0:
+		elif cnt_left == 0:
 			# No lines detected on left or right
 
 			CTE = 0
-		else:
-			if cnt_left == 0:
-				# Lines detected on right
-
-				CTE = 500
-			else:
-				# Lines detected on left
-
-				CTE = -500
 
 
 		final = color_frame_main
@@ -354,7 +282,7 @@ def check_lanes(edges_frame , color_frame_main):
 			final = cv.addWeighted(final, 1, line_image, 1, 0)
 		
 
-	return (final, CTE , keep_turning)
+	return (final, CTE)
 	
 
 def get_end_points(rho , theta):
@@ -417,19 +345,11 @@ def main(args = None):
 	node = Node("Process_image_node")
 	zed_img_subscription = node.create_subscription(
 		Image,
-		'/zed2i/zed_node/stereo/image_rect_color',
+		'/zed/zed_node/stereo/image_rect_color',
 		image_callback,
 		5
 	)
 
-	# this sub is not working. Im not sure what the type would be for this
-
-	# zed_right_cam_info = node.create_subscription(
-	# 	String,
-	# 	'/zed2i/zed_node/right/camera_info',
-	# 	calib_callback,
-	# 	5
-	# )
 
 	steering_publisher = node.create_publisher(Int64 , 'pid_steering' , 1)
 
@@ -439,7 +359,6 @@ def main(args = None):
 	FREQ = 20
 	rate = node.create_rate(FREQ , node.get_clock())
 
-	turning_mode = False
 
 	# ROS2 loop while ROS2 is still running and is ok
 	while rclpy.ok():
@@ -458,38 +377,10 @@ def main(args = None):
 			# keep_turning = (boolean) if turn should be completed because lines are detected
 			# lane_on_left = (boolean) if lane is detected on left with left frame
 			# lane_on_right = (boolean) if lane is detected on right with right frame
-			intersection_detection , turn , CTE , keep_turning , lane_on_left , lane_on_right = process_img(frame)
+			CTE = process_img(frame)
 
-			# Check if an intersection is detected or if it is already in turning mode
-			if intersection_detection or turning_mode:
-
-				# If already turning keep turning or stop turning
-				if turning_mode:
-
-					# If lines are not detected, lane on left is not detected, or lane on right is not detected, continue turning until all 3 criteria are true
-					if keep_turning or not lane_on_left or not lane_on_right:
-						message = "Still turning"
-					else:
-						message = "Done turning"
-						turning_mode = False
-
-				# If not turning, start turning based on direction
-				else:
-					if turn == 0:
-						steer = -100
-						turning = "Left"
-					if turn == 1:
-						steer = 0
-						turning = "Straight"
-					if turn == 2:
-						steer = 100
-						turning = "Right"
-					turning_mode = True
-			
-			# If no intersection is detected, correct based on lanes detected
-			else:
-				turning = "PID MODE"
-				steer = PID(CTE , FREQ)
+			turning = "PID MODE"
+			steer = PID(CTE , FREQ)
 
 			# Send the steering values to pwm_gen
 			# Might want to eventually include a throttle publisher so we can stop when no lines are detected
@@ -500,15 +391,7 @@ def main(args = None):
 
 		# Display of all the important messages
 		stdscr.refresh()
-		stdscr.addstr(1 , 5 , 'Turning Condition: %s		   ' % message)
-		stdscr.addstr(2 , 5 , 'Steering: %s	  ' % int(steer))
-		stdscr.addstr(3 , 5 , 'Turning Direction: %s		  ' % turning)
-		stdscr.addstr(4 , 5 , 'Left Lane Detected: %s		  ' % lane_on_left)
-		stdscr.addstr(5 , 5 , 'Right Lane Detected: %s		  ' % lane_on_right)
-		stdscr.addstr(6 , 5 , 'Lines Detected: %s		  ' % (not keep_turning))
-		stdscr.addstr(7, 5, "Gamma: %s       " % str(gamma))
-		#stdscr.addstr(8, 5, "right cam info: %s       " % str(camera_info))
-
+		stdscr.addstr(1 , 5 , 'Turning Condition: %s		   ' % str(steer))
 
 		rate.sleep()
 	

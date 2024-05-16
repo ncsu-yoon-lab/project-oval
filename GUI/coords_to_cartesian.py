@@ -43,3 +43,12 @@ class CoordsToCartesian(object):
             markerPoint = [x, y]
 
         return markerPoint
+    
+    def heading_to_yaw(self, heading):
+
+        # Not sure about the offset, needs to be tested
+        OFFSET = 360 - 330.2289756152796
+
+        yaw = heading + OFFSET
+
+        return yaw
