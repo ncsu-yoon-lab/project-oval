@@ -54,56 +54,33 @@ def imu_callback(data):
     global throttle
     throttle = data.data
 
+def get_lookahead(current_x, current_y, waypoints):
 
-def vector_math(x_target, y_target):
-    global current_x , current_y , current_yaw, exception
-
-    yaw = math.radians(current_yaw)
-
-    vector_p = [math.cos(yaw) , math.sin(yaw)]
-    vector_r = [x_target - current_x, y_target - current_y]
-    try:
-        theta = math.acos((vector_r[0] * vector_p[0] + vector_r[1] * vector_p[1])/(math.sqrt(vector_r[0] ** 2 + vector_r[1] ** 2) * math.sqrt(vector_p[0] ** 2 + vector_p[1] ** 2)))
-        exception = "None"
-    except ZeroDivisionError:
-        theta = 0.0
-        exception = "Divided by 0"
-    crossProduct = vector_r[0] * vector_p[1] - vector_r[1] * vector_p[0]
-
-    if crossProduct < 0:
-        sign = -1
-    else:
-        sign = 1
-
-    return theta , sign
-
-def closest_point(current_x, current_y, waypoints):
     # Sets the closest point as none to start
-    closest_points = (None, None)
+    closest_point = (None, None)
 
+    m1 = m2 = None
+    
     # If it is the first time the closest point is being found
-    if current_segment is None:
-        for i in range(len(waypoints) - 1):
-            waypoint_start = waypoints[i]
-            waypoint_end = waypoints[i + 1]
+    for i in range(len(waypoints) - 1):
+        waypoint_start = waypoints[i]
+        waypoint_end = waypoints[i + 1]
 
-            # Get the slope between the two waypoints
-            try:
-                m1 = (waypoint_end[1] - waypoint_start[1]) / (waypoint_end[0] - waypoint_start[0])
-            except ZeroDivisionError:
-                x = waypoint_start[0]
-                y = (waypoint_start[1] + waypoint_end[1]) / 2
-                return x, y
+        # Get the slope between the two waypoints
+        try:
+            m1 = (waypoint_end[1] - waypoint_start[1]) / (waypoint_end[0] - waypoint_start[0])
+        except ZeroDivisionError:
+            x = waypoint_start[0]
+            y = (waypoint_start[1] + waypoint_end[1]) / 2
 
+        # The slope for the perpendicular line to the vehicle is the reciprical
+        try:
+            m2 = -1.0 / m1
+        except ZeroDivisionError:
+            x = (waypoint_start[0] + waypoint_end[0]) / 2
+            y = waypoint_start[1]
 
-            # The slope for the perpendicular line to the vehicle is the reciprical
-            try:
-                m2 = -1.0 / m1
-            except ZeroDivisionError:
-                x = (waypoint_start[0] + waypoint_end[0]) / 2
-                y = waypoint_start[1]
-                return x, y
-
+        if m1 is not None and m2 is not None:
             # Calculate the b value for y = mx + b equation between the two waypoints
             b1 = waypoint_start[1] - m1 * waypoint_start[0]
 
@@ -115,30 +92,37 @@ def closest_point(current_x, current_y, waypoints):
 
             # Calculate the y value
             y = m1 * x + b1
+        
+        # Minimum and maximum x
+        x_min = min(waypoint_start[0], waypoint_end[0])
+        x_max = max(waypoint_start[0], waypoint_end[0])
+
+        # Check that they are within the range
+        if x < x_min:
+            if waypoint_start[0] > waypoint_end[0]:
+                x = waypoint_end[0]
+                y = waypoint_end[1]
+            else:
+                x = waypoint_start[0]
+                y = waypoint_start[1]
+        elif x > x_max:
+            if waypoint_start[0] < waypoint_end[0]:
+                x = waypoint_end[0]
+                y = waypoint_end[1]
+            else:
+                x = waypoint_start[0]
+                y = waypoint_start[1]
+        
+        # Check for the first iteration
+        if closest_point[0] is None:
+            closest_point = (x, y)
+
+        if (math.sqrt((x - current_x)**2 + (y - current_y)**2) 
+            < math.sqrt((closest_point[0] - current_x)**2 + (closest_point[1] - current_y)**2)):
+            closest_point = (x, y)
             
-            # Minimum and maximum x
-            x_min = min(waypoint_start[0], waypoint_end[0])
-            x_max = max(waypoint_start[0], waypoint_end[0])
-
-            # Check that they are within the range
-            if x < x_min:
-                if waypoint_start[0] > waypoint_end[0]:
-                    x = waypoint_end[0]
-                    y = waypoint_end[1]
-                else:
-                    x = waypoint_start[0]
-                    y = waypoint_start[1]
-            elif x > x_max:
-                if waypoint_start[0] < waypoint_end[0]:
-                    x = waypoint_end[0]
-                    y = waypoint_end[1]
-                else:
-                    x = waypoint_start[0]
-                    y = waypoint_start[1]
-            
-            return x, y
-
-
+    return closest_point
+    
 
 def main():
     global current_x, current_y, current_yaw, current_x_goal, current_y_goal, waypoints, distance_to_waypoint, throttle, steering, exception
@@ -176,7 +160,7 @@ def main():
     while rclpy.ok():
 
         if len(waypoints) > 0:
-            closest_x, closest_y = closest_point(current_x, current_y, waypoints)
+            look_ahead_y, look_ahead_x = get_lookahead(current_x, current_y, waypoints)
 
         pure_pursuit_location_data = Float64MultiArray()
         pure_pursuit_location_data.data = [current_x, current_y, current_yaw, current_x_goal, current_y_goal, distance_to_waypoint]

@@ -56,6 +56,7 @@ def vector_math(x_target, y_target):
 
     vector_p = [math.cos(yaw) , math.sin(yaw)]
     vector_r = [x_target - current_x, y_target - current_y]
+    
     try:
         theta = math.acos((vector_r[0] * vector_p[0] + vector_r[1] * vector_p[1])/(math.sqrt(vector_r[0] ** 2 + vector_r[1] ** 2) * math.sqrt(vector_p[0] ** 2 + vector_p[1] ** 2)))
     except ZeroDivisionError:

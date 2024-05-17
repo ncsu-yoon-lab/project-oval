@@ -3,7 +3,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from pyvicon_datastream import tools
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import *
 import math
 import threading
 import curses
@@ -50,7 +50,9 @@ def main(args=None):
     FREQ = 10
     rate = node.create_rate(FREQ, node.get_clock())
 
-    data = [None] * 4
+    data = [0.0] * 4
+
+    data1 = Float64MultiArray()
 
     os.system('clear')
 
@@ -60,22 +62,24 @@ def main(args=None):
         try:
             xyz, yaw = get_position()
 
+            data1.data = [float(xyz[0] / 1000), float(xyz[1] / 1000), float(xyz[2] / 1000), float(yaw)]
+
             data[0] = float(xyz[0] / 1000)
             data[1] = float(xyz[1] / 1000)
             data[2] = float(xyz[2] / 1000)
             data[3] = float(yaw)
             try:
-                vicon_publisher.publish(data)
+                vicon_publisher.publish(data1)
                 exception = "None"
             except Exception as e:
-                exception = e
+                exception = repr(e)
         except TypeError as e:
             exception = "Car not being picked up by camera, re-run the program, or try to make sure the car is in view of the cameras."
 
 
         stdscr.refresh()
         stdscr.addstr(1 , 5 , 'VICON NODE')
-        if (len(data) == 4):
+        if (data[0] != 0.0):
             stdscr.addstr(3 , 5 , 'Current X (m) :  %.4f	                ' % data[0])
             stdscr.addstr(4 , 5 , 'Current Y (m) :  %.4f		         ' % data[1])
             stdscr.addstr(5 , 5 , 'Current Z (m) :  %.4f	                ' % data[2])
