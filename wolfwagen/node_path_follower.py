@@ -16,6 +16,8 @@ current_x = current_y = current_yaw = current_x_goal = current_y_goal = distance
 
 waypoints = []
 
+slopes = []
+
 throttle = 0
 
 steering = 0
@@ -24,7 +26,9 @@ VICON = True
 
 exception = ""
 
-current_segment = None
+lookahead = 1
+
+current_segment = 0
 
 # Receives the current x, y, and yaw from the vicon node
 def vicon_callback(data):
@@ -40,7 +44,7 @@ def vicon_callback(data):
 
 # Callback to get the waypoints
 def ui_callback(data):
-    global waypoints
+    global waypoints, slopes
 
     temp_list = data.data
 
@@ -50,11 +54,21 @@ def ui_callback(data):
     for i in range(0, len(temp_list), 2):
         waypoints.append([temp_list[i], temp_list[i + 1]])
 
+    for i in range(len(waypoints) - 2):
+        x1 = waypoints[i][0]
+        y1 = waypoints[i][1]
+        x2 = waypoints[i + 1][0]
+        y2 = waypoints[i + 1][1]
+
+        slopes.append((y2 - y1) / (x2 - x1))
+
 def imu_callback(data):
     global throttle
     throttle = data.data
 
 def get_lookahead(current_x, current_y, waypoints):
+
+    global current_segment, lookahead_mag
 
     # Sets the closest point as none to start
     closest_point = (None, None)
@@ -116,12 +130,71 @@ def get_lookahead(current_x, current_y, waypoints):
         # Check for the first iteration
         if closest_point[0] is None:
             closest_point = (x, y)
+            current_segment = i
 
+        # Sets the closest point coordinate
         if (math.sqrt((x - current_x)**2 + (y - current_y)**2) 
             < math.sqrt((closest_point[0] - current_x)**2 + (closest_point[1] - current_y)**2)):
             closest_point = (x, y)
-            
-    return closest_point
+            current_segment = i
+
+    # After current segment is found and the closest point is found, get the lookahead point
+    lookahead_segment = current_segment
+    lookahead_mag = lookahead
+
+    # While true loop until the lookahead point is known to be within a segment and does not exceed it
+    while True:
+        # Get the unit vector by finding the magnitude of the vector of the current segment that it is on then dividing the vector of the segment (1, slope) by the magnitude
+        mag = math.sqrt(1**2 + slopes[current_segment]**2)
+        lookahead_unit_vector = (1 / mag, slopes[current_segment] / mag)
+
+        # Multiply the unit vector by the lookahead magnitude to get the look ahead vector
+        lookahead_vector = (lookahead_unit_vector[0] * lookahead_mag, lookahead_unit_vector[1] * lookahead_mag)
+
+        # Add the vector to the closest point found previously to get the x,y coordinate of the lookahead
+        lookahead_point = (lookahead_vector[0] + closest_point[0], lookahead_vector[1] * closest_point[1])
+
+        # Check that the lookahead does not exceed the bounds of the segment
+        # Gets the x min and max from the waypoints that it is between
+        x_min = min(waypoints[current_segment][0], waypoints[current_segment + 1][0])
+        x_max = max(waypoints[current_segment][0], waypoints[current_segment + 1][0])
+
+        # Checks if the max of the lookahead exceeds the max x
+        if lookahead_point[0] > x_max:
+
+            # Checks if it is referring to waypoint it is coming from or going to and gets the x and y of that waypoint
+            if waypoints[current_segment][0] > waypoints[current_segment + 1][0]:
+                x = waypoints[current_segment][0]
+                y = waypoints[current_segment][1]
+            else:
+                x = waypoints[current_segment + 1][0]
+                y = waypoints[current_segment + 1][1]
+
+            # Subtracts the distance it has already gone on the current lookahead and adds 1 to the lookahead segment that it is on
+            lookahead_mag = lookahead_mag - math.sqrt((closest_point[0] - x)**2 + (closest_point[1] - y)**2)
+            lookahead_segment += 1
+        
+        # Checks if the min of the lookahead exceeds the min x
+        elif lookahead_point[0] < x_min:
+
+            # Checks if it is referring to the waypoint it is coming from or going to and gets the x and y of that waypoint
+            if waypoints[current_segment][0] < waypoints[current_segment + 1][0]:
+                x = waypoints[current_segment][0]
+                y = waypoints[current_segment][1]
+            else:
+                x = waypoints[current_segment + 1][0]
+                y = waypoints[current_segment + 1][1]
+
+            # Subtracts the distance it has already gone on the current lookahead and adds 1 to the lookahead segment that it is on
+            lookahead_mag = lookahead_mag - math.sqrt((closest_point[0] - x)**2 + (closest_point[1] - y)**2)
+            lookahead_segment += 1
+
+        # If the lookahead point is within the range then it breaks from the while loop
+        else:
+            break
+    
+    # Return the point of the lookahead
+    return lookahead_point
     
 
 def main():
