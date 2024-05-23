@@ -18,7 +18,7 @@ waypoints = []
 
 slopes = []
 
-throttle = 17
+throttle = 16
 
 steering = 0
 
@@ -26,7 +26,7 @@ VICON = True
 
 exception = ""
 
-lookahead = 1.0
+lookahead = 0.5
 
 current_segment = 0
 
@@ -65,7 +65,11 @@ def ui_callback(data):
             x2 = waypoints[i + 1][0]
             y2 = waypoints[i + 1][1]
 
-            slopes.append((y2 - y1) / (x2 - x1))
+            # If vertical line, catch it and make it a large slope
+            try:
+                slopes.append((y2 - y1) / (x2 - x1))
+            except ZeroDivisionError:
+                slopes.append(20000)
 
         waypoints_received = True
     
@@ -89,20 +93,16 @@ def get_lookahead(current_x, current_y, waypoints):
         waypoint_end = waypoints[i + 1]
 
         # Get the slope between the two waypoints
-        try:
-            m1 = float(waypoint_end[1] - waypoint_start[1]) / float(waypoint_end[0] - waypoint_start[0])
-        except ZeroDivisionError:
+        if waypoint_end[0] - waypoint_start[0] == 0:
             x = float(waypoint_start[0])
             y = current_y
-
-        # The slope for the perpendicular line to the vehicle is the reciprical
-        try:
-            m2 = -1.0 / m1
-        except ZeroDivisionError:
+        elif waypoint_end[1] - waypoint_start[1] == 0:
             x = current_x
             y = float(waypoint_start[1])
+        else:
+            m1 = float(waypoint_end[1] - waypoint_start[1]) / float(waypoint_end[0] - waypoint_start[0])
+            m2 = -1.0 / m1
 
-        if m1 is not None and m2 is not None:
             # Calculate the b value for y = mx + b equation between the two waypoints
             b1 = waypoint_start[1] - m1 * waypoint_start[0]
 

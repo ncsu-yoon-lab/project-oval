@@ -58,7 +58,7 @@ def main(args=None):
             steer = manual_steer
             str_mode = "Manual"
         else:
-            throttle = pp_throttle
+            throttle = manual_throttle
             steer = pp_steer
             str_mode = "Pure Pursuit"
 
