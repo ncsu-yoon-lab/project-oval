@@ -4,9 +4,12 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Int64
 import threading
+import curses
 
 #Joy node should be running  
 #ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
+
+stdscr = curses.initscr()
 
 steering = 0
 throttle = 0
@@ -112,7 +115,10 @@ def main(args=None):
 			pub_logging_switch.publish(log)
 			logging_switch_requested = 0
 
-		print("manual throttle: %d (auto: %d), manual steering: %d" % (throttle, auto_throttle, steering))
+		stdscr.refresh()
+		stdscr.addstr(1, 5, 'XBOX CONTROLLER NODE')
+		stdscr.addstr(3, 5, 'Manual Throttle : %d                ' % throttle)
+		stdscr.addstr(4, 5, 'Steering : %d                       ' % steering)
 		
 		rate.sleep()
 

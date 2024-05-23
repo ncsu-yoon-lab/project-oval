@@ -30,9 +30,6 @@ def pure_pursuit_callback(data):
     current_goal_x = data.data[3]
     current_goal_y = data.data[4]
 
-    # Distance to waypoint
-    distance_to_waypoint = data.data[5]
-
 # Allows the user to input as many x and y points until they enter x. It then allows the user to double check the results
 def user_input():
     global waypoints
@@ -105,22 +102,20 @@ def main():
     os.system('clear')
 
     stdscr = curses.initscr()
-
-    if rclpy.ok():
+        
+    while rclpy.ok():
         msg = Float64MultiArray()
         msg.data = waypoints
         pub_waypoints_to_pure_pursuit.publish(msg)
-
-    while rclpy.ok():
-
         stdscr.refresh()
-        stdscr.addstr(1 , 5 , 'Current X :  %.4f		         ' % float(current_x))
-        stdscr.addstr(2 , 5 , 'Current Y :  %.4f	                ' % float(current_y))
-        stdscr.addstr(3 , 5 , 'Yaw :  %.4f		         ' % float(current_yaw))
+        stdscr.addstr(1, 5, 'UI NODE')
 
-        stdscr.addstr(5 , 5 , 'Current Waypoint X :  %.4f		         ' % float(current_goal_x))
-        stdscr.addstr(6 , 5 , 'Current Waypoint Y :  %.4f	                ' % float(current_goal_y))
-        stdscr.addstr(7, 5, 'Distance to next waypoint:  %.4f            ' % float(distance_to_waypoint))
+        stdscr.addstr(3 , 5 , 'Current X :  %.4f		         ' % float(current_x))
+        stdscr.addstr(4 , 5 , 'Current Y :  %.4f	                ' % float(current_y))
+        stdscr.addstr(5 , 5 , 'Yaw :  %.4f		         ' % float(current_yaw))
+        stdscr.addstr(6 , 5 , 'Current Waypoint X :  %.4f		         ' % float(current_goal_x))
+        stdscr.addstr(7 , 5 , 'Current Waypoint Y :  %.4f	                ' % float(current_goal_y))
+        stdscr.addstr(8, 5, 'Distance to next waypoint:  %.4f            ' % float(distance_to_waypoint))
 
         rate.sleep()
 

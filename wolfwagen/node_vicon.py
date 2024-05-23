@@ -74,7 +74,7 @@ def main(args=None):
             except Exception as e:
                 exception = repr(e)
         except TypeError as e:
-            exception = "Car not being picked up by camera, re-run the program, or try to make sure the car is in view of the cameras."
+            exception = "Car not being picked up by camera"
 
 
         stdscr.refresh()

@@ -6,7 +6,7 @@ import struct
 import can
 import threading
 import curses
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Int64MultiArray
 
 pp_throttle = pp_steer = manual_throttle = manual_steer = mode = 0
 
@@ -42,7 +42,7 @@ def main(args=None):
     rclpy.init(args=args)
     node = Node("driver")
 
-    sub_to_pure_pursuit = node.create_subscription(Float64MultiArray,'pure_pursuit_motor_topic', pure_pursuit_callback, 1)
+    sub_to_pure_pursuit = node.create_subscription(Int64MultiArray,'pure_pursuit_motor_topic', pure_pursuit_callback, 1)
     sub_manual_steering = node.create_subscription(Int64,'manual_steering', manual_steering_callback, 1)
     sub_manual_throttle = node.create_subscription(Int64,'manual_throttle', manual_throttle_callback, 1)
     sub_mode_switch = node.create_subscription(Int64, 'mode_switch', mode_switch_callback, 1)
@@ -73,7 +73,7 @@ def main(args=None):
             stdscr.refresh()
             stdscr.addstr(1 , 5 , 'MOTOR ACTUATION NODE')
             stdscr.addstr(3 , 5 , 'Throttle :  %s                 ' % str(throttle))
-            stdscr.addstr(4 , 5 , 'Steer :  %s                    ' % str(steer - steer_offset))
+            stdscr.addstr(4 , 5 , 'Steer :  %s                    ' % str(steer))
             stdscr.addstr(5 , 5 , 'Mode :  %s                ' % str_mode)
             stdscr.addstr(7 , 5 , 'Exceptions :  %s                                                                               ' % exception)
 
