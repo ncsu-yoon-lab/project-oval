@@ -15,116 +15,105 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.image import Image
 from kivy.uix.spinner import Spinner
 from kivy.graphics import *
+from kivy.core.window import Window
 
 Builder.load_file('design.kv')
 
-class LoadingScreen(Screen):
+class StartScreen(Screen):
 
-    def on_enter(self):
-        Clock.schedule_interval(lambda dt: self.update_loading_text(), 1.0)
+    # Initialize the start screen
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        pass
 
-    def update_loading_text(self):
-        if (self.checkGPS()):
-            self.ids.loading_text.text = "GPS Found"
+class ResearchScreen(Screen):
 
-        else:
-            if (self.ids.loading_text.text.count('.') == 3):
-                self.ids.loading_text.text = "Waiting for GPS Signal"
-            else:
-                self.ids.loading_text.text += "."
-    
-    # Update to check for a valid GPS signal
-    def checkGPS(self):
-        return False
-
-class SelectLocation(Screen):
     # Initializing lat, long, and zoom
-    lat = long = zoom = 11
+    lat = long = zoom = 19
+    lat = 35.770849
+    long = -78.674706
 
-    # Initialize the mapview
-    mapview = MapView(zoom = zoom, lat = lat, lon = long)
-
-    # Initialy checks if gps is available and uses that lat/long if not it keeps the same lat, long, zoom and creates map
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        if (self.check_GPS()):
-            self.lat, self.long = self.get_GPS()
-        self.create_map(self.lat, self.long, self.zoom)
-        Clock.schedule_interval(lambda dt: self.update_position(), 3.0)
-    
-    # Checks if the GPS is available
-    def check_GPS(self):
-        return False
-
-    # Gets the coordinates from the GPS
-    def get_GPS(self):
-        return None, None
-
-    # Creates the map with the specified lat, long, zoom and makes it into a widget
-    def create_map(self, la, lo, z):
-        self.mapview.lat = la
-        self.mapview.lon = lo
-        self.mapview.zoom = z
-        self.ids.map_container.add_widget(self.mapview)
-
-    # For entering a new position
-    def enter_position(self):
-        try:
-            lat = float(self.ids.latitude.text)
-            long = float(self.ids.longitude.text)
-            self.ids.messenger.text = "Valid Lat/Long"
-            if (lat is None or long is None):
-                lat = 11
-                long = 11
-            self.mapview.lat = lat
-            self.mapview.lon = long
-            self.lat = lat
-            self.long = long
-            self.update_map_widget()
-        except ValueError:
-            self.ids.messenger.text = 'Invalid Lat/Long'
-
-    def update_map_widget(self):
-        # Remove the previous map widget
-        self.ids.map_container.remove_widget(self.mapview)
-        
-        # Create a new map widget with updated coordinates
-        self.mapview = MapView(zoom=self.zoom, lat=self.lat, lon=self.long)
-        
-        # Add the updated map widget back to the container
-        self.ids.map_container.add_widget(self.mapview)
-
-
-    # Updates the current position of the red dot
-    def update_position(self):
-        prev_lat = self.lat
-        prev_long = self.long
-        self.lat, self.long = self.mapview.get_latlon_at(int(self.mapview.size[0]/2), int(self.mapview.size[1]/2), zoom = None)
-
-    # Zooming in
-    def zoom_in(self):
-        self.zoom += 1
-        self.mapview.zoom = self.zoom
-    
-    # Zooming out
-    def zoom_out(self):
-        self.zoom -= 1
-        self.mapview.zoom = self.zoom
-    
-class MainMenu(Screen):
+    # Initialize the start screen
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-class AAV_MonitoringApp(App):
+        # Initialize the mapview
+        self.mapview = MapView(zoom = self.zoom, lat = self.lat, lon = self.long)
+
+        # Creating a plot for tracking the data
+        self.graphview = Graph(xlabel='X', ylabel='Y', x_ticks_minor=5, x_ticks_major=25, y_ticks_minor=1,
+                      y_ticks_major=10, y_grid_label=True, x_grid_label=True, padding=5,
+                      xlog=False, ylog=False, xmin=-0, xmax=100, ymin=-1, ymax=1)
+        plot = MeshLinePlot(color=[1, 0, 0, 1])
+        plot.points = [(x, 0.5 * x * 0.01) for x in range(0, 101)]
+        self.graphview.add_plot(plot)
+
+
+        # Create the research widget that holds either the plot or the map
+        self.research_widget = self.ids.research_widget
+
+        # Add the map to the widget
+        map = self.ids.research_widget
+        map.add_widget(self.mapview)
+
+        # Set the initial switch to 0
+        self.widget_switch_state = 0
+        self.log_switch_state = 0
+        self.route_switch_state = 0
+        
+    # Allows the user to switch between views of the current tracked positions 
+    # and the statistics between each position tracked (Percent error)
+    def switch_widgets(self):
+        
+        # Get the current widget being displayed
+        widget = self.research_widget.children[0]
+
+        # Remove that current widget
+        self.research_widget.remove_widget(widget)
+
+        # If the switch state is 0, change it to 1 then display the graph
+        # Else change it to 1 then display the map
+        if self.widget_switch_state == 0:
+            self.widget_switch_state += 1
+            self.ids.switch.text = 'Display Map'
+            self.research_widget.add_widget(self.graphview)
+        else:
+            self.widget_switch_state -= 1
+            self.ids.switch.text = 'Display Statistics'
+            self.research_widget.add_widget(self.mapview)
+
+    # Logs the data of the GPS signals received via communication with ESP
+    def log_data(self):
+
+        # If the log switch state is 0, the data will be logged consistently to a local csv file
+        # Else the logging of the data is stopped
+        if self.log_switch_state == 0:
+            pass
+        else:
+            pass
+
+    # Generate a constant set of waypoints for the car to travel and be displayed on the map
+    def generate_loop(self):
+        pass
+
+class PrototypeScreen(Screen):
+
+    # Initialize the start screen
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        pass
+
+class WW_MonitoringApp(App):
 
     def build(self):
+        Window.fullscreen = 'auto'
         sm = ScreenManager()
         Window.clearcolor = (230/255, 230/255, 230/255, 1)
-        sm.add_widget(LoadingScreen(name='loading_screen'))
-        sm.add_widget(SelectLocation(name='select_location'))
-        sm.add_widget(MainMenu(name='main_menu'))
+        sm.add_widget(StartScreen(name='start_screen'))
+        sm.add_widget(ResearchScreen(name='research_screen'))
+        sm.add_widget(PrototypeScreen(name='prototype_screen'))
 
         return sm
 
 if __name__ == '__main__':
-    AAV_MonitoringApp().run()
+    WW_MonitoringApp().run()

@@ -1,42 +1,54 @@
 #:set button_fc [0.447, 0.447, 0.447, 1]
-#:set button_size (0.8 , 0.2)
+#:set button_size (0.3 , 0.1)
 #:set button_fs 40
 
 #:set blur 20
 
 #:set white [0.98 , 0.98 , 0.98 ,1]
-#:set green [0.545 , 0.7647 , 0.29411 , 1]
+#:set red [0.8 , 0.2 , 0.2 , 1]
 #:set black_fade [0 , 0 , 0 , 0.85]
 #:set gray [0 , 0 , 0 , 0.5]
 #:set black [0.0, 0.0, 0.0, 1]
 
-<LoadingScreen>:
+<StartScreen>:
 
         RelativeLayout:
 
                 Label:
 
-                        id: loading_text
-                        text: "Waiting for GPS Signal"
-                        font_size: 60
-                        color: white
+                        id: wolf
+                        text: "WOLF"
+                        font_size: 150
+                        bold: True
+                        color: red
+                        size_hint: (1.0, 0.15)
+                        pos_hint: {'center_x': 0.25, 'top': 0.8}
+
+                Image:
+
+                        id: logo
+                        source: 'WW_Logo.png'
+                        size_hint: (1, 0.6)
+                        pos_hint: {'center_x': 0.5, 'top': 1.0}
+
+                Label:
+
+                        id: wagen
+                        text: "WAGEN"
+                        font_size: 150
+                        bold: True
+                        color: red
                         size_hint: (1, 0.15)
-                        pos_hint: {'center_x': 0.5, 'top': 0.5}
-                        canvas.before:
-                                Color:
-                                        rgba: green
-                                Rectangle:
-                                        pos: self.pos
-                                        size: self.size
+                        pos_hint: {'center_x': 0.75, 'top': 0.8}
                 
                 Button:
-                        id: continue_button
-                        text: 'GPS Signal Not Found'
+                        id: research_button
+                        text: 'Research'
                         font_size: button_fs
                         color: button_fc
-                        on_press: root.manager.current = 'select_location'
+                        on_press: root.manager.current = 'research_screen'
                         size_hint: button_size
-                        pos_hint: {'center_x': 0.5, 'top': 0.25}
+                        pos_hint: {'center_x': 0.25, 'top': 0.25}
                         background_normal: ''
                         background_color: white
                         canvas.before:
@@ -50,146 +62,138 @@
                                         border_radius: 10 , 10 , 10 , 10
                                         blur_radius: blur if self.state == "normal" else 50
 
-<SelectLocation>:
-        
+                Button:
+                        id: prototype_button
+                        text: 'Prototype'
+                        font_size: button_fs
+                        color: button_fc
+                        on_press: root.manager.current = 'prototype_screen'
+                        size_hint: button_size
+                        pos_hint: {'center_x': 0.75, 'top': 0.25}
+                        background_normal: ''
+                        background_color: white
+                        canvas.before:
+                                Color:
+                                        rgba: black_fade
+                                BoxShadow:
+                                        pos: self.pos
+                                        size: self.size
+                                        offset: 0, -10
+                                        spread_radius: -20, -20
+                                        border_radius: 10 , 10 , 10 , 10
+                                        blur_radius: blur if self.state == "normal" else 50
+
+<ResearchScreen>
+
+        RelativeLayout:
+
+                Button:
+                        id: back
+                        text: "Back"
+                        font_size: button_fs
+                        color: button_fc
+                        on_press: root.manager.current = 'start_screen'
+                        size_hint: (0.2, 0.1)
+                        pos_hint: {'center_x': 0.15, 'top': 0.95}
+                        background_normal: ''
+                        background_color: white
+                        canvas.before:
+                                Color:
+                                        rgba: black_fade
+                                BoxShadow:
+                                        pos: self.pos
+                                        size: self.size
+                                        offset: 0, -10
+                                        spread_radius: -20, -20
+                                        border_radius: 10 , 10 , 10 , 10
+                                        blur_radius: blur if self.state == "normal" else 50
+
+                Label:
+                        id: title
+                        text: "Research"
+                        font_size: 60
+                        color: black
+                        size_hint: (1, 0.15)
+                        pos_hint: {'center_x': 0.5, 'top': 1.0}
+
+                RelativeLayout:
+                        id: research_widget
+                        size_hint: (0.5, 0.75)
+                        pos_hint: {'center_x': 0.3, 'top': 0.8}
+
+                Button:
+                        id: switch
+                        text: "Begin Loop"
+                        font_size: button_fs
+                        color: button_fc
+                        on_press: root.generate_loop()
+                        size_hint: (0.2, 0.1)
+                        pos_hint: {'center_x': 0.8, 'top': 0.8}
+                        background_normal: ''
+                        background_color: white
+                        canvas.before:
+                                Color:
+                                        rgba: black_fade
+                                BoxShadow:
+                                        pos: self.pos
+                                        size: self.size
+                                        offset: 0, -10
+                                        spread_radius: -20, -20
+                                        border_radius: 10 , 10 , 10 , 10
+                                        blur_radius: blur if self.state == "normal" else 50
+
+                Button:
+                        id: switch
+                        text: "Begin Logging"
+                        font_size: button_fs
+                        color: button_fc
+                        on_press: root.log_data()
+                        size_hint: (0.2, 0.1)
+                        pos_hint: {'center_x': 0.8, 'top': 0.55}
+                        background_normal: ''
+                        background_color: white
+                        canvas.before:
+                                Color:
+                                        rgba: black_fade
+                                BoxShadow:
+                                        pos: self.pos
+                                        size: self.size
+                                        offset: 0, -10
+                                        spread_radius: -20, -20
+                                        border_radius: 10 , 10 , 10 , 10
+                                        blur_radius: blur if self.state == "normal" else 50
+                
+                Button:
+                        id: switch
+                        text: "Display Statistics"
+                        font_size: button_fs
+                        color: button_fc
+                        on_press: root.switch_widgets()
+                        size_hint: (0.2, 0.1)
+                        pos_hint: {'center_x': 0.8, 'top': 0.3}
+                        background_normal: ''
+                        background_color: white
+                        canvas.before:
+                                Color:
+                                        rgba: black_fade
+                                BoxShadow:
+                                        pos: self.pos
+                                        size: self.size
+                                        offset: 0, -10
+                                        spread_radius: -20, -20
+                                        border_radius: 10 , 10 , 10 , 10
+                                        blur_radius: blur if self.state == "normal" else 50
+
+
+
+<PrototypeScreen>
+
         RelativeLayout:
 
                 Label:
-                        id: location_selection
-                        text: "Select Body of Water"
+                        id: text
+                        text: "Prototype"
                         font_size: 60
-                        color: white
+                        color: black
                         size_hint: (1, 0.15)
                         pos_hint: {'center_x': 0.5, 'top': 1.0}
-                        canvas.before:
-                                Color:
-                                        rgba: green
-                                Rectangle:
-                                        pos: self.pos
-                                        size: self.size
-                
-                TextInput:
-                        id: latitude
-                        hint_text: 'Latitude'
-                        size_hint: (0.3, 0.075)
-                        pos_hint: {'center_x': 0.2, 'top': 0.8}
-                
-                TextInput:
-                        id: longitude
-                        hint_text: 'Latitude'
-                        size_hint: (0.3, 0.075)
-                        pos_hint: {'center_x': 0.5, 'top': 0.8}
-                
-                Label:
-                        id: messenger
-                        font_size: 60
-                        color: black
-                        text: 'Invalid Lat/Long'
-                        size_hint: (0.3, 0.075)
-                        pos_hint: {'center_x': 0.8, 'top': 0.8}
-
-                Button:
-                        id: enter
-                        font_size: 60
-                        color: black
-                        text: 'Enter'
-                        size_hint: (0.3, 0.075)
-                        pos_hint: {'center_x': 0.2, 'top': 0.725}
-                        background_normal: ''
-                        background_color: white
-                        on_press: root.enter_position()
-                        canvas.before:
-                                Color:
-                                        rgba: black_fade
-                                BoxShadow:
-                                        pos: self.pos
-                                        size: self.size
-                                        offset: 0, -10
-                                        spread_radius: -20, -20
-                                        border_radius: 10 , 10 , 10 , 10
-                                        blur_radius: blur if self.state == "normal" else 50
-
-                Button:
-                        id: select
-                        font_size: 60
-                        color: black
-                        text: 'Select'
-                        size_hint: (0.3, 0.075)
-                        pos_hint: {'center_x': 0.5, 'top': 0.725}
-                        background_normal: ''
-                        background_color: white
-                        on_press: root.ids.map_container.export_to_png("map.png")
-                        on_release: root.manager.current = 'main_menu'
-                        canvas.before:
-                                Color:
-                                        rgba: black_fade
-                                BoxShadow:
-                                        pos: self.pos
-                                        size: self.size
-                                        offset: 0, -10
-                                        spread_radius: -20, -20
-                                        border_radius: 10 , 10 , 10 , 10
-                                        blur_radius: blur if self.state == "normal" else 50
-
-                RelativeLayout:
-                        id: map_container
-                        size_hint_x: 1.0
-                        size_hint_y: 0.6
-                        allow_stretch: True
-                        pos_hint: {'center_x': 0.5, 'top': 0.6}
-
-                RelativeLayout:
-                        id: ellipse
-                        size_hint_x: 1.0
-                        size_hint_y: 0.6
-                        pos_hint: {'center_x': 0.5, 'top': 0.6}
-                        canvas:
-                                Color:
-                                        rgba: [1.0, 0.0, 0.0, 1.0]
-                                Ellipse:
-                                        pos: (self.width / 2 - 10, self.height / 2 - 10)
-                                        size: (20, 20)
-                                        angle_start: 0
-                                        angle_end: 360
-                        
-                        Button:
-                                id: zoom_in
-                                font_size: 60
-                                color: black
-                                text: '+'
-                                size_hint: (0.075, 0.075)
-                                pos_hint: {'center_x': 0.1, 'top': 0.9}
-                                background_normal: ''
-                                background_color: white
-                                on_press: root.zoom_in()
-                                canvas.before:
-                                        Color:
-                                                rgba: black_fade
-                                        BoxShadow:
-                                                pos: self.pos
-                                                size: self.size
-                                                offset: 0, -10
-                                                spread_radius: -20, -20
-                                                border_radius: 10 , 10 , 10 , 10
-                                                blur_radius: blur if self.state == "normal" else 50
-                        
-                        Button:
-                                id: zoom_out
-                                font_size: 60
-                                color: black
-                                text: '-'
-                                size_hint: (0.075, 0.075)
-                                pos_hint: {'center_x': 0.1, 'top': 0.8}
-                                background_normal: ''
-                                background_color: white
-                                on_press: root.zoom_out()
-                                canvas.before:
-                                        Color:
-                                                rgba: black_fade
-                                        BoxShadow:
-                                                pos: self.pos
-                                                size: self.size
-                                                offset: 0, -10
-                                                spread_radius: -20, -20
-                                                border_radius: 10 , 10 , 10 , 10
-                                                blur_radius: blur if self.state == "normal" else 50
