@@ -184,6 +184,54 @@
                                         border_radius: 10 , 10 , 10 , 10
                                         blur_radius: blur if self.state == "normal" else 50
 
+                Label:
+                        id: rtk_label
+                        text: 'RTK'
+                        font_size: button_fs
+                        color: button_fc
+                        size_hint: (0.2, 0.14)
+                        pos_hint: {'center_x': 0.7, 'top': 0.18}
+
+
+                CheckBox:
+                        id: rtk_cb
+                        color: red
+                        on_active: root.checkbox_clicked(self, self.active)
+                        pos_hint: {'center_x': 0.7, 'top': 0.18}
+                        size_hint: (0.1, 0.1)
+                        active: True
+
+                Label:
+                        id: gps_label
+                        text: 'GPS'
+                        font_size: button_fs
+                        color: button_fc
+                        size_hint: (0.2, 0.14)
+                        pos_hint: {'center_x': 0.8, 'top': 0.18}
+
+                CheckBox:
+                        id: gps_cb
+                        color: red
+                        on_active: root.checkbox_clicked(self, self.active)
+                        pos_hint: {'center_x': 0.8, 'top': 0.18}
+                        size_hint: (0.1, 0.1)
+                        active: False
+
+                Label:
+                        id: ml_label
+                        text: 'ML'
+                        font_size: button_fs
+                        color: button_fc
+                        size_hint: (0.2, 0.14)
+                        pos_hint: {'center_x': 0.9, 'top': 0.18}
+
+                CheckBox:
+                        id: ml_cb
+                        color: red
+                        on_active: root.checkbox_clicked(self, self.active)
+                        pos_hint: {'center_x': 0.9, 'top': 0.18}
+                        size_hint: (0.1, 0.1)
+                        active: False
 
 
 <PrototypeScreen>
