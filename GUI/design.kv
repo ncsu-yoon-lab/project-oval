@@ -277,21 +277,14 @@
                         size_hint: (0.35, 0.75)
                         pos_hint: {'center_x': 0.8, 'top': 0.8}
 
-                        Label:
-                                id: vehicle_number_display
-                                text: 'No Vehicle Selected'
-                                size_hint: (0.8, 0.3)
-                                font_size: 60
-                                pos_hint: {'center_x': 0.5, 'top': 0.8}
-
                         Button:
                                 id: prototype_button
-                                text: 'Select Vehicle'
+                                text: 'Generate Route'
                                 font_size: button_fs
                                 color: button_fc
-                                on_press: root.manager.current = 'start_screen'
-                                size_hint: (0.8, 0.3)
-                                pos_hint: {'center_x': 0.5, 'top': 0.8}
+                                on_press: root.generate_route()
+                                size_hint: (0.5, 0.1)
+                                pos_hint: {'center_x': 0.5, 'top': 0.2}
                                 background_normal: ''
                                 background_color: white
                                 canvas.before:
@@ -305,3 +298,304 @@
                                                 border_radius: 10 , 10 , 10 , 10
                                                 blur_radius: blur if self.state == "normal" else 50
 
+                        Label:
+                                id: start_label
+                                text: 'Start'
+                                bold: True
+                                font_size: 75
+                                color: black
+                                size_hint: (0.1, 0.05)
+                                pos_hint: {'center_x': 0.1, 'top': 1.0}
+
+                        RelativeLayout:
+                                id: start_cb
+
+                                CheckBox:
+                                        id: current
+                                        group: 'start'
+                                        text: 'CURRENT'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.92}
+
+                                CheckBox:
+                                        id: eb1
+                                        group: 'start'
+                                        text: 'EB1'
+                                        lat: 35.771549
+                                        lon: -78.674697
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.84}
+
+                                CheckBox:
+                                        id: eb2
+                                        group: 'start'
+                                        text: 'EB2'
+                                        lat: 35.771654
+                                        lon: -78.674104
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.76}
+
+                                CheckBox:
+                                        id: eb3
+                                        group: 'start'
+                                        text: 'EB3'
+                                        lat: 35.771166
+                                        lon: -78.673954
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.68}
+
+                                CheckBox:
+                                        id: fw
+                                        group: 'start'
+                                        text: 'FW'
+                                        lat: 35.770953
+                                        lon: -78.675150
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.60}
+
+                                CheckBox:
+                                        id: hunt
+                                        group: 'start'
+                                        text: 'HUNT'
+                                        lat: 35.769914
+                                        lon: -78.675925
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.52}
+
+                                CheckBox:
+                                        id: mid
+                                        group: 'start'
+                                        text: 'MID'
+                                        lat: 35.770576
+                                        lon: -78.674423
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.44}
+
+                                CheckBox:
+                                        id: oval
+                                        group: 'start'
+                                        text: 'OVAL'
+                                        lat: 35.770004
+                                        lon: -78.674873
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.1, 'top': 0.36}
+
+                        
+                        Label:
+                                text: 'Current'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.92}
+
+
+
+                        Label:
+                                text: 'EB 1'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.84}
+
+
+
+                        Label:
+                                text: 'EB 2'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.76}
+
+
+
+                        Label:
+                                text: 'EB 3'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.68}
+
+
+
+                        Label:
+                                text: 'FW'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.60}
+
+
+                        Label:
+                                text: 'Hunt'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.52}
+
+
+
+                        Label:
+                                text: 'Midway'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.44}
+
+
+                        Label:
+                                text: 'Oval'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.23, 'top': 0.36}
+
+                        Label:
+                                id: end_label
+                                text: 'End'
+                                bold: True
+                                font_size: 75
+                                color: black
+                                size_hint: (0.1, 0.05)
+                                pos_hint: {'center_x': 0.8, 'top': 1.0}
+
+                        RelativeLayout:
+                                id: end_cb
+
+                                CheckBox:
+                                        id: current
+                                        group: 'end'
+                                        text: 'CURRENT'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.92}
+
+                                CheckBox:
+                                        id: eb1
+                                        group: 'end'
+                                        text: 'EB1'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.84}
+
+                                CheckBox:
+                                        id: eb2
+                                        group: 'end'
+                                        text: 'EB2'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.76}
+
+                                CheckBox:
+                                        id: eb3
+                                        group: 'end'
+                                        text: 'EB3'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.68}
+
+                                CheckBox:
+                                        id: fw
+                                        group: 'end'
+                                        text: 'FW'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.60}
+
+                                CheckBox:
+                                        id: hunt
+                                        group: 'end'
+                                        text: 'HUNT'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.52}
+
+                                CheckBox:
+                                        id: mid
+                                        group: 'end'
+                                        text: 'MID'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.44}
+
+                                CheckBox:
+                                        id: oval
+                                        group: 'end'
+                                        text: 'OVAL'
+                                        color: red
+                                        size_hint: (0.1, 0.1)
+                                        pos_hint: {'center_x': 0.8, 'top': 0.36}
+                        
+                        Label:
+                                text: 'Current'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.92}
+
+
+                        Label:
+                                text: 'EB 1'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.84}
+
+
+
+                        Label:
+                                text: 'EB 2'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.76}
+
+
+
+                        Label:
+                                text: 'EB 3'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.68}
+
+
+
+                        Label:
+                                text: 'FW'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.60}
+
+
+
+                        Label:
+                                text: 'Hunt'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.52}
+
+
+                        Label:
+                                text: 'Midway'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.44}
+
+
+                        Label:
+                                text: 'Oval'
+                                font_size: 60
+                                color: black
+                                size_hint: (0.1, 0.095)
+                                pos_hint: {'center_x': 0.93, 'top': 0.36}
