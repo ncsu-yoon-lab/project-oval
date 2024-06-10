@@ -1,7 +1,0 @@
-{
-    "python.analysis.extraPaths": [
-        "./AStar/utils",
-        "./AStar/simulation",
-        "./AStar/environment"
-    ]
-}
