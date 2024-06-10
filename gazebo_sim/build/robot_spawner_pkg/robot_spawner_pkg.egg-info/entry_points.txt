@@ -1,3 +1,0 @@
-[console_scripts]
-spawn_demo = robot_spawner_pkg.spawn_demo:main
-

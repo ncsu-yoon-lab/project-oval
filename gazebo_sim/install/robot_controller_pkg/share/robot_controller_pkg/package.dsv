@@ -1,9 +1,0 @@
-source;share/robot_controller_pkg/hook/pythonpath.ps1
-source;share/robot_controller_pkg/hook/pythonpath.dsv
-source;share/robot_controller_pkg/hook/pythonpath.sh
-source;share/robot_controller_pkg/hook/ament_prefix_path.ps1
-source;share/robot_controller_pkg/hook/ament_prefix_path.dsv
-source;share/robot_controller_pkg/hook/ament_prefix_path.sh
-source;../../build/robot_controller_pkg/share/robot_controller_pkg/hook/pythonpath_develop.ps1
-source;../../build/robot_controller_pkg/share/robot_controller_pkg/hook/pythonpath_develop.dsv
-source;../../build/robot_controller_pkg/share/robot_controller_pkg/hook/pythonpath_develop.sh
