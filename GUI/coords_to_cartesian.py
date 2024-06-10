@@ -52,3 +52,4 @@ class CoordsToCartesian(object):
         yaw = heading + OFFSET
 
         return yaw
+    
