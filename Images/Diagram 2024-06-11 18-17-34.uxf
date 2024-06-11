@@ -1,0 +1,43 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>1750</x><y>1050</y><w>210</w><h>140</h></coordinates><panel_attributes>&lt;&lt;node_motor_act.py&gt;&gt;
+
+--
+Summary:
+Receives messages for throttle,
+steering, and mode. Controls
+motors via CAN with Teensy.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2290</x><y>1050</y><w>210</w><h>150</h></coordinates><panel_attributes>&lt;&lt;node_xbox_controller.py&gt;&gt;
+
+--
+Summary:
+Receives Joy messages and 
+interprets them to then send 
+to node_motor_act.py to change
+the speed and steering of the
+vehicle and to change autonomous 
+vs manual mode</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2810</x><y>1050</y><w>210</w><h>140</h></coordinates><panel_attributes>&lt;&lt;joy_node&gt;&gt;
+
+--
+Summary:
+Package that constantly sends
+Joy messages</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>2490</x><y>1100</y><w>340</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=mesg: Joy
+Topic: joy
+</panel_attributes><additional_attributes>10;20;320;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1950</x><y>1100</y><w>360</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=mesg: Int64 [-100, 100]
+Topic: manual_throttle
+</panel_attributes><additional_attributes>10;20;340;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1950</x><y>1150</y><w>360</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=mesg: Int64 [-100, 100]
+Topic: manual_steering</panel_attributes><additional_attributes>10;20;340;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1950</x><y>1050</y><w>360</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=mesg: Int64 [1]
+Topic: mode_switch</panel_attributes><additional_attributes>10;20;340;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1750</x><y>620</y><w>210</w><h>140</h></coordinates><panel_attributes>&lt;&lt;node_motor_act.py&gt;&gt;
+
+--
+Summary:
+Receives messages for throttle,
+steering, and mode. Controls
+motors via CAN with Teensy.</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1760</x><y>750</y><w>160</w><h>320</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=mesg: Int64 [-100, 100]
+Topic: manual_throttle
+</panel_attributes><additional_attributes>10;300;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1930</x><y>750</y><w>160</w><h>320</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=mesg: Int64 [-100, 100]
+Topic: manual_throttle
+</panel_attributes><additional_attributes>10;300;10;10</additional_attributes></element></diagram>
