@@ -14,8 +14,9 @@ from std_msgs.msg import Int64
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
+import numpy as np
 
-from lib.lane_detector import LaneDetector
+from lib.simple_lane_detection import SimpleLaneDetector
 
 # Other libraries
 import time
@@ -30,6 +31,7 @@ target_distance = 2.0
 
 # ROS2 Topic Names
 SEGMENTATION_TOPIC = '/segmentation/mask'  # Input: distance to lane edge
+STEERING_TOPIC = '/steering'  # Output: steering commands
 
 class LaneFollowerNode(Node):
     """
@@ -48,6 +50,13 @@ class LaneFollowerNode(Node):
         # Initialize the ROS2 node with name "driver"
         super().__init__("driver")
 
+        # Create publisher for steering commands
+        self.steer_pub = self.create_publisher(
+            Int64,
+            STEERING_TOPIC,
+            10
+        )
+
         # Create subscribers to listen for edge detection data
         self.create_subscription(
             Image,                        # Message type
@@ -59,7 +68,8 @@ class LaneFollowerNode(Node):
         # State variables for edge detection and distance
         self.bridge = CvBridge()
         self.mask_image = None
-        self.lane_detector = LaneDetector()
+        self.lane_detector = SimpleLaneDetector()
+        self.edge_detected = False  # Track if lanes are detected
         
         # PID Controller state variables
         self.previous_error = 0.0     # Previous error for derivative calculation
@@ -73,44 +83,57 @@ class LaneFollowerNode(Node):
         Args:
             msg: ROS2 Image message for segmentation mask
         """
+        # Convert ROS Image to OpenCV format (keep as grayscale)
         self.mask_image = self.bridge.imgmsg_to_cv2(msg)
-
-
+        print(f"Mask shape: {self.mask_image.shape}")
+        
+        # Detect lanes
         lanes_detected = self.lane_detector.detect_lanes(self.mask_image)
 
-        if lanes_detected is not None:
-            left_lane = lanes_detected['left_lane']
-            right_lane = lanes_detected['right_lane']
-            lane_center = lanes_detected['path_center']
-
-            distance = abs((self.mask_image.shape[0] / 2) - lane_center)
-
-            self.find_steering(self, distance)
-
-        cv2.imshow()
+        viz_image = self.lane_detector.visualize(self.mask_image, lanes_detected)
+        cv2.imshow("Lane Detection Visualization", viz_image)
+        cv2.waitKey(1)
+        # if lanes_detected is not None:
+        #     self.edge_detected = True
+        #     left_lane = lanes_detected['left_edge']
+        #     right_lane = lanes_detected['right_edge']
+        #     path_center = lanes_detected['center_point']
             
+        #     # Extract x-coordinate from path_center tuple
+        #     lane_center_x = path_center[0]
             
+        #     # Calculate distance from image center
+        #     image_center_x = self.mask_image.shape[1] / 2
+        #     distance = abs(image_center_x - lane_center_x)
+            
+        #     # Calculate steering based on distance
+        #     self.find_steering(distance)
+            
+        #     # Visualize the detected lanes
+        #     self.visualize_lanes(left_lane, right_lane, path_center)
+        # else:
+        #     self.edge_detected = False
+        #     self.find_steering(0)  # No lanes detected
 
     def find_steering(self, distance: float):
         """
         Main callback that processes edge distance and calculates steering
         
         Args:
-            msg: ROS2 message containing distance to lane edge
+            distance: Distance from target position
         """
-
         # Only calculate steering if an edge is detected
-        if self.edge_detected:  # Fixed variable reference (was edge_detected without self)
+        if self.edge_detected:
             # Calculate error: how far we are from target distance
             error = distance - target_distance
             
             # Use PID controller to calculate steering correction
             steer = self.PID(error)
-            print(f"Edge detected. Distance: {distance}, Error: {error}, Steer: {steer}")
+            print(f"Edge detected. Distance: {distance:.2f}, Error: {error:.2f}, Steer: {steer}")
         else:
             # No edge detected - don't steer (go straight)
             steer = 0
-            print(f"No edge detected. Steer: 0")
+            print("No edge detected. Steer: 0")
             
         # Publish the calculated steering command
         self.publish_steer(steer)
@@ -173,7 +196,7 @@ def main():
     """
     # Initialize the ROS2 Python client library
     rclpy.init()
-    
+    print("Working...")
     # Create instance of our lane follower node
     lane_follower = LaneFollowerNode()
     
@@ -183,8 +206,6 @@ def main():
     except KeyboardInterrupt:
         # Handle Ctrl+C gracefully
         print('Shutting down due to keyboard interrupt')
-        # Note: lane_follower.shutdown() method doesn't exist - this line will cause error
-        # lane_follower.shutdown()  # Should be removed or implemented
     except Exception as e:
         # Handle any other unexpected errors
         print(f'Unexpected error: {str(e)}')

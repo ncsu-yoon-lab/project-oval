@@ -179,6 +179,10 @@ class SegmentationNode(Node):
         try:
             start_time = time.time()
             segmentation_mask, probabilities = self.seg_model.segment_image(image_to_process)
+
+            # Convert to convex hull
+            segmentation_mask = self.apply_convex_hull_to_mask(segmentation_mask)
+
             processing_time = time.time() - start_time
             
             self.get_logger().info(f"Segmentation completed in {processing_time:.3f}s")
@@ -188,7 +192,7 @@ class SegmentationNode(Node):
             
             
             if self.show_display:
-                +                self.display_results(image_to_process, segmentation_mask, probabilities)
+                self.display_results(image_to_process, segmentation_mask, probabilities)
             
             if self.publish_segmentation:
                 self.publish_segmentation_mask(segmentation_mask)
@@ -206,26 +210,51 @@ class SegmentationNode(Node):
         Returns:
             convex_hull_mask: Mask with convex hull applied
         """
+        binary_mask = (mask > 127).astype(np.uint8) * 255
+    
+        # Step 1: Aggressive closing to fill all gaps
+        kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
+        closed = cv2.morphologyEx(binary_mask, cv2.MORPH_CLOSE, kernel_close)
+        
+        # Step 2: Remove small islands
+        kernel_open = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+        opened = cv2.morphologyEx(closed, cv2.MORPH_OPEN, kernel_open)
+        
+        # Step 3: Dilate slightly to ensure continuous lane
+        kernel_dilate = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+        dilated = cv2.dilate(opened, kernel_dilate, iterations=1)
+        
+        # Step 4: Bilateral filter for edge-preserving smoothing
+        # (smooths interior but keeps edges defined)
+        bilateral = cv2.bilateralFilter(dilated, 9, 75, 75)
+        
+        # Step 5: Final Gaussian smoothing
+        smoothed = cv2.GaussianBlur(bilateral, (11, 11), 0)
+        
+        # Step 6: Clean threshold
+        _, lane_mask = cv2.threshold(smoothed, 127, 255, cv2.THRESH_BINARY)
+        
+        return lane_mask
         # Convert to binary mask (assuming non-zero values are the object)
-        binary_mask = (mask > 0).astype(np.uint8)
+        # binary_mask = (mask > 0).astype(np.uint8)
         
-        # Find contours
-        contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # # Find contours
+        # contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
-        if not contours:
-            return mask  # Return original if no contours found
+        # if not contours:
+        #     return mask  # Return original if no contours found
         
-        # Get largest contour (main object)
-        largest_contour = max(contours, key=cv2.contourArea)
+        # # Get largest contour (main object)
+        # largest_contour = max(contours, key=cv2.contourArea)
         
-        # Get convex hull
-        hull = cv2.convexHull(largest_contour)
+        # # Get convex hull
+        # hull = cv2.convexHull(largest_contour)
         
-        # Create new mask with convex hull
-        convex_hull_mask = np.zeros_like(mask)
-        cv2.fillPoly(convex_hull_mask, [hull], 255)  # Fill with 255 (white)
+        # # Create new mask with convex hull
+        # convex_hull_mask = np.zeros_like(mask)
+        # cv2.fillPoly(convex_hull_mask, [hull], 255)  # Fill with 255 (white)
         
-        return convex_hull_mask
+        # return convex_hull_mask
     
     def display_results(self, original_image, segmentation_mask, probabilities):
         try:
@@ -291,7 +320,7 @@ def main(args=None):
     
     try:
         node = SegmentationNode(
-            model_path="/home/wolfwagen1/ros2_ws/src/project-oval/project-oval/models/dino_segmentation_2.onnx",  
+            model_path="/home/wolfwagen/Documents/gitproject/project-oval/project-oval/models/dino_segmentation_2.onnx",  
             image_topic="/zed/zed_node/left/image_rect_color",
             device="cuda",
             use_tensorrt=False,
