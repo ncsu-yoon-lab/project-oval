@@ -38,12 +38,28 @@ class StartScreen(Screen):
 class ResearchScreen(Screen):
 
     # Initializing lat, long, and zoom
-    lat = long = zoom = 19
+    zoom = 19
     lat = 35.770849
     long = -78.674706
 
     # File path
     file_path = 'C:\\Users\\malin\\Documents\\GitHub\\wolfwagen\\Server\\logged_data.csv'
+
+    # The latitude and longitude points between each route
+    EB1toEB2 = [[35.771549, -78.674697],[35.771598, -78.674656],[35.771687, -78.674549],[35.771715, -78.674491],[35.771724, -78.674432],[35.771726, -78.674371],[35.771728, -78.674302],[35.771704, -78.674220],[35.771678, -78.674161],[35.771654, -78.674104]]
+    EB1toEB3 = [[35.771549, -78.674697],[35.771473, -78.674549],[35.771429, -78.674461],[35.771336, -78.674278],[35.771242, -78.674096],[35.771194, -78.674005],[35.771166, -78.673954]]
+    EB1toFW = [[35.771549, -78.674697],[35.771484, -78.674745],[35.771405, -78.674809],[35.771334, -78.674866],[35.771260, -78.674927],[35.771170, -78.674986],[35.771105, -78.675043],[35.771022, -78.675102],[35.770953, -78.675150]]
+    EB3toEB2 = [[35.771166, -78.673954],[35.771231, -78.673913],[35.771294, -78.673878],[35.771364, -78.673867],[35.771433, -78.673873],[35.771520, -78.673902],[35.771566, -78.673945],[35.771612, -78.674015],[35.771654, -78.674104]]
+    EB3toMID = [[35.771166, -78.673954],[35.771107, -78.674007],[35.771039, -78.674061],[35.770967, -78.674122],[35.770898, -78.674173],[35.770835, -78.674224],[35.770772, -78.674275],[35.770693, -78.674334],[35.770632, -78.674380],[35.770576, -78.674423]]
+    FWtoMID = [[35.770953, -78.675150],[35.770917, -78.675074],[35.770856, -78.674962],[35.770800, -78.674852],[35.770746, -78.674742],[35.770682, -78.674624],[35.770624, -78.674508],[35.770576, -78.674423]]
+    FWtoHUNT = [[35.770953, -78.675150],[35.770909, -78.675190],[35.770828, -78.675254],[35.770754, -78.675313],[35.770658, -78.675388],[35.770576, -78.675453],[35.770456, -78.675538],[35.770339, -78.675624],[35.770265, -78.675686],[35.770162, -78.675769],[35.770082, -78.675828],[35.770012, -78.675884],[35.769914, -78.675925]]
+    OVALtoMID = [[35.770004, -78.674873],[35.770104, -78.674793],[35.770195, -78.674715],[35.770263, -78.674669],[35.770348, -78.674605],[35.770429, -78.674538],[35.770507, -78.674479],[35.770576, -78.674423]]
+    OVALtoHUNT = [[35.770004, -78.674873],[35.770000, -78.674940],[35.769996, -78.675034],[35.769987, -78.675155],[35.769983, -78.675262],[35.769965, -78.675364],[35.769959, -78.675474],[35.769948, -78.675594],[35.769941, -78.675723],[35.769926, -78.675833],[35.769914, -78.675925]]
+
+    routes = (EB1toEB2, EB1toEB3, EB1toFW, EB3toEB2, EB3toMID, FWtoMID, FWtoHUNT, OVALtoMID, OVALtoHUNT)
+
+    intersections = ("EB1", "EB2", "EB3", "FW", "HUNT", "MID", "OVAL")
+    intersection_coordinates = ((35.771549, -78.674697), (35.771654, -78.674104), (35.771166, -78.673954), (35.770953, -78.675150), (35.769914, -78.675925), (35.770576, -78.674423), (35.770004, -78.674873))
 
     # Initialize the start screen
     def __init__(self, **kwargs):
@@ -80,6 +96,12 @@ class ResearchScreen(Screen):
         self.gps_pe = []
         self.ml_pe = []
 
+        # Markers added to the map
+        self.markers = []
+
+        # Initializes if the two routes are already generated
+        self.routes_found = False
+
         # Create the research widget that holds either the plot or the map
         self.research_widget = self.ids.research_widget
 
@@ -95,13 +117,19 @@ class ResearchScreen(Screen):
     def main_loop(self, instance):
 
         # Receive the current data from the web server
-        self.receive_data()
+        current_lat, current_lon = self.receive_data()
 
         self.calculate_stats()
 
         # Log data if it is turned on
         if self.log_switch_state == 1:
             self.log_data()
+
+        # Clears all markers before updating the current location of the vehicle
+        self.clear_markers()
+
+        # Adds the current location of the vehicle
+        self.add_marker(current_lat, current_lon, False)
         
         # Constantly update the route on the map if needed
         if self.route_switch_state == 1:
@@ -130,7 +158,24 @@ class ResearchScreen(Screen):
         with open(self.file_path, 'w', newline='') as csv_file:
             writer = csv.writer(csv_file)
             writer.writerows(data)
+
+    # Clears all the markers on the map
+    def clear_markers(self):
+        for marker in self.markers:
+            self.mapview.remove_marker(marker)
     
+    # Creates a marker when given a lat and long
+    def add_marker(self, latitude, longitude, isRoute):
+
+        # Creating a map marker at the specified lat and long
+        if isRoute:
+            marker = MapMarker(lat=latitude, lon=longitude, source='Images/red_dot.png')
+        else:
+            marker = MapMarker(lat=latitude, lon=longitude)
+
+        # Add the marker to the map
+        self.markers.append(marker)
+        self.mapview.add_widget(marker)
 
     # Receives data from the server to then be logged to a csv and displayed
     def receive_data(self):
@@ -149,11 +194,14 @@ class ResearchScreen(Screen):
 
         # Parse the csv to get the times and data 
         data = [line.split(',') for line in lines]
+        size = len(self.times)
         if len(data) > 3:
-            self.times[len(self.times)] = data[0].pop()
-            self.rtk_data[len(self.rtk_data)] = data[1].pop()
-            self.gps_data[len(self.gps_data)] = data[2].pop()
-            self.ml_data[len(self.ml_data)] = data[3].pop()
+            self.times[size] = data[0].pop()
+            self.rtk_data[size] = data[1].pop()
+            self.gps_data[size] = data[2].pop()
+            self.ml_data[size] = data[3].pop()
+        
+        return self.rtk_data[size][0], self.rtk_data[size][1]
         
     # When a checkbox is clicked, the data is updated to reflect which checkboxes are currently active
     def checkbox_clicked(self, instance, value):
@@ -165,7 +213,16 @@ class ResearchScreen(Screen):
     # Checks that when it leaves a route, a new one is added
     # Two routes shown at a time, current and next
     def generate_route(self):
-        pass
+
+        previous_intersection = self.intersections[0]
+        current_intersection = self.intersections[1]
+        next_intersection = self.intersections[2]
+
+        # Checks if there are already 2 routes designated for the car
+        if not self.routes_found:
+            for i in range(self.intersection_coordinates):
+                d = 
+
 
         
     # Allows the user to switch between views of the current tracked positions 
@@ -256,7 +313,7 @@ class PrototypeScreen(Screen):
         self.routes = [self.EB1toEB2, self.EB1toEB3, self.EB1toFW, self.EB3toEB2, self.EB3toMID, self.FWtoMID, self.FWtoHUNT, self.OVALtoMID, self.OVALtoHUNT]
 
         # Get the current position of each inactive vehicle
-        self.points = self.get_vehicle_positions()
+        self.vehicles = self.get_vehicle_positions()
 
         self.markers = []
 
@@ -266,22 +323,27 @@ class PrototypeScreen(Screen):
         self.set_markers()
 
     # Creates a marker when given a lat and long
-    def add_marker(self, latitude, longitude, color):
-
-        if color == 'r':
-            source = 'red_marker.png'
+    def add_marker(self, latitude, longitude, isRoute):
 
         # Creating a map marker at the specified lat and long
-        marker = MapMarker(lat=latitude, lon=longitude, source = source)
+        if isRoute:
+            marker = MapMarker(lat=latitude, lon=longitude, source='Images/red_dot.png')
+        else:
+            marker = MapMarker(lat=latitude, lon=longitude)
+            self.markers.append(marker)
 
         # Add the marker to the map
-        self.mapview.add_marker(marker)
-        self.markers.append(marker)
+        self.mapview.add_widget(marker)
+
+    # Clears all the markers on the map
+    def clear_markers(self):
+        for marker in self.markers:
+            self.mapview.remove_marker(marker)
 
     # Sets the markers up
     def set_markers(self):
-        for point in self.points:
-            self.add_marker(point[0], point[1], 'r')
+        for vehicle in self.vehicles:
+            self.add_marker(vehicle[0], vehicle[1], False)
 
     # Gets the position of each vehicle active
     # Currently randomly generated as points on current paths
@@ -339,25 +401,28 @@ class PrototypeScreen(Screen):
             # Re-initializes the closest distance to a node and second closest node
             closest_node = 0
             second_closest_node = 1
-            closest_distance = distance.distance((closest_vehicle.lat, closest_vehicle.lon), (self.markers[0].lat, self.markers[0].lon))
-            second_closest_distance = distance.distance((closest_vehicle.lat, closest_vehicle.lon), (self.markers[1].lat, self.markers[1].lon))
+            closest_distance = distance.distance((closest_vehicle.lat, closest_vehicle.lon), (start_cb[1].lat, start_cb[1].lon))
+            second_closest_distance = distance.distance((closest_vehicle.lat, closest_vehicle.lon), (start_cb[2].lat, start_cb[2].lon))
 
             # Goes through every node finding the closest and second closest node to find the segment
             for i in range(len(start_cb) - 1):
                 lat = start_cb[i + 1].lat
                 lon = start_cb[i + 1].lon
-
                 d = distance.distance((lat, lon), (closest_vehicle.lat, closest_vehicle.lon))
                 if closest_distance > d:
                     closest_distance = d
                     closest_node = i
-                elif second_closest_distance < d < closest_distance:
+                elif second_closest_distance > d > closest_distance:
                     second_closest_distance = d
                     second_closest_node = i
 
             # Initialize the route list
             route_coords = []
             
+            self.clear_markers()
+
+            self.add_marker(closest_vehicle.lat, closest_vehicle.lon, False)
+
             # Checks if closest or second closest node is closer to the start to find the direction
             distance_from_closest = distance.distance((start_cb[closest_node].lat, start_cb[closest_node].lon), (start_node.lat, start_node.lon))
             distance_from_second_closest = distance.distance((start_cb[closest_node].lat, start_cb[closest_node].lon), (start_node.lat, start_node.lon))
@@ -402,7 +467,7 @@ class PrototypeScreen(Screen):
 
     def add_points_to_map(self, coords):
         for i in coords:
-            self.add_marker(i[0], i[1], 'r')
+            self.add_marker(i[0], i[1], True)
     
     def get_route_coords(self, route):
 
