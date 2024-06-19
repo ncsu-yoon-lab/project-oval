@@ -13,31 +13,23 @@ import curses
 stdscr = curses.initscr()
 
 current_x = closest_x = closest_y = current_y = current_z = current_yaw = current_x_goal = current_y_goal = distance_to_waypoint = 0.0
-
 waypoints = []
-
 slopes = []
+current_segment = 0
+previous_error = 0
+waypoints_received = False
 
 throttle = 16
-
 steering = 0
-
+lookahead = 0.5
 VICON = True
 
 exception = ""
 
-lookahead = 0.5
-
-current_segment = 0
-
-previous_error = 0
-
-waypoints_received = False
 
 # Receives the current x, y, and yaw from the vicon node
 def vicon_callback(data):
-
-    global current_x , current_y , current_z, current_yaw
+    global current_x, current_y, current_z, current_yaw
 
     # Current x and y position (-inf, inf) Float
     current_x = data.data[0]
@@ -47,6 +39,7 @@ def vicon_callback(data):
     # Current yaw (-180, 180) Float
     current_yaw = data.data[3]
 
+
 # Callback to get the waypoints
 def ui_callback(data):
     global waypoints, slopes, waypoints_received
@@ -55,7 +48,7 @@ def ui_callback(data):
 
         if (len(temp_list)) % 2 != 0:
             temp_list = temp_list[:-1]
-        
+
         for i in range(0, len(temp_list), 2):
             waypoints.append([temp_list[i], temp_list[i + 1]])
 
@@ -72,21 +65,21 @@ def ui_callback(data):
                 slopes.append(20000)
 
         waypoints_received = True
-    
+
 
 def imu_callback(data):
     global throttle
     throttle = data.data
 
-def get_lookahead(current_x, current_y, waypoints):
 
+def get_lookahead(current_x, current_y, waypoints):
     global current_segment, lookahead, slopes, closest_x, closest_y
 
     # Sets the closest point as none to start
     closest_point = (None, None)
 
     m1 = m2 = None
-    
+
     # If it is the first time the closest point is being found
     for i in range(len(waypoints) - 1):
         waypoint_start = waypoints[i]
@@ -127,7 +120,6 @@ def get_lookahead(current_x, current_y, waypoints):
             x = waypoint_start[0]
             y = waypoint_start[1]
 
-        
         # Check for the first iteration
         if closest_point[0] is None:
             closest_point = (x, y)
@@ -148,7 +140,7 @@ def get_lookahead(current_x, current_y, waypoints):
     # While true loop until the lookahead point is known to be within a segment and does not exceed it
     while True:
         # After current segment is found and the closest point is found, get the lookahead point
-        mag = math.sqrt(1.0**2 + slopes[lookahead_segment]**2)
+        mag = math.sqrt(1.0 ** 2 + slopes[lookahead_segment] ** 2)
         lookahead_unit_vector = (1.0 / mag, slopes[lookahead_segment] / mag)
 
         # Multiply the unit vector by the lookahead magnitude to get the look ahead vector
@@ -164,7 +156,8 @@ def get_lookahead(current_x, current_y, waypoints):
         lookahead_point = (sign * lookahead_vector[0] + closest_point[0], sign * lookahead_vector[1] + closest_point[1])
 
         # Get the length of the current segment
-        segment_length = distance(waypoints[lookahead_segment + 1][0], waypoints[lookahead_segment + 1][1], closest_point[0], closest_point[1])
+        segment_length = distance(waypoints[lookahead_segment + 1][0], waypoints[lookahead_segment + 1][1],
+                                  closest_point[0], closest_point[1])
 
         # If the length of the lookahead is less than the length of the segment, return lookahead point, else continue in while loop
         if (segment_length >= lookahead_mag):
@@ -175,9 +168,11 @@ def get_lookahead(current_x, current_y, waypoints):
             closest_point = (waypoints[lookahead_segment + 1][0], waypoints[lookahead_segment + 1][1])
             lookahead_segment += 1
 
+
 def distance(x1, y1, x2, y2):
-    dist = math.sqrt((float(y2-y1))**2 + (float(x2-x1))**2)
+    dist = math.sqrt((float(y2 - y1)) ** 2 + (float(x2 - x1)) ** 2)
     return dist
+
 
 def steering_PID(current_x, current_y, lookahead_x, lookahead_y, FREQ):
     global current_yaw, previous_error, exception
@@ -193,13 +188,15 @@ def steering_PID(current_x, current_y, lookahead_x, lookahead_y, FREQ):
     else:
         sign = 1.0
 
-    theta = sign * math.degrees(math.acos((delta_x * math.cos(math.radians(current_yaw)) + delta_y * math.sin(math.radians(current_yaw))) / distance(lookahead_x, lookahead_y, current_x, current_y))) 
-    
+    theta = sign * math.degrees(math.acos(
+        (delta_x * math.cos(math.radians(current_yaw)) + delta_y * math.sin(math.radians(current_yaw))) / distance(
+            lookahead_x, lookahead_y, current_x, current_y)))
+
     # K values of PID
     Kp = 1.0
     Ki = 0.0
     Kd = 0.0
-    dt = 1/float(FREQ)
+    dt = 1 / float(FREQ)
     integral = 0
 
     set_point = 0
@@ -209,13 +206,13 @@ def steering_PID(current_x, current_y, lookahead_x, lookahead_y, FREQ):
     steering = Kp * error + Ki * integral + Kd * derivative
     previous_error = error
 
-
     if steering > 100:
         steering = 100
     if steering < -100:
         steering = -100
 
     return int(steering)
+
 
 def main():
     global current_x, current_y, current_yaw, current_x_goal, current_y_goal, waypoints, distance_to_waypoint, throttle, steering, closest_x, closest_y, exception
@@ -232,16 +229,16 @@ def main():
     )
 
     sub_to_vicon = pure_pursuit_node.create_subscription(
-        Float64MultiArray, 
-        'vicon_topic', 
-        vicon_callback, 
+        Float64MultiArray,
+        'vicon_topic',
+        vicon_callback,
         1)
 
     pub_pure_pursuit_location = pure_pursuit_node.create_publisher(Float64MultiArray, "pure_pursuit_topic", 1)
 
     pub_pure_pursuit_motor = pure_pursuit_node.create_publisher(Int64MultiArray, "pure_pursuit_motor_topic", 1)
 
-    thread = threading.Thread(target=rclpy.spin, args=(pure_pursuit_node, ), daemon=True)
+    thread = threading.Thread(target=rclpy.spin, args=(pure_pursuit_node,), daemon=True)
     thread.start()
 
     FREQ = 10
@@ -256,7 +253,8 @@ def main():
             steering = steering_PID(current_x, current_y, lookahead_x, lookahead_y, FREQ)
 
         pure_pursuit_location_data = Float64MultiArray()
-        pure_pursuit_location_data.data = [current_x, current_y, current_yaw, current_x_goal, current_y_goal, distance_to_waypoint]
+        pure_pursuit_location_data.data = [current_x, current_y, current_yaw, current_x_goal, current_y_goal,
+                                           distance_to_waypoint]
         pub_pure_pursuit_location.publish(pure_pursuit_location_data)
 
         pure_pursuit_motor_data = Int64MultiArray()
@@ -264,26 +262,27 @@ def main():
         pub_pure_pursuit_motor.publish(pure_pursuit_motor_data)
 
         stdscr.refresh()
-        stdscr.addstr(1 , 5 , 'PURE PURSUIT NODE')
+        stdscr.addstr(1, 5, 'PURE PURSUIT NODE')
 
-        stdscr.addstr(3 , 5 , 'Waypoints : [' + ", ".join(str(x) for x in waypoints) + "]")
+        stdscr.addstr(3, 5, 'Waypoints : [' + ", ".join(str(x) for x in waypoints) + "]")
 
-        stdscr.addstr(5 , 5 , 'Current X :  %.4f		         ' % float(current_x))
-        stdscr.addstr(6 , 5 , 'Current Y :  %.4f	                ' % float(current_y))
-        stdscr.addstr(7 , 5 , 'Lookahead X :  %.4f		         ' % float(lookahead_x))
-        stdscr.addstr(8 , 5 , 'Lookahead Y :  %.4f	                ' % float(lookahead_y))
-        stdscr.addstr(9 , 5 , 'Closest X :  %.4f		         ' % float(closest_x))
-        stdscr.addstr(10 , 5 , 'Closest Y :  %.4f	                ' % float(closest_y))
+        stdscr.addstr(5, 5, 'Current X :  %.4f		         ' % float(current_x))
+        stdscr.addstr(6, 5, 'Current Y :  %.4f	                ' % float(current_y))
+        stdscr.addstr(7, 5, 'Lookahead X :  %.4f		         ' % float(lookahead_x))
+        stdscr.addstr(8, 5, 'Lookahead Y :  %.4f	                ' % float(lookahead_y))
+        stdscr.addstr(9, 5, 'Closest X :  %.4f		         ' % float(closest_x))
+        stdscr.addstr(10, 5, 'Closest Y :  %.4f	                ' % float(closest_y))
 
-        stdscr.addstr(12 , 5 , 'Throttle :  %d		         ' % throttle)
-        stdscr.addstr(13 , 5 , 'Steering :  %d	                ' % steering)
+        stdscr.addstr(12, 5, 'Throttle :  %d		         ' % throttle)
+        stdscr.addstr(13, 5, 'Steering :  %d	                ' % steering)
 
-        stdscr.addstr(15 , 5 , 'Exception :  %s	                ' % str(exception))
-        
+        stdscr.addstr(15, 5, 'Exception :  %s	                ' % str(exception))
+
         rate.sleep()
 
     pure_pursuit_node.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
