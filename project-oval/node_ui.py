@@ -10,7 +10,6 @@ import numpy as np
 import curses
 import os
 
-
 current_x = current_y = current_yaw = current_goal_x = current_goal_y = distance_to_waypoint = 0.0
 
 waypoints = []
@@ -29,6 +28,7 @@ def pure_pursuit_callback(data):
     # Current x and y goal position (-inf, inf) Float
     current_goal_x = data.data[3]
     current_goal_y = data.data[4]
+
 
 # Allows the user to input as many x and y points until they enter x. It then allows the user to double check the results
 def user_input():
@@ -57,7 +57,7 @@ def user_input():
                 clean_y_input = True
             except ValueError:
                 clean_y_input = False
-        
+
         if clean_x_input and clean_y_input:
             waypoints.append(x)
             waypoints.append(y)
@@ -86,9 +86,10 @@ def main():
         1  # queue size
     )
 
-    pub_waypoints_to_pure_pursuit = ui_node.create_publisher(Float64MultiArray, "ui_topic", 1) # publishing one value for now as a test, later change the data type and values
+    pub_waypoints_to_pure_pursuit = ui_node.create_publisher(Float64MultiArray, "ui_topic",
+                                                             1)  # publishing one value for now as a test, later change the data type and values
 
-    thread = threading.Thread(target=rclpy.spin, args=(ui_node, ), daemon=True)
+    thread = threading.Thread(target=rclpy.spin, args=(ui_node,), daemon=True)
     thread.start()
 
     FREQ = 10
@@ -98,11 +99,11 @@ def main():
     print("Enter x when you are done")
 
     user_input()
-    
+
     os.system('clear')
 
     stdscr = curses.initscr()
-        
+
     while rclpy.ok():
         msg = Float64MultiArray()
         msg.data = waypoints
@@ -110,17 +111,18 @@ def main():
         stdscr.refresh()
         stdscr.addstr(1, 5, 'UI NODE')
 
-        stdscr.addstr(3 , 5 , 'Current X :  %.4f		         ' % float(current_x))
-        stdscr.addstr(4 , 5 , 'Current Y :  %.4f	                ' % float(current_y))
-        stdscr.addstr(5 , 5 , 'Yaw :  %.4f		         ' % float(current_yaw))
-        stdscr.addstr(6 , 5 , 'Current Waypoint X :  %.4f		         ' % float(current_goal_x))
-        stdscr.addstr(7 , 5 , 'Current Waypoint Y :  %.4f	                ' % float(current_goal_y))
+        stdscr.addstr(3, 5, 'Current X :  %.4f		         ' % float(current_x))
+        stdscr.addstr(4, 5, 'Current Y :  %.4f	                ' % float(current_y))
+        stdscr.addstr(5, 5, 'Yaw :  %.4f		         ' % float(current_yaw))
+        stdscr.addstr(6, 5, 'Current Waypoint X :  %.4f		         ' % float(current_goal_x))
+        stdscr.addstr(7, 5, 'Current Waypoint Y :  %.4f	                ' % float(current_goal_y))
         stdscr.addstr(8, 5, 'Distance to next waypoint:  %.4f            ' % float(distance_to_waypoint))
 
         rate.sleep()
 
     ui_node.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
