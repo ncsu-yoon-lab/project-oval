@@ -19,6 +19,7 @@ calibrated = False
 
 previous_time = time.time()
 
+
 def speed_callback(data):
     # ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i camera_name:=zed
     global linear_acceleration, a_x, a_y, a_z, x_offset, y_offset, z_offset
@@ -27,13 +28,12 @@ def speed_callback(data):
     a_x = a.x - x_offset
     a_y = a.y - y_offset
     a_z = a.z - constants.g - z_offset
-    linear_acceleration = math.sqrt(a_x**2 + a_y**2 + a_z**2)
+    linear_acceleration = math.sqrt(a_x ** 2 + a_y ** 2 + a_z ** 2)
 
     # Filter the linear acceleration
     if linear_acceleration < 0.1:
         linear_acceleration = 0
 
-    
 
 def get_velocity(linear_acceleration):
     global previous_velocity, previous_time
@@ -46,6 +46,7 @@ def get_velocity(linear_acceleration):
 
     return velocity
 
+
 def velocity_PID(velocity, FREQ):
     global previous_error
 
@@ -53,7 +54,7 @@ def velocity_PID(velocity, FREQ):
     Kp = 1.0
     Ki = 0.0
     Kd = 0.0
-    dt = 1/float(FREQ)
+    dt = 1 / float(FREQ)
     integral = 0
 
     # We want the car to maintain a 0.5 m/s velocity
@@ -65,6 +66,7 @@ def velocity_PID(velocity, FREQ):
     previous_error = error
 
     return int(throttle)
+
 
 def calibrate_speed():
     global x_offset, y_offset, z_offset, a_x, a_y, a_z, calibrated
@@ -79,6 +81,7 @@ def calibrate_speed():
     else:
         return False
 
+
 ## Creating a Subscription
 def main():
     global linear_acceleration, calibrated
@@ -89,7 +92,7 @@ def main():
     speed_sub = speed_node.create_subscription(speed, '/zed/zed_node/speed/data', speed_callback, 1)
     speed_pub = speed_node.create_publisher(Int64, 'speed_topic', 1)
 
-    thread = threading.Thread(target=rclpy.spin, args=(speed_node, ), daemon=True)
+    thread = threading.Thread(target=rclpy.spin, args=(speed_node,), daemon=True)
     thread.start()
 
     FREQ = 10
@@ -116,10 +119,10 @@ def main():
 
         # Display of all the important messages
         stdscr.refresh()
-        stdscr.addstr(1 , 5 , 'speed NODE')
-        stdscr.addstr(3 , 5 , 'Acceleration : %.4f		        ' % float(linear_acceleration))
-        stdscr.addstr(4 , 5 , 'Velocity : %.4f                  ' % float(velocity))
-        stdscr.addstr(5 , 5 , 'Throttle : %d                  ' % throttle)
+        stdscr.addstr(1, 5, 'speed NODE')
+        stdscr.addstr(3, 5, 'Acceleration : %.4f		        ' % float(linear_acceleration))
+        stdscr.addstr(4, 5, 'Velocity : %.4f                  ' % float(velocity))
+        stdscr.addstr(5, 5, 'Throttle : %d                  ' % throttle)
 
         rate.sleep()
 
