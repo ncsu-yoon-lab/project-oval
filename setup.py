@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'wolfwagen'
+package_name = 'project-oval'
 
 setup(
     name=package_name,

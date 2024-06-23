@@ -171,7 +171,6 @@ def get_lookahead(current_x, current_y, waypoints):
             return lookahead_point
         else:
             lookahead_mag -= segment_length
-            exception = lookahead_mag
             closest_point = (waypoints[lookahead_segment + 1][0], waypoints[lookahead_segment + 1][1])
             lookahead_segment += 1
 
