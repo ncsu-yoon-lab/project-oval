@@ -1,6 +1,7 @@
 import rclpy
-from std_msgs.msg import Int64
+from std_msgs.msg import Int64, Float64MultiArray
 from sensor_msgs.msg import GPSFix
+from lib.coords_to_cartesian import CoordsToCartesian as c2c
 import threading
 from rclpy.node import Node
 import time
@@ -10,17 +11,16 @@ import curses
 
 stdscr = curses.initscr()
 
-throttle = 0
+throttle = latitude = longitude = heading = altitude = previous_error = 0
 
-def speed_callback(data):
-    global throttle
+def rtk_callback(data):
+    global throttle, latitude, longitude, altitude, heading
     
-    pass
-
-
-def gps_callback(data):
-    pass
-
+    throttle = velocity_PID(data.speed)
+    latitude = data.latitude
+    longitude = data.longitude
+    altitude = data.altitude
+    heading = data.track
 
 def velocity_PID(velocity, FREQ):
     global previous_error
@@ -42,65 +42,60 @@ def velocity_PID(velocity, FREQ):
 
     return int(throttle)
 
-
-def calibrate_speed():
-    global x_offset, y_offset, z_offset, a_x, a_y, a_z, calibrated
-
-    # Check that accelerations in x y and z are first received
-    if a_x is not None and a_y is not None and a_z is not None:
-        x_offset = a_x
-        y_offset = a_y
-        z_offset = a_z
-        calibrated = True
-        return True
-    else:
-        return False
-
-
-
 def main():
+    global throttle, latitude, longitude, altitude, heading
 
     rclpy.init()
-    gps_node = rclpy.create_node('gps_node')
+    rtk_node = rclpy.create_node('rtk_node')
 
-    gps_sub = gps_node.create_subscription(speed, '/zed/zed_node/speed/data', speed_callback, 1)
-    speed_pub = speed_node.create_publisher(Int64, 'speed_topic', 1)
+    rtk_sub = rtk_node.create_subscription(GPSFix, '/gpsfix', rtk_callback, 1)
+    speed_pub = rtk_node.create_publisher(Int64, 'speed_topic', 1)
+    pose_pub = rtk_node.create_publisher(Float64MultiArray, 'pos_topic', 1)
 
-    thread = threading.Thread(target=rclpy.spin, args=(speed_node,), daemon=True)
+    thread = threading.Thread(target=rclpy.spin, args=(rtk_node,), daemon=True)
     thread.start()
 
     FREQ = 10
-    rate = speed_node.create_rate(FREQ, speed_node.get_clock())
-
-    # Waits until the speed zeros the accelerometer
-    while not calibrate_speed():
-        continue
+    rate = rtk_node.create_rate(FREQ, rtk_node.get_clock())
 
     while rclpy.ok():
 
-        if calibrated:
-            velocity = get_velocity(linear_acceleration)
-        else:
-            velocity = 0.0
-
-        throttle = velocity_PID(velocity, FREQ)
-
+        # Publishes the throttle based on its current speed
         data = Int64()
-
         data.data = throttle
-
         speed_pub.publish(data)
+
+        # Converts the latitude and longitude to x, y coordinates with origin at center of path between EB1 and EB3, y axis towards hunt (parallel to sidewalk from EB1 to FW), x axis towards EB3 (parallel to sidewalk from EB1 to EB3)
+        point = c2c.get_cartesian((latitude, longitude))
+
+        # Converts the given heading to a yaw in degrees
+        yaw = c2c.heading_to_yaw(heading)
+
+        # Publishes the position and heading
+        data = Float64MultiArray
+        data[0] = point[0]
+        data[1] = point[1]
+        data[2] = altitude
+        data[3] = yaw
+        pose_pub.publish(data)
 
         # Display of all the important messages
         stdscr.refresh()
-        stdscr.addstr(1, 5, 'speed NODE')
-        stdscr.addstr(3, 5, 'Acceleration : %.4f		        ' % float(linear_acceleration))
-        stdscr.addstr(4, 5, 'Velocity : %.4f                  ' % float(velocity))
-        stdscr.addstr(5, 5, 'Throttle : %d                  ' % throttle)
+        stdscr.addstr(1, 5, 'RTK NODE')
+
+        stdscr.addstr(3, 5, 'Throttle : %.4f		        ' % float(throttle))
+        stdscr.addstr(4, 5, 'Latitude : %.4f                  ' % float(latitude))
+        stdscr.addstr(5, 5, 'Longitude : %.4f                  ' % float(longitude))
+        stdscr.addstr(6, 5, 'Heading : %.4f                  ' % float(heading))
+
+        stdscr.addstr(8, 5, 'X : %.4f                  ' % float(data[0]))
+        stdscr.addstr(9, 5, 'Y : %.4f                  ' % float(data[1]))
+        stdscr.addstr(10, 5, 'Yaw : %.4f                  ' % float(data[3]))
+
 
         rate.sleep()
 
-    speed_node.destroy_node()
+    rtk_node.destroy_node()
     rclpy.shutdown()
 
 

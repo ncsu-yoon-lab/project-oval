@@ -44,7 +44,7 @@ def main(args=None):
 
     rclpy.init(args=args)
     node = Node("vicon_pos")
-    vicon_publisher = node.create_publisher(Float64MultiArray, 'vicon_topic', 1)
+    vicon_publisher = node.create_publisher(Float64MultiArray, 'pos_topic', 1)
 
     thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
     thread.start()

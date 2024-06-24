@@ -229,7 +229,7 @@ def main():
 
     sub_to_vicon = pure_pursuit_node.create_subscription(
         Float64MultiArray,
-        'vicon_topic',
+        'pos_topic',
         vicon_callback,
         1)
 

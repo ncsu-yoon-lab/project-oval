@@ -2,13 +2,16 @@ from geopy import distance
 import math
 
 class CoordsToCartesian(object):
-    def __init__(self, origin, referenceX, referenceY):
+
+    # The reference coordinates for the OVAL
+    origin = (35.7713528, -78.673756)
+    referenceX = (35.7706063, -78.6728862)
+    referenceY = (35.7692556, -78.6743267)
+
+    def __init__(self):
         # Initializing the coordinate system with lat long for origin, reference point on x axis and reference point on y axis
-        self.OX = distance.distance(origin, referenceX).meters
-        self.OY = distance.distance(origin, referenceY).meters
-        self.referenceX = referenceX
-        self.referenceY = referenceY
-        self.origin = origin
+        self.OX = distance.distance(self.origin, self.referenceX).meters
+        self.OY = distance.distance(self.origin, self.referenceY).meters
 
     def polar_to_cartesian(self, radius, theta):
         x = radius * math.cos(theta)
