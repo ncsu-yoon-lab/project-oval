@@ -13,7 +13,7 @@ stdscr = curses.initscr()
 
 steering = 0
 throttle = 0
-auto_throttle = 15	#in auto mode
+auto_throttle = 15  #in auto mode
 
 MAX_MANUAL_THROTTLE = 28
 MAX_AUTO_THROTTLE = 17
@@ -30,8 +30,7 @@ topic_manual_steering = "manual_steering"
 topic_manual_throttle = "manual_throttle"
 topic_mode_switch = "mode_switch"
 
-sensitivity = 28 #used to be 100 on old motor
-
+sensitivity = 28  #used to be 100 on old motor
 
 
 def joy_callback(data):
@@ -105,4 +104,4 @@ def main(args=None):
 	rclpy.shutdown()
 
 if __name__ == '__main__':
-	main()
+    main()

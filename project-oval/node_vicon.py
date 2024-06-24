@@ -16,6 +16,7 @@ OBJECT_NAME = "OVAL"
 vicontracker = tools.ObjectTracker(VICON_TRACKER_IP)
 exception = "None"
 
+
 def get_position():
     global exception
 
@@ -34,6 +35,7 @@ def get_position():
     else:
         exception = "No Vicon Data!"
 
+
 def main(args=None):
     global exception
 
@@ -43,8 +45,8 @@ def main(args=None):
     rclpy.init(args=args)
     node = Node("vicon_pos")
     vicon_publisher = node.create_publisher(Float64MultiArray, 'vicon_topic', 1)
-    
-    thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
+
+    thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
     thread.start()
 
     FREQ = 10
@@ -76,16 +78,15 @@ def main(args=None):
         except TypeError as e:
             exception = "Car not being picked up by camera"
 
-
         stdscr.refresh()
-        stdscr.addstr(1 , 5 , 'VICON NODE')
+        stdscr.addstr(1, 5, 'VICON NODE')
         if (data[0] != 0.0):
-            stdscr.addstr(3 , 5 , 'Current X (m) :  %.4f	                ' % data[0])
-            stdscr.addstr(4 , 5 , 'Current Y (m) :  %.4f		         ' % data[1])
-            stdscr.addstr(5 , 5 , 'Current Z (m) :  %.4f	                ' % data[2])
-            stdscr.addstr(6 , 5 , 'YAW (Degrees) :  %.4f		         ' % data[3])
-        stdscr.addstr(8 , 5 , 'Exceptions :  %s	                ' % str(exception))
-        
+            stdscr.addstr(3, 5, 'Current X (m) :  %.4f	                ' % data[0])
+            stdscr.addstr(4, 5, 'Current Y (m) :  %.4f		         ' % data[1])
+            stdscr.addstr(5, 5, 'Current Z (m) :  %.4f	                ' % data[2])
+            stdscr.addstr(6, 5, 'YAW (Degrees) :  %.4f		         ' % data[3])
+        stdscr.addstr(8, 5, 'Exceptions :  %s	                ' % str(exception))
+
         rate.sleep()
 
     node.destroy_node()
