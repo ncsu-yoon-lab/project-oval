@@ -199,14 +199,19 @@ class ResearchScreen(Screen):
 
         # Parse the csv to get the times and data 
         data = [line.split(',') for line in lines]
-        size = len(self.times)
-        if len(data) > 3:
-            self.times[size] = data[0].pop()
-            self.rtk_data[size] = data[1].pop()
-            self.gps_data[size] = data[2].pop()
-            self.ml_data[size] = data[3].pop()
-        
-        return self.rtk_data[size][0], self.rtk_data[size][1]
+        # size = len(self.times)
+        # if len(data) > 3:
+        #     self.times[size] = data[0].pop()
+        #     self.rtk_data[size] = data[1].pop()
+        #     self.gps_data[size] = data[2].pop()
+        #     self.ml_data[size] = data[3].pop()
+
+        # return self.rtk_data[size][0], self.rtk_data[size][1]
+
+        lat = data[0]
+        lon = data[1]
+
+        return lat, lon
         
     # When a checkbox is clicked, the data is updated to reflect which checkboxes are currently active
     def checkbox_clicked(self, instance, value):
