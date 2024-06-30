@@ -58,6 +58,15 @@ python main.py
 ## EC2 AWS Webserver
 1. Login to the webserver account
 2. Begin the instance of the server
+3. The server should start, if not follow the below commands
+
+```shell
+cd code
+```
+```shell
+python Server.py
+```
+
 
 
 
