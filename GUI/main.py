@@ -58,7 +58,7 @@ class ResearchScreen(Screen):
 
     routes = (EB1toEB2, EB1toEB3, EB1toFW, EB3toEB2, EB3toMID, FWtoMID, FWtoHUNT, OVALtoMID, OVALtoHUNT)
 
-    debug_mode = True
+    debug_mode = False
 
     # Initialize the start screen
     def __init__(self, **kwargs):
@@ -102,7 +102,7 @@ class ResearchScreen(Screen):
         self.routes_found = False
 
         # Initializes the past, current, and next routes
-        self.current_route = self.next_route = self.full_route = None
+        self.current_route = self.next_route = self.full_route = self.previous_route = None
 
         # Create the research widget that holds either the plot or the map
         self.research_widget = self.ids.research_widget
@@ -183,10 +183,11 @@ class ResearchScreen(Screen):
         self.mapview.add_widget(marker)
 
     # Receives data from the server to then be logged to a csv and displayed
+    # Reads CSV of vehicles current position in the form of [lat, lon]
     def receive_data(self):
 
         # URL of the AWS server being used
-        url = 'http://3.16.149.178/download/data.csv'
+        url = 'http://3.16.149.178/download/pos.csv'
 
         # Get the response from the url
         response = requests.get(url)
@@ -199,20 +200,34 @@ class ResearchScreen(Screen):
 
         # Parse the csv to get the times and data 
         data = [line.split(',') for line in lines]
-        # size = len(self.times)
-        # if len(data) > 3:
-        #     self.times[size] = data[0].pop()
-        #     self.rtk_data[size] = data[1].pop()
-        #     self.gps_data[size] = data[2].pop()
-        #     self.ml_data[size] = data[3].pop()
 
-        # return self.rtk_data[size][0], self.rtk_data[size][1]
+        coords = []
+        for row in data:
+            coord = ""
+            for digit in row:
+                coord += (str(digit))
+            coords.append(coord)
 
-        lat = data[0]
-        lon = data[1]
 
+        lat = coords[0]
+        lon = coords[1]
         return lat, lon
-        
+    
+    # Sends data to the server of the waypoints
+    # Formats data in the form of [[lat1, lon1], [lat2, lon2], [lat3, lon3]]
+    def send_data(self):
+
+        # Formats the file waypoints.csv to have the most recent waypoints
+        file_path = 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Server\\waypoints.csv'
+        with open(file_path, 'w', newline = '') as file:
+            writer = csv.writer(file)
+            writer.writerows(self.full_route)
+
+        # Sends the file waypoints.csv to the server
+        url = 'http://3.16.149.178/upload'
+        files = {'file': open(file_path, 'rb')}
+        response = requests.post(url, files=files)
+
     # When a checkbox is clicked, the data is updated to reflect which checkboxes are currently active
     def checkbox_clicked(self, instance, value):
         self.rtk_check = self.ids.rtk_cb.active
@@ -288,6 +303,8 @@ class ResearchScreen(Screen):
         # Goes through all the points 
         for point in self.full_route:
             self.add_marker(point[0], point[1], True)
+
+        self.send_data()
 
 
     # Finds the route that the vehicle is closest to

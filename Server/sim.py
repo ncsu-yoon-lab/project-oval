@@ -16,7 +16,8 @@ def main():
         time.sleep(2)
 
         # Sends the next waypoint to the web server
-        send_current_pos(waypoints[1])
+        if waypoints[0] != 'File not found':
+            send_current_pos(waypoints[1])
 
         # Wait 2 seconds before continuing loop
         time.sleep(2)
@@ -35,15 +36,15 @@ def get_waypoints():
     lines = csv_content.splitlines()
 
     # Parse the lines into a 2D array
-    data = [line.split(',') for line in lines]
-
+    waypoints = [line.split(',') for line in lines]
+    
     return waypoints
 
 # Sends its current position to the server
 def send_current_pos(current_pos):
 
     # Path to the CSV file
-    file_path = 'C:\\Users\\malin\\Documents\\GitHub\\Server\\test.csv'
+    file_path = 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Server\\pos.csv'
 
     # Open the CSV file in write mode to clear its contents and write new data
     with open(file_path, mode='w', newline='') as file:
@@ -51,7 +52,7 @@ def send_current_pos(current_pos):
         writer.writerows(current_pos)
 
     url = 'http://3.16.149.178/upload'
-    files = {'file': open('C:\\Users\\malin\\Documents\\GitHub\\Server\\test.csv', 'rb')}
+    files = {'file': open(file_path, 'rb')}
     response = requests.post(url, files=files)
 
 if __name__ == "__main__":
