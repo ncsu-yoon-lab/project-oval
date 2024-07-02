@@ -1,8 +1,5 @@
 import rclpy
-from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Float64MultiArray
-from std_msgs.msg import Int64MultiArray
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64MultiArray, Int64MultiArray, Float64, Int64
 import threading
 from rclpy.node import Node
 import time
@@ -22,7 +19,7 @@ waypoints_received = False
 throttle = 16
 steering = 0
 lookahead = 0.5
-VICON = True
+VICON = False
 
 exception = ""
 
@@ -66,10 +63,31 @@ def ui_callback(data):
 
         waypoints_received = True
 
+# Callback for the server node to get the waypoints
+def server_callback(data):
+    global waypoints, slopes, waypoints_received
+    if not waypoints_received:
+        temp_list = data.data
 
-def imu_callback(data):
-    global throttle
-    throttle = data.data
+        if (len(temp_list)) % 2 != 0:
+            temp_list = temp_list[:-1]
+
+        for i in range(0, len(temp_list), 2):
+            waypoints.append([temp_list[i], temp_list[i + 1]])
+
+        for i in range(len(waypoints) - 1):
+            x1 = waypoints[i][0]
+            y1 = waypoints[i][1]
+            x2 = waypoints[i + 1][0]
+            y2 = waypoints[i + 1][1]
+
+            # If vertical line, catch it and make it a large slope
+            try:
+                slopes.append((y2 - y1) / (x2 - x1))
+            except ZeroDivisionError:
+                slopes.append(20000)
+
+        waypoints_received = True
 
 
 def get_lookahead(current_x, current_y, waypoints):
@@ -167,12 +185,38 @@ def get_lookahead(current_x, current_y, waypoints):
             closest_point = (waypoints[lookahead_segment + 1][0], waypoints[lookahead_segment + 1][1])
             lookahead_segment += 1
 
-
+# Calculates the distance between two x y points
 def distance(x1, y1, x2, y2):
     dist = math.sqrt((float(y2 - y1)) ** 2 + (float(x2 - x1)) ** 2)
     return dist
 
+# PID for calculating the speed, but just doing proportional gain
+def speed_callback(data):
+    global throttle
+    speed = data.data
 
+    # Target speed is 0.8 m/s
+    target_speed = 0.8
+
+    # Finding the difference between expected speed and measured speed
+    error = target_speed - float(speed)
+
+    # Adding the error with a coefficient (guessing it is 18) to the current throttle
+    throttle += int(error * 18)
+
+# Callback to get the current position
+def pos_callback(data):
+    global current_x, current_y, current_z, current_yaw
+
+    # Current x and y position (-inf, inf) Float
+    current_x = data.data[0]
+    current_y = data.data[1]
+    current_z = data.data[2]
+
+    # Current yaw (-180, 180) Float
+    current_yaw = data.data[3]
+
+# PID for adjusting the steering
 def steering_PID(current_x, current_y, lookahead_x, lookahead_y, FREQ):
     global current_yaw, previous_error, exception
 
@@ -220,18 +264,40 @@ def main():
 
     pure_pursuit_node = rclpy.create_node('pure_pursuit_node')
 
-    sub_to_ui = pure_pursuit_node.create_subscription(
-        Float64MultiArray,  # Replace PoseStamped with the appropriate message type
-        'ui_topic',  # Specify the topic you want to subscribe to
-        ui_callback,  # Specify the callback function
-        1  # queue size
-    )
+    if VICON:
+        sub_to_ui = pure_pursuit_node.create_subscription(
+            Float64MultiArray,  # Replace PoseStamped with the appropriate message type
+            'ui_topic',  # Specify the topic you want to subscribe to
+            ui_callback,  # Specify the callback function
+            1  # queue size
+        )
 
-    sub_to_vicon = pure_pursuit_node.create_subscription(
-        Float64MultiArray,
-        'pos_topic',
-        vicon_callback,
-        1)
+        sub_to_vicon = pure_pursuit_node.create_subscription(
+            Float64MultiArray,
+            'pos_topic',
+            vicon_callback,
+            1)
+    else:
+        sub_to_rtk_pos = pure_pursuit_node.create_subscription(
+            Float64MultiArray,
+            'pos_topic',
+            pos_callback,
+            1
+        )
+
+        sub_to_rtk_speed = pure_pursuit_node.create_subscription(
+            Int64,
+            'speed_topic',
+            speed_callback,
+            1
+        )
+
+        sub_to_server = pure_pursuit_node.create_subscription(
+            Float64MultiArray,
+            'waypoints_topic',
+            server_callback,
+            1
+        )
 
     pub_pure_pursuit_location = pure_pursuit_node.create_publisher(Float64MultiArray, "pure_pursuit_topic", 1)
 

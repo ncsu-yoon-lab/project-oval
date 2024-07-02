@@ -58,8 +58,7 @@ class ResearchScreen(Screen):
 
     routes = (EB1toEB2, EB1toEB3, EB1toFW, EB3toEB2, EB3toMID, FWtoMID, FWtoHUNT, OVALtoMID, OVALtoHUNT)
 
-    intersections = ("EB1", "EB2", "EB3", "FW", "HUNT", "MID", "OVAL")
-    intersection_coordinates = ((35.771549, -78.674697), (35.771654, -78.674104), (35.771166, -78.673954), (35.770953, -78.675150), (35.769914, -78.675925), (35.770576, -78.674423), (35.770004, -78.674873))
+    debug_mode = False
 
     # Initialize the start screen
     def __init__(self, **kwargs):
@@ -102,6 +101,9 @@ class ResearchScreen(Screen):
         # Initializes if the two routes are already generated
         self.routes_found = False
 
+        # Initializes the past, current, and next routes
+        self.current_route = self.next_route = self.full_route = self.previous_route = None
+
         # Create the research widget that holds either the plot or the map
         self.research_widget = self.ids.research_widget
 
@@ -117,7 +119,10 @@ class ResearchScreen(Screen):
     def main_loop(self, instance):
 
         # Receive the current data from the web server
-        current_lat, current_lon = self.receive_data()
+        if self.debug_mode:
+            self.current_lat, self.current_lon = 35.771260, -78.674927
+        else:
+            self.current_lat, self.current_lon = self.receive_data()
 
         self.calculate_stats()
 
@@ -129,10 +134,10 @@ class ResearchScreen(Screen):
         self.clear_markers()
 
         # Adds the current location of the vehicle
-        self.add_marker(current_lat, current_lon, False)
+        self.add_marker(self.current_lat, self.current_lon, False)
         
         # Constantly update the route on the map if needed
-        if self.route_switch_state == 1:
+        if self.route_switch_state:
             self.generate_route()
 
     # Calculate the statistics of the data
@@ -178,10 +183,11 @@ class ResearchScreen(Screen):
         self.mapview.add_widget(marker)
 
     # Receives data from the server to then be logged to a csv and displayed
+    # Reads CSV of vehicles current position in the form of [lat, lon]
     def receive_data(self):
 
         # URL of the AWS server being used
-        url = 'http://3.16.149.178/download/data.csv'
+        url = 'http://3.16.149.178/download/pos.csv'
 
         # Get the response from the url
         response = requests.get(url)
@@ -194,15 +200,34 @@ class ResearchScreen(Screen):
 
         # Parse the csv to get the times and data 
         data = [line.split(',') for line in lines]
-        size = len(self.times)
-        if len(data) > 3:
-            self.times[size] = data[0].pop()
-            self.rtk_data[size] = data[1].pop()
-            self.gps_data[size] = data[2].pop()
-            self.ml_data[size] = data[3].pop()
-        
-        return self.rtk_data[size][0], self.rtk_data[size][1]
-        
+
+        coords = []
+        for row in data:
+            coord = ""
+            for digit in row:
+                coord += (str(digit))
+            coords.append(coord)
+
+
+        lat = coords[0]
+        lon = coords[1]
+        return lat, lon
+    
+    # Sends data to the server of the waypoints
+    # Formats data in the form of [[lat1, lon1], [lat2, lon2], [lat3, lon3]]
+    def send_data(self):
+
+        # Formats the file waypoints.csv to have the most recent waypoints
+        file_path = 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Server\\waypoints.csv'
+        with open(file_path, 'w', newline = '') as file:
+            writer = csv.writer(file)
+            writer.writerows(self.full_route)
+
+        # Sends the file waypoints.csv to the server
+        url = 'http://3.16.149.178/upload'
+        files = {'file': open(file_path, 'rb')}
+        response = requests.post(url, files=files)
+
     # When a checkbox is clicked, the data is updated to reflect which checkboxes are currently active
     def checkbox_clicked(self, instance, value):
         self.rtk_check = self.ids.rtk_cb.active
@@ -213,17 +238,105 @@ class ResearchScreen(Screen):
     # Checks that when it leaves a route, a new one is added
     # Two routes shown at a time, current and next
     def generate_route(self):
+        
+        # Checks if this is the first time generating a route and finds the current route it is on if it is
+        if self.current_route == None:
+            self.current_route = self.get_closest_route()
 
-        previous_intersection = self.intersections[0]
-        current_intersection = self.intersections[1]
-        next_intersection = self.intersections[2]
+        # Initializes the shortest distance and closest point
+        shortest_distance = sys.maxsize
+        closest_point = None
 
-        # Checks if there are already 2 routes designated for the car
-        if not self.routes_found:
-            for i in range(self.intersection_coordinates):
-                d = 
+        # Goes through all the points in the current route to find which point on the route is closest to the vehicle
+        for i in range(len(self.current_route)):
+            d = distance.distance(self.current_route[i], (self.current_lat, self.current_lon))
+            if d < shortest_distance:
+                shortest_distance = d
+                closest_point = i
+
+        # Initializes the full route as the current route from position of closest point to end of route
+        self.full_route = self.current_route[closest_point:]
+        
+        # Checks if the next route has already been created
+        if self.next_route is not None:
+
+            # Checks if the closest point on the current route is the beginning of the next route and sets the current route as next route and makes next route None
+            if self.current_route[closest_point] == self.next_route[0]:
+                self.current_route = self.next_route
+                self.next_route = None
+
+        # Checks if the next route was set to None
+        if self.next_route == None:
+
+            # Gets the last point on the current_route
+            last_point = self.current_route[len(self.current_route) - 1]
+
+            # Initializes the possible routes
+            possible_routes = []
+
+            # Goes through the routes and finds the points that are the same as the end of the current route
+            for route in self.routes:
+
+                # Makes a reverse of the route
+                reverse_route = list(route[::-1])
+
+                # Checks if the current route is not the same as the route or the reverse of the route
+                if self.current_route != route and self.current_route != reverse_route:
+
+                    for point in route:
+
+                        # Checks if the point is the same as the last point of the current route
+                        if point == last_point:
+
+                            # Checks if the point is at the beginning or end of the list and adds the correct orientation
+                            if (point != route[0]):
+                                possible_routes.append(reverse_route)
+                            else:
+                                possible_routes.append(route)
+            
+            # Randomly chooses the next route from the possible options
+            self.next_route = possible_routes[random.randint(0,len(possible_routes) - 1)]
+        
+        # Updates the full route to include the next route and adjusted current route
+        self.full_route += self.next_route
+        
+        # Goes through all the points 
+        for point in self.full_route:
+            self.add_marker(point[0], point[1], True)
+
+        self.send_data()
 
 
+    # Finds the route that the vehicle is closest to
+    def get_closest_route(self):
+
+        # Initializes the min_distance as the largest possible number
+        shortest_distance = sys.maxsize
+
+        # Initializes the shortest route and closest point
+        closest_route = None
+
+        # Goes through the list of routes and finds the point that is the closest to the current point
+        for route in self.routes:
+            for point in route:
+
+                # Gets the distance from the point and current position
+                d = distance.distance(point, (self.current_lat, self.current_lon))
+
+                # Checks if the distance is less than the current shortest distance
+                if d < shortest_distance:
+                    closest_route = route
+                    shortest_distance = d
+
+        
+        return closest_route
+
+
+    def route_gen_switch(self):
+        if self.generating_routes:
+            self.generating_routes = False
+        else:
+            self.generating_routes = True
         
     # Allows the user to switch between views of the current tracked positions 
     # and the statistics between each position tracked (Percent error)
@@ -273,7 +386,7 @@ class ResearchScreen(Screen):
             self.ids.switch_log.text = 'Begin Logging'
 
     # Generate a constant set of waypoints for the car to travel and be displayed on the map
-    def switch_route(self):
+    def switch_route_gen(self):
 
         # If the route switch is 1, it will begin to generate a random route for the 
         if self.route_switch_state == 0:
