@@ -50,7 +50,8 @@ def main():
 
     rtk_sub = rtk_node.create_subscription(GPSFix, '/gpsfix', rtk_callback, 1)
     speed_pub = rtk_node.create_publisher(Int64, 'speed_topic', 1)
-    pose_pub = rtk_node.create_publisher(Float64MultiArray, 'pos_topic', 1)
+    pos_pub = rtk_node.create_publisher(Float64MultiArray, 'pos_topic', 1)
+    coord_pub = rtk_node.create_publisher(Float64MultiArray, 'coord_topic', 1)
 
     thread = threading.Thread(target=rclpy.spin, args=(rtk_node,), daemon=True)
     thread.start()
@@ -65,6 +66,12 @@ def main():
         data.data = throttle
         speed_pub.publish(data)
 
+        # Publishes the latitude and longitude from the rtk
+        data = Float64MultiArray()
+        data.data[0] = latitude
+        data.data[1] = longitude
+        coord_pub.publish(data)
+
         # Converts the latitude and longitude to x, y coordinates with origin at center of path between EB1 and EB3, y axis towards hunt (parallel to sidewalk from EB1 to FW), x axis towards EB3 (parallel to sidewalk from EB1 to EB3)
         point = c2c.get_cartesian((latitude, longitude))
 
@@ -72,12 +79,12 @@ def main():
         yaw = c2c.heading_to_yaw(heading)
 
         # Publishes the position and heading
-        data = Float64MultiArray
-        data[0] = point[0]
-        data[1] = point[1]
-        data[2] = altitude
-        data[3] = yaw
-        pose_pub.publish(data)
+        data = Float64MultiArray()
+        data.data[0] = point[0]
+        data.data[1] = point[1]
+        data.data[2] = altitude
+        data.data[3] = yaw
+        pos_pub.publish(data)
 
         # Display of all the important messages
         stdscr.refresh()
