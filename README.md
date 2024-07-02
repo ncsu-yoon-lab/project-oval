@@ -48,8 +48,8 @@ python node_server.py
 
 # Startup Sequence For GUI and Web Server
 
-Activate the Kivy Virtual Environment to run the GUI
-[Instructions](https://kivy.org/doc/stable-2.0.0/gettingstarted/installation.html) for setting up kivy virtual environment
+- Activate the Kivy Virtual Environment to run the GUI
+- [Instructions](https://kivy.org/doc/stable-2.0.0/gettingstarted/installation.html) for setting up kivy virtual environment
 
 ## GUI
 ```shell
