@@ -96,6 +96,7 @@ def main():
             converted_point = c2c.get_cartesian(point)
             for coord in converted_point:
                 data.data[idx] = coord
+                idx += 1
 
         # Publish the waypoints
         server_pub.publish(data)
