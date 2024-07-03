@@ -1,6 +1,6 @@
 # Project Oval
 
-Project On-campus Vehicle Autonomous Launch (OVAL) is a project ran with the intentions of desigining an autonomous vehicle that is capable of traveling throughout NC State's campus. With this framework, it can provide research opportunities for students to test on the vehicle as it travels throughout the campus. In addition, it provides the opportunity for the University to adopt it for package delivery, security, weed monitor, or any other autonomous application needed around campus.
+Project On-campus Vehicle Autonomous Launch (OVAL) is a project ran with the intentions of desigining an autonomous vehicle that is capable of traveling throughout NC State's campus. With this framework, it can provide research opportunities for students to test on the vehicle as it travels throughout the campus. In addition, it provides the opportunity for the University to adopt it for package delivery, security, plant monitor, or any other autonomous application needed around campus.
 
 Startup requires setting up the ROS2 environment on the on board computer, setting up the GUI on a separate computer, and setting up the EC2 AWS web server on a separate computer or the same one as the GUI
 
