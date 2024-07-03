@@ -4,13 +4,13 @@ Project On-campus Vehicle Autonomous Launch (OVAL) is a project ran with the int
 
 Startup requires setting up the ROS2 environment on the on board computer, setting up the GUI on a separate computer, and setting up the EC2 AWS web server on a separate computer or the same one as the GUI
 
-# Startup Sequence For On Board Computer (Jetson)
+## Startup Sequence For On Board Computer (Jetson)
 
 List of all the nodes needed:
 - Joy Node
 - Swift GNSS Node
 - Zed Node
-- XBOX Controller Node
+- XBox Controller Node
 - Motor Actuation Node
 - RTK Node
 - Pure Pursuit Node
@@ -19,62 +19,80 @@ List of all the nodes needed:
 
 Below are the instructions for starting each node
 
-## Joy Node
+### Joy Node
+This node is used to output the joystick outputs from the XBox controller.
+
 ```shell
 ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
 ```
 
-## Zed Node
+### Zed Node
+This node is used to output the Zed topics which can be found [here](https://www.stereolabs.com/docs/ros/zed-node)
+
 ```shell
 ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
 ```
 
-## Swift GNSS Node
+### Swift GNSS Node
+This node is used to output the Swift GNSS topics. Specifically it outputs /fixgps which contains velocity of the vehicle, position, and yaw.
+
 ```shell
 ros2 launch swiftnav_ros2_driver start.py
 ```
 
-## XBOX Controller Node
+### XBOX Controller Node
+This node subscribes to the Joy Node messages to output the correct actions depending on what buttons are pushed and movements in the joystick.
+
 ```shell
 python node_xbox_controller.py
 ```
 
-## Motor Actuation Node
+### Motor Actuation Node
+This node subscribes to the XBox Controller Node to receive manual throttle and steering and if a button is pushed to switch modes. If the mode is switched, it switches to pure pursuit mode where it subscribes to its throttle and steering calculated from the RTK Node.
+
 ```shell
 python node_motor_act.py
 ```
 
-## Pure Pursuit Node
+### Pure Pursuit Node
+This node subscribes to the RTK Node to know its latitude, longitude, yaw, and speed. It also subscribes to the Server Node to receive the waypoints that it must travel to. With this information, it calculates from its current position to the next waypoint, what steering is needed. It also maintains a constant speed by adjusting the throttle (ie increase throttle if going up hill and decrease throttle if going down hill)
+
 ```shell
 python node_pure_pursuit.py
 ```
 
-## Server Node
+### Server Node
+This node receives waypoints from the server and publishes them to the Pure Pursuit Node. It also subscribes to the RTK Node to receive its current position to then send that back over the server.
+
 ```shell
 python node_server.py
 ```
 
-## Camera Node
-```shell
-python node_capture_images.py
-```
+### RTK Node
+This node subscribes to the Swift GNSS Node to receive the current position, yaw, and speed.
 
-## RTK Node
 ```shell
 python node_rtk.py
 ```
 
-# Startup Sequence For GUI and Web Server
+### Camera Node
+**This node is only needed if you need photos to be recorded while driving around.** It subscribes to the Zed Node to receive images from the camera and captures them and saves them to a file to help with training.
+
+```shell
+python node_capture_images.py
+```
+
+## Startup Sequence For GUI and Web Server
 
 - Activate the Kivy Virtual Environment to run the GUI
 - [Instructions](https://kivy.org/doc/stable-2.0.0/gettingstarted/installation.html) for setting up kivy virtual environment
 
-## GUI
+### GUI
 ```shell
 python main.py
 ```
 
-## EC2 AWS Webserver
+### EC2 AWS Webserver
 1. Login to the webserver account
 2. Begin the instance of the server
 3. The server should start, if not follow the below commands
@@ -86,9 +104,9 @@ cd code
 python Server.py
 ```
 
-# Common Issues
+## Common Issues
 
-## CAN Issues
+### CAN Issues
 If node_motor_act.py outputs the following exception:
 ```shell
 failed to transmit [Errno 105] No buffer space available
