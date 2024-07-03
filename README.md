@@ -31,7 +31,7 @@ python node_xbox_controller.py
 
 ## Zed Node
 ```shell
-ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2iros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
+ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
 ```
 
 ## Motor Actuation Node
