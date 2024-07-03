@@ -8,11 +8,14 @@ Startup requires setting up the ROS2 environment on the on board computer, setti
 
 List of all the nodes needed:
 - Joy Node
+- Swift GNSS Node
+- Zed Node
 - XBOX Controller Node
 - Motor Actuation Node
 - RTK Node
 - Pure Pursuit Node
 - Server Node
+- Capture Images Node
 
 Below are the instructions for starting each node
 
@@ -24,6 +27,11 @@ ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
 ## XBOX Controller Node
 ```shell
 python node_xbox_controller.py
+```
+
+## Zed Node
+```shell
+ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2iros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
 ```
 
 ## Motor Actuation Node
@@ -44,6 +52,11 @@ python node_pure_pursuit.py
 ## Server Node
 ```shell
 python node_server.py
+```
+
+## Camera Node
+```shell
+python node_capture_images.py
 ```
 
 # Startup Sequence For GUI and Web Server
