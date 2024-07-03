@@ -24,24 +24,24 @@ Below are the instructions for starting each node
 ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
 ```
 
-## XBOX Controller Node
-```shell
-python node_xbox_controller.py
-```
-
 ## Zed Node
 ```shell
 ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
 ```
 
+## Swift GNSS Node
+```shell
+ros2 launch swiftnav_ros2_driver start.py
+```
+
+## XBOX Controller Node
+```shell
+python node_xbox_controller.py
+```
+
 ## Motor Actuation Node
 ```shell
 python node_motor_act.py
-```
-
-## RTK Node
-```shell
-python node_rtk.py
 ```
 
 ## Pure Pursuit Node
@@ -57,6 +57,11 @@ python node_server.py
 ## Camera Node
 ```shell
 python node_capture_images.py
+```
+
+## RTK Node
+```shell
+python node_rtk.py
 ```
 
 # Startup Sequence For GUI and Web Server
