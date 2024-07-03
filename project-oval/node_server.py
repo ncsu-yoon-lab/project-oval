@@ -91,10 +91,17 @@ def main():
 
         # Goes through all the points in the waypoints and adds each latitude and longitude to the Float64MultiArray
         for point in waypoints:
-            # Converts the point into an x y coordinate
-            converted_point = converter.get_cartesian((float(point[0]), float(point[1])))
-            for coord in converted_point:
-                data.data.append(coord)
+
+            # Tries to convert string to float, if caught it will not append that point
+            try:
+
+                # Converts the point into an x y coordinate
+                converted_point = converter.get_cartesian((float(point[0]), float(point[1])))
+                for coord in converted_point:
+                    data.data.append(coord)
+                    
+            except ValueError:
+                pass
 
         # Publish the waypoints
         server_pub.publish(data)

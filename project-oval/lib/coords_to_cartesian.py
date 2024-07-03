@@ -50,8 +50,7 @@ class CoordsToCartesian(object):
     def heading_to_yaw(self, heading) -> float:
 
         # Not sure about the offset, needs to be tested
-        OFFSET = 360 - 330.2289756152796
-
+        OFFSET = 58
         yaw = heading + OFFSET
 
         return yaw

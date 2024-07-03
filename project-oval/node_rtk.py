@@ -74,22 +74,22 @@ def main():
 
         # Publishes the latitude and longitude from the rtk
         data = Float64MultiArray()
-        data.data[0] = latitude
-        data.data[1] = longitude
+        data.data.append(latitude)
+        data.data.append(longitude)
         coord_pub.publish(data)
 
         # Converts the latitude and longitude to x, y coordinates with origin at center of path between EB1 and EB3, y axis towards hunt (parallel to sidewalk from EB1 to FW), x axis towards EB3 (parallel to sidewalk from EB1 to EB3)
-        point = c2c.get_cartesian((latitude, longitude))
+        point = converter.get_cartesian((latitude, longitude))
 
         # Converts the given heading to a yaw in degrees
-        yaw = c2c.heading_to_yaw(heading)
+        yaw = converter.heading_to_yaw(heading)
 
         # Publishes the position and heading
         data = Float64MultiArray()
-        data.data[0] = point[0]
-        data.data[1] = point[1]
-        data.data[2] = altitude
-        data.data[3] = yaw
+        data.data.append(point[0])
+        data.data.append(point[1])
+        data.data.append(altitude)
+        data.data.append(yaw)
         pos_pub.publish(data)
 
         # Display of all the important messages
@@ -100,6 +100,7 @@ def main():
         stdscr.addstr(4, 5, 'Latitude : %.4f                  ' % float(latitude))
         stdscr.addstr(5, 5, 'Longitude : %.4f                  ' % float(longitude))
         stdscr.addstr(6, 5, 'Heading : %.4f                  ' % float(heading))
+        stdscr.addstr(7, 5, 'Yaw : %.4f                  ' % float(yaw))
 
         rate.sleep()
 
