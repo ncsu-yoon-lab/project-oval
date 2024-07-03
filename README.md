@@ -71,6 +71,7 @@ python Server.py
 # Common Issues
 
 ## CAN Issues
+If node_motor_act.py outputs the following exception:
 ```shell
 failed to transmit [Errno 105] No buffer space available
 ```
