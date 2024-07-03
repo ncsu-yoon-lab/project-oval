@@ -12,7 +12,7 @@ from lib.coords_to_cartesian import CoordsToCartesian as c2c
 
 stdscr = curses.initscr()
 
-latitude = longitude = 0
+latitude = longitude = 0.0
 
 waypoints = []
 
@@ -27,7 +27,7 @@ def rtk_callback(data):
 def server_send(current_pos):
 
     # Path to the CSV file
-    file_path = '~/oval_ws/src/project-oval/Server/pos.csv'
+    file_path = '/home/wolfwagen/oval_ws/src/project-oval/Server/pos.csv'
 
     # Open the CSV file in write mode to clear its contents and write new data
     with open(file_path, mode='w', newline='') as file:
@@ -78,6 +78,8 @@ def main():
 
     FREQ = 10
     rate = server_node.create_rate(FREQ, server_node.get_clock())
+    
+    converter = c2c()
 
     while rclpy.ok():
 
@@ -87,23 +89,19 @@ def main():
         # Initialize the data as a Float64MultiArray
         data = Float64MultiArray()
 
-        # Initialize the index
-        idx = 0
-
         # Goes through all the points in the waypoints and adds each latitude and longitude to the Float64MultiArray
         for point in waypoints:
             # Converts the point into an x y coordinate
-            converted_point = c2c.get_cartesian(point)
+            converted_point = converter.get_cartesian((float(point[0]), float(point[1])))
             for coord in converted_point:
-                data.data[idx] = coord
-                idx += 1
+                data.data.append(coord)
 
         # Publish the waypoints
         server_pub.publish(data)
 
         # Send the current position to the server if it is connected
         if is_connected:
-            server_send([latitude, longitude])
+            server_send([(latitude, longitude)])
 
         # Display of all the important messages
         stdscr.refresh()
@@ -114,7 +112,7 @@ def main():
         stdscr.addstr(5, 5, 'Current Latitude : %.4f                  ' % float(latitude))
         stdscr.addstr(6, 5, 'Current Longitude : %.4f                  ' % float(longitude))
 
-        stdscr.addstr(8, 5, 'Waypoints : ' + waypoints)
+        stdscr.addstr(8, 5, 'Waypoints : %s          ' % str(waypoints))
 
         rate.sleep()
 
