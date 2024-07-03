@@ -68,6 +68,11 @@ cd code
 python Server.py
 ```
 
+# Common Issues
 
+## CAN Issues
+```shell
+failed to transmit" [Errno 105] No buffer space available
+```
 
 
