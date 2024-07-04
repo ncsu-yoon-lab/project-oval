@@ -1,6 +1,6 @@
 import rclpy
 from std_msgs.msg import Int64, Float64MultiArray
-from sensor_msgs.msg import GPSFix
+from gps_msgs.msg import GPSFix
 from lib.coords_to_cartesian import CoordsToCartesian as c2c
 import threading
 from rclpy.node import Node
@@ -13,14 +13,18 @@ stdscr = curses.initscr()
 
 throttle = latitude = longitude = heading = altitude = previous_error = 0
 
+FREQ = 10
+
 def rtk_callback(data):
+    
     global throttle, latitude, longitude, altitude, heading
     
-    throttle = velocity_PID(data.speed)
+    throttle = velocity_PID(data.speed, FREQ)
     latitude = data.latitude
     longitude = data.longitude
     altitude = data.altitude
     heading = data.track
+
 
 def velocity_PID(velocity, FREQ):
     global previous_error
@@ -45,6 +49,8 @@ def velocity_PID(velocity, FREQ):
 def main():
     global throttle, latitude, longitude, altitude, heading
 
+    converter = c2c()
+
     rclpy.init()
     rtk_node = rclpy.create_node('rtk_node')
 
@@ -52,11 +58,12 @@ def main():
     speed_pub = rtk_node.create_publisher(Int64, 'speed_topic', 1)
     pos_pub = rtk_node.create_publisher(Float64MultiArray, 'pos_topic', 1)
     coord_pub = rtk_node.create_publisher(Float64MultiArray, 'coord_topic', 1)
+    log_pub = rtk_node.create_publisher(Float64MultiArray, 'rtk_logging_topic', 1)
 
     thread = threading.Thread(target=rclpy.spin, args=(rtk_node,), daemon=True)
     thread.start()
 
-    FREQ = 10
+    
     rate = rtk_node.create_rate(FREQ, rtk_node.get_clock())
 
     while rclpy.ok():
@@ -68,23 +75,28 @@ def main():
 
         # Publishes the latitude and longitude from the rtk
         data = Float64MultiArray()
-        data.data[0] = latitude
-        data.data[1] = longitude
+        data.data.append(latitude)
+        data.data.append(longitude)
         coord_pub.publish(data)
 
         # Converts the latitude and longitude to x, y coordinates with origin at center of path between EB1 and EB3, y axis towards hunt (parallel to sidewalk from EB1 to FW), x axis towards EB3 (parallel to sidewalk from EB1 to EB3)
-        point = c2c.get_cartesian((latitude, longitude))
+        point = converter.get_cartesian((latitude, longitude))
 
         # Converts the given heading to a yaw in degrees
-        yaw = c2c.heading_to_yaw(heading)
+        yaw = converter.heading_to_yaw(heading)
 
         # Publishes the position and heading
         data = Float64MultiArray()
-        data.data[0] = point[0]
-        data.data[1] = point[1]
-        data.data[2] = altitude
-        data.data[3] = yaw
+        data.data.append(point[0])
+        data.data.append(point[1])
+        data.data.append(altitude)
+        data.data.append(yaw)
         pos_pub.publish(data)
+
+        # Publishes the data of the RTK Node to be logged
+        data = Float64MultiArray()
+        data.data = [float(latitude), float(longitude), float(heading)]
+        log_pub.publish(data)
 
         # Display of all the important messages
         stdscr.refresh()
@@ -94,11 +106,7 @@ def main():
         stdscr.addstr(4, 5, 'Latitude : %.4f                  ' % float(latitude))
         stdscr.addstr(5, 5, 'Longitude : %.4f                  ' % float(longitude))
         stdscr.addstr(6, 5, 'Heading : %.4f                  ' % float(heading))
-
-        stdscr.addstr(8, 5, 'X : %.4f                  ' % float(data[0]))
-        stdscr.addstr(9, 5, 'Y : %.4f                  ' % float(data[1]))
-        stdscr.addstr(10, 5, 'Yaw : %.4f                  ' % float(data[3]))
-
+        stdscr.addstr(7, 5, 'Yaw : %.4f                  ' % float(yaw))
 
         rate.sleep()
 

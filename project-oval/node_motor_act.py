@@ -72,6 +72,7 @@ def main(args=None):
             can_data = struct.pack('>hhI', throttle, steer, 0)
             msg = can.Message(arbitration_id=0x1, data=can_data, is_extended_id=False)
             bus.send(msg)
+            exception = ""
         except Exception as error:
             exception = error
         finally:

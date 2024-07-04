@@ -15,7 +15,7 @@ steering = 0
 throttle = 0
 auto_throttle = 15  #in auto mode
 
-MAX_MANUAL_THROTTLE = 28
+MAX_MANUAL_THROTTLE = 40
 MAX_AUTO_THROTTLE = 17
 
 mode_switch_requested = 0

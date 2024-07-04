@@ -47,11 +47,17 @@ class CoordsToCartesian(object):
 
         return markerPoint
     
-    def heading_to_yaw(self, heading):
+    def heading_to_yaw(self, heading) -> float:
+        
+        # Measured by finding heading pointing the x direction (parallel to vector from EB1 to EB3)
+        # Degrees
+        OFFSET = 130
 
-        # Not sure about the offset, needs to be tested
-        OFFSET = 360 - 330.2289756152796
+        # Subtract the offset from the heading
+        yaw = heading - OFFSET
 
-        yaw = heading + OFFSET
+        # If the yaw is still greater than 180, subtract 360 from it so that it can be converted from a range of (0, 360) to (-180, 180) which is required by pure pursuit
+        if yaw > 180:
+            yaw -= 360
 
         return yaw
