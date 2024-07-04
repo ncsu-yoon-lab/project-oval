@@ -58,6 +58,7 @@ def main():
     speed_pub = rtk_node.create_publisher(Int64, 'speed_topic', 1)
     pos_pub = rtk_node.create_publisher(Float64MultiArray, 'pos_topic', 1)
     coord_pub = rtk_node.create_publisher(Float64MultiArray, 'coord_topic', 1)
+    log_pub = rtk_node.create_publisher(Float64MultiArray, 'rtk_logging_topic', 1)
 
     thread = threading.Thread(target=rclpy.spin, args=(rtk_node,), daemon=True)
     thread.start()
@@ -91,6 +92,11 @@ def main():
         data.data.append(altitude)
         data.data.append(yaw)
         pos_pub.publish(data)
+
+        # Publishes the data of the RTK Node to be logged
+        data = Float64MultiArray()
+        data.data = [float(latitude), float(longitude), float(heading)]
+        log_pub.publish(data)
 
         # Display of all the important messages
         stdscr.refresh()

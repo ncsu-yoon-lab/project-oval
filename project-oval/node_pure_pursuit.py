@@ -303,6 +303,8 @@ def main():
 
     pub_pure_pursuit_motor = pure_pursuit_node.create_publisher(Int64MultiArray, "pure_pursuit_motor_topic", 1)
 
+    pub_pure_pursuit_logger = pure_pursuit_node.create_publisher(Float64MultiArray, 'pure_pursuit_logging_topic', 1)
+
     thread = threading.Thread(target=rclpy.spin, args=(pure_pursuit_node,), daemon=True)
     thread.start()
 
@@ -322,9 +324,15 @@ def main():
                                            distance_to_waypoint]
         pub_pure_pursuit_location.publish(pure_pursuit_location_data)
 
+        # Publishes the motor actuations of the pure pursuit node
         pure_pursuit_motor_data = Int64MultiArray()
         pure_pursuit_motor_data.data = [throttle, steering]
         pub_pure_pursuit_motor.publish(pure_pursuit_motor_data)
+
+        # Publishes the pure pursuit data to be logged
+        pure_pursuit_logger_data = Float64MultiArray()
+        pure_pursuit_logger_data.data = [current_x, current_y, current_yaw, current_x_goal, current_y_goal, lookahead_x, lookahead_y]
+        pub_pure_pursuit_logger.publish(pure_pursuit_logger_data)
 
         stdscr.refresh()
         stdscr.addstr(1, 5, 'PURE PURSUIT NODE')
