@@ -201,16 +201,8 @@ class ResearchScreen(Screen):
         # Parse the csv to get the times and data 
         data = [line.split(',') for line in lines]
 
-        coords = []
-        for row in data:
-            coord = ""
-            for digit in row:
-                coord += (str(digit))
-            coords.append(coord)
-
-
-        lat = coords[0]
-        lon = coords[1]
+        lat = float(data[0][0])
+        lon = float(data[0][1])
         return lat, lon
     
     # Sends data to the server of the waypoints
