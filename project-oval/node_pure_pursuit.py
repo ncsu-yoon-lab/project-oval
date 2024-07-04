@@ -313,6 +313,8 @@ def main():
     lookahead_x = 0.0
     lookahead_y = 0.0
 
+    start_time = time.time()
+
     while rclpy.ok():
 
         if len(waypoints) > 0:
@@ -350,6 +352,7 @@ def main():
         stdscr.addstr(13, 5, 'Steering :  %d	                ' % steering)
 
         stdscr.addstr(15, 5, 'Exception :  %s	                ' % str(exception))
+        stdscr.addstr(16, 5, 'Time :  %.4f                      ' % float(time.time() - start_time))
 
         rate.sleep()
 

@@ -26,17 +26,20 @@ def rtk_callback(data):
 
 def server_send(current_pos):
 
-    # Path to the CSV file
-    file_path = '/home/wolfwagen/oval_ws/src/project-oval/Server/pos.csv'
+    try:
+        # Path to the CSV file
+        file_path = '/home/wolfwagen/oval_ws/src/project-oval/Server/pos.csv'
 
-    # Open the CSV file in write mode to clear its contents and write new data
-    with open(file_path, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(current_pos)
+        # Open the CSV file in write mode to clear its contents and write new data
+        with open(file_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerows(current_pos)
 
-    url = 'http://3.16.149.178/upload'
-    files = {'file': open(file_path, 'rb')}
-    response = requests.post(url, files=files)
+        url = 'http://3.16.149.178/upload'
+        files = {'file': open(file_path, 'rb')}
+        response = requests.post(url, files=files)
+    except RequestException:
+        pass
 
 # Calls to get the most recent data from the server
 def server_receive():

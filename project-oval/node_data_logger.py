@@ -110,7 +110,7 @@ def main():
 
         rate.sleep()
 
-    rtk_node.destroy_node()
+    logger_node.destroy_node()
     rclpy.shutdown()
 
 
