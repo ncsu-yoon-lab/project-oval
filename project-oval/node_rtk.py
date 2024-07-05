@@ -49,7 +49,7 @@ def velocity_PID(velocity, FREQ):
 def main():
     global throttle, latitude, longitude, altitude, heading
 
-    converter = c2c()
+    converter = c2c(35.7713528, -78.673756)
 
     rclpy.init()
     rtk_node = rclpy.create_node('rtk_node')
@@ -80,7 +80,7 @@ def main():
         coord_pub.publish(data)
 
         # Converts the latitude and longitude to x, y coordinates with origin at center of path between EB1 and EB3, y axis towards hunt (parallel to sidewalk from EB1 to FW), x axis towards EB3 (parallel to sidewalk from EB1 to EB3)
-        point = converter.get_cartesian((latitude, longitude))
+        point = converter.get_cartesian(latitude, longitude)
 
         # Converts the given heading to a yaw in degrees
         yaw = converter.heading_to_yaw(heading)

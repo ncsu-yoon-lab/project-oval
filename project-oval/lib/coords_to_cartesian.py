@@ -3,49 +3,40 @@ import math
 
 class CoordsToCartesian(object):
 
-    # The reference coordinates for the OVAL
-    origin = (35.7713528, -78.673756)
-    referenceX = (35.7706063, -78.6728862)
-    referenceY = (35.7692556, -78.6743267)
-
-    def __init__(self):
-        # Initializing the coordinate system with lat long for origin, reference point on x axis and reference point on y axis
-        self.OX = distance.distance(self.origin, self.referenceX).meters
-        self.OY = distance.distance(self.origin, self.referenceY).meters
-
-    def polar_to_cartesian(self, radius, theta):
-        x = radius * math.cos(theta)
-        y = radius * math.sin(theta)
-        return x, y
+    # The radius of Earth in meters
+    R = 6378137
     
-    def cartesian_distance(self, x1, y1, x2, y2):
-        dist = math.sqrt((x1-x2)**2+(y1-y2)**2)
-        return dist
+    # origin = (35.7713528, -78.673756)
 
-    def get_cartesian(self, coords):
+    def __init__(self, lat_origin, lon_origin):
 
-        # Getting the distances between coordinates
-        OP = distance.distance(self.origin, coords).meters
-        XP = distance.distance(coords, self.referenceX).meters
-        YP = distance.distance(self.referenceY, coords).meters
+        # Sets the origin of the coordinate system
+        self.origin = (lat_origin, lon_origin)
 
-        # Initializing the markerPoint (In cartesian form)
-        markerPoint = []
+    def haversine(self, lat, lon):
 
-        # Finding the angle between the x axis and the vector OP
-        theta = math.acos((-(XP)**2 + self.OX**2 + OP**2)/(2*self.OX*OP))
+        # Finds the difference between the lat longs and converts them to radians
+        d_lat = math.radians(lat - self.origin[0])
+        d_lon = math.radians(lon - self.origin[1])
 
-        # Finding the points based on the distance from origin to point and theta found
-        x, y = self.polar_to_cartesian(OP, theta)
+        a = math.sin(d_lat / 2) ** 2 + math.cos(math.radians(self.origin[0])) * math.cos(math.radians(lat)) * math.sin(d_lon / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-        # Checks if theta is supposed to be positive or negative by checking if the distance from y to the point is the same as the expected y to point distance
-        if abs(self.cartesian_distance(x, y, 0, self.OY) - YP) <= 50:
-            markerPoint = [x, y]
-        else:
-            x, y = self.polar_to_cartesian(OP, -theta)
-            markerPoint = [x, y]
+        distance = self.R * c
 
-        return markerPoint
+        return distance
+
+    def latlon_to_xy(self, lat, lon):
+
+        x = self.haversine(self.origin[0], lon)
+        y = self.haversine(lat, self.origin[1])
+
+        if lon < self.origin[1]:
+            x = -x
+        if lat < self.origin[0]:
+            y = -y
+
+        return (x, y)
     
     def heading_to_yaw(self, heading) -> float:
         

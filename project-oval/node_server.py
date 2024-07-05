@@ -82,7 +82,7 @@ def main():
     FREQ = 10
     rate = server_node.create_rate(FREQ, server_node.get_clock())
     
-    converter = c2c()
+    converter = c2c(35.7713528, -78.673756)
 
     while rclpy.ok():
 
@@ -99,7 +99,7 @@ def main():
             try:
 
                 # Converts the point into an x y coordinate
-                converted_point = converter.get_cartesian((float(point[0]), float(point[1])))
+                converted_point = converter.get_cartesian(float(point[0]), float(point[1]))
                 for coord in converted_point:
                     data.data.append(coord)
                     
