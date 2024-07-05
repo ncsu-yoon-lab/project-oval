@@ -27,11 +27,13 @@ def image_callback(msg):
 
     # Adjusts the gamma of the same frame
 
-    frame_darker = adjust_gamma(frame)
+    frame_darker = adjust_gamma(frame, 0.5)
+
+    frame_darkest = adjust_gamma(frame, 0.3)
+
     last_frame_time = time.time()
 
-def adjust_gamma(image):
-    gamma = 0.5
+def adjust_gamma(image, gamma):
 
     # Adjusts the brightness of frame to make it easier or harder to see colors
     # Increasing gamma makes it darker, decreasing gamma makes it brighter
@@ -81,6 +83,7 @@ def main(args = None):
                 # Saves the frame as a png in the specified file path with a changing name depending on the count
                 cv.imwrite(file_path + str(count) + '.jpg', frame)
                 cv.imwrite(file_path + str(count) + '_darker.jpg', frame_darker)
+                cv.imwrite(file_path + str(count) + '_darkest.jpg', frame_darkest)
 
                 # Increase the count by one
                 count += 1
