@@ -18,6 +18,7 @@ from kivy.uix.spinner import Spinner
 from kivy.graphics import *
 from kivy.core.window import Window
 
+from requests.exceptions import RequestException
 import requests
 import random
 import os
@@ -122,7 +123,12 @@ class ResearchScreen(Screen):
         if self.debug_mode:
             self.current_lat, self.current_lon = 35.771260, -78.674927
         else:
-            self.current_lat, self.current_lon = self.receive_data()
+            try:
+                self.current_lat, self.current_lon = self.receive_data()
+                self.ids.message.text = ""
+            except RequestException:
+                self.current_lat = self.current_lon = 0
+                self.ids.message.text = "Server not connected"
 
         self.calculate_stats()
 
@@ -209,16 +215,19 @@ class ResearchScreen(Screen):
     # Formats data in the form of [[lat1, lon1], [lat2, lon2], [lat3, lon3]]
     def send_data(self):
 
-        # Formats the file waypoints.csv to have the most recent waypoints
-        file_path = 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Server\\waypoints.csv'
-        with open(file_path, 'w', newline = '') as file:
-            writer = csv.writer(file)
-            writer.writerows(self.full_route)
+        try:
+            # Formats the file waypoints.csv to have the most recent waypoints
+            file_path = 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Server\\waypoints.csv'
+            with open(file_path, 'w', newline = '') as file:
+                writer = csv.writer(file)
+                writer.writerows(self.full_route)
 
-        # Sends the file waypoints.csv to the server
-        url = 'http://3.16.149.178/upload'
-        files = {'file': open(file_path, 'rb')}
-        response = requests.post(url, files=files)
+            # Sends the file waypoints.csv to the server
+            url = 'http://3.16.149.178/upload'
+            files = {'file': open(file_path, 'rb')}
+            response = requests.post(url, files=files)
+        except RequestException:
+            pass
 
     # When a checkbox is clicked, the data is updated to reflect which checkboxes are currently active
     def checkbox_clicked(self, instance, value):
@@ -666,7 +675,7 @@ class GraphClass(object):
 class WW_MonitoringApp(App):
 
     def build(self):
-        Window.fullscreen = 'auto'
+        #Window.fullscreen = 'auto'
         sm = ScreenManager()
         Window.clearcolor = (230/255, 230/255, 230/255, 1)
         sm.add_widget(StartScreen(name='start_screen'))
