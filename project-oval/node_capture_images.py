@@ -9,10 +9,12 @@ from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Image
 import curses
 import time
 import threading
+import numpy as np
 
 stdscr = curses.initscr()
 
 # Initializations
+
 frame = None # frame is the OpenCV image
 last_frame_time = time_since_last_saved = time.time() # Used to compare the times in between frames
 br = CvBridge() # Used to convert ROS2 frames to OpenCV frames
@@ -20,10 +22,24 @@ received_frame = False
 
 def image_callback(msg):
     # Receives ROS2 message of frame from ZED and converts it into OpenCV frame and stores last_frame_time
-    global frame, last_frame_time
+    global frame, frame_darker, frame_darkest, last_frame_time
     frame = br.imgmsg_to_cv2(msg)
+
+    # Adjusts the gamma of the same frame
+
+    frame_darker = adjust_gamma(frame)
     last_frame_time = time.time()
-    
+
+def adjust_gamma(image):
+    gamma = 0.5
+
+    # Adjusts the brightness of frame to make it easier or harder to see colors
+    # Increasing gamma makes it darker, decreasing gamma makes it brighter
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+                  for i in np.arange(0 , 256)]).astype("uint8")
+    return cv.LUT(image , table)
+
 def main(args = None):
     global frame, time_since_last_saved, received_frame, last_frame_time
 
@@ -64,6 +80,7 @@ def main(args = None):
 
                 # Saves the frame as a png in the specified file path with a changing name depending on the count
                 cv.imwrite(file_path + str(count) + '.jpg', frame)
+                cv.imwrite(file_path + str(count) + '_darker.jpg', frame_darker)
 
                 # Increase the count by one
                 count += 1
