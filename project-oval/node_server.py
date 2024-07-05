@@ -75,6 +75,7 @@ def main():
 
     server_sub = server_node.create_subscription(Float64MultiArray, 'coord_topic', rtk_callback, 1)
     server_pub = server_node.create_publisher(Float64MultiArray, 'waypoints_topic', 1)
+    server_coord_pub = server_node.create_publisher(Float64MultiArray, 'waypoints_coord_topic', 1)
 
     thread = threading.Thread(target=rclpy.spin, args=(server_node,), daemon=True)
     thread.start()
@@ -106,8 +107,15 @@ def main():
             except ValueError:
                 pass
 
-        # Publish the waypoints
+        # Publish the waypoints as x y
         server_pub.publish(data)
+
+        # Publish the waypoints as lat long
+        data = Float64MultiArray()
+        for point in waypoints:
+            for coord in point:
+                data.data.append(float(coord))
+        server_coord_pub.publish(data)
 
         # Send the current position to the server if it is connected
         if is_connected:

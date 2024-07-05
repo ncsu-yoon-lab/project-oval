@@ -65,29 +65,30 @@ def ui_callback(data):
 
 # Callback for the server node to get the waypoints
 def server_callback(data):
+
     global waypoints, slopes, waypoints_received
-    if not waypoints_received:
-        temp_list = data.data
 
-        if (len(temp_list)) % 2 != 0:
-            temp_list = temp_list[:-1]
+    temp_list = data.data
 
-        for i in range(0, len(temp_list), 2):
-            waypoints.append([temp_list[i], temp_list[i + 1]])
+    if (len(temp_list)) % 2 != 0:
+        temp_list = temp_list[:-1]
 
-        for i in range(len(waypoints) - 1):
-            x1 = waypoints[i][0]
-            y1 = waypoints[i][1]
-            x2 = waypoints[i + 1][0]
-            y2 = waypoints[i + 1][1]
+    for i in range(0, len(temp_list), 2):
+        waypoints.append([temp_list[i], temp_list[i + 1]])
 
-            # If vertical line, catch it and make it a large slope
-            try:
-                slopes.append((y2 - y1) / (x2 - x1))
-            except ZeroDivisionError:
-                slopes.append(20000)
+    for i in range(len(waypoints) - 1):
+        x1 = waypoints[i][0]
+        y1 = waypoints[i][1]
+        x2 = waypoints[i + 1][0]
+        y2 = waypoints[i + 1][1]
 
-        waypoints_received = True
+        # If vertical line, catch it and make it a large slope
+        try:
+            slopes.append((y2 - y1) / (x2 - x1))
+        except ZeroDivisionError:
+            slopes.append(20000)
+
+    waypoints_received = True
 
 
 def get_lookahead(current_x, current_y, waypoints):
@@ -157,6 +158,7 @@ def get_lookahead(current_x, current_y, waypoints):
 
     # While true loop until the lookahead point is known to be within a segment and does not exceed it
     while True:
+        
         # After current segment is found and the closest point is found, get the lookahead point
         mag = math.sqrt(1.0 ** 2 + slopes[lookahead_segment] ** 2)
         lookahead_unit_vector = (1.0 / mag, slopes[lookahead_segment] / mag)
@@ -203,6 +205,10 @@ def speed_callback(data):
 
     # Adding the error with a coefficient (guessing it is 18) to the current throttle
     throttle += int(error * 18)
+
+    # Bounds throttle
+    if throttle >= 50:
+        throttle = 50
 
 # Callback to get the current position
 def pos_callback(data):
@@ -339,20 +345,18 @@ def main():
         stdscr.refresh()
         stdscr.addstr(1, 5, 'PURE PURSUIT NODE')
 
-        stdscr.addstr(3, 5, 'Waypoints : [' + ", ".join(str(x) for x in waypoints) + "]")
+        stdscr.addstr(3, 5, 'Current X :  %.4f		         ' % float(current_x))
+        stdscr.addstr(4, 5, 'Current Y :  %.4f	                ' % float(current_y))
+        stdscr.addstr(5, 5, 'Lookahead X :  %.4f		         ' % float(lookahead_x))
+        stdscr.addstr(6, 5, 'Lookahead Y :  %.4f	                ' % float(lookahead_y))
+        stdscr.addstr(7, 5, 'Closest X :  %.4f		         ' % float(closest_x))
+        stdscr.addstr(8, 5, 'Closest Y :  %.4f	                ' % float(closest_y))
 
-        stdscr.addstr(5, 5, 'Current X :  %.4f		         ' % float(current_x))
-        stdscr.addstr(6, 5, 'Current Y :  %.4f	                ' % float(current_y))
-        stdscr.addstr(7, 5, 'Lookahead X :  %.4f		         ' % float(lookahead_x))
-        stdscr.addstr(8, 5, 'Lookahead Y :  %.4f	                ' % float(lookahead_y))
-        stdscr.addstr(9, 5, 'Closest X :  %.4f		         ' % float(closest_x))
-        stdscr.addstr(10, 5, 'Closest Y :  %.4f	                ' % float(closest_y))
+        stdscr.addstr(10, 5, 'Throttle :  %d		         ' % throttle)
+        stdscr.addstr(11, 5, 'Steering :  %d	                ' % steering)
 
-        stdscr.addstr(12, 5, 'Throttle :  %d		         ' % throttle)
-        stdscr.addstr(13, 5, 'Steering :  %d	                ' % steering)
-
-        stdscr.addstr(15, 5, 'Exception :  %s	                ' % str(exception))
-        stdscr.addstr(16, 5, 'Time :  %.4f                      ' % float(time.time() - start_time))
+        stdscr.addstr(13, 5, 'Exception :  %s	                ' % str(exception))
+        stdscr.addstr(14, 5, 'Time :  %.4f                      ' % float(time.time() - start_time))
 
         rate.sleep()
 
