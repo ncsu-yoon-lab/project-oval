@@ -3,6 +3,9 @@
 import requests
 import time
 import csv
+from coords_to_cartesian import CoordsToCartesian as c2c
+
+converter = c2c(35.7713528, -78.673756)
 
 # Main 
 def main():
@@ -42,6 +45,7 @@ def get_waypoints():
 
 # Sends its current position to the server
 def send_current_pos(current_pos):
+    
 
     # Path to the CSV file
     file_path = 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Server\\pos.csv'
@@ -54,6 +58,8 @@ def send_current_pos(current_pos):
     url = 'http://3.16.149.178/upload'
     files = {'file': open(file_path, 'rb')}
     response = requests.post(url, files=files)
+
+    print(converter.latlon_to_xy(current_pos[0], current_pos[1]))
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,7 @@
 from geopy import distance
 import math
 
-class CoordsToCartesian(object):
+class CoordsToCartesian():
 
     # The radius of Earth in meters
     R = 6378137
@@ -27,6 +27,9 @@ class CoordsToCartesian(object):
         return distance
 
     def latlon_to_xy(self, lat, lon):
+        
+        lat = float(lat)
+        lon = float(lon)
 
         x = self.haversine(self.origin[0], lon)
         y = self.haversine(lat, self.origin[1])
