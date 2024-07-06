@@ -195,16 +195,7 @@ def distance(x1, y1, x2, y2):
 # PID for calculating the speed, but just doing proportional gain
 def speed_callback(data):
     global throttle
-    speed = data.data
-
-    # Target speed is 0.8 m/s
-    target_speed = 0.8
-
-    # Finding the difference between expected speed and measured speed
-    error = target_speed - float(speed)
-
-    # Adding the error with a coefficient (guessing it is 18) to the current throttle
-    throttle += int(error * 18)
+    throttle = data.data
 
     # Bounds throttle
     if throttle >= 50:
@@ -260,7 +251,7 @@ def steering_PID(current_x, current_y, lookahead_x, lookahead_y, FREQ):
     if steering < -100:
         steering = -100
 
-    return int(steering)
+    return int(-1 * steering)
 
 
 def main():

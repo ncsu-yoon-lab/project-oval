@@ -36,13 +36,15 @@ class CoordsToCartesian(object):
         if lat < self.origin[0]:
             y = -y
 
-        return (x, y)
+        # Originally returned as x, y (with y as north and x as east) but we want to flip the coordinate system so x is north and y is east to match heading
+        # return (x, y)
+        return (y, x)
     
     def heading_to_yaw(self, heading) -> float:
         
         # Measured by finding heading pointing the x direction (parallel to vector from EB1 to EB3)
         # Degrees
-        OFFSET = 130
+        OFFSET = 0
 
         # Subtract the offset from the heading
         yaw = heading - OFFSET

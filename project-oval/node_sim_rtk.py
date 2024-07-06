@@ -40,7 +40,7 @@ def server_callback(data):
 def main():
     global throttle, latitude, longitude, altitude, heading, previous_coord
 
-    converter = c2c()
+    converter = c2c(35.770764, -78.674802)
 
     rclpy.init()
     rtk_sim_node = rclpy.create_node('rtk_sim_node')
@@ -71,7 +71,7 @@ def main():
         coord_pub.publish(data)
 
         # Converts the latitude and longitude to x, y coordinates with origin at center of path between EB1 and EB3, y axis towards hunt (parallel to sidewalk from EB1 to FW), x axis towards EB3 (parallel to sidewalk from EB1 to EB3)
-        point = converter.get_cartesian((latitude, longitude))
+        point = converter.latlon_to_xy(latitude, longitude)
 
         # Checks if the previous point is already known
         if previous_coord:
@@ -109,6 +109,9 @@ def main():
         stdscr.addstr(5, 5, 'Longitude : %.4f                  ' % float(longitude))
         stdscr.addstr(6, 5, 'Heading : %.4f                  ' % float(heading))
         stdscr.addstr(7, 5, 'Yaw : %.4f                  ' % float(yaw))
+
+        stdscr.addstr(9, 5, 'X :  %.4f                    ' % float(point[0]))
+        stdscr.addstr(10, 5, 'Y :  %.4f                    ' % float(point[1]))
 
         rate.sleep()
 

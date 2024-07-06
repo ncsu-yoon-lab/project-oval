@@ -24,16 +24,19 @@ last_frame_time = time_since_last_saved = time.time() # Used to compare the time
 br = CvBridge() # Used to convert ROS2 frames to OpenCV frames
 received_frame = False
 
-latitude = longitude = heading = 0
+latitude = longitude = heading = spherical_err = horizontal_err = vertical_err = track_err = 0
 
 def rtk_callback(data):
     
-    global latitude, longitude, heading
+    global latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err
 
     latitude = data.latitude
     longitude = data.longitude
-    altitude = data.altitude
     heading = data.track
+    spherical_err = data.err
+    horizontal_err = data.err_horz
+    vertical_err = data.err_vert
+    track_err = data.err_track
 
 def image_callback(msg):
     # Receives ROS2 message of frame from ZED and converts it into OpenCV frame and stores last_frame_time
@@ -62,7 +65,7 @@ def log_data(data):
 
     CSV_FILE = '/home/wolfwagen/oval_ws/src/project-oval/log/data_logger.csv'
 
-    FIELD_NAMES = ['timestamp', 'latitude', 'longitude', 'heading', 'img_name', 'darker_img_name', 'darkest_img_name']
+    FIELD_NAMES = ['timestamp', 'latitude', 'longitude', 'heading','img_name', 'darker_img_name', 'darkest_img_name', 'spherical_error', 'horizontal_error', 'vertical_error', 'track_error']
 
     # Saves the data as a dictionary
     saved_data = {
@@ -73,6 +76,10 @@ def log_data(data):
         FIELD_NAMES[4]: data[4],
         FIELD_NAMES[5]: data[5],
         FIELD_NAMES[6]: data[6],
+        FIELD_NAMES[7]: data[7],
+        FIELD_NAMES[8]: data[8],
+        FIELD_NAMES[9]: data[9],
+        FIELD_NAMES[10]: data[10]
     }
 
     # Checks if the file exists already
@@ -92,7 +99,7 @@ def log_data(data):
         writer.writerow(saved_data)
 
 def main(args = None):
-    global frame, time_since_last_saved, received_frame, last_frame_time, latitude, longitude, heading
+    global frame, time_since_last_saved, received_frame, last_frame_time, latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err
 
     rclpy.init(args = args)
     node = Node("capture_images_node")
@@ -143,7 +150,7 @@ def main(args = None):
                 cv.imwrite(file_path + img_darkest_name, frame_darkest)
 
                 # Saves the data and the names of the images to a csv
-                data = [timer, latitude, longitude, heading, img_name, img_darker_name, img_darkest_name]
+                data = [timer, latitude, longitude, heading, img_name, img_darker_name, img_darkest_name, spherical_err, horizontal_err, vertical_err, track_err]
                 log_data(data)
 
                 # Increase the count by one
