@@ -206,9 +206,13 @@ class ResearchScreen(Screen):
 
         # Parse the csv to get the times and data 
         data = [line.split(',') for line in lines]
-
-        lat = float(data[0][0])
-        lon = float(data[0][1])
+        try:
+            lat = float(data[0][0])
+            lon = float(data[0][1])
+        except IndexError:
+            lat = self.lat
+            lon = self.long
+    
         return lat, lon
     
     # Sends data to the server of the waypoints
