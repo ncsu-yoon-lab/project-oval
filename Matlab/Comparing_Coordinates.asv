@@ -7,45 +7,54 @@ origin_lon = -78.674802;
 
 points = readtable('data_gps_logger_test4.csv');
 
-figure;
+figure(1);
+
+hold on;
+
+figure(2);
 
 hold on;
 
 numRows = height(points);
 
 for i = 1:numRows
+    fprintf("Next Point\n");
     rtk_lat = points.latitude(i);
     rtk_lon = points.longitude(i);
-    gps_lat = points.gps_lat(i);
-    gps_lon = points.gps_lon(i);
+    gps_lat = convert_degrees(points.gps_lat(i));
+    gps_lon = -1.0 * convert_degrees(points.gps_lon(i));
 
+    if rtk_lat ~= 0
 
-    rtk_point = latlon_to_xy(rtk_lat, rtk_lon);
+        rtk_point = latlon_to_xy(rtk_lat, rtk_lon, origin_lat, origin_lon, R);
+    
+        gps_point = latlon_to_xy(gps_lat, gps_lon, origin_lat, origin_lon, R);
+        
+        figure(1);
+        plot(rtk_point(1), rtk_point(2), 'ro', 'MarkerSize', 3, 'MarkerFaceColor', 'r');
+        plot(gps_point(1), gps_point(2), 'bo', 'MarkerSize', 3, 'MarkerFaceColor', 'b');
 
-    gps_point = latlon_to_xy(gps_lat, gps_lon);
-
-    plot(rtk_point(1), rtk_point(2), 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
-
-    plot(gps_point(1), gps_point(2), 'bo', 'MarkerSize', 10, 'MarkerFaceColor', 'b');
-
-    pause(1);
+        
+    
+        pause(0.1);
+    end
 end
 
-function point = latlon_to_xy(lat, lon)
-    x = haversine(origin_lat, lon);
-    y = haversine(lat, origin_lon);
+function point = latlon_to_xy(lat, lon, origin_lat, origin_lon, R)
+    x = haversine(origin_lat, lon, origin_lat, origin_lon, R);
+    y = haversine(lat, origin_lon, origin_lat, origin_lon, R);
 
-    if lon < origin_lat
+    if lon < origin_lon
         x = -x;
     end
-    if lat < origin(1, 1)
+    if lat < origin_lat
         y = -y;
     end
 
     point = [y, x];
 end
 
-function distance = haversine(lat, lon)
+function distance = haversine(lat, lon, origin_lat, origin_lon, R)
     
     d_lat = deg2rad(lat - origin_lat);
     d_lon = deg2rad(lon - origin_lon);
