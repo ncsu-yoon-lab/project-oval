@@ -12,6 +12,10 @@ import threading
 import numpy as np
 import os
 import csv
+import joblib
+
+# Gets the saved model
+model = joblib.load('/home/wolfwagen/oval_ws/src/project-oval/ML/gps_adjuster.pkl')
 
 stdscr = curses.initscr()
 
@@ -20,7 +24,7 @@ stdscr = curses.initscr()
 time_since_last_saved = time.time() # Used to compare the times in between frames
 received_data = False
 
-latitude = longitude = heading = spherical_err = horizontal_err = vertical_err = track_err = gps_lat = gps_long = lat_dir = lon_dir = gps_qual = num_sats = hdop = undulation = diff_age = 0
+latitude = longitude = heading = spherical_err = horizontal_err = vertical_err = track_err = gps_lat = gps_lon = gps_adjusted_lat = gps_adjusted_lon = 0
 
 def rtk_callback(data):
     
@@ -39,7 +43,7 @@ def log_data(data):
 
     CSV_FILE = '/home/wolfwagen/oval_ws/src/project-oval/log/data_gps_logger.csv'
 
-    FIELD_NAMES = ['timestamp', 'latitude', 'longitude', 'heading','spherical_error', 'horizontal_error', 'vertical_error', 'track_error', 'gps_lat', 'gps_lon', 'lat_dir', 'lon_dir', 'gps_qual','num_sats', 'hdop', 'undulation', 'diff_age']
+    FIELD_NAMES = ['timestamp', 'latitude', 'longitude', 'heading','spherical_error', 'horizontal_error', 'vertical_error', 'track_error', 'gps_lat', 'gps_lon', 'gps_adjusted_lat', 'gps_adjusted_lon']
 
     # Saves the data as a dictionary
     saved_data = {
@@ -54,12 +58,7 @@ def log_data(data):
         FIELD_NAMES[8]: data[8],
         FIELD_NAMES[9]: data[9],
         FIELD_NAMES[10]: data[10],
-        FIELD_NAMES[11]: data[11],
-        FIELD_NAMES[12]: data[12],
-        FIELD_NAMES[13]: data[13],
-        FIELD_NAMES[14]: data[14],
-        FIELD_NAMES[15]: data[15],
-        FIELD_NAMES[16]: data[16]
+        FIELD_NAMES[11]: data[11]
     }
 
     # Checks if the file exists already
@@ -79,24 +78,31 @@ def log_data(data):
         writer.writerow(saved_data)
 
 def gpgga_callback(msg):
-    global received_data, gps_lat, gps_long, lat_dir, lon_dir, gps_qual, num_sats, hdop, undulation, diff_age
+    global received_data, gps_lat, gps_lon
 
     received_data = True
 
     gps_lat = msg.lat
-    gps_long = msg.lon
-    lat_dir = msg.lat_dir
-    lon_dir = msg.lon_dir
-    gps_qual = msg.gps_qual
-    num_sats = msg.num_sats
-    hdop = msg.hdop
-    undulation = msg.undulation
-    diff_age = msg.diff_age
+    gps_lon = msg.lon
+
+def gps_adjuster(lat, lon):
+
+    global model
+
+    # Sets up the point as an np array
+    point = np.array([[lat, lon]])
+
+    # Gets the corrected point based off the model
+    corrected_point = model.predict(point)
+
+    # Returns the corrected point
+    return corrected_point[0]
+
 
 
 def main(args = None):
     
-    global time_since_last_saved, received_data, latitude, longitude, heading, gps_lat, gps_long, lat_dir, lon_dir, gps_qual, num_sats, hdop, undulation, diff_age, spherical_err, horizontal_err, vertical_err, track_err
+    global time_since_last_saved, received_data, latitude, longitude, heading, gps_lat, gps_lon, spherical_err, horizontal_err, vertical_err, track_err
 
     rclpy.init(args = args)
     node = Node("capture_gps_node")
@@ -116,8 +122,11 @@ def main(args = None):
 
     # ROS2 loop while ROS2 is still running and is ok
     while rclpy.ok():
-
+        
+        # Checks that data is being received from the GPS
         if received_data:
+
+            gps_adjusted_lat, gps_adjusted_lon = gps_adjuster(gps_lat, gps_lon)
 
             # Checks if it has been enough time to save the next frame as png
             if time.time() - time_since_last_saved > 3:
@@ -126,7 +135,7 @@ def main(args = None):
                 timer = now.strftime('%H:%M:%S')
 
                 # Saves the data and the names of the images to a csv
-                data = [timer, latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err, gps_lat, gps_long, lat_dir, lon_dir , gps_qual, num_sats, hdop, undulation, diff_age]
+                data = [timer, latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err, gps_lat, gps_lon, gps_adjusted_lat, gps_adjusted_lon]
                 log_data(data)
 
                 # Reset the time since the last image was saved
