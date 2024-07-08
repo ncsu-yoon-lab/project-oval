@@ -120,13 +120,22 @@ def main(args = None):
     FREQ = 20
     rate = node.create_rate(FREQ , node.get_clock())
 
+    ml_time = 0
+
     # ROS2 loop while ROS2 is still running and is ok
     while rclpy.ok():
         
         # Checks that data is being received from the GPS
         if received_data:
+            
+            # Used to check the time for the ML to predict the gps coordinate to ensure there is not too much of a delay
+            start = time.time()
 
+            # Gets the adjusted coordinates from the ML model
             gps_adjusted_lat, gps_adjusted_lon = gps_adjuster(gps_lat, gps_lon)
+
+            # Finds the difference in the end time and start time
+            ml_time = time.time() - start
 
             # Checks if it has been enough time to save the next frame as png
             if time.time() - time_since_last_saved > 3:
@@ -146,6 +155,7 @@ def main(args = None):
         stdscr.refresh()
         stdscr.addstr(1 , 5 , 'GPS (CHEAP) NODE')
         stdscr.addstr(3, 5, 'Logging Data: %s                 ' % str(received_data))
+        stdscr.addstr(5, 5, 'Timer for ML: %.4f               ' % ml_time)
 
         rate.sleep()
     
