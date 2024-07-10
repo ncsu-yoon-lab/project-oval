@@ -24,7 +24,7 @@ stdscr = curses.initscr()
 FREQ = 10
 
 # Initialize the data being collected
-swift_latitude = swift_longitude = swift_heading = zed_x = zed_y = zed_yaw = gps_latitude = gps_longitude = None
+swift_latitude = swift_longitude = swift_heading = zed_x = zed_y = zed_yaw = gps_latitude = gps_longitude = swift_horizontal_error = swift_vertical_error = swift_track_error = None
 
 # Initialize the booleans of receiving the messages
 swift_received = gps_received = zed_received = False
@@ -33,7 +33,7 @@ swift_received = gps_received = zed_received = False
 FILE = '/home/wolfwagen/oval_ws/src/project-oval/log/position_data_logger.csv'
 
 # Initialize the names of the fields of the data
-FIELD_NAMES = ['timestamp', 'swift_latitude', 'swift_longitude', 'swift_heading', 'zed_x', 'zed_y', 'zed_yaw', 'gps_latitude', 'gps_longitude', 'ml_latitude', 'ml_longitude']
+FIELD_NAMES = ['timestamp', 'swift_latitude', 'swift_longitude', 'swift_heading', 'swift_horizontal_error', 'swift_vertical_error','swift_track_error','zed_x', 'zed_y', 'zed_yaw', 'gps_latitude', 'gps_longitude', 'ml_latitude', 'ml_longitude']
 
 # Initialize the machine learning model
 model = joblib.load('/home/wolfwagen/oval_ws/src/project-oval/ML/gps_adjuster.pkl')
@@ -42,12 +42,15 @@ def swift_callback(msg):
     """Callback for the swift messages"""
     
     # Global variables that are set by the callback message
-    global swift_latitude, swift_longitude, swift_heading, swift_received
+    global swift_latitude, swift_longitude, swift_heading, swift_received, swift_horizontal_error, swift_vertical_error, swift_track_error
 
     # Set the data to be saved from the swift node from the message
     swift_latitude = msg.latitude
     swift_longitude = msg.longitude
     swift_heading = msg.track
+    swift_horizontal_error = msg.err_horz
+    swift_vertical_error = msg.err_vert
+    swift_track_error = msg.err_track
 
     # Set the swift received to True
     swift_received = True
@@ -132,7 +135,10 @@ def log_data(data):
         FIELD_NAMES[7]: data[7],
         FIELD_NAMES[8]: data[8],
         FIELD_NAMES[9]: data[9],
-        FIELD_NAMES[10]: data[10]
+        FIELD_NAMES[10]: data[10],
+        FIELD_NAMES[11]: data[11],
+        FIELD_NAMES[12]: data[12],
+        FIELD_NAMES[13]: data[13]
     }
 
     # Checks if the file exists already
@@ -194,7 +200,7 @@ def main():
             ml_latitude, ml_longitude = gps_adjuster(gps_latitude, gps_longitude)
 
             # Format the data to be saved
-            data = [timestamp, swift_latitude, swift_longitude, swift_heading, zed_x, zed_y, zed_yaw, gps_latitude, gps_longitude, ml_latitude, ml_longitude]
+            data = [timestamp, swift_latitude, swift_longitude, swift_heading, swift_horizontal_error, swift_vertical_error, swift_track_error, zed_x, zed_y, zed_yaw, gps_latitude, gps_longitude, ml_latitude, ml_longitude]
 
             # Log the data
             log_data(data)
