@@ -1,60 +1,56 @@
 % Radius of the Earth in meters
 R = 6378137;
 
-
 origin_lat = 35.770764;
 origin_lon = -78.674802;
 
-points = readtable('C:\Users\malin\Documents\GitHub\project-oval\Data\data_gps_logger_test4.csv');
+points = readtable("C:\Users\malin\Downloads\Project_Oval_Test5\combined_data_test5.csv");
 
 figure(1);
 
 % Subplot for RTK and GPS positions
-subplot(2,1,1);
-hold on;
 title('RTK and GPS Positions');
 xlabel('X (meters)');
 ylabel('Y (meters)');
-
-% Subplot for percent differences
-subplot(2,1,2);
 hold on;
-title('Percent Differences');
-xlabel('Point Index');
-ylabel('Percent Difference (%)');
 
 numRows = height(points);
 
+% Arrays to store points for path plotting
+rtk_path = [];
+gps_path = [];
+ml_path = [];
+
 for i = 1:numRows
     fprintf("Next Point\n");
-    rtk_lat = points.latitude(i);
-    rtk_lon = points.longitude(i);
-    gps_lat = convert_degrees(points.gps_lat(i));
-    gps_lon = -1.0 * convert_degrees(points.gps_lon(i));
+    rtk_lat = points.swift_latitude(i);
+    rtk_lon = points.swift_longitude(i);
+    gps_lat = points.gps_latitude(i);
+    gps_lon = points.gps_longitude(i);
+    ml_lat = points.ml_latitude(i);
+    ml_lon = points.ml_longitude(i);
 
     if rtk_lat ~= 0
-
         rtk_point = latlon_to_xy(rtk_lat, rtk_lon, origin_lat, origin_lon, R);
-    
         gps_point = latlon_to_xy(gps_lat, gps_lon, origin_lat, origin_lon, R);
+        ml_point = latlon_to_xy(ml_lat, ml_lon, origin_lat, origin_lon, R);
 
-        % Plot RTK and GPS points
-        subplot(2,1,1);
-        plot(rtk_point(1), rtk_point(2), 'ro', 'MarkerSize', 3, 'MarkerFaceColor', 'r');
-        plot(gps_point(1), gps_point(2), 'bo', 'MarkerSize', 3, 'MarkerFaceColor', 'b');
+        % Append points to paths
+        rtk_path = [rtk_path; rtk_point];
+        gps_path = [gps_path; gps_point];
+        ml_path = [ml_path; ml_point];
 
-        % Calculate percent difference
-        percent_diff_lat = abs(abs(rtk_lat - gps_lat) / (rtk_lat) * 100);
-        percent_diff_lon = abs(abs(rtk_lon - gps_lon) / (rtk_lon) * 100);
+        % Plot the paths up to the current point
+        cla; % Clear the current axes
+        plot(rtk_path(:, 1), rtk_path(:, 2), 'r-', 'LineWidth', 1);
+        plot(gps_path(:, 1), gps_path(:, 2), 'b-', 'LineWidth', 1);
+        plot(ml_path(:, 1), ml_path(:, 2), 'g-', 'LineWidth', 1);
 
-        % Plot percent difference
-        subplot(2,1,2);
-        plot(i, percent_diff_lat, 'r.');
-        plot(i, percent_diff_lon, 'b.');
-        legend('Latitude', 'Longitude');
-        drawnow;
-        
-    
+        % Plot the most recent points with distinct markers
+        plot(rtk_path(end, 1), rtk_path(end, 2), 'ro', 'MarkerSize', 6, 'MarkerFaceColor', 'r');
+        plot(gps_path(end, 1), gps_path(end, 2), 'bo', 'MarkerSize', 6, 'MarkerFaceColor', 'b');
+        plot(ml_path(end, 1), ml_path(end, 2), 'go', 'MarkerSize', 6, 'MarkerFaceColor', 'g');
+
         pause(0.1);
     end
 end
@@ -74,7 +70,6 @@ function point = latlon_to_xy(lat, lon, origin_lat, origin_lon, R)
 end
 
 function distance = haversine(lat, lon, origin_lat, origin_lon, R)
-    
     d_lat = deg2rad(lat - origin_lat);
     d_lon = deg2rad(lon - origin_lon);
 
@@ -82,12 +77,4 @@ function distance = haversine(lat, lon, origin_lat, origin_lon, R)
     c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
     distance = R * c;
-end
-
-function decimalDegrees = convert_degrees(point)
-    degrees = floor(point / 100);
-
-    minutes = point - degrees * 100;
-
-    decimalDegrees = degrees + minutes / 60;
 end
