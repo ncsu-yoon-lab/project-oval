@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+# Imports necessary ROS2 packages
 import rclpy # Python Client Library for ROS 2
 from rclpy.node import Node # Handles the creation of nodes
 from sensor_msgs.msg import Image # Image is the message type
 import cv2 as cv # OpenCV library
 from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
-from gps_msgs.msg import GPSFix
+from gps_msgs.msg import GPSFix # GPS message type
 
+# Other necessary packages
 import curses
 import time
 import datetime
@@ -15,57 +17,82 @@ import numpy as np
 import os
 import csv
 
+# Initializes the terminal display
 stdscr = curses.initscr()
 
-# Initializations
+# Initializes the frames and positional data
+frame = frame_darker = frame_darkest = latitude = longitude = heading = spherical_err = horizontal_err = vertical_err = track_err = None # frame is the OpenCV image
 
-frame = None # frame is the OpenCV image
-last_frame_time = time_since_last_saved = time.time() # Used to compare the times in between frames
-br = CvBridge() # Used to convert ROS2 frames to OpenCV frames
-received_frame = False
+# Initializes the last time a frame was captured
+last_frame_time = time.time()
 
-latitude = longitude = heading = spherical_err = horizontal_err = vertical_err = track_err = 0
+# Used to convert ROS2 frames to OpenCV frames
+br = CvBridge() 
 
-def rtk_callback(data):
-    
-    global latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err
+# Initializes the booleans to false
+received_frame = saving_images = received_swift = False
 
-    latitude = data.latitude
-    longitude = data.longitude
-    heading = data.track
-    spherical_err = data.err
-    horizontal_err = data.err_horz
-    vertical_err = data.err_vert
-    track_err = data.err_track
+# Path to the directory where the images will be saved
+DIR_PATH = '/home/wolfwagen/oval_ws/src/project-oval/log/captured_images/'
+
+# CSV file where the data will be logged to
+CSV_PATH = '/home/wolfwagen/oval_ws/src/project-oval/log/image_logger.csv'
+
+# The names of the fields for the CSV
+FIELD_NAMES = ['timestamp', 'latitude', 'longitude', 'heading','img_name', 'darker_img_name', 'darkest_img_name', 'spherical_error', 'horizontal_error', 'vertical_error', 'track_error']
+
+# Frequency for the ROS2 node
+FREQ = 20
+
+def rtk_callback(msg):
+    """Callback from the swift GNSS system node"""
+
+    # Calls all of the global variables that will be changed from the message from the swift GNSS node
+    global latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err, received_swift
+
+    # Sets all of the necessary positional data from the message
+    latitude = msg.latitude
+    longitude = msg.longitude
+    heading = msg.track
+    spherical_err = msg.err
+    horizontal_err = msg.err_horz
+    vertical_err = msg.err_vert
+    track_err = msg.err_track
+
+    # Sets the received swift data to true
+    received_swift = True
 
 def image_callback(msg):
-    # Receives ROS2 message of frame from ZED and converts it into OpenCV frame and stores last_frame_time
+    """Callback from the image node from the zed"""
+
+    # Calls all of the global variables that will be changed from the message from the zed node
     global frame, frame_darker, frame_darkest, last_frame_time
+
+    # Gets the frame by converting the message to opencv format using the bridge
     frame = br.imgmsg_to_cv2(msg)
 
-    # Adjusts the gamma of the same frame
-
+    # Adjusts the gamma of the same frame to darker and darkest
     frame_darker = adjust_gamma(frame, 0.5)
-
     frame_darkest = adjust_gamma(frame, 0.3)
 
+    # Sets a new last time a frame was taken
     last_frame_time = time.time()
 
 def adjust_gamma(image, gamma):
+    """Adjusts the brightness of the image input into the function"""
 
-    # Adjusts the brightness of frame to make it easier or harder to see colors
-    # Increasing gamma makes it darker, decreasing gamma makes it brighter
+    # Inverts the gamma input
     invGamma = 1.0 / gamma
+
+    # Alters all pixels in the image by the inverted gamma
     table = np.array([((i / 255.0) ** invGamma) * 255
                   for i in np.arange(0 , 256)]).astype("uint8")
+    
+    # Returns the new image which is now altered by the gamma
     return cv.LUT(image , table)
 
-# Logs the data to the given file
 def log_data(data):
-
-    CSV_FILE = '/home/wolfwagen/oval_ws/src/project-oval/log/data_logger.csv'
-
-    FIELD_NAMES = ['timestamp', 'latitude', 'longitude', 'heading','img_name', 'darker_img_name', 'darkest_img_name', 'spherical_error', 'horizontal_error', 'vertical_error', 'track_error']
+    """Logs the data captured to a csv to be analyzed following its collection"""
 
     # Saves the data as a dictionary
     saved_data = {
@@ -83,10 +110,10 @@ def log_data(data):
     }
 
     # Checks if the file exists already
-    file_exists = os.path.isfile(CSV_FILE)
+    file_exists = os.path.isfile(CSV_PATH)
 
     # Opens the file
-    with open(CSV_FILE, 'a', newline='') as csvfile:
+    with open(CSV_PATH, 'a', newline='') as csvfile:
 
         # Makes a writer for a dictionary and sets the field names
         writer = csv.DictWriter(csvfile, fieldnames=FIELD_NAMES)
@@ -99,27 +126,29 @@ def log_data(data):
         writer.writerow(saved_data)
 
 def main(args = None):
-    global frame, time_since_last_saved, received_frame, last_frame_time, latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err
+    """Main function to be ran after the script is started"""
 
+    # Initializes ROS2
     rclpy.init(args = args)
-    node = Node("capture_images_node")
-    zed_img_subscription = node.create_subscription(
-        Image,
-        '/zed/zed_node/left/image_rect_color',
-        image_callback,
-        5
-    )
 
+    # Creates a ROS2 node
+    node = Node("capture_images_node")
+
+    # Creates a subscription for the images captured by the zed camera
+    zed_img_subscription = node.create_subscription(Image, '/zed/zed_node/left/image_rect_color', image_callback, 5)
+
+    # Creates a subscription for the gps coordinates captured by the swift GNSS system
     rtk_coord_subscription = node.create_subscription(GPSFix, '/gpsfix', rtk_callback, 1)
 
-    file_path = '/home/wolfwagen/oval_ws/src/project-oval/log/captured_images/'
-    count = 0
-
+    # Threads the node so that it constantly spins and receives messages
     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
     thread.start()
 
-    FREQ = 20
+    # Creates a rate for the node to spin at
     rate = node.create_rate(FREQ , node.get_clock())
+
+    # Initialize the time since there was a save last
+    time_since_last_saved = time.time()
 
     # ROS2 loop while ROS2 is still running and is ok
     while rclpy.ok():
@@ -134,27 +163,30 @@ def main(args = None):
             if time.time() - last_frame_time > 3:
                 break
 
-            # Checks if it has been enough time to save the next frame as png
-            if time.time() - time_since_last_saved > 3:
+            # Checks if it has been enough time to save the next frame as png and that there is a path to the directory
+            if time.time() - time_since_last_saved > 3 and os.path.isdir(DIR_PATH):
+                
+                # Sets the saving images to True
+                saving_images = True
 
-                now = datetime.datetime.now()
-                timer = now.strftime('%H:%M:%S')
+                # Gets the current timestamp
+                timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
 
-                img_name = timer + '.jpg'
-                img_darker_name = timer + '_darker.jpg'
-                img_darkest_name = timer + '_darkest.jpg'
+                # Saves the image with the timestamp in the name as reference
+                img_name = timestamp + '.jpg'
+                img_darker_name = timestamp + '_darker.jpg'
+                img_darkest_name = timestamp + '_darkest.jpg'
 
-                # Saves the frame as a png in the specified file path with a changing name depending on the count
-                cv.imwrite(file_path + img_name, frame)
-                cv.imwrite(file_path + img_darker_name, frame_darker)
-                cv.imwrite(file_path + img_darkest_name, frame_darkest)
+                # Saves the frame as a png in the specified file path with a changing name depending on the timestamp
+                cv.imwrite(DIR_PATH + img_name, frame)
+                cv.imwrite(DIR_PATH + img_darker_name, frame_darker)
+                cv.imwrite(DIR_PATH + img_darkest_name, frame_darkest)
 
-                # Saves the data and the names of the images to a csv
-                data = [timer, latitude, longitude, heading, img_name, img_darker_name, img_darkest_name, spherical_err, horizontal_err, vertical_err, track_err]
+                # Creates data that will be logged to the csv
+                data = [timestamp, latitude, longitude, heading, img_name, img_darker_name, img_darkest_name, spherical_err, horizontal_err, vertical_err, track_err]
+                
+                # Logs the data to the csv
                 log_data(data)
-
-                # Increase the count by one
-                count += 1
 
                 # Reset the time since the last image was saved
                 time_since_last_saved = time.time()
@@ -163,7 +195,10 @@ def main(args = None):
         # Display of all the important messages
         stdscr.refresh()
         stdscr.addstr(1 , 5 , 'CAPTURE IMAGES NODE')
-        stdscr.addstr(3, 5, 'Capturing Images: %s                 ' % str(received_frame))
+
+        stdscr.addstr(3, 5, 'Receiving Images: %s                 ' % str(received_frame))
+        stdscr.addstr(4, 5, 'Receiving GPS: %s                    ' % str(received_swift))
+        stdscr.addstr(5, 5, 'Saving Images: %s                    ' % str(saving_images))
 
         rate.sleep()
     

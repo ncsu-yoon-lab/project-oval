@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 # Import necessary ROS2 packages
 import rclpy
