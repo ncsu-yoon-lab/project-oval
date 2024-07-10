@@ -145,7 +145,7 @@ def main(args = None):
             if time.time() - time_since_last_saved > 3:
 
                 now = datetime.datetime.now()
-                timer = now.strftime('%H:%M:%S')
+                timer = now.strftime('%Y-%m-%d-%H:%M:%S')
 
                 # Saves the data and the names of the images to a csv
                 data = [timer, latitude, longitude, heading, spherical_err, horizontal_err, vertical_err, track_err, gps_lat, gps_lon, gps_adjusted_lat, gps_adjusted_lon]
