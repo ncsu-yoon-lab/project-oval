@@ -91,12 +91,16 @@ def gps_adjuster(lat, lon):
 
     # Sets up the point as an np array
     point = np.array([[lat, lon]])
+    try:
+        # Gets the corrected point based off the model
+        corrected_point = model.predict(point)
 
-    # Gets the corrected point based off the model
-    corrected_point = model.predict(point)
 
-    # Returns the corrected point
-    return corrected_point[0]
+        # Returns the corrected point
+        return corrected_point[0]
+
+    except ValueError:
+        return (0.0, 0.0)
 
 
 
