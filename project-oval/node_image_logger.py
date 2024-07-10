@@ -30,7 +30,7 @@ last_frame_time = time.time()
 br = CvBridge() 
 
 # Initializes the booleans to false
-received_frame = saving_images = received_swift = False
+received_frame = received_swift = False
 
 # Path to the directory where the images will be saved
 DIR_PATH = '/home/wolfwagen/oval_ws/src/project-oval/log/captured_images/'
@@ -66,7 +66,7 @@ def image_callback(msg):
     """Callback from the image node from the zed"""
 
     # Calls all of the global variables that will be changed from the message from the zed node
-    global frame, frame_darker, frame_darkest, last_frame_time
+    global frame, frame_darker, frame_darkest, last_frame_time, received_frame
 
     # Gets the frame by converting the message to opencv format using the bridge
     frame = br.imgmsg_to_cv2(msg)
@@ -77,6 +77,9 @@ def image_callback(msg):
 
     # Sets a new last time a frame was taken
     last_frame_time = time.time()
+
+    # Changes received frame to true
+    received_frame = True
 
 def adjust_gamma(image, gamma):
     """Adjusts the brightness of the image input into the function"""
@@ -150,21 +153,21 @@ def main(args = None):
     # Initialize the time since there was a save last
     time_since_last_saved = time.time()
 
+    # Initializes saving images to false
+    saving_images = False
+
     # ROS2 loop while ROS2 is still running and is ok
     while rclpy.ok():
 
         # Checking if there are frames (waiting for ZED node to start publishing)
         if frame is not None:
 
-            # Set the received frames to true
-            received_frame = True
-
             # If the time in-between frames is too long
             if time.time() - last_frame_time > 3:
                 break
 
-            # Checks if it has been enough time to save the next frame as png and that there is a path to the directory
-            if time.time() - time_since_last_saved > 3 and os.path.isdir(DIR_PATH):
+            # Checks if it has been enough time to save the next frame as png and that there is a path to the directory and that GPS data is being received
+            if time.time() - time_since_last_saved > 3 and os.path.isdir(DIR_PATH) and received_swift:
                 
                 # Sets the saving images to True
                 saving_images = True
