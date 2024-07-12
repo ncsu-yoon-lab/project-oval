@@ -71,7 +71,7 @@ def gps_callback(data):
     if not np.isnan(lat) and not np.isnan(lon):
         # Converts the gps data from DDmm.mmmm to dd.dddd
         gps_latitude, gps_longitude = gps_converter(lat), gps_converter(lon)
-
+        gps_longitude = gps_longitude * -1.0
         # Set the gps received to True
         gps_received = True
 
