@@ -37,7 +37,7 @@ FILE = '/home/wolfwagen/oval_ws/src/project-oval/log/position_data_logger.csv'
 FIELD_NAMES = ['timestamp', 'swift_latitude', 'swift_longitude', 'swift_heading', 'swift_horizontal_error', 'swift_vertical_error','swift_track_error','zed_x', 'zed_y', 'zed_yaw', 'gps_latitude', 'gps_longitude', 'ml_latitude', 'ml_longitude']
 
 # Initialize the machine learning model
-model = joblib.load('/home/wolfwagen/oval_ws/src/project-oval/ML/gps_adjuster.pkl')
+model = joblib.load('/home/wolfwagen/oval_ws/src/project-oval/ML/gps_adjuster_combined.pkl')
 
 def swift_callback(msg):
     """Callback for the swift messages"""

@@ -6,21 +6,11 @@ from sklearn.metrics import mean_squared_error
 import joblib
 
 # Load the dataset
-data = pd.read_csv('C:\\Users\\malin\\Documents\\GitHub\\project-oval\\Data\\data_gps_logger_test4.csv')
-
-# Convert the degrees minutes to decimal degrees
-def convert_degrees(point):
-    degrees = np.floor(point / 100)
-    minutes = point - degrees * 100
-    return degrees + minutes / 60
-
-# Receives the gps lat and longs and converts them to degrees
-data['gps_lat'] = data['gps_lat'].apply(convert_degrees)
-data['gps_lon'] = data['gps_lon'].apply(lambda x: -convert_degrees(x))
+data = pd.read_csv('C:\\Users\\malin\\Documents\\GitHub\\project-oval\\ML\\position_data_trainer_combined.csv')
 
 # Prepare the features (input data) and labels (correct points)
-X = data[['gps_lat', 'gps_lon']].values
-y = data[['latitude', 'longitude']].values
+X = data[['gps_latitude_filtered', 'gps_longitude_filtered']].values
+y = data[['swift_latitude_filtered', 'swift_longitude_filtered']].values
 
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -36,4 +26,4 @@ y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 print(f'Mean Squared Error: {mse}')
 
-joblib.dump(model, 'gps_adjuster.pkl')
+joblib.dump(model, 'C:\\Users\\malin\\Documents\\GitHub\\project-oval\\ML\\gps_adjuster_combined.pkl')
