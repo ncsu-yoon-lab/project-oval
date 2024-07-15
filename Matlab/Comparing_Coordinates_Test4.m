@@ -71,12 +71,12 @@ for i = 1:numRows
         hold on;
         
         % Plot the paths up to the current point
-        %plot(rtk_path(:, 1), rtk_path(:, 2), 'r-', 'LineWidth', 1);
+        plot(rtk_path(:, 1), rtk_path(:, 2), 'r-', 'LineWidth', 1);
         plot(gps_path(:, 1), gps_path(:, 2), 'b-', 'LineWidth', 1);
         plot(ml_path(:, 1), ml_path(:, 2), 'g-', 'LineWidth', 1);
 
         % Plot the most recent points with distinct markers
-        %plot(rtk_path(end, 1), rtk_path(end, 2), 'ro', 'MarkerSize', 6, 'MarkerFaceColor', 'r');
+        plot(rtk_path(end, 1), rtk_path(end, 2), 'ro', 'MarkerSize', 6, 'MarkerFaceColor', 'r');
         plot(gps_path(end, 1), gps_path(end, 2), 'bo', 'MarkerSize', 6, 'MarkerFaceColor', 'b');
         plot(ml_path(end, 1), ml_path(end, 2), 'go', 'MarkerSize', 6, 'MarkerFaceColor', 'g');
 
