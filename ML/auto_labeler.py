@@ -1,9 +1,17 @@
 from building_identifier import BuildingIdentifier as BI
 import cv2
 
-def get_building_x():
+building_x = None
+
+def get_building_x(event, x, y, flags, params):
     """Gets the x position of the center of the bounding box of the building"""
-    return 900
+
+    global building_x
+
+    if event == cv2.EVENT_LBUTTONDOWN:
+        building_x = x
+        print(f"Clicked coordinates: x={x}, y={y}")
+
 
 def get_current_pos():
     """Gets the current position and angle of the car at the same moment the photo was taken"""
@@ -23,14 +31,21 @@ def main():
     # Gets the image
     img = cv2.imread("C:\\Users\\malin\\Downloads\\2024-07-11-09_21_01.jpg")
 
-    # Gets the width of the image
-    _, width = img.shape[0:2]
+    # Display the image and set the mouse callback to capture the click event
+    cv2.imshow('image', img)
+    cv2.setMouseCallback('image', get_building_x)
+    
+    # Wait until a key is pressed or a mouse click happens
+    cv2.waitKey(0)
+
+    # Gets the width of the image 
+    width = img.shape[1]
 
     # Finds the center of the image
     center = width / 2
 
     # Gets the x position of the building based on the center x pixel in the image where the building was identified
-    building_x_position = get_building_x() - center
+    building_x_position = building_x - center
 
     # Gets the current latitude and longitude and heading at the same moment of the image
     current_latitude, current_longitude, current_heading = get_current_pos()

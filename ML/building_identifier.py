@@ -130,6 +130,6 @@ class BuildingIdentifier():
             # Changes the temp x and y by a step size in the direction that it is looking
             temp_x = temp_x + STEP_SIZE * math.cos(math.radians(direction))
             temp_y = temp_y + STEP_SIZE * math.sin(math.radians(direction))
-
+    
         # Returns the name of the building or an error if there is a problem
         return building_name
