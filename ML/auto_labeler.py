@@ -10,7 +10,6 @@ def get_building_x(event, x, y, flags, params):
 
     if event == cv2.EVENT_LBUTTONDOWN:
         building_x = x
-        print(f"Clicked coordinates: x={x}, y={y}")
 
 
 def get_current_pos():
@@ -37,6 +36,8 @@ def main():
     
     # Wait until a key is pressed or a mouse click happens
     cv2.waitKey(0)
+
+    print("Looking for building...")
 
     # Gets the width of the image 
     width = img.shape[1]
