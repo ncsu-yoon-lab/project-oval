@@ -26,22 +26,26 @@ class CocoDataset(CocoDetection):
         super(CocoDataset, self).__init__(img_folder, ann_file)
         self.transforms = transforms
 
-    def __getitem__(self, idx):
-        img, target = super(CocoDataset, self).__getitem__(idx)
-
-        # Convert image from PIL to tensor
-        img_path = self.coco.loadImgs(self.ids[idx])[0]['file_name']
-        img_full_path = os.path.join(self.root, img_path)
-
+    def _load_image(self, id):
+        path = self.coco.loadImgs(id)[0]['file_name']
+        full_path = os.path.join(self.root, path)
         try:
-            img = Image.open(img_full_path)
+            img = Image.open(full_path).convert("RGB")
             img.verify()  # Verify the image file
-            img = Image.open(img_full_path).convert("RGB")  # Reopen the image to use it
+            img = Image.open(full_path).convert("RGB")  # Reopen the image to use it
         except (FileNotFoundError, IOError, SyntaxError) as e:
-            print(f"Error opening or verifying image {img_full_path}: {e}")
+            print(f"Error opening or verifying image {full_path}: {e}")
+            return None
+        return img
+
+    def __getitem__(self, idx):
+        id = self.ids[idx]
+        img = self._load_image(id)
+
+        if img is None:
             return self.__getitem__((idx + 1) % len(self))  # Try the next index
-        
-        target = self.coco.loadAnns(self.coco.getAnnIds(imgIds=self.ids[idx]))
+
+        target = self.coco.loadAnns(self.coco.getAnnIds(imgIds=id))
         
         boxes = []
         labels = []
