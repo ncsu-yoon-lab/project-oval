@@ -1,5 +1,7 @@
 images 
 university_annotations
+jimin_model_1.pth
+jimin_model_2.pth
 .env
 Test_2
 university_landmark
