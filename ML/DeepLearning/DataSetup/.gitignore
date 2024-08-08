@@ -16,3 +16,6 @@ model.pt
 model_epoch_10.pth
 test_images_ann
 Test_3
+annotations
+resized_annotations
+lan_lon_model.pt
