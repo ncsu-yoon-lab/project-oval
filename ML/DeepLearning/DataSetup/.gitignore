@@ -14,7 +14,7 @@ model_epoch_9.pth
 model.pt
 model_epoch_10.pth
 lan_lon_model.pt
-
+*.pt
 # Image folders 
 Test_4
 images
