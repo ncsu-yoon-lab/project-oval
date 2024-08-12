@@ -1,0 +1,28 @@
+# Models 
+jimin_model_1.pth
+jimin_model_2.pth
+.env
+model_epoch_1.pth
+model_epoch_2.pth
+model_epoch_3.pth
+model_epoch_4.pth
+model_epoch_5.pth
+model_epoch_6.pth
+model_epoch_7.pth
+model_epoch_8.pth
+model_epoch_9.pth
+model.pt
+model_epoch_10.pth
+lan_lon_model.pt
+
+# Image folders 
+Test_4
+images
+university_annotations
+Test_2
+niversity_landmark
+Test_3
+annotations
+resized_annotations
+test_images
+test_images_ann
