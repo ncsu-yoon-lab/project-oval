@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 import cv2 
 from PIL import Image
 import numpy as np
+import time
 
 class BBoxDetectionRCNN:
     def __init__(self, model_path):
@@ -37,7 +38,13 @@ class BBoxDetectionRCNN:
         # Load the train model
         self.model.load_state_dict(torch.load(self.model_path))
         self.model.eval()
-        
+    
+    def quantize_model(self):
+        """
+        Function that applies quantization to the model
+        """
+        self.model = torch.quantization.quantize_dynamic(self.model, {torch.nn.Linear}, dtype=torch.qint8)
+
     def predict_from_frame(self, frame):
         """
         Function that first creates a pipeline to convert normal nparry -> tensor array. 
@@ -50,7 +57,7 @@ class BBoxDetectionRCNN:
         
         # Make predictions
         with torch.no_grad():
-            predictions = self.mode(frame_tensor)
+            predictions = self.model(frame_tensor)
 
         return predictions 
     
@@ -62,33 +69,39 @@ class BBoxDetectionRCNN:
             return
         
         while True:
+            start = time.time()  # Start time
             ret, frame = cap.read()
             
             if not ret:
                 print("Failed to grab frame")
                 break
-            
+
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             pil_image = Image.fromarray(frame_rgb)
             predictions = self.predict_from_frame(pil_image)
             
             for i, box in enumerate(predictions[0]['boxes']):
-                score = predictions[0]['scores'][i].items()
+                score = predictions[0]['scores'][i]
                 if score > 0.5:
                     x1, y1, x2, y2 = box.int().tolist()
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                     label = f"Class {predictions[0]['labels'][i].item()} | {score:.2f}"
                     cv2.putText(frame, label, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+            end = time.time()  # End time
+            inference_time = end - start  # Time taken for one loop iteration
+            print(f"Inference Time: {inference_time:.4f} seconds")  # Print inference time
             
             cv2.imshow('Object Detection', frame)
             
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break 
             
-            cap.release()
-            cv2.destroyAllWindows()
+        cap.release()
+        cv2.destroyAllWindows()
             
 model_path = "FasterRCNN.pth"
 bbox_detector = BBoxDetectionRCNN(model_path)
 bbox_detector.load_RCNN_model()
+bbox_detector.quantize_model()
 bbox_detector.start_camera()
