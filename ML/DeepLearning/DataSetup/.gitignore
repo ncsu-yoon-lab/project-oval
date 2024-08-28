@@ -14,7 +14,10 @@ model_epoch_9.pth
 model.pt
 model_epoch_10.pth
 lan_lon_model.pt
-
+*.pth
+*.pt
+captured_images_test6
+university_landmark
 # Image folders 
 Test_4
 images
