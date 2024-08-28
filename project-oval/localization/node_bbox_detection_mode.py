@@ -1,7 +1,7 @@
 import torch
 import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
+from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
 import cv2 
@@ -16,10 +16,11 @@ class BBoxDetectionRCNN:
         Args:
             model_path (string): Path to the model 
         """
-        
+        self.backbone = resnet_fpn_backbone('resnet18', pretrained=True)
+
         # Loads the pretrained model RCNN
-        self.model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
-        
+        self.model = torchvision.models.detection.FasterRCNN(self.backbone, num_classes=91)  # Default COCO classes
+
         # Get the number of input features from the classifier
         self.in_feature = self.model.roi_heads.box_predictor.cls_score.in_features
         
