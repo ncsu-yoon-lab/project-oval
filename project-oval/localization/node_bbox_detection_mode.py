@@ -1,10 +1,10 @@
+import cv2 
 import torch
 import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
-import cv2 
 from PIL import Image
 import numpy as np
 import time
@@ -101,8 +101,7 @@ class BBoxDetectionRCNN:
         cap.release()
         cv2.destroyAllWindows()
             
-model_path = "FasterRCNN.pth"
+model_path = "model_resnet18_epoch_6.pth"
 bbox_detector = BBoxDetectionRCNN(model_path)
 bbox_detector.load_RCNN_model()
-bbox_detector.quantize_model()
 bbox_detector.start_camera()

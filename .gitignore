@@ -4,5 +4,6 @@ wolfwagen/stop_sign_detection/stop_sign_model
 .idea/
 *.pth
 *.pt
+log
 captured_images_test6
 university_landmark
