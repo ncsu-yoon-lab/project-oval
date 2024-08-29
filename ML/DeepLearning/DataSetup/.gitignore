@@ -14,7 +14,13 @@ model_epoch_9.pth
 model.pt
 model_epoch_10.pth
 lan_lon_model.pt
+deeplearning
+*.pth
 *.pt
+captured_images_test6
+university_landmark
+*.pt
+main
 # Image folders 
 Test_6
 Test_4
