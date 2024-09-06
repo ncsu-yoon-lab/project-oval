@@ -4,8 +4,9 @@
 import rclpy
 from gps_msgs.msg import GPSFix
 from geometry_msgs.msg import PoseStamped
-from nmea_msgs.msg import Gpgga
+from nmea_msgs.msg import Gpgga, Gprmc
 from rclpy.node import Node
+from sensor_msgs.msg import Image
 
 # Import other necessary packages
 import threading
@@ -15,8 +16,9 @@ import csv
 import curses
 import os
 import math
-import joblib
 import numpy as np
+import cv2 as cv # OpenCV library
+from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
 
 # Intialize the controller of the terminal page
 stdscr = curses.initscr()
@@ -24,56 +26,74 @@ stdscr = curses.initscr()
 # Set the frequency of the ROS2 node
 FREQ = 10
 
+# Used to convert ROS2 frames to OpenCV frames
+br = CvBridge() 
+
 # Initialize the data being collected
-swift_latitude = swift_longitude = swift_heading = zed_x = zed_y = zed_yaw = gps_latitude = gps_longitude = swift_horizontal_error = swift_vertical_error = swift_track_error = None
+swift_latitude = swift_longitude = swift_heading = zed_x = zed_y = zed_yaw = gps_latitude = gps_longitude = frame = None
 
 # Initialize the booleans of receiving the messages
-swift_received = gps_received = zed_received = False
+swift_received = gps_received = zed_received = image_received = False
+
+# Initializes the last time a frame was received
+last_frame_time = time.time()
+
+# Path to the directory where the images will be saved
+DIR_PATH = '/home/wolfwagen/oval_ws/src/project-oval/log/captured_images/'
 
 # Initialize the file where the data will be saved
 FILE = '/home/wolfwagen/oval_ws/src/project-oval/log/position_data_logger.csv'
 
 # Initialize the names of the fields of the data
-FIELD_NAMES = ['timestamp', 'swift_latitude', 'swift_longitude', 'swift_heading', 'swift_horizontal_error', 'swift_vertical_error','swift_track_error','zed_x', 'zed_y', 'zed_yaw', 'gps_latitude', 'gps_longitude', 'ml_latitude', 'ml_longitude']
+FIELD_NAMES = ['timestamp', 'image_name', 'swift_latitude', 'swift_longitude', 'swift_heading', 'zed_x', 'zed_y', 'zed_yaw', 'gps_latitude', 'gps_longitude', 'gps_track']
 
-# Initialize the machine learning model
-model = joblib.load('/home/wolfwagen/oval_ws/src/project-oval/ML/gps_adjuster_combined.pkl')
-
-def swift_callback(msg):
+def swift_callback(data):
     """Callback for the swift messages"""
     
     # Global variables that are set by the callback message
-    global swift_latitude, swift_longitude, swift_heading, swift_received, swift_horizontal_error, swift_vertical_error, swift_track_error
+    global swift_latitude, swift_longitude, swift_heading, swift_received
 
     # Set the data to be saved from the swift node from the message
-    swift_latitude = msg.latitude
-    swift_longitude = msg.longitude
-    swift_heading = msg.track
-    swift_horizontal_error = msg.err_horz
-    swift_vertical_error = msg.err_vert
-    swift_track_error = msg.err_track
+    swift_latitude = data.latitude
+    swift_longitude = data.longitude
+    swift_heading = data.track
 
     # Set the swift received to True
     swift_received = True
+
+def image_callback(data):
+    """Callback for the zed image messages"""
+
+    global frame, last_frame_time, image_received
+
+    frame = br.imgmsg_to_cv2(data)
+
+    # Sets a new last time a frame was taken
+    last_frame_time = time.time()
+
+    # Changes received frame to true
+    image_received = True
 
 def gps_callback(data):
     """Callback for the gps messages"""
 
     # Global variables that are set by the callback messages
-    global gps_latitude, gps_longitude, gps_received
+    global gps_latitude, gps_longitude, gps_received, gps_track
 
     # Set the data to be saved from the gps node from the message
     lat = data.lat
     lon = data.lon
 
     # Checks that the lat and lon are not Nan
-
     if not np.isnan(lat) and not np.isnan(lon):
         # Converts the gps data from DDmm.mmmm to dd.dddd
         gps_latitude, gps_longitude = gps_converter(lat), gps_converter(lon)
         gps_longitude = gps_longitude * -1.0
         # Set the gps received to True
         gps_received = True
+    
+    # Sets the track of the gps
+    gps_track = data.track
 
 def zed_callback(data):
     """Callback for the zed messages"""
@@ -109,18 +129,6 @@ def gps_converter(point):
     # Returns the converted coordinate
     return degrees + minutes / 60
 
-def gps_adjuster(lat, lon):
-    """Uses the ML model to predict a more accurate GPS location"""
-    
-    # Sets the gps raw latitude and longitude data as an np array
-    point = np.array([[lat, lon]])
-
-    # Predicts the latitude and longitude from the model
-    corrected_point = model.predict(point)
-
-    # Returns the corrected latitude and longitude
-    return corrected_point[0][0], corrected_point[0][1]
-
 def log_data(data):
     """Logs the data from this node to be saved and analyzed after collecting the data"""
 
@@ -136,10 +144,7 @@ def log_data(data):
         FIELD_NAMES[7]: data[7],
         FIELD_NAMES[8]: data[8],
         FIELD_NAMES[9]: data[9],
-        FIELD_NAMES[10]: data[10],
-        FIELD_NAMES[11]: data[11],
-        FIELD_NAMES[12]: data[12],
-        FIELD_NAMES[13]: data[13]
+        FIELD_NAMES[10]: data[10]
     }
 
     # Checks if the file exists already
@@ -169,8 +174,9 @@ def main():
 
     # Subscribes to the swift GNSS, gps, and zed and they all go back to their callbacks
     swift_sub = logger_node.create_subscription(GPSFix, '/gpsfix', swift_callback, 1)
-    gps_sub = logger_node.create_subscription(Gpgga, '/gps/gpgga', gps_callback, 1)
+    gps_sub = logger_node.create_subscription(Gprmc, '/gps/gprmc', gps_callback, 1)
     zed_sub = logger_node.create_subscription(PoseStamped, '/zed/zed_node/pose', zed_callback, 1)
+    img_sub = logger_node.create_subscription(Image, '/zed/zed_node/left/image_rect_color', image_callback, 1)
 
     # Threads the node so it spins and constantly receives new messages
     thread = threading.Thread(target=rclpy.spin, args=(logger_node,), daemon=True)
@@ -189,19 +195,22 @@ def main():
     while rclpy.ok():
         
         # Checks if the swift, gps, and zed messages have all been received and that it has been more than time between logs to log again
-        if swift_received and gps_received and zed_received and time.time() - time_last_logged > time_between_logs:
-            
+        if os.path.isdir(DIR_PATH) and swift_received and image_received and gps_received and zed_received and time.time() - time_last_logged > time_between_logs:
+
             # Reset time last logged
             time_last_logged = time.time()
 
             # Get the timestamp
             timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
 
-            # Gets the output of the ml model for the latitude and longitude
-            ml_latitude, ml_longitude = gps_adjuster(gps_latitude, gps_longitude)
+            # Set the name of the image
+            image_name = timestamp + ".jpg"
+
+            # Saves the image to the path
+            cv.imwrite(DIR_PATH + image_name, frame)
 
             # Format the data to be saved
-            data = [timestamp, swift_latitude, swift_longitude, swift_heading, swift_horizontal_error, swift_vertical_error, swift_track_error, zed_x, zed_y, zed_yaw, gps_latitude, gps_longitude, ml_latitude, ml_longitude]
+            data = [timestamp, image_name, swift_latitude, swift_longitude, swift_heading, zed_x, zed_y, zed_yaw, gps_latitude, gps_longitude, gps_track]
 
             # Log the data
             log_data(data)
@@ -213,6 +222,7 @@ def main():
         stdscr.addstr(3, 5, 'Received Swift Data : %s		        ' % str(swift_received))
         stdscr.addstr(4, 5, 'Received GPS Data : %s		        ' % str(gps_received))
         stdscr.addstr(5, 5, 'Received ZED Data : %s		        ' % str(zed_received))
+        stdscr.addstr(6, 5, 'Received Image Data : %s               ' % str(image_received))
 
         # Sleeps at the created rate between updating messages
         rate.sleep()
