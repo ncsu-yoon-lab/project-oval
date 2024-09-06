@@ -3,3 +3,5 @@ wolfwagen/stop_sign_detection/stop_sign_model
 .vscode/
 .idea/
 log
+test_5
+found_images.csv
