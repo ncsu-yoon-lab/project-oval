@@ -5,3 +5,4 @@ wolfwagen/stop_sign_detection/stop_sign_model
 log
 test_5
 found_images.csv
+test_5_found_image/
