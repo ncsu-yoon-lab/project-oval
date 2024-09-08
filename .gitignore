@@ -6,3 +6,11 @@ log
 test_5
 found_images.csv
 test_5_found_image/
+data.yaml
+test/
+train/
+valid/
+README.dataset.txt
+README.roboflow.txt
+
+
