@@ -53,6 +53,37 @@ class LatLonModelLSTM(nn.Module):
         
         return x
 
+class CompassModelLSTM(nn.Module):
+    def __init__(self):
+        super(CompassModelLSTM, self).__init__()
+        
+        self.lstm = nn.LSTM(input_size=75, hidden_size=256, num_layers=2, batch_first=True, bidirectional=True, dropout=0.2)
+        
+        self.fc1 = nn.Linear(512, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 1)
+        
+        self.bn1 = nn.BatchNorm1d(256)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.dropout = nn.Dropout(p=0.3)
+
+    def forward(self, x):
+        x = x.unsqueeze(1)
+        lstm_out, _ = self.lstm(x)
+        x = lstm_out[:, -1, :]
+        
+        
+        x = F.leaky_relu(self.bn1(self.fc1(x)))
+        
+        
+        x = F.leaky_relu(self.bn2(self.fc2(x)))
+        x = self.dropout(x)
+        x = F.leaky_relu(self.fc3(x))
+        x = self.fc4(x)
+        return x
+
+
 class LatLonModelFFNN(nn.Module):
     def __init__(self):
         super(LatLonModelFFNN, self).__init__()
