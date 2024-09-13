@@ -1,4 +1,5 @@
 import cv2
+import csv
 import numpy as np
 from ultralytics import YOLO
 import time
@@ -87,15 +88,30 @@ class CompassModelLSTM(nn.Module):
 class LatLonModelFFNN(nn.Module):
     def __init__(self):
         super(LatLonModelFFNN, self).__init__()
-        self.fc1 = nn.Linear(72, 40)
-        self.bn1 = nn.BatchNorm1d(40)
-        self.fc2 = nn.Linear(40, 2)
+        self.fc1 = nn.Linear(72, 256)
+        self.bn1 = nn.BatchNorm1d(256)
+
+        self.fc2 = nn.Linear(256, 128)
+        self.bn2 = nn.BatchNorm1d(128)
+
+        self.fc3 = nn.Linear(128, 64)
+        self.bn3 = nn.BatchNorm1d(64)
+
+        self.fc4 = nn.Linear(64, 32)
+        self.bn4 = nn.BatchNorm1d(32)
+
+        self.fc5 = nn.Linear(32, 2)
+
         self.dropout = nn.Dropout(p=0.3)
 
     def forward(self, x):
         x = F.leaky_relu(self.bn1(self.fc1(x)))
         x = self.dropout(x)
         x = self.fc2(x)
+        x = self.fc3(x)
+        x = self.fc4(x)
+        x = self.fc5(x)
+
         return x
 
 class LatLonPrediction:
@@ -284,6 +300,58 @@ class YOLOModel:
         print(f"On Average it took {sum(processing_times) / len(processing_times)} seconds")
         print(processing_times)
 
+    def predict_record_inferences_for_images_in_folder(self, folder_path, output_csv):
+        processing_times=[]
+
+        with open(output_csv, mode="w", newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Image Name", "Processing Time"])
+
+            # Iterarte over all files 
+            for filename in os.listdir(folder_path):
+                print(f"Filename is {filename}")
+                if filename.endswith(('.jpg')):
+                    image_path = os.path.join(folder_path, filename)
+                    image = cv2.imread(image_path)
+
+                    if image is None:
+                        print(f"IMage not found {image}")
+                        continue
+                        
+                    start_time = time.time()
+
+                    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    predictions = self.predict_from_frame(image_rgb)
+
+                    for result in predictions:
+                        boxes = result.boxes.xyxy
+                        confidences = result.boxes.conf
+                        class_ids = result.boxes.cls
+
+                        for box, confidence, class_id in zip(boxes, confidences, class_ids):
+                            x_min, y_min, x_max, y_max = map(int, box)
+                            label = self.CUSTOM_CLASS_NAMES[int(class_id)]
+                            score = float(confidence)
+                            text = f'{label}: {score:.2f}'
+                            cv2.rectangle(image_rgb, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+                            cv2.putText(image_rgb, text, (x_min, y_min - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+
+                            # Predicting the lat lon model
+                            bbox_tensor = self.create_bbox_tensor(box, class_id)
+                            predicted_lat_lon = self.predict_lat_lon(bbox_tensor)
+                            
+                            print(f"Predicted Lat/Lon: {predicted_lat_lon}")
+
+                    end_time = time.time()
+                    time_taken = end_time - start_time 
+
+                    processing_times.append(time_taken)
+
+                    writer.writerow([filename, time_taken])
+            print("Processing times for each image (seconds):")
+            print(f"Number of images processed: {len(processing_times)}")
+            print(f"Average processing time: {sum(processing_times) / len(processing_times)} seconds")
+
     def predict_lat_lon(self, bbox_tensor):
         self.lat_lon_model.eval()
         with torch.no_grad():
@@ -312,14 +380,17 @@ class BBoxDetectionRCNN:
         
         self.model_path = model_path
         self.lat_lon_model = lat_lon_model
-
-
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Move the model to the device
+        self.model.to(self.device)
+        self.CUSTOM_CLASS_NAMES = ["sign", "FW", "HUNT", "OVAL", "engineering-building", "security-station", "sign", "street-lamp", "trashcan"]
+        
     def load_RCNN_model(self): 
         """
         Function that loads the Trained Model that is used to identify 9 different classes
         """
         
-        # Load the train model
+        # Load the train model  
         self.model.load_state_dict(torch.load(self.model_path))
         self.model.eval()
     
@@ -329,22 +400,31 @@ class BBoxDetectionRCNN:
         """
         self.model = torch.quantization.quantize_dynamic(self.model, {torch.nn.Linear}, dtype=torch.qint8)
 
-    def predict_from_frame(self, frame):
-        """
-        Function that first creates a pipeline to convert normal nparry -> tensor array. 
-        Then makes prediction using the model 
-        """
-        self.model.eval()
-        # Need to first transform the frame to tensor data structure 
-        transform = transforms.Compose([transforms.ToTensor()]) # This line creates a pipeline to convert to tensor data structure
-        frame_tensor = transform(frame).unsqueeze(0) # Adds extra dimensional, since the model expects a batch of images shape [1, C, H, W]
-        
-        # Make predictions
-        with torch.no_grad():
-            predictions = self.model(frame_tensor)
-
-        return predictions 
     
+    
+    def create_bbox_tensor(self, box, class_id):
+        """
+        Converts a bounding box and class ID into a tensor.
+        box: A list or array of [x_min, y_min, x_max, y_max].
+        class_id: An integer representing the class of the object.
+        
+        Returns:
+            bbox_tensor: A tensor containing the normalized bounding box and class ID.
+        """
+        # Extract bounding box coordinates
+        x_min, y_min, x_max, y_max = box
+        
+        # Optionally normalize the bounding box coordinates (if needed)
+        # For simplicity, we'll just convert the coordinates without normalization
+        bbox_data = [x_min, y_min, x_max, y_max, class_id]
+
+        # Ensure the tensor is of shape (1, 72)
+        bbox_tensor = torch.zeros((1, 72), dtype=torch.float32).to(self.device)
+        bbox_tensor[0, :len(bbox_data)] = torch.tensor(bbox_data, dtype=torch.float32)
+        
+        return bbox_tensor
+
+
     def start_camera(self):
         cap = cv2.VideoCapture(0)
         if not cap.isOpened():
@@ -428,24 +508,162 @@ class BBoxDetectionRCNN:
     
     def predict_lat_lon(self, bbox_tensor):
         self.lat_lon_model.eval()
-        with torch.no_grad():
-            lat_lon = self.lat_lon_model(bbox_tensor)
-        return lat_lon.squeeze().numpy()
+        bbox_tensor = bbox_tensor.to(self.device)
+    
+        # Make sure the lat_lon_model is on the same device
+        self.lat_lon_model = self.lat_lon_model.to(self.device)
+        
+        # Make the prediction
+        lat_lon = self.lat_lon_model(bbox_tensor)
+    
+        return lat_lon
 
-model_path = "best.pt"
+    def predict_from_frame(self, frame):
+        """
+        Function that first creates a pipeline to convert normal nparry -> tensor array. 
+        Then makes prediction using the model 
+        """
+        self.model.eval()
+
+        # Convert the frame (NumPy array) to a PyTorch tensor
+        # First convert it from HWC format (Height, Width, Channels) to CHW (Channels, Height, Width)
+        frame_tensor = torch.tensor(frame).permute(2, 0, 1).float()
+
+        frame_tensor = frame_tensor / 255.0
+
+        # Add batch dimension (B, C, H, W)
+        frame_tensor = frame_tensor.unsqueeze(0)
+
+        # Move the tensor to the device (CPU or GPU) the model is on
+        frame_tensor = frame_tensor.to(self.device)
+
+        # Perform prediction
+        with torch.no_grad():
+            predictions = self.model(frame_tensor)
+
+        print(f"Predictions: {predictions}")
+        return predictions
+
+    def predict_record_inferences_for_images_in_folder(self, folder_path, output_csv):
+        # List to store the time taken for each image processing
+        processing_times = []
+
+        # Open CSV file for writing
+        with open(output_csv, mode='w', newline='') as file:
+            print("Opening CSV file")
+            writer = csv.writer(file)
+            writer.writerow(['Image Name', 'Processing Time (s)'])
+
+            # Iterate over all files in the folder
+            for filename in os.listdir(folder_path):
+                print(f"Filename is {filename}")
+                if filename.endswith(('.png', '.jpg', '.jpeg')):  # Ensure it's an image file
+                    image_path = os.path.join(folder_path, filename)
+                    print(f"The image path is {image_path}")
+                    image = cv2.imread(image_path)
+                    if image is None:
+                        print(f"Failed to load image: {filename}")
+                        continue
+
+                    # Start the timer for this image
+                    start_time = time.time()
+
+                    # Convert image to RGB
+                    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    predictions = self.predict_from_frame(image_rgb)
+
+                    # Process predictions (bounding boxes, etc.)
+                    bbox_data = self.extract_bbox_data(predictions)
+                    
+                    # Ensure bbox_data is padded to 72 values (9 classes * 2 boxes * 4 coordinates)
+                    bbox_tensor = torch.tensor(bbox_data).unsqueeze(0).to(self.device)
+
+                    # Predict lat/lon using the bbox_tensor
+                    lat_lon = self.predict_lat_lon(bbox_tensor)
+                    print(f"Lat/Lon prediction: {lat_lon}")
+
+                    # End the timer for this image
+                    end_time = time.time()
+                    time_taken = end_time - start_time
+                    processing_times.append(time_taken)
+
+                    # Write to CSV
+                    writer.writerow([filename, time_taken])
+
+        # Print out the list of times taken to process each image
+        print("Processing times for each image (seconds):")
+        print(f"Number of images processed: {len(processing_times)}")
+        print(f"Average processing time: {sum(processing_times) / len(processing_times)} seconds")
+        print(processing_times)
+
+    # Method to extract and format bounding box data for lat/lon prediction
+    def extract_bbox_data(self, predictions, threshold=0.5):
+        bbox_data = []
+        label_counts = {}
+
+        # Iterate over predictions (bounding boxes, scores, and labels)
+        for score, label, box in zip(predictions[0]['scores'], predictions[0]['labels'], predictions[0]['boxes']):
+            if score >= threshold:
+                if label not in label_counts:
+                    label_counts[label] = 0
+                if label_counts[label] < 2:  # Limit to 2 boxes per class
+                    xmin, ymin, xmax, ymax = box.cpu().numpy()
+                    width = xmax - xmin
+                    height = ymax - ymin
+
+                    # Append bounding box data (xmin, ymin, width, height)
+                    bbox_data.extend([xmin, ymin, width, height])
+                    label_counts[label] += 1
+
+        # Pad bbox_data with zeros if there are fewer than 2 boxes per class
+        for label in range(1, 10):  # Assuming labels 1 to 9
+            if label not in label_counts:
+                label_counts[label] = 0
+            while label_counts[label] < 2:  # Pad with zeros if less than 2 boxes
+                bbox_data.extend([0.0, 0.0, 0.0, 0.0])
+                label_counts[label] += 1
+
+        return bbox_data   
+
+model_path = "models/best.pt"
 lat_lon_path = "lat_lon_model_gps.pt"
 test_image_path = "test_img.jpg"
-RCNN_model_path = "model_resnet18_epoch_6.pth"
-FFNN_model_path = "ffnn_location_no_shortened_digits.pt"
+RCNN_model_path = "models/faster_rcnn.pth"
+FFNN_model_path = "models/RCNN_FFNN_simplified_shallow.pt"
+test_image_path = "test_7/captured_images_test7"
+
+RCNN_FFNN_Normal_Shallow = "models/RCNN_FFNN_normal_shallow.pt"
+RCNN_FFNN_Normal_Shallow_MODEL_CSV_PATH = "test_inferences/RCNN_FFNN_Normal_Shallow.csv"
+# YOLO_FFNN_Normal_Shallow_MODEL = "models/YOLO_FFNN_normal_shallow.pt"
+# YOLO_FFNN_Normal_Shallow_MODEL_CSV_PATH = "test_inferences/YOLO_FFNN_normal_shallow.csv"
+# YOLO_FFNN_simplified_shallow_MODEL = "models/YOLO_FFNN_simplified_shallow.pt"
+# YOLO_FFNN_simplified_shallow_MODEL_CSV_PATH = "test_inferences/YOLO_FFNN_Simplified_Shallow.csv"
+# YOLO_LSTM_normal_shallow_MODEL = "models/YOLO_LSTM_normal_shallow.pt"
+# YOLO_LSTM_normal_shallow_MODEL_CSV_PATH = "test_inferences/YOLO_LSTM_normal_shallow.csv"
+# YOLO_LSTM_simplified_shallow_MODEL = "models/YOLO_LSTM_simplified_shallow.pt"
+# YOLO_LSTM_simplified_shallow_MODEL_CSV_PATH = "test_inferences/YOLO_LSTM_Simplified_Shallow.csv"
+# RCNN_FFNN_Simplified_Shallow = "test_inferences/RCNN_FFNN_Simplified_Shallow.csv"
+# RCNN_LSTM_NORMAL_SHALLOW_MODEL_PATH = "models/RCNN_LSTM_normal_shallow.pt"
+# RCNN_LSTM_NORMAL_CSV_PATH = "test_inferences/RCNN_LSTM_Normal_Shallow.csv"
+# RCNN_LSTM_SIMPLIFIED_SHALLOW_PATH = "models/RCNN_LSTM_simplified_shallow.pt"
+# RCNN_LSTM_SIMPLIFIED_CSV_PATH = "test_inferences/RCNN_LSTM_Simplified_shallow.csv"
 
 # Loading the lat and lon model
 lat_lon_model = LatLonModelFFNN()
-lat_lon_model.load_state_dict(torch.load(FFNN_model_path))
+lat_lon_model.load_state_dict(torch.load(RCNN_FFNN_Normal_Shallow))
+
+# Loading the lat and lon model for LSTM 
+# lat_lon_model = LatLonModelLSTM()
+# lat_lon_model.load_state_dict(torch.load(YOLO_FFNN_simplified_shallow_MODEL))
 
 # Loading the yolo model
 # bbox_detector = YOLOModel(model_path, lat_lon_model)
 # bbox_detector.start_camera()
+# bbox_detector.predict_record_inferences_for_images_in_folder(test_image_path, RCNN_FFNN_Normal_Shallow_MODEL_CSV_PATH)
+
 
 ## For RCNN model
+
 rcnn = BBoxDetectionRCNN(RCNN_model_path, lat_lon_model)
-rcnn.start_camera()
+rcnn.predict_record_inferences_for_images_in_folder(test_image_path, RCNN_FFNN_Normal_Shallow_MODEL_CSV_PATH)
+# rcnn.start_camera()
