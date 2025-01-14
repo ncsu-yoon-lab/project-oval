@@ -6,7 +6,7 @@ from std_msgs.msg import Int64, Bool
 import threading
 import curses
 
-stdscr = curses.initscr()
+# stdscr = curses.initscr()
 
 # Throttle should be bounded between [-10, +4]
 MAX_MANUAL_THROTTLE_FORWARD = 20
@@ -26,6 +26,7 @@ def joy_callback(data):
 	# Input for throttle and steering are between [-1.0, 1.0]
 	throttle_input = data.axes[1]
 	steering_input = data.axes[2]
+	print(steering_input)
 
 	# Convert this to [-20, +20] for throttle and [-100, 100] for steering
 	throttle = int(100 * throttle_input)
@@ -75,11 +76,11 @@ def main(args=None):
 				send_data.data = False
 				manual_mode_pub.publish(send_data)
 			
-			stdscr.refresh()
-			stdscr.addstr(1, 25, 'Xbox Controller       ')
-			stdscr.addstr(2, 25, 'Throttle: %.2f  ' % throttle)
-			stdscr.addstr(3, 25, 'Steering: %.2f  ' % steering)
-			stdscr.addstr(4, 25, 'Manual: %s  ' % str(manual))
+			# stdscr.refresh()
+			# stdscr.addstr(1, 25, 'Xbox Controller       ')
+			# stdscr.addstr(2, 25, 'Throttle: %.2f  ' % throttle)
+			# stdscr.addstr(3, 25, 'Steering: %.2f  ' % steering)
+			# stdscr.addstr(4, 25, 'Manual: %s  ' % str(manual))
 			rate.sleep()
 		except KeyboardInterrupt:
 			curses.endwin()
