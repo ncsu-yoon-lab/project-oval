@@ -2,10 +2,10 @@
 
 // Define the PPM pin
 #define OUTPUT_PIN 10
+#define OUTPUT_PIN 11
 #define CHANNEL_COUNT 1  // Single channel for VESC
 #define BAUD_RATE 115200
 #define TEST_LED_PIN 7
-
 // Define throttle limits (in microseconds)
 #define MIN_THROTTLE 1500  // 1ms pulse
 #define CENTER_THROTTLE 2000  // 1.5ms pulse
@@ -19,11 +19,9 @@ int targetThrottle = CENTER_THROTTLE;
 unsigned long lastUpdateTime = 0;
 const int updateInterval = 100;  // Send updates every 100ms
 
-extern PPMEncoder ppmEncoder;
-
 void setup() {
   // Initialize PPM output
-  ppmEncoder1.begin(OUTPUT_PIN);
+  ppmEncoder.begin(OUTPUT_PIN);
   
   // Initialize serial communication
   Serial.begin(BAUD_RATE);
