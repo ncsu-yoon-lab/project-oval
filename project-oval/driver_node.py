@@ -13,9 +13,9 @@ throttle = 0
 steer = 0
 manual_mode = True
 
-PWM_MAX = 2000
-PWM_CENTER = 1500
-PWM_MIN = 1000
+PWM_MAX = 2500
+PWM_CENTER = 2000
+PWM_MIN = 1500
 
 INPUT_MAX = 100
 INPUT_CENTER = 0
