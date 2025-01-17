@@ -42,15 +42,6 @@ void handleSerialCommands() {
       Serial.print("MODE_CHANGED,");
       Serial.println(mode);
     }
-    else if (command.startsWith("THROTTLE")) {
-      // THROTTLE,1500 for setting specific throttle value
-      int throttle = command.substring(9).toInt();
-      if (throttle >= MIN_THROTTLE && throttle <= MAX_THROTTLE) {
-        targetThrottle = throttle;
-        Serial.print("THROTTLE_SET,");
-        Serial.println(throttle);
-      }
-    }
   }
 }
 
@@ -63,28 +54,6 @@ void sendUpdate(int currentThrottle) {
     Serial.println(currentThrottle);
     lastUpdateTime = millis();
   }
-}
-
-void autoSweepMode() {
-  static int currentThrottle = CENTER_THROTTLE;
-  static int direction = 1;  // 1 for increasing, -1 for decreasing
-  
-  // Update throttle
-  currentThrottle += (STEP_SIZE * direction);
-  
-  // Check limits and change direction
-  if (currentThrottle >= MAX_THROTTLE) {
-    currentThrottle = MAX_THROTTLE;
-    direction = -1;
-  } else if (currentThrottle <= CENTER_THROTTLE) {
-    currentThrottle = CENTER_THROTTLE;
-    direction = 1;
-    delay(1000);  // Pause at neutral
-  }
-  
-  ppmEncoder.setChannel(0, currentThrottle);
-  sendUpdate(currentThrottle);
-  delay(STEP_DELAY);
 }
 
 void manualMode() {
@@ -106,10 +75,6 @@ void loop() {
   // Check for commands from Pi
   handleSerialCommands();
   
-  // Run appropriate mode
-  if (currentMode == MODE_AUTO) {
-    autoSweepMode();
-  } else {
-    manualMode();
-  }
+  manualMode();
+  
 }
