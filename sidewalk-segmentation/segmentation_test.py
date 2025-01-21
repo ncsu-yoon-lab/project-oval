@@ -15,7 +15,7 @@ class SegmentationTester:
         
         # Initialize your model architecture here
         # This is a placeholder - replace with your actual model architecture
-        self.model = AutoModelForSemanticSegmentation.from_config("./sidewalk_segmentation_model/config.json")  # You'll need to define this
+        self.model = AutoModelForSemanticSegmentation.from_pretrained("./sidewalk_segmentation_model")  
         self.model.load_state_dict(self.model_state)
         self.model.to(self.device)
         self.model.eval()
@@ -56,20 +56,32 @@ class SegmentationTester:
         """Run segmentation on a test image and visualize results."""
         # Preprocess image
         input_batch, original_image = self.preprocess_image(image_path)
-        
-        # Run inference
-        output = self.model(input_batch)
-        
-        # Post-process the output
-        # Modify this based on your model's output format
-        segmentation_mask = output.squeeze(0).cpu().numpy()
+
+        # Check if input_batch is a dictionary (Hugging Face standard)
+        if isinstance(input_batch, dict):
+            pixel_values = input_batch["pixel_values"]
+        else:
+            pixel_values = input_batch  # If it's already a tensor
+
+        # Perform inference
+        output = self.model(pixel_values=pixel_values)
+
+        # Access logits (raw model output)
+        logits = output.logits  # Shape: [batch_size, num_classes, height, width]
+
+        # Remove the batch dimension
+        segmentation_mask = logits.squeeze(0).cpu().numpy()  # Shape: [num_classes, height, width]
+
+        # If multi-class segmentation, get the most likely class per pixel
         if len(segmentation_mask.shape) > 2:
-            segmentation_mask = np.argmax(segmentation_mask, axis=0)
-        
+            segmentation_mask = np.argmax(segmentation_mask, axis=0)  # Shape: [height, width]
+
         # Visualize results
         self.visualize_results(original_image, segmentation_mask)
-        
+
         return segmentation_mask
+
+
 
 def main():
     # Example usage
