@@ -1,0 +1,90 @@
+import torch
+import safetensors
+from safetensors.torch import load_file
+from PIL import Image
+import torchvision.transforms as transforms
+import numpy as np
+import matplotlib.pyplot as plt
+from transformers import AutoModelForSemanticSegmentation
+
+class SegmentationTester:
+    def __init__(self, model_path):
+        # Load the model from safetensors file
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model_state = load_file(model_path)
+        
+        # Initialize your model architecture here
+        # This is a placeholder - replace with your actual model architecture
+        self.model = AutoModelForSemanticSegmentation.from_config("./sidewalk_segmentation_model/config.json")  # You'll need to define this
+        self.model.load_state_dict(self.model_state)
+        self.model.to(self.device)
+        self.model.eval()
+        
+        # Define image transforms
+        self.transform = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                              std=[0.229, 0.224, 0.225])
+        ])
+
+    def preprocess_image(self, image_path):
+        """Load and preprocess the input image."""
+        image = Image.open(image_path).convert('RGB')
+        input_tensor = self.transform(image)
+        input_batch = input_tensor.unsqueeze(0).to(self.device)
+        return input_batch, image
+
+    def visualize_results(self, original_image, segmentation_mask):
+        """Visualize the segmentation results."""
+        plt.figure(figsize=(12, 4))
+        
+        plt.subplot(1, 2, 1)
+        plt.imshow(original_image)
+        plt.title('Original Image')
+        plt.axis('off')
+        
+        plt.subplot(1, 2, 2)
+        plt.imshow(segmentation_mask, cmap='viridis')
+        plt.title('Segmentation Mask')
+        plt.axis('off')
+        
+        plt.show()
+
+    @torch.no_grad()
+    def test_image(self, image_path):
+        """Run segmentation on a test image and visualize results."""
+        # Preprocess image
+        input_batch, original_image = self.preprocess_image(image_path)
+        
+        # Run inference
+        output = self.model(input_batch)
+        
+        # Post-process the output
+        # Modify this based on your model's output format
+        segmentation_mask = output.squeeze(0).cpu().numpy()
+        if len(segmentation_mask.shape) > 2:
+            segmentation_mask = np.argmax(segmentation_mask, axis=0)
+        
+        # Visualize results
+        self.visualize_results(original_image, segmentation_mask)
+        
+        return segmentation_mask
+
+def main():
+    # Example usage
+    model_path = "./sidewalk_segmentation_model/model.safetensors"
+    test_image_path = "test_image.jpg"
+    
+    # Initialize tester
+    tester = SegmentationTester(model_path)
+    
+    # Run test
+    segmentation_mask = tester.test_image(test_image_path)
+    
+    print("Segmentation complete!")
+    print(f"Mask shape: {segmentation_mask.shape}")
+    print(f"Unique classes found: {np.unique(segmentation_mask)}")
+
+if __name__ == "__main__":
+    main()
