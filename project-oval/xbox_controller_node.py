@@ -48,8 +48,8 @@ def main(args=None):
 	# Subscription to joy topic - gets info from controller
 	joy_sub = node.create_subscription(Joy, "joy", joy_callback, 5)
 	# Publishers to manual throttle and steering - publishes bounded number pre-PWM
-	manual_throttle_pub = node.create_publisher(Int64, "/xbox_controller/throttle", 10)
-	manual_steering_pub = node.create_publisher(Int64, "/xbox_controller/steer", 10)
+	manual_throttle_pub = node.create_publisher(Int64, "manual_throttle", 10)
+	manual_steering_pub = node.create_publisher(Int64, "manual_steer", 10)
 	mode_pub = node.create_publisher(Bool, "/xbox_controller/mode", 10)
 
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
