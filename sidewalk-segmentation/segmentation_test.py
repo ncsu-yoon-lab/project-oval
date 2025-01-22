@@ -79,6 +79,8 @@ class SegmentationTester:
         # Visualize results
         self.visualize_results(original_image, segmentation_mask)
 
+        np.savetxt('output.txt', segmentation_mask, fmt='%d')
+
         return segmentation_mask
 
 
