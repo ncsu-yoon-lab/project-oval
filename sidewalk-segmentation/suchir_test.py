@@ -1,14 +1,14 @@
-#!/usr/bin/env python
-import rclpy
-from rclpy.node import Node
-from sensor_msgs.msg import Image
+# #!/usr/bin/env python
+# import rclpy
+# from rclpy.node import Node
+# from sensor_msgs.msg import Image
 import cv2
-from cv_bridge import CvBridge
+# from cv_bridge import CvBridge
 import threading
 import time
 import math
 import numpy as np
-from std_msgs.msg import Int64
+# from std_msgs.msg import Int64
 
 #Default: stereo image (from both L and R lenses)
 IMAGE_TOPIC = "/zed/zed_node/stereo/image_rect_color"
@@ -24,22 +24,28 @@ FIXED_THROTTLE = 4
 lower_yellow_threshold = np.array([0, 200, 200], dtype= "uint8")
 upper_yellow_threshold = np.array([150, 255, 255], dtype= "uint8")
 
-br = CvBridge()
+# br = CvBridge()
 image = None
-def camera_callback(data):
-    global image
-    image = br.imgmsg_to_cv2(data)
-    image = image[:,:,:3]
+# def camera_callback(data):
+#     global image
+#     image = br.imgmsg_to_cv2(data)
+#     image = image[:,:,:3]
 
 
 def process_image(img):
+
+    print(img.shape)
     height, width = img.shape
-    img[img > 1] = 30
+    img[img > 1] = 9
+    img[img < 1] = 1
+
     print(img.shape)
 
+    np.savetxt('output2.txt', img, fmt='%d')
 
-    processed_img(img)
-    
+    processed_img = cv2.convertScaleAbs(img)
+
+
     # Line detection
     edges = cv2.Canny(processed_img, 250, 400)
     edges_copy = np.copy(edges)
@@ -137,52 +143,52 @@ def process_image(img):
     # Positive value == car is too far right, negative too far left
     return car_center - lane_center
 
-def main():
+# def main():
 
-    rclpy.init()
-    node = rclpy.create_node('lane_follower')
-    node.create_subscription(Image, IMAGE_TOPIC, camera_callback, 10)
+#     rclpy.init()
+#     node = rclpy.create_node('lane_follower')
+#     node.create_subscription(Image, IMAGE_TOPIC, camera_callback, 10)
     
-    cv_steering_pub = node.create_publisher(Int64, "cv_steer", 10)
-    cv_throttle_pub = node.create_publisher(Int64, "cv_throttle", 10)
+#     cv_steering_pub = node.create_publisher(Int64, "cv_steer", 10)
+#     cv_throttle_pub = node.create_publisher(Int64, "cv_throttle", 10)
 
-    thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
-    thread.start()
+#     thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
+#     thread.start()
 
-    FREQ = 10
-    rate = node.create_rate(FREQ, node.get_clock())
+#     FREQ = 10
+#     rate = node.create_rate(FREQ, node.get_clock())
     
-    while rclpy.ok() and image is None:
-        print("Not receiving image topic")
-        rate.sleep()
+#     while rclpy.ok() and image is None:
+#         print("Not receiving image topic")
+#         rate.sleep()
 
-    cte = 0
-    curr_time = time.time()
-    integrated_error = 0 
+#     cte = 0
+#     curr_time = time.time()
+#     integrated_error = 0 
 
-    while rclpy.ok():
-        # Process one image. The return value will be use for `something` later.
-        old_cte = cte
-        old_time = curr_time
-        cte = process_image(image)
-        curr_time = time.time()
-        integrated_error += (curr_time - old_time) * cte
-        response = -1 * Kp * cte - Kd * (cte - old_cte)/(curr_time - old_time) - Ki * integrated_error
+#     while rclpy.ok():
+#         # Process one image. The return value will be use for `something` later.
+#         old_cte = cte
+#         old_time = curr_time
+#         cte = process_image(image)
+#         curr_time = time.time()
+#         integrated_error += (curr_time - old_time) * cte
+#         response = -1 * Kp * cte - Kd * (cte - old_cte)/(curr_time - old_time) - Ki * integrated_error
         
-        published_response = Int64()
-        published_response.data = int(response)
+#         published_response = Int64()
+#         published_response.data = int(response)
 
-        print("PID response: " + str(published_response.data))
-        cv_steering_pub.publish(published_response)
+#         print("PID response: " + str(published_response.data))
+#         cv_steering_pub.publish(published_response)
 
-        cv_throttle_val = Int64()
-        cv_throttle_val.data = int(FIXED_THROTTLE)
-        cv_throttle_pub.publish(cv_throttle_val)
+#         cv_throttle_val = Int64()
+#         cv_throttle_val.data = int(FIXED_THROTTLE)
+#         cv_throttle_pub.publish(cv_throttle_val)
 
-        rate.sleep()
+#         rate.sleep()
 
-    node.destroy_node()
-    rclpy.shutdown()
+#     node.destroy_node()
+#     rclpy.shutdown()
 
-if __name__ == '__main__':
-    main()
+# # if __name__ == '__main__':
+# #     main()

@@ -6,6 +6,8 @@ import torchvision.transforms as transforms
 import numpy as np
 import matplotlib.pyplot as plt
 from transformers import AutoModelForSemanticSegmentation
+from suchir_test import process_image
+
 
 class SegmentationTester:
     def __init__(self, model_path):
@@ -99,6 +101,9 @@ def main():
     print("Segmentation complete!")
     print(f"Mask shape: {segmentation_mask.shape}")
     print(f"Unique classes found: {np.unique(segmentation_mask)}")
+
+    output = process_image(segmentation_mask)
+    print(output)
 
 if __name__ == "__main__":
     main()
