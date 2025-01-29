@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from transformers import AutoModelForSemanticSegmentation
 from suchir_test import process_image
-
+import cv2
 
 class SegmentationTester:
     def __init__(self, model_path):
@@ -85,8 +85,6 @@ class SegmentationTester:
 
         return segmentation_mask
 
-
-
 def main():
     # Example usage
     model_path = "./sidewalk_segmentation_model/model.safetensors"
@@ -102,8 +100,9 @@ def main():
     print(f"Mask shape: {segmentation_mask.shape}")
     print(f"Unique classes found: {np.unique(segmentation_mask)}")
 
-    output = process_image(segmentation_mask)
-    print(output)
+    output, edges = process_image(segmentation_mask)
+    tester.visualize_results(output, edges)
+    # print(output)
 
 if __name__ == "__main__":
     main()

@@ -31,118 +31,47 @@ image = None
 #     image = br.imgmsg_to_cv2(data)
 #     image = image[:,:,:3]
 
-
 def process_image(img):
 
-    print(img.shape)
-    height, width = img.shape
-    img[img > 1] = 9
-    img[img < 1] = 1
+    img[img==0]=1
 
-    print(img.shape)
+    # Convert segmentation mask to proper image format
+    processed_img = np.zeros_like(img, dtype=np.uint8)
 
-    np.savetxt('output2.txt', img, fmt='%d')
+    # Assuming you want to detect lines for specific classes
+    # Adjust these values based on which classes represent roads/paths
+    road_classes = [1, 3, 4]  # modify these values based on your segmentation classes
+    for class_id in road_classes:
+        processed_img[img == class_id] = 255
 
-    processed_img = cv2.convertScaleAbs(img)
+    np.savetxt('output3.txt', processed_img, fmt="%d")
 
+    # Apply Gaussian blur to smooth edges
+    blurred = cv2.GaussianBlur(processed_img, (5, 5), 0)
 
-    # Line detection
-    edges = cv2.Canny(processed_img, 250, 400)
-    edges_copy = np.copy(edges)
+    # Apply Canny with appropriate thresholds for binary image
+    edges = cv2.Canny(blurred, 30, 100)
 
+    # Dilate edges to connect nearby lines
+    kernel = np.ones((3,3), np.uint8)
+    edges = cv2.dilate(edges, kernel, iterations=1)
+
+    # Modify HoughLinesP parameters for smaller image
     lines = cv2.HoughLinesP(
-        edges_copy, 
-        rho = 1,   
-        theta = np.pi / 180,
-        threshold = 10,
-        lines = np.array([]),
-        minLineLength = 30,
-        maxLineGap = 10
+        edges, 
+        rho=1,
+        theta=np.pi/180,
+        threshold=15,        # Lower threshold due to smaller image
+        minLineLength=20,    # Adjust based on image size
+        maxLineGap=5        # Smaller gap due to image size
     )
-
-    line_img = np.zeros_like(processed_img, dtype=np.uint8)
-    line_color = [0, 255, 0]
-    line_thickness = 1
-    dot_color = [0, 255, 0]
-    dot_size = 3
-    left_line_x = []
-    left_line_y = []
-    right_line_x = []
-    right_line_y = []
-
-    if lines is None:
-        lane_center = processed_img.shape[1] / 2
-        print("NO LINES DETECTED!")
-        return 0
-    
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-            slope = (y2 - y1)/(x2 - x1)
-            # Filter slopes that aren't steep enough
-            if abs(slope) >= 0.25:
-                # Sort into left, right lines
-                if slope > 0:
-                    left_line_x.append(x1)
-                    left_line_x.append(x2)
-                    left_line_y.append(y1)
-                    left_line_y.append(y2)
-                else:
-                    right_line_x.append(x1)
-                    right_line_x.append(x2)
-                    right_line_y.append(y1)
-                    right_line_y.append(y2)
-                
-                cv2.line(line_img, (x1, y1), (x2, y2), line_color, line_thickness)
-
-    lane_center = 0
-    poly_left = None
-    poly_right = None
-    # If we can't see any lines at all (uh oh)
-
-    # If we can't see left or right lines
-    if len(left_line_x) == 0:
-        print("No right line detected")
-        return -250
-    elif len(right_line_x) == 0:
-        print("No left line detected")
-        return 250
-    else:
-        # Create a polynomial fit of left lines, right lines
-        left_line_fit = np.polyfit(left_line_y, left_line_x, deg=1)
-        right_line_fit = np.polyfit(right_line_y, right_line_x, deg=1)
-
-        # Create function such that f(y) = x
-        poly_left = np.poly1d(left_line_fit)
-        poly_right = np.poly1d(right_line_fit)
-
-        # MAX_Y is the "bottom" of our image
-        MAX_Y = processed_img.shape[0]
-        # MIN_Y = min(left_line_y.append(right_line_y))
-
-        # Find the close end of the left, right lanes
-        left_x_close = poly_left(MAX_Y)
-        right_x_close = poly_right(MAX_Y)
-        # Find the center of our calculated lanes
-        lane_center = (left_x_close + right_x_close) / 2
-    # Center of our car is based off camera location
-    car_center = processed_img.shape[1] / 2
-
-    if poly_left is not None and poly_right is not None:
-        print("Left lane slope", poly_left.c)
-        print("Right lane slope", poly_right.c)
-    print("Center of lane (calculated):", lane_center)
-    print("Center of car", car_center)
-    print("CTE", car_center - lane_center)
-    # cv2.circle(line_img, (x1, y1), dot_size, dot_color, -1)
-    # cv2.circle(line_img, (x2, y2), dot_size, dot_color, -1)
-    overlay = cv2.addWeighted(processed_img, 1.0, line_img, 1.0, 0.0)
-    processed_img = overlay
-    
-    cv2.imshow('Complete processed image (with lines)', processed_img)
+    return processed_img, edges
+    # Debug: show intermediate results
+    cv2.imshow('Processed Binary', processed_img)
+    cv2.imshow('Edges', edges)
     cv2.waitKey(1)
-    # Positive value == car is too far right, negative too far left
-    return car_center - lane_center
 
+    # Rest of your line processing code...
 # def main():
 
 #     rclpy.init()
