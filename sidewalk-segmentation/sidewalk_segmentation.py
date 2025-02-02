@@ -212,57 +212,33 @@ def extend_line_coordinates(line: Tuple[int, int, int, int],
     
     slope = (y2_scaled - y1_scaled) / (x2_scaled - x1_scaled)
     b = y1_scaled - slope * x1_scaled
+
+    # Check where it exceeds the y bounds
+    y_intersect_1 = int(b)
+    y_intersect_2 = int(slope * new_size[0] + b)
     
+    if (y_intersect_1 < 0):
+        x_intersect_1 = int((y_intersect_1 - b) / new_size[0])
+        y_intersect_1 = 0
+    else:
+        x_intersect_1 = 0
+
+    if (y_intersect_2 > new_size[0]):
+        x_intersect_2 = int((y_intersect_2 - b) / new_size[0])
+        y_intersect_2 = new_size[0]
+    else:
+        x_intersect_2 = new_size[1]
+        
+    return(x_intersect_1, y_intersect_1, x_intersect_2, y_intersect_2)
+
+
     # Find x coordinates at y = 0 and y = height
-    x_top = int((0 - b) / slope)
-    x_bottom = int((new_size[0] - b) / slope)
-    
-    return (x_bottom, new_size[0], x_top, 0)
-    
+    # x_top = int((0 - b) / slope)
+    # x_bottom = int((new_size[0] - b) / slope)
 
-def find_line_intersection(line1, line2):
-    """Find intersection point of two lines given in the form (x1, y1, x2, y2)"""
-    if line1 is None or line2 is None:
-        return None
-        
-    x1, y1, x2, y2 = line1
-    x3, y3, x4, y4 = line2
+    # print("NEW: ", new_size)
     
-    # Calculate denominator
-    denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-    if denom == 0:  # Lines are parallel
-        return None
-        
-    # Calculate intersection point
-    t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
-    
-    # Get intersection coordinates
-    x = x1 + t * (x2 - x1)
-    y = y1 + t * (y2 - y1)
-    
-    return (int(x), int(y))
-
-def find_line_intersection(line1, line2):
-    """Find intersection point of two lines given in the form (x1, y1, x2, y2)"""
-    if line1 is None or line2 is None:
-        return None
-        
-    x1, y1, x2, y2 = line1
-    x3, y3, x4, y4 = line2
-    
-    # Calculate denominator
-    denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-    if denom == 0:  # Lines are parallel
-        return None
-        
-    # Calculate intersection point
-    t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
-    
-    # Get intersection coordinates
-    x = x1 + t * (x2 - x1)
-    y = y1 + t * (y2 - y1)
-    
-    return (int(x), int(y))
+    # return (x_bottom, new_size[0], x_top, 0)
 
 def create_colored_mask(mask: np.ndarray) -> np.ndarray:
     """Convert segmentation mask to a colored visualization"""
@@ -305,13 +281,16 @@ def visualize_results(original_image: Image.Image,
     extended_left = extend_line_coordinates(left_line, mask_shape, (height, width)) if left_line else None
     extended_right = extend_line_coordinates(right_line, mask_shape, (height, width)) if right_line else None
     
+    # Add this line:
+    print(height)
+    print(width)
+    print(extended_left)
+    print(extended_right)
+    
     # Calculate center line coordinates
     center_x = width // 2
     center_line = (center_x, height, center_x, 0)  # Vertical line from bottom to top
-    
-    # Find intersection point of extended lines
-    intersection_point = find_line_intersection(extended_left, extended_right) if extended_left and extended_right else None
-    
+
     # Create line overlays for each image type
     def create_line_overlay(base_image, is_bgr=False):
         if is_bgr:
@@ -336,13 +315,6 @@ def visualize_results(original_image: Image.Image,
                 (center_line[0], center_line[1]),
                 (center_line[2], center_line[3]),
                 (255, 0, 0), 2)
-        
-        # Draw intersection line in yellow (RGB format)
-        if intersection_point:
-            cv2.line(line_img,
-                    (intersection_point[0], height),
-                    (intersection_point[0], 0),
-                    (255, 255, 0), 2)
             
         return cv2.addWeighted(base_image, 1.0, line_img, 1.0, 0.0)
     
