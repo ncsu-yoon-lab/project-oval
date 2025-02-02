@@ -6,6 +6,8 @@ import serial
 import sys
 import threading
 
+MAX_MIN_THROTTLE = 20
+
 class DriverNode(Node):
     def __init__(self):
         super().__init__("driver")
@@ -28,21 +30,37 @@ class DriverNode(Node):
         print(f"Steer: {self.steer}")
 
     def throttle_callback(self, msg):
-        self.throttle = msg.data
+        if (msg.data > MAX_MIN_THROTTLE):
+            self.throttle = MAX_MIN_THROTTLE
+        elif (msg.data < -MAX_MIN_THROTTLE):
+            self.throttle = -MAX_MIN_THROTTLE
+        else:
+            self.throttle = msg.data
+
         print(f"Throttle: {self.throttle}")
     
     def converter(self, throttle, steer):
-        throttle_val = int((self.throttle + 100) * 4095 / 200)
-        steer_val = int((self.steer + 100) * 4095 / 200)
 
-        return throttle_val, throttle_val
+        steer_factor_left = 1
+        steer_factor_right = 1
+
+        if (steer > 0):
+            steer_factor_right = steer / 100.0
+        elif (steer < 0):
+            steer_factor_left = abs(steer / 100.0)
+        
+
+        throttle_left = int((self.throttle + 100) * 4095 / 200 * steer_factor_left)
+        throttle_right = int((self.throttle + 100) * 4095 / 200 * steer_factor_right)
+
+        return throttle_left, throttle_right
 
     def send_speeds(self):
         
-        throttle1, throttle2 = self.converter(self.throttle, self.steer)
+        throttle_left, throttle_right = self.converter(self.throttle, self.steer)
 
         try:
-            data = f"{throttle1},{throttle2},{(throttle1 + throttle2) & 0xFFFF}\n"
+            data = f"{throttle_left},{throttle_right},{(throttle_left + throttle_right) & 0xFFFF}\n"
             self.ser.write(data.encode())
             print(f"Sent: {data.strip()}")
             return self.ser.readline().decode().strip() == "OK"
