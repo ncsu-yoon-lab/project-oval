@@ -337,44 +337,50 @@ def visualize_results(original_image: Image.Image,
                      segmentation_mask: np.ndarray,
                      lines_image: Optional[np.ndarray] = None,
                      left_line=None,
-                     right_line=None):
+                     right_line=None,
+                     result_file=None):
     """Visualize processing steps with center line and intersection point"""
+    
+    plt.close('all')
+
     # Create figure with larger size and adjusted spacing
-    plt.figure(figsize=(20, 8))
-    plt.subplots_adjust(wspace=0.3)  # Adjust spacing between subplots
+    plt.figure(figsize=(24, 8))  # Made wider to accommodate third image
+    plt.subplots_adjust(wspace=0.3)
     
     # Convert original image to numpy array and get its size
-    original_np = np.array(original_image)  # This will be in RGB already
+    original_np = np.array(original_image)
     height, width = original_np.shape[:2]
     mask_shape = segmentation_mask.shape
+    
+    # Create colored segmentation mask
+    segmentation_colored = create_colored_mask(segmentation_mask)
     
     # Extend lines to image edges
     extended_left = extend_line_coordinates(left_line, mask_shape, (height, width)) if left_line else None
     extended_right = extend_line_coordinates(right_line, mask_shape, (height, width)) if right_line else None
     
-    # Add this line:
-    print("Left: ", extended_left)
-    print("Right: ", extended_right)
-    distance = pixel_to_distance(extended_right[3])
-    print("Distance: ", distance)
-    print("X point: ", 1280)
-    angle = pixel_to_yaw(1280)
-    print(angle)
-    distance_to_edge = math.tan(angle) * distance
-    print("Distance to edge of path: ", distance_to_edge)
+    # Print debug info
+    if extended_right is not None:
+        print("Left: ", extended_left)
+        print("Right: ", extended_right)
+        distance = pixel_to_distance(extended_right[3])
+        print("Distance: ", distance)
+        print("X point: ", 1280)
+        angle = pixel_to_yaw(1280)
+        print(angle)
+        distance_to_edge = math.tan(angle) * distance
+        print("Distance to edge of path: ", distance_to_edge)
     
     # Calculate center line coordinates
     center_x = width // 2
-    center_line = (center_x, height, center_x, 0)  # Vertical line from bottom to top
+    center_line = (center_x, height, center_x, 0)
 
-    # Create line overlays for each image type
     def create_line_overlay(base_image, is_bgr=False):
         if is_bgr:
             base_image = cv2.cvtColor(base_image, cv2.COLOR_BGR2RGB)
             
         line_img = np.zeros_like(base_image)
         
-        # Draw detected lines in green (RGB format)
         if extended_left:
             cv2.line(line_img, 
                     (extended_left[0], extended_left[1]), 
@@ -386,7 +392,6 @@ def visualize_results(original_image: Image.Image,
                     (extended_right[2], extended_right[3]), 
                     (0, 255, 0), 3)
             
-        # Draw center line in red (RGB format)
         cv2.line(line_img,
                 (center_line[0], center_line[1]),
                 (center_line[2], center_line[3]),
@@ -394,8 +399,12 @@ def visualize_results(original_image: Image.Image,
             
         return cv2.addWeighted(base_image, 1.0, line_img, 1.0, 0.0)
     
-    # Process images
+    # Process all three images
     original_with_lines = create_line_overlay(original_np, is_bgr=False)
+    
+    # Resize segmentation mask to match original image size
+    segmentation_colored_resized = cv2.resize(segmentation_colored, (width, height))
+    segmentation_with_lines = create_line_overlay(segmentation_colored_resized, is_bgr=False)
     
     if lines_image is not None:
         lines_image_resized = cv2.resize(lines_image, (width, height))
@@ -403,31 +412,37 @@ def visualize_results(original_image: Image.Image,
     else:
         processed_with_lines = None
     
-    # Display images in a 1x2 grid
-    plt.subplot(1, 2, 1)
-    plt.imshow(original_with_lines)  # Original is already in RGB
+    # Display images in a 1x3 grid
+    plt.subplot(1, 3, 1)
+    plt.imshow(original_with_lines)
     plt.title('Original Image with Lines', pad=20, fontsize=14)
     plt.axis('off')
     
+    plt.subplot(1, 3, 2)
+    plt.imshow(segmentation_with_lines)
+    plt.title('Segmentation Mask with Lines', pad=20, fontsize=14)
+    plt.axis('off')
+    
     if processed_with_lines is not None:
-        plt.subplot(1, 2, 2)
-        plt.imshow(processed_with_lines)  # Already converted to RGB in create_line_overlay
-        plt.title('Processed Image with Lines', pad=20, fontsize=14)
+        plt.subplot(1, 3, 3)
+        plt.imshow(processed_with_lines)
+        plt.title('Processed Binary Image with Lines', pad=20, fontsize=14)
         plt.axis('off')
     
-    # Ensure layout is tight and centered
     plt.tight_layout()
+    
+    plt.savefig(result_file)
     plt.show()
+
 
 def main():
     model_path = "./sidewalk_segmentation_model/model.safetensors"
-    images_folder = "./test_images"  # Folder containing test images
+    images_folder = "./test_images"
     
     # Initialize components
     segmentation_model = SegmentationModel(model_path)
     lane_detector = LaneDetector()
     
-    # Get list of all image files in the folder
     import os
     valid_extensions = ('.jpg', '.jpeg', '.png')
     image_files = [f for f in os.listdir(images_folder) 
@@ -435,27 +450,38 @@ def main():
     
     # Process each image
     for image_file in image_files:
-        print(f"\nProcessing {image_file}...")
-        image_path = os.path.join(images_folder, image_file)
-        
-        try:
-            # Process image
-            mask = segmentation_model.segment_image(image_path)
-            processed, edges, right_line, left_line = lane_detector.process_image(mask)
+        if "result" not in image_file:
+            print(f"\nProcessing {image_file}...")
+            image_path = os.path.join(images_folder, image_file)
             
-            # Debug prints
-            print("Lines:")
-            print(f"Left line: {left_line}")
-            print(f"Right line: {right_line}")
-            print(f"Mask shape: {mask.shape}")
+            try:
+                # Process image
+                mask = segmentation_model.segment_image(image_path)
+                processed, edges, right_line, left_line = lane_detector.process_image(mask)
+                
+                # Debug prints
+                print("Lines:")
+                
+                print(f"Left line: {left_line}")
+                print(f"Right line: {right_line}")
+                print(f"Mask shape: {mask.shape}")
+
+                result_file = images_folder + "/" + image_file[:len(image_file) - 4] + "-result.png"
+                
+                # Visualize results
+                _, original_image = segmentation_model.preprocess_image(image_path)
+                visualize_results(original_image, mask, processed, left_line, right_line, result_file)
+                
+                # Wait for user input before processing next image
+                input("Press Enter to continue to next image...")
+                
+            except Exception as e:
+                print(f"Error processing {image_file}: {str(e)}")
+                continue
             
-            # Visualize results
-            _, original_image = segmentation_model.preprocess_image(image_path)
-            visualize_results(original_image, mask, processed, left_line, right_line)
-            
-        except Exception as e:
-            print(f"Error processing {image_file}: {str(e)}")
-            continue
+            finally:
+                # Ensure figures are closed even if an error occurs
+                plt.close('all')
 
 if __name__ == "__main__":
     main()
