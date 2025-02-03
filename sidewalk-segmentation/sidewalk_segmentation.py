@@ -8,6 +8,11 @@ from safetensors.torch import load_file
 from transformers import AutoModelForSemanticSegmentation
 from dataclasses import dataclass
 from typing import Tuple, Optional, List
+import math
+
+VFOV = 68 # degrees
+HFOV = 101 # degrees
+HEIGHT = 0.6 # meters
 
 @dataclass
 class LaneDetectionConfig:
@@ -188,7 +193,7 @@ class LaneDetector:
 def extend_line_coordinates(line: Tuple[int, int, int, int], 
                          original_size: Tuple[int, int],
                          new_size: Tuple[int, int]) -> Optional[Tuple[int, int, int, int]]:
-    """Create a line that extends to the top and bottom of the image"""
+    """Create a line that extends to the edges of the image, handling all possible intersections"""
     if line is None:
         return None
     
@@ -212,33 +217,37 @@ def extend_line_coordinates(line: Tuple[int, int, int, int],
     
     slope = (y2_scaled - y1_scaled) / (x2_scaled - x1_scaled)
     b = y1_scaled - slope * x1_scaled
-
-    # Check where it exceeds the y bounds
-    y_intersect_1 = int(b)
-    y_intersect_2 = int(slope * new_size[0] + b)
     
-    if (y_intersect_1 < 0):
-        x_intersect_1 = int((y_intersect_1 - b) / new_size[0])
-        y_intersect_1 = 0
-    else:
-        x_intersect_1 = 0
-
-    if (y_intersect_2 > new_size[0]):
-        x_intersect_2 = int((y_intersect_2 - b) / new_size[0])
-        y_intersect_2 = new_size[0]
-    else:
-        x_intersect_2 = new_size[1]
-        
-    return(x_intersect_1, y_intersect_1, x_intersect_2, y_intersect_2)
-
-
-    # Find x coordinates at y = 0 and y = height
-    # x_top = int((0 - b) / slope)
-    # x_bottom = int((new_size[0] - b) / slope)
-
-    # print("NEW: ", new_size)
+    # Find all possible intersection points
+    # With top edge (y = 0)
+    x_top = (0 - b) / slope
+    # With bottom edge (y = height)
+    x_bottom = (new_size[0] - b) / slope
+    # With left edge (x = 0)
+    y_left = b
+    # With right edge (x = width)
+    y_right = slope * new_size[1] + b
     
-    # return (x_bottom, new_size[0], x_top, 0)
+    # Initialize points array
+    points = []
+    
+    # Check each intersection point and add valid ones
+    if 0 <= x_top <= new_size[1]:
+        points.append((int(x_top), 0))
+    if 0 <= x_bottom <= new_size[1]:
+        points.append((int(x_bottom), new_size[0]))
+    if 0 <= y_left <= new_size[0]:
+        points.append((0, int(y_left)))
+    if 0 <= y_right <= new_size[0]:
+        points.append((new_size[1], int(y_right)))
+    
+    # Sort points by y-coordinate to maintain bottom-to-top order
+    points.sort(key=lambda p: p[1], reverse=True)
+    
+    if len(points) >= 2:
+        return (points[0][0], points[0][1], points[1][0], points[1][1])
+    
+    return None
 
 def create_colored_mask(mask: np.ndarray) -> np.ndarray:
     """Convert segmentation mask to a colored visualization"""
@@ -262,6 +271,68 @@ def create_colored_mask(mask: np.ndarray) -> np.ndarray:
     
     return colored_mask
 
+def pixel_to_yaw(x_pixel: int, image_width: int = 1280, horizontal_fov_degrees: float = HFOV) -> float:
+    """
+    Calculate yaw angle to a point given its x-pixel coordinate
+    
+    Args:
+        x_pixel: x coordinate in the image (0 is left, image_width is right)
+        image_width: width of the image in pixels
+        horizontal_fov_degrees: horizontal field of view of the camera in degrees
+    
+    Returns:
+        yaw_angle: angle in radians (negative is left, positive is right)
+    """
+    # Convert FOV to radians
+    horizontal_fov = math.radians(horizontal_fov_degrees)
+    
+    # Calculate the angle from the camera's center line to the pixel
+    # First, find the angle for each pixel
+    angle_per_pixel = horizontal_fov / image_width
+    
+    # Find center pixel
+    center_x = image_width / 2
+    
+    # Calculate angle to the point (positive to the right, negative to the left)
+    yaw_angle = angle_per_pixel * (x_pixel - center_x)
+    
+    return yaw_angle
+
+def pixel_to_distance(y_pixel=None, image_height=720, camera_height=0.4, 
+                     vertical_fov_degrees=68) -> float:
+    """
+    Calculate distance to a point on the ground given its y-pixel coordinate
+    
+    Args:
+        y_pixel: y coordinate in the image (0 is top, image_height is bottom)
+        image_height: height of the image in pixels
+        camera_height: height of the camera from the ground in meters
+        vertical_fov_degrees: vertical field of view of the camera in degrees
+    
+    Returns:
+        distance: distance to the point in meters
+    """
+    # Convert FOV to radians
+    vertical_fov = math.radians(vertical_fov_degrees)
+    
+    # Calculate the angle from the camera's horizontal plane to the pixel
+    # First, find the angle for each pixel
+    angle_per_pixel = vertical_fov / image_height
+    
+    # Find center pixel (horizon line when pitch = 0)
+    center_y = image_height / 2
+    
+    # Calculate angle to the point (negative because pixel coordinates increase downward)
+    pixel_angle = -angle_per_pixel * (y_pixel - center_y)
+    
+    # Now we can use basic trigonometry
+    # distance = height / tan(angle)
+    if pixel_angle <= 0:  # Must be below horizon
+        return float('inf')
+    
+    distance = camera_height / math.tan(pixel_angle)
+    return distance
+
 def visualize_results(original_image: Image.Image, 
                      segmentation_mask: np.ndarray,
                      lines_image: Optional[np.ndarray] = None,
@@ -282,10 +353,15 @@ def visualize_results(original_image: Image.Image,
     extended_right = extend_line_coordinates(right_line, mask_shape, (height, width)) if right_line else None
     
     # Add this line:
-    print(height)
-    print(width)
-    print(extended_left)
-    print(extended_right)
+    print("Left: ", extended_left)
+    print("Right: ", extended_right)
+    distance = pixel_to_distance(extended_right[3])
+    print("Distance: ", distance)
+    print("X point: ", 1280)
+    angle = pixel_to_yaw(1280)
+    print(angle)
+    distance_to_edge = math.tan(angle) * distance
+    print("Distance to edge of path: ", distance_to_edge)
     
     # Calculate center line coordinates
     center_x = width // 2
@@ -345,25 +421,41 @@ def visualize_results(original_image: Image.Image,
 
 def main():
     model_path = "./sidewalk_segmentation_model/model.safetensors"
-    test_image_path = "test_image.jpg"
+    images_folder = "./test_images"  # Folder containing test images
     
     # Initialize components
     segmentation_model = SegmentationModel(model_path)
     lane_detector = LaneDetector()
     
-    # Process image
-    mask = segmentation_model.segment_image(test_image_path)
-    processed, edges, left_line, right_line = lane_detector.process_image(mask)
+    # Get list of all image files in the folder
+    import os
+    valid_extensions = ('.jpg', '.jpeg', '.png')
+    image_files = [f for f in os.listdir(images_folder) 
+                  if f.lower().endswith(valid_extensions)]
     
-    # Debug prints
-    print("Lines:")
-    print(f"Left line: {left_line}")
-    print(f"Right line: {right_line}")
-    print(f"Mask shape: {mask.shape}")
-    
-    # Visualize results
-    _, original_image = segmentation_model.preprocess_image(test_image_path)
-    visualize_results(original_image, mask, processed, left_line, right_line)
+    # Process each image
+    for image_file in image_files:
+        print(f"\nProcessing {image_file}...")
+        image_path = os.path.join(images_folder, image_file)
+        
+        try:
+            # Process image
+            mask = segmentation_model.segment_image(image_path)
+            processed, edges, right_line, left_line = lane_detector.process_image(mask)
+            
+            # Debug prints
+            print("Lines:")
+            print(f"Left line: {left_line}")
+            print(f"Right line: {right_line}")
+            print(f"Mask shape: {mask.shape}")
+            
+            # Visualize results
+            _, original_image = segmentation_model.preprocess_image(image_path)
+            visualize_results(original_image, mask, processed, left_line, right_line)
+            
+        except Exception as e:
+            print(f"Error processing {image_file}: {str(e)}")
+            continue
 
 if __name__ == "__main__":
     main()
