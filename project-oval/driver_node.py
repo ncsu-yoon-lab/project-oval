@@ -6,7 +6,9 @@ import serial
 import sys
 import threading
 
-MAX_MIN_THROTTLE = 20
+MAX_MIN_THROTTLE = 100
+
+MAX_OUTPUT = 4095
 
 class DriverNode(Node):
     def __init__(self):
@@ -19,8 +21,10 @@ class DriverNode(Node):
 
     def init_serial(self):
         try:
-            self.ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1, write_timeout=1)
-            print(f"Opened {self.ser.name}")
+            self.ser_left = serial.Serial('/dev/ttyACM2', 115200, timeout=1, write_timeout=1)
+            self.ser_right = serial.Serial('/dev/ttyACM1', 115200, timeout=1, write_timeout=1)
+            print(f"Opened {self.ser_left.name}")
+            print(f"Opened {self.ser_right.name}")
         except serial.SerialException as e:
             print(f"Error: {e}")
             sys.exit(1)
@@ -44,14 +48,22 @@ class DriverNode(Node):
         steer_factor_left = 1
         steer_factor_right = 1
 
-        if (steer > 0):
-            steer_factor_right = steer / 100.0
-        elif (steer < 0):
-            steer_factor_left = abs(steer / 100.0)
+        if (steer < 0):
+            steer_factor_left =  (100.0 - abs(steer)) / 100.0
+            steer_factor_right =  (100.0 + abs(steer)) / 100.0
+        elif (steer > 0):
+            steer_factor_left = (100.0 + steer) / 100.0
+            steer_factor_right = (100.0 - steer) / 100.0
         
+        print("Left factor: ", steer_factor_left)
+        print("Right factor: ", steer_factor_right)
+        throttle_left = int((throttle * steer_factor_left + 100) * 4095 / 200)
+        throttle_right = int((throttle * steer_factor_right + 100) * 4095 / 200)
 
-        throttle_left = int((self.throttle + 100) * 4095 / 200 * steer_factor_left)
-        throttle_right = int((self.throttle + 100) * 4095 / 200 * steer_factor_right)
+        if throttle_left > MAX_OUTPUT:
+            throttle_left = MAX_OUTPUT
+        elif throttle_right > MAX_OUTPUT:
+            throttle_right = MAX_OUTPUT
 
         return throttle_left, throttle_right
 
@@ -60,10 +72,15 @@ class DriverNode(Node):
         throttle_left, throttle_right = self.converter(self.throttle, self.steer)
 
         try:
-            data = f"{throttle_left},{throttle_right},{(throttle_left + throttle_right) & 0xFFFF}\n"
-            self.ser.write(data.encode())
-            print(f"Sent: {data.strip()}")
-            return self.ser.readline().decode().strip() == "OK"
+            data_left = f"{throttle_left}\n"
+            self.ser_left.write(data_left.encode())
+            print(f"Sent Left: {data_left.strip()}")
+
+            data_right = f"{throttle_right}\n"
+            self.ser_right.write(data_right.encode())
+            print(f"Sent Right: {data_right.strip()}")
+
+            return self.ser_left.readline().decode().strip() == "OK" and self.ser_right.readline().decode().strip() == "OK"
         except Exception as e:
             print(f"Error: {e}")
             return False
