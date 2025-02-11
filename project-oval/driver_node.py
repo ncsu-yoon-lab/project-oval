@@ -5,6 +5,8 @@ from std_msgs.msg import Int64
 import serial
 import sys
 import threading
+import struct
+import time
 
 MAX_INPUT = 100.0
 
@@ -31,7 +33,7 @@ class DriverNode(Node):
 
     def steer_callback(self, msg):
         self.steer = msg.data
-        print(f"Steer: {self.steer}")
+        # print(f"Steer: {self.steer}")
 
     def throttle_callback(self, msg):
         if (msg.data > MAX_INPUT):
@@ -41,8 +43,8 @@ class DriverNode(Node):
         else:
             self.throttle = msg.data
 
-        print(f"Throttle: {self.throttle}")
-    
+        # print(f"Throttle: {self.throttle}")
+
     def arcade_drive(self, throttle, steer):
         maximum = max(abs(steer), abs(throttle))
         total, difference = throttle + steer, throttle - steer
@@ -63,84 +65,43 @@ class DriverNode(Node):
             else:            # III quadrant
                 throttle_left = -maximum
                 throttle_right = difference
-        
-        return throttle_left, throttle_right
-
-
-    def converter(self, throttle_left, throttle_right):
-        
-        # throttle_left = int((throttle + 100) * 4095 / 200)
-        # throttle_right = int((-1 * steer + 100) * 4095 / 200)
-        
-        steer_factor_left = 1
-        steer_factor_right = 1
-
-        # if (steer < 0):
-        #     steer_factor_left = (MAX_INPUT - abs(steer) * 2) / MAX_INPUT
-        #     steer_factor_right = (MAX_INPUT + abs(steer) * 2) / MAX_INPUT
-        # elif (steer > 0):
-        #     steer_factor_left = (MAX_INPUT + steer * 2) / MAX_INPUT
-        #     steer_factor_right = (MAX_INPUT - steer * 2) / MAX_INPUT
-
-
-        throttle_left = int((throttle_left * steer_factor_left + MAX_INPUT) * MAX_OUTPUT / (2 * MAX_INPUT))
-        throttle_right = int((throttle_right * steer_factor_right + MAX_INPUT) * MAX_OUTPUT / (2 * MAX_INPUT))
-
-        # throttle_left = min(int((throttle * steer_factor_left + MAX_INPUT) * MAX_OUTPUT / (2 * MAX_INPUT)), 3800)
-        # throttle_right = min(int((throttle * steer_factor_right + MAX_INPUT) * MAX_OUTPUT / (2 * MAX_INPUT)), 3800)
-
-        # throttle_left = max(int((throttle * steer_factor_left + MAX_INPUT) * MAX_OUTPUT / (2 * MAX_INPUT)), 300)
-        # throttle_right = max(int((throttle * steer_factor_right + MAX_INPUT) * MAX_OUTPUT / (2 * MAX_INPUT)), 300)
-
-        if throttle_left > MAX_OUTPUT:
-            throttle_left = MAX_OUTPUT
-        elif throttle_right > MAX_OUTPUT:
-            throttle_right = MAX_OUTPUT
 
         return throttle_left, throttle_right
 
     def send_speeds(self):
-
-        # throttle_left, throttle_right = self.arcade_drive(self.throttle, self.steer)
-        throttle_left, throttle_right = self.converter(self.throttle, self.throttle)
-
         try:
-            data_left = f"{throttle_left}\n"
-            self.ser_left.write(data_left.encode())
-            print(f"Sent Left: {data_left.strip()}")
+            
+            start_marker = b'\xAA'  # Start marker (10101010 in binary)
+            data_left = start_marker + struct.pack('<f', self.throttle)  # 4-byte float
+            data_right = start_marker + struct.pack('<f', self.throttle)  # 4-byte float
 
-            data_right = f"{throttle_right}\n"
-            self.ser_right.write(data_right.encode())
-            print(f"Sent Right: {data_right.strip()}")
+            self.ser_left.write(data_left)
+            # print(f"Sent Left: {self.throttle}")
 
-            return self.ser_left.readline().decode().strip() == "OK" and self.ser_right.readline().decode().strip() == "OK"
+            self.ser_right.write(data_right)
+            # print(f"Sent Right: {self.throttle}")
+
+            # return self.ser_left.readline().decode().strip() == "OK" and self.ser_right.readline().decode().strip() == "OK"
+            return True
         except Exception as e:
             print(f"Error: {e}")
             return False
-        # finally:
-        #     throttle_left = MAX_OUTPUT / 2
-        #     throttle_right = MAX_OUTPUT / 2
-        #     data_left = f"{throttle_left}\n"
-        #     data_right = f"{throttle_right}\n"
-        #     self.ser_left.write(data_right.encode())
-        #     self.ser_right.write(data_right.encode())
-        #     self.ser_left.close()
-        #     self.ser_right.close()
-
 
 def main():
     rclpy.init()
     node = DriverNode()
+    
     spin_thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
     spin_thread.start()
-    
+
     try:
         while rclpy.ok():
             node.send_speeds()
     except KeyboardInterrupt:
-        node.ser.close()
-        
-    
+        node.ser_right.close()
+        node.ser_left.close()
+        print("Serials Closed")
+
     rclpy.shutdown()
 
 if __name__ == '__main__':
