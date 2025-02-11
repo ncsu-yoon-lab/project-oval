@@ -71,9 +71,10 @@ class DriverNode(Node):
     def send_speeds(self):
         try:
             
+            left_throttle, right_throttle = self.arcade_drive(self.throttle, self.steer)
             start_marker = b'\xAA'  # Start marker (10101010 in binary)
-            data_left = start_marker + struct.pack('<f', self.throttle)  # 4-byte float
-            data_right = start_marker + struct.pack('<f', self.throttle)  # 4-byte float
+            data_left = start_marker + struct.pack('<f', float(left_throttle))  # 4-byte float
+            data_right = start_marker + struct.pack('<f', float(right_throttle))  # 4-byte float
 
             self.ser_left.write(data_left)
             # print(f"Sent Left: {self.throttle}")
