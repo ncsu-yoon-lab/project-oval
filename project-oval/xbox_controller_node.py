@@ -27,8 +27,8 @@ def joy_callback(data):
 		manual = not manual
 		switch_time = time.time()
 	# Input for throttle and steer are between [-1.0, 1.0]
-	throttle_input = data.axes[1]**3
-	steer_input = data.axes[2]**3
+	throttle_input = data.axes[1]
+	steer_input = data.axes[2]
 
 	# Convert this to [-20, +20] for throttle and [-100, 100] for steer
 	throttle = int(100 * throttle_input)
