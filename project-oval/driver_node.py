@@ -21,8 +21,8 @@ class DriverNode(Node):
 
     def init_serial(self):
         try:
-            self.ser_left = serial.Serial('/dev/ttyACM2', 115200, timeout=1, write_timeout=1)
-            self.ser_right = serial.Serial('/dev/ttyACM1', 115200, timeout=1, write_timeout=1)
+            self.ser_left = serial.Serial('/dev/ttyACM1', 115200, timeout=1, write_timeout=1)
+            self.ser_right = serial.Serial('/dev/ttyACM0', 115200, timeout=1, write_timeout=1)
             print(f"Opened {self.ser_left.name}")
             print(f"Opened {self.ser_right.name}")
         except serial.SerialException as e:
@@ -44,7 +44,10 @@ class DriverNode(Node):
         print(f"Throttle: {self.throttle}")
     
     def converter(self, throttle, steer):
-
+        
+        # throttle_left = int((throttle + 100) * 4095 / 200)
+        # throttle_right = int((-1 * steer + 100) * 4095 / 200)
+        
         steer_factor_left = 1
         steer_factor_right = 1
 
