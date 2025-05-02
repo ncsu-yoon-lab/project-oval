@@ -2,6 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int64
+from std_msgs.msg import Bool
 import serial
 import sys
 import threading
@@ -11,6 +12,7 @@ import time
 MAX_INPUT = 100.0
 
 MAX_OUTPUT = 4095
+stop_signal = False
 
 class DriverNode(Node):
     def __init__(self):
@@ -20,10 +22,11 @@ class DriverNode(Node):
         self.init_serial()
         self.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
         self.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
+        self.create_subscription(Bool, 'lidar_od_signal', self.brake_callback, 10)
 
     def init_serial(self):
         try:
-            self.ser_left = serial.Serial('/dev/ttyACM0', 115200, timeout=1, write_timeout=1)
+            self.ser_left = serial.Serial('/dev/ttyACM2', 115200, timeout=1, write_timeout=1)
             self.ser_right = serial.Serial('/dev/ttyACM1', 115200, timeout=1, write_timeout=1)
             print(f"Opened {self.ser_left.name}")
             print(f"Opened {self.ser_right.name}")
@@ -34,6 +37,14 @@ class DriverNode(Node):
     def steer_callback(self, msg):
         self.steer = msg.data
         # print(f"Steer: {self.steer}")
+    
+    def brake_callback(self, msg):
+        global stop_signal
+        stop_signal = msg.data
+        
+        if stop_signal:
+            print(f"Stop Signal: {stop_signal}")
+
 
     def throttle_callback(self, msg):
         if (msg.data > MAX_INPUT):
@@ -46,6 +57,8 @@ class DriverNode(Node):
         # print(f"Throttle: {self.throttle}")
 
     def arcade_drive(self, throttle, steer):
+        if stop_signal and throttle > 0:
+            throttle = 0
         maximum = max(abs(steer), abs(throttle))
         total, difference = throttle + steer, throttle - steer
 

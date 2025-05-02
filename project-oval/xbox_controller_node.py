@@ -18,17 +18,21 @@ manual = True
 steer = 0
 throttle = 0
 switch_time = time.time()
+a_button_pressed = False
 
 def joy_callback(data):
-	global steer, throttle, manual, switch_time
+	global steer, throttle, manual, switch_time, a_button_pressed
+	a_button_pressed = data.buttons[7] == 1
 
 	# Check for toggle between manual and auto driving (A Button)
 	if(data.buttons[0] == 1 and time.time() - switch_time > 0.1):
 		manual = not manual
 		switch_time = time.time()
 	# Input for throttle and steer are between [-1.0, 1.0]
-	throttle_input = data.axes[1] * 0.3
-	steer_input = data.axes[2] * 0.3
+
+	# If the a button is being pressed, we want to be in turbo mode
+	throttle_input = (data.axes[1]**3) * (1 if a_button_pressed else 0.3)
+	steer_input = (data.axes[2]**3) * (1 if a_button_pressed else 0.3)
 
 	# Convert this to [-20, +20] for throttle and [-100, 100] for steer
 	throttle = int(100 * throttle_input)
