@@ -3,6 +3,9 @@
 ## Overview
 The electronics system is designed and developed with the use of [KiCAD](https://www.kicad.org/) to incorporate the entire electrical system into a printed circuit board (PCB). The PCB will be manufactured by [JLCPCB](https://jlcpcb.com/). Developing a custom PCB will provide consistent connections and further adjustments as new revisions are made on the PCB.
 
+## KiCAD Version Control
+You can access the project by importing the .proj file in this directory. Do not change anything unless collaborating with other members.
+
 ## Next Steps
 * Schematic needs to be checked
 * Test ATTiny85 with I2C and PPM generation
@@ -26,3 +29,6 @@ Each motor will be driven via an [ATTiny85](https://www.microchip.com/en-us/prod
 
 ### Access Panel
 Inside the tailgate of the system there will be an access panel to all the features inside the electronics box to avoid having to remove the electronics box at any time. The access panel will include charging ports for battery 1 and 2, USB A and USB C ports to the Orin, pins to the Orin, OLED screen displaying battery life, LED displaying power on/off, display port to the Orin, and the toggle switch for powering the system, and a DC jack to access 12VDC if needed for testing.
+
+## [Current parts list](https://docs.google.com/spreadsheets/d/1QfchhVsQ0_ZyLnvvQ3l3CDZhC2zzI9vGqhxGo_DR1Cs/edit?usp=sharing)
+Feel free to add new parts if needed.
