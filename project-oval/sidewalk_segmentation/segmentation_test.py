@@ -88,7 +88,7 @@ class SegmentationTester:
 def main():
     # Example usage
     model_path = "./sidewalk_segmentation_model/model.safetensors"
-    test_image_path = "test_image.jpg"
+    test_image_path = "test_image1.jpg"
     
     # Initialize tester
     tester = SegmentationTester(model_path)

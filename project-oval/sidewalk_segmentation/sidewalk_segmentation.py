@@ -9,6 +9,16 @@ from transformers import AutoModelForSemanticSegmentation
 from dataclasses import dataclass
 from typing import Tuple, Optional, List
 import math
+import torch
+import numpy as np
+import cv2
+from PIL import Image
+import matplotlib.pyplot as plt
+import torchvision.transforms as transforms
+from safetensors.torch import load_file
+from transformers import AutoModelForSemanticSegmentation
+from dataclasses import dataclass
+from typing import Tuple, Optional, List
 
 VFOV = 68 # degrees
 HFOV = 101 # degrees
@@ -62,17 +72,19 @@ class SegmentationModel:
             )
         ])
 
-    def preprocess_image(self, image_path: str) -> Tuple[torch.Tensor, Image.Image]:
+    def preprocess_image(self, cv_image) -> Tuple[torch.Tensor, Image.Image]:
         """Preprocess image for model input"""
-        image = Image.open(image_path).convert('RGB')
+        cv_image_rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(cv_image_rgb)
+        # image = Image.open(image_path).convert('RGB')
         input_tensor = self.transform(image)
         input_batch = input_tensor.unsqueeze(0).to(self.device)
         return input_batch, image
 
     @torch.no_grad()
-    def segment_image(self, image_path: str) -> np.ndarray:
+    def segment_image(self, image) -> np.ndarray:
         """Perform segmentation on input image"""
-        input_batch, _ = self.preprocess_image(image_path)
+        input_batch, _ = self.preprocess_image(image)
         
         pixel_values = input_batch if not isinstance(input_batch, dict) else input_batch["pixel_values"]
         output = self.model(pixel_values=pixel_values)
@@ -82,19 +94,6 @@ class SegmentationModel:
             segmentation_mask = np.argmax(segmentation_mask, axis=0)
             
         return segmentation_mask
-
-import torch
-import numpy as np
-import cv2
-from PIL import Image
-import matplotlib.pyplot as plt
-import torchvision.transforms as transforms
-from safetensors.torch import load_file
-from transformers import AutoModelForSemanticSegmentation
-from dataclasses import dataclass
-from typing import Tuple, Optional, List
-
-# ... [Previous config and SegmentationModel class remain the same] ...
 
 class LaneDetector:
     """Processes segmentation mask to detect lanes and calculate steering"""
