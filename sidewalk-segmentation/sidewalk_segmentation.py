@@ -14,6 +14,12 @@ VFOV = 68 # degrees
 HFOV = 101 # degrees
 HEIGHT = 0.6 # meters
 
+# Load model directly
+from transformers import AutoImageProcessor, SegformerForSemanticSegmentation
+
+# processor = AutoImageProcessor.from_pretrained("tobiasc/segformer-b0-finetuned-segments-sidewalk")
+# model = SegformerForSemanticSegmentation.from_pretrained("tobiasc/segformer-b0-finetuned-segments-sidewalk")
+
 @dataclass
 class LaneDetectionConfig:
     """Configuration parameters for lane detection"""
@@ -441,6 +447,7 @@ def main():
     
     # Initialize components
     segmentation_model = SegmentationModel(model_path)
+    # segmentation_model = MODEL
     lane_detector = LaneDetector()
     
     import os
@@ -461,7 +468,7 @@ def main():
                 
                 # Debug prints
                 print("Lines:")
-                
+
                 print(f"Left line: {left_line}")
                 print(f"Right line: {right_line}")
                 print(f"Mask shape: {mask.shape}")
