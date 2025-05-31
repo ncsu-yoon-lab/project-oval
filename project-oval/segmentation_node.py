@@ -48,8 +48,8 @@ def main():
 
     while rclpy.ok():
         # Process one image. The return value will be use for `something` later.
-        
         image = seg_model.segment_image(zed_image)
+
 
         process_image(image)
 
