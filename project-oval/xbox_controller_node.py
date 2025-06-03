@@ -25,7 +25,7 @@ def joy_callback(data):
 	a_button_pressed = data.buttons[7] == 1
 
 	# Check for toggle between manual and auto driving (A Button)
-	if(data.buttons[0] == 1 and time.time() - switch_time > 0.1):
+	if(data.buttons[0] == 1 and time.time() - switch_time > 0.5):
 		manual = not manual
 		switch_time = time.time()
 	# Input for throttle and steer are between [-1.0, 1.0]
@@ -85,7 +85,7 @@ def main(args=None):
 			stdscr.refresh()
 			stdscr.addstr(1, 25, 'Xbox Controller       ')
 			stdscr.addstr(2, 25, 'Throttle: %.2f  ' % throttle)
-			stdscr.addstr(3, 25, 'steer: %.2f  ' % steer)
+			stdscr.addstr(3, 25, 'Steer: %.2f  ' % steer)
 			stdscr.addstr(4, 25, 'Manual: %s  ' % str(manual))
 			rate.sleep()
 		except KeyboardInterrupt:
