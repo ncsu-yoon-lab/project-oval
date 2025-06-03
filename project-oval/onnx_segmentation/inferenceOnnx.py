@@ -11,7 +11,7 @@ from std_msgs.msg import Int64, Float32
 import onnxruntime as ort
 from PIL import Image as PILImage
 
-IMAGE_TOPIC = "/zed/zed_node/stereo/image_rect_color"
+IMAGE_TOPIC = "/zed/zed_node/left/image_rect_color"
 
 # ONNX model path - update this to your model
 MODEL_PATH = "../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx"
