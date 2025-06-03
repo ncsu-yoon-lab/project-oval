@@ -1,3 +1,4 @@
+
 import Jetson.GPIO as GPIO
 import time
 from threading import Thread
@@ -38,23 +39,23 @@ class PPMGenerator:
         """
         while self.running:
             # Generate sync pulse
-            GPIO.output(self.pin, True)
-            time.sleep(self.SYNC_LENGTH / 1000000.0)
             GPIO.output(self.pin, False)
+            time.sleep(self.SYNC_LENGTH / 1000000.0)
+            GPIO.output(self.pin, True)
             
             # Generate channel 0 (variable)
             pulse_time = int(self.channel_values[0] * 1000)
             time.sleep(pulse_time / 1000000.0)
-            GPIO.output(self.pin, True)
-            time.sleep(self.SYNC_LENGTH / 1000000.0)
             GPIO.output(self.pin, False)
+            time.sleep(self.SYNC_LENGTH / 1000000.0)
+            GPIO.output(self.pin, True)
             
             # Generate channels 1-7 (fixed at 1.5ms)
             for _ in range(6):  # Changed from 7 to 6 to get exactly 8 channels total
                 time.sleep(1500 / 1000000.0)  # 1.5ms fixed timing
-                GPIO.output(self.pin, True)
-                time.sleep(self.SYNC_LENGTH / 1000000.0)
                 GPIO.output(self.pin, False)
+                time.sleep(self.SYNC_LENGTH / 1000000.0)
+                GPIO.output(self.pin, True)
             
             # Calculate and wait for remainder of frame
             total_time = self.SYNC_LENGTH + pulse_time + self.SYNC_LENGTH + \
@@ -87,27 +88,3 @@ class PPMGenerator:
         """
         self.stop()
         GPIO.cleanup()
-
-# Example usage
-if __name__ == "__main__":
-    try:
-        # Initialize PPM generator on pin 18
-        ppm = PPMGenerator(pin=18)
-        
-        # Start generating PPM signal
-        ppm.start()
-        
-        # Example: Sweep channel 0 back and forth
-        while True:
-            for pos in np.arange(1.0, 2.0, 0.1):
-                ppm.set_channel(pos)
-                time.sleep(0.1)
-            for pos in np.arange(2.0, 1.0, -0.1):
-                ppm.set_channel(pos)
-                time.sleep(0.1)
-                
-    except KeyboardInterrupt:
-        print("Stopping PPM generation...")
-    finally:
-        if 'ppm' in locals():
-            ppm.cleanup()

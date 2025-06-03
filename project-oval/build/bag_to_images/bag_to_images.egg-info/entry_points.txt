@@ -1,0 +1,3 @@
+[console_scripts]
+bag_to_image = bag_to_images.extract_images:main
+
