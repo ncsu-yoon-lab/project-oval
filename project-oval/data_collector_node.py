@@ -22,6 +22,7 @@ import csv
 # Topic definitions
 RTK_TOPIC = "/gpsfix"
 GPS_TOPIC = '/gps/gprmc'
+QUAL_TOPIC = '/gps/gpgga'
 ZED_IMU_DATA_TOPIC = "/zed/zed_node/imu/data"
 ZED_IMU_DATA_RAW_TOPIC = "/zed/zed_node/imu/data_raw"
 ZED_LEFT_CAM_IMU_TOPIC = "/zed/zed_node/left_cam_imu_transform"
@@ -37,6 +38,7 @@ class DataCollector(Node):
         self.image = None
         self.rtk_data = None
         self.gps_data = None
+        self.gps_qual = None
         self.imu_data = None
         self.imu_raw_data = None
         self.imu_cam_transform = None
@@ -52,6 +54,7 @@ class DataCollector(Node):
             'imu': 50,                  # 50 Hz - 6 axis IMU
             'zed_image': 1,             # 1 Hz - ZED Frames
             'rtk': 1,                   # 1 Hz - RTK GPS
+            'gps_qual': 1,
             'gps': 1,                   # 1 Hz - Cheap GPS
             'zed_pose': 5,              # 5 Hz - ZED Pose estimation
             'zed_imu': 50,              # 50 Hz - ZED IMU
@@ -74,9 +77,9 @@ class DataCollector(Node):
         self.metadata_list = []
         
         # Create dataset directories
-        if not os.path.exists('dataset'):
-            os.makedirs('dataset')
-            os.makedirs('dataset/images')
+        if not os.path.exists('/home/wolfwagen/ext-vol/ww_data_collection'):
+            os.makedirs('/home/wolfwagen/ext-vol/ww_data_collection')
+            os.makedirs('/home/wolfwagen/ext-vol/ww_data_collection/images')
         
         # Create CSV file for data
         self.csv_filename = 'dataset/sgil_test.csv'
@@ -84,8 +87,8 @@ class DataCollector(Node):
             writer = csv.writer(f)
             writer.writerow([
                 'timestamp', 
-                'rtk_lat', 'rtk_lon', 'rtk_alt', 'rtk_heading',
-                'gps_lat', 'gps_lon', 'gps_heading',
+                'rtk_lat', 'rtk_lon', 'rtk_alt', 'rtk_heading', 'rtk_sats',
+                'gps_lat', 'gps_lon', 'gps_heading', 'gps_sats', 'gps_qual',
                 'imu_orientation_x', 'imu_orientation_y', 'imu_orientation_z', 'imu_orientation_w',
                 'imu_angular_velocity_x', 'imu_angular_velocity_y', 'imu_angular_velocity_z',
                 'imu_linear_acceleration_x', 'imu_linear_acceleration_y', 'imu_linear_acceleration_z',
@@ -110,7 +113,8 @@ class DataCollector(Node):
         self.create_subscription(Int64, '/xbox_controller/steer', self.right_throttle_callback, 10)
         self.create_subscription(Int64, '/xbox_controller/throttle', self.left_throttle_callback, 10)
         self.create_subscription(Float64MultiArray, '/cheap_imu', self.cheap_imu_callback, 100)
-        
+        self.create_subscription(Gpgga, QUAL_TOPIC, self.gps_qual_callback, 10)
+
         # Create timer for data collection and saving - runs at master frequency (50Hz)
         self.create_timer(self.save_interval, self.process_data)
         
@@ -122,6 +126,7 @@ class DataCollector(Node):
             'image': None,
             'rtk': None,
             'gps': None,
+            'gps_qual': None,
             'imu': None,
             'imu_raw': None,
             'imu_cam': None,
@@ -189,6 +194,14 @@ class DataCollector(Node):
         }
         self.last_updates['imu'] = time.time()
         self.get_logger().debug('Received IMU data')
+
+    def gps_qual_callback(self, msg):
+        self.gps_qual = {
+                'gps_sats': msg.num_sats,
+                'gps_qual': msg.gps_qual
+            }
+        self.last_updates['gps_qual'] = time.time()
+        self.get_logger().debug('Received gps qual')
     
     def imu_raw_callback(self, msg):
         self.imu_raw_data = {
@@ -246,7 +259,8 @@ class DataCollector(Node):
                 'latitude': msg.latitude,
                 'longitude': msg.longitude,
                 'altitude': msg.altitude,
-                'track': msg.track
+                'track': msg.track,
+                'rtk_sats': msg.status.satellites_used
             }
             self.last_updates['rtk'] = time.time()
             self.get_logger().debug('Received RTK GPS data')
@@ -332,8 +346,8 @@ class DataCollector(Node):
             writer = csv.writer(f)
             writer.writerow([
                 'timestamp',
-                'rtk_lat', 'rtk_lon', 'rtk_alt', 'rtk_heading',
-                'gps_lat', 'gps_lon', 'gps_heading',
+                'rtk_lat', 'rtk_lon', 'rtk_alt', 'rtk_heading', 'rtk_sats',
+                'gps_lat', 'gps_lon', 'gps_heading', 'gps_sats', 'gps_qual',
                 'left_throttle', 'right_throttle',
                 'image_filename'
             ])
@@ -504,7 +518,7 @@ class DataCollector(Node):
     def _save_low_freq_data(self, timestamp_str):
         """Save low-frequency data (1Hz)"""
         # Save image
-        image_filename = f'dataset/images/image_{timestamp_str.replace(".", "_")}.jpg'
+        image_filename = f'/home/wolfwagen/ext-vol/ww_data_collection/images/image_{timestamp_str.replace(".", "_")}.jpg'
         if self.image is not None:
             cv2.imwrite(image_filename, self.image)
             self.get_logger().info(f'Saved image to {image_filename}')
@@ -521,7 +535,8 @@ class DataCollector(Node):
                 self.rtk_data.get('latitude', 0),
                 self.rtk_data.get('longitude', 0),
                 self.rtk_data.get('altitude', 0),
-                self.rtk_data.get('track', 0)
+                self.rtk_data.get('track', 0),
+                self.rtk_data.get('rtk_sats', 0)
             ])
         else:
             csv_row.extend([0, 0, 0, 0])
@@ -531,7 +546,9 @@ class DataCollector(Node):
             csv_row.extend([
                 self.gps_data.get('latitude', 0),
                 self.gps_data.get('longitude', 0),
-                self.gps_data.get('track', 0)
+                self.gps_data.get('track', 0),
+                self.gps_qual.get('gps_sats', 0),
+                self.gps_qual.get('gps_qual', 0)
             ])
         else:
             csv_row.extend([0, 0, 0])

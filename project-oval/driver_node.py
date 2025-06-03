@@ -3,15 +3,14 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int64
 from std_msgs.msg import Bool
-import serial
 import sys
 import threading
-import struct
 import time
+from pyvesc import VESC
+import atexit            
 
 MAX_INPUT = 100.0
 
-MAX_OUTPUT = 4095
 stop_signal = False
 
 class DriverNode(Node):
@@ -19,24 +18,19 @@ class DriverNode(Node):
         super().__init__("driver")
         self.throttle = 0
         self.steer = 0
-        self.init_serial()
+        self.serial_port = '/dev/ttyTHS0'
+
+        # Setup VESC
+        self.motor = VESC(self.serial_port)
+        atexit.register(self.cleanup)
+        self.right_id = 115
+
         self.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
         self.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
         self.create_subscription(Bool, 'lidar_od_signal', self.brake_callback, 10)
 
-    def init_serial(self):
-        try:
-            self.ser_left = serial.Serial('/dev/ttyACM2', 115200, timeout=1, write_timeout=1)
-            self.ser_right = serial.Serial('/dev/ttyACM1', 115200, timeout=1, write_timeout=1)
-            print(f"Opened {self.ser_left.name}")
-            print(f"Opened {self.ser_right.name}")
-        except serial.SerialException as e:
-            print(f"Error: {e}")
-            sys.exit(1)
-
     def steer_callback(self, msg):
         self.steer = msg.data
-        # print(f"Steer: {self.steer}")
     
     def brake_callback(self, msg):
         global stop_signal
@@ -54,15 +48,13 @@ class DriverNode(Node):
         else:
             self.throttle = msg.data
 
-        # print(f"Throttle: {self.throttle}")
-
     def arcade_drive(self, throttle, steer):
+        throttle *= -1.0
+        steer *= -1.0
         if stop_signal and throttle > 0:
             throttle = 0
         maximum = max(abs(steer), abs(throttle))
         total, difference = throttle + steer, throttle - steer
-
-        multiplier = throttle / MAX_INPUT
 
         if throttle >= 0:
             if steer >= 0:  # I quadrant
@@ -83,23 +75,26 @@ class DriverNode(Node):
 
     def send_speeds(self):
         try:
-            
             left_throttle, right_throttle = self.arcade_drive(self.throttle, self.steer)
-            start_marker = b'\xAA'  # Start marker (10101010 in binary)
-            data_left = start_marker + struct.pack('<f', float(left_throttle))  # 4-byte float
-            data_right = start_marker + struct.pack('<f', float(right_throttle))  # 4-byte float
-
-            self.ser_left.write(data_left)
-            # print(f"Sent Left: {self.throttle}")
-
-            self.ser_right.write(data_right)
-            # print(f"Sent Right: {self.throttle}")
-
-            # return self.ser_left.readline().decode().strip() == "OK" and self.ser_right.readline().decode().strip() == "OK"
+            
+            # Convert to duty cycle (-1.0 to 1.0)
+            left_duty = left_throttle / MAX_INPUT
+            right_duty = right_throttle / MAX_INPUT
+            
+            # Send duty cycle to motors
+            self.motor.set_duty_cycle(left_duty)
+            self.motor.set_duty_cycle(right_duty, can_id=self.right_id)
+            
             return True
         except Exception as e:
             print(f"Error: {e}")
             return False
+
+    def cleanup(self):
+        """Stop motors and close connection"""
+        self.motor.set_duty_cycle(0)
+        self.motor.set_duty_cycle(0, can_id=self.right_id)
+        self.motor.stop_heartbeat()
 
 def main():
     rclpy.init()
@@ -111,9 +106,8 @@ def main():
     try:
         while rclpy.ok():
             node.send_speeds()
+            time.sleep(0.1)
     except KeyboardInterrupt:
-        node.ser_right.close()
-        node.ser_left.close()
         print("Serials Closed")
 
     rclpy.shutdown()
