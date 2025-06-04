@@ -9,7 +9,13 @@ from pathlib import Path
 class LaneDetector():
 
     def __init__(self):
-        pass
+        self.first_time = True
+        self.previous_point1 = None
+        self.previous_point2 = None
+        self.previous_point3 = None
+        self.previous_point4 = None
+        self.previous_percent = 0.2
+        self.current_percent = 1.0 - self.previous_percent
 
     def _crop_image(self, image: np.ndarray) -> np.ndarray:
         num_rows, num_columns, _ = image.shape
@@ -227,6 +233,20 @@ class LaneDetector():
         
         return image_with_edges, point1, point2, point3, point4
 
+    def filter_points(self, p1, p2, p3, p4):
+        
+        filtered_p1 = (p1[0] * self.current_percent + self.previous_point1[0] * self.previous_percent, p1[1] * self.current_percent + self.previous_point1[1] * self.previous_percent)
+        filtered_p2 = (p2[0] * self.current_percent + self.previous_point2[0] * self.previous_percent, p2[1] * self.current_percent + self.previous_point2[1] * self.previous_percent)
+        filtered_p3 = (p3[0] * self.current_percent + self.previous_point3[0] * self.previous_percent, p3[1] * self.current_percent + self.previous_point3[1] * self.previous_percent)
+        filtered_p4 = (p4[0] * self.current_percent + self.previous_point4[0] * self.previous_percent, p4[1] * self.current_percent + self.previous_point4[1] * self.previous_percent)
+
+        self.previous_point1 = filtered_p1
+        self.previous_point2 = filtered_p2
+        self.previous_point3 = filtered_p3
+        self.previous_point4 = filtered_p4
+
+        return filtered_p1, filtered_p2, filtered_p3, filtered_p4
+
     def process_single_image(self, original_image: np.ndarray, segmented_image: np.ndarray):
         """Process a single image and return the result with lane lines drawn"""
         # Crop the segmented image
@@ -239,10 +259,19 @@ class LaneDetector():
         image_with_edges, point1, point2, point3, point4 = self._find_edges(cropped_image, path_center)
         
         # Adjust points back to original image coordinates
-        point1 = (point1[0], point1[1] + cropped_top + cropped_bottom)
-        point2 = (point2[0], point2[1] + cropped_top + cropped_bottom)
-        point3 = (point3[0], point3[1] + cropped_top + cropped_bottom)
-        point4 = (point4[0], point4[1] + cropped_top + cropped_bottom)
+        point1 = (point1[0], point1[1] + cropped_top)
+        point2 = (point2[0], point2[1] + cropped_top)
+        point3 = (point3[0], point3[1] + cropped_top)
+        point4 = (point4[0], point4[1] + cropped_top)
+
+        if self.first_time:
+            self.first_time = False
+            self.previous_point1 = point1
+            self.previous_point2 = point2
+            self.previous_point3 = point3
+            self.previous_point4 = point4
+        
+        point1, point2, point3, point4 = self.filter_points(point1, point2, point3, point4)
 
         # Create a copy of the original image to draw on
         result_image = original_image.copy()
@@ -303,37 +332,37 @@ class LaneDetector():
                 result_image, cropped_image, image_with_edges = self.process_single_image(original_image, seg_image)
                 
                 # Create 2x2 visualization using the Agg backend
-                fig, axes = plt.subplots(2, 2, figsize=(12, 8), dpi=100)
+                fig, axes = plt.subplots(1, 2, figsize=(12, 8), dpi=100)
                 fig.suptitle(f'Lane Detection - Frame {i+1}', fontsize=16)
                 
                 # Original image with lane lines
-                axes[0, 0].imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
-                axes[0, 0].set_title('Original + Lane Lines')
-                axes[0, 0].axis('off')
+                axes[0].imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
+                axes[0].set_title('Original + Lane Lines')
+                axes[0].axis('off')
                 
                 # Segmented image
                 if len(seg_image.shape) == 3:
-                    axes[0, 1].imshow(cv2.cvtColor(seg_image, cv2.COLOR_BGR2RGB))
+                    axes[1].imshow(cv2.cvtColor(seg_image, cv2.COLOR_BGR2RGB))
                 else:
-                    axes[0, 1].imshow(seg_image, cmap='gray')
-                axes[0, 1].set_title('Segmented Image')
-                axes[0, 1].axis('off')
+                    axes[1].imshow(seg_image, cmap='gray')
+                axes[1].set_title('Segmented Image')
+                axes[1].axis('off')
                 
                 # Cropped image
-                if len(cropped_image.shape) == 3:
-                    axes[1, 0].imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
-                else:
-                    axes[1, 0].imshow(cropped_image, cmap='gray')
-                axes[1, 0].set_title('Cropped Image')
-                axes[1, 0].axis('off')
+                # if len(cropped_image.shape) == 3:
+                #     axes[1, 0].imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
+                # else:
+                #     axes[1, 0].imshow(cropped_image, cmap='gray')
+                # axes[1, 0].set_title('Cropped Image')
+                # axes[1, 0].axis('off')
                 
-                # Image with lane edges
-                if len(image_with_edges.shape) == 3:
-                    axes[1, 1].imshow(cv2.cvtColor(image_with_edges, cv2.COLOR_BGR2RGB))
-                else:
-                    axes[1, 1].imshow(image_with_edges, cmap='gray')
-                axes[1, 1].set_title('Lane Edges Detected')
-                axes[1, 1].axis('off')
+                # # Image with lane edges
+                # if len(image_with_edges.shape) == 3:
+                #     axes[1, 1].imshow(cv2.cvtColor(image_with_edges, cv2.COLOR_BGR2RGB))
+                # else:
+                #     axes[1, 1].imshow(image_with_edges, cmap='gray')
+                # axes[1, 1].set_title('Lane Edges Detected')
+                # axes[1, 1].axis('off')
                 
                 plt.tight_layout()
                 
