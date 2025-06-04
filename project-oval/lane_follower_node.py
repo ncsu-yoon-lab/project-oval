@@ -76,7 +76,7 @@ class LaneFollowerNode(Node):
         self.integral = 0.0           # Accumulated error for integral term
         self.previous_time = time.time()  # Previous timestamp for time delta calculation
 
-    def edge_detected_callback(self, msg: Bool):  # Fixed method name and added colon
+    def edge_detected_callback(self, msg: Bool):
         """
         Callback for edge detection status messages
         

@@ -90,6 +90,10 @@ class SidewalkGUI(Node):
                 pixels_hom = (K @ cam_points.T).T  # (N, 3)
                 pixels = pixels_hom[:, :2] / pixels_hom[:, 2:]
             
+                # Flip horizontally and vertically
+                pixels[:, 0] = img.shape[1] - pixels[:, 0]  # Horizontal flip
+                pixels[:, 1] = img.shape[0] - pixels[:, 1]  # Vertical flip
+                
                 for pt in pixels:
                     cam_x, cam_y = int(pt[0]), int(pt[1])
                     if 0 <= cam_x < img.shape[1] and 0 <= cam_y < img.shape[0]:

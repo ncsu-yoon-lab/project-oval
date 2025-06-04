@@ -4,6 +4,7 @@ import cv2
 import threading
 import time
 import numpy as np
+
 import onnxruntime as ort
 from PIL import Image as PILImage
 from dataclasses import dataclass
@@ -12,6 +13,8 @@ import math
 import matplotlib.pyplot as plt
 
 IMAGE_TOPIC = "/zed/zed_node/left/image_rect_color"
+EDGE_DISTANCE_TOPIC = '/segmentation/edge_distance'
+EDGE_DETECTED_TOPIC = '/segmentation/edge_detected'
 
 # ONNX model path - update this to your model
 MODEL_PATH = "../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx"
@@ -277,11 +280,11 @@ def create_colored_mask(mask: np.ndarray) -> np.ndarray:
     """Convert segmentation mask to a colored visualization"""
     # Define colors for different classes (RGB format)
     color_map = {
-        0: [0, 0, 0],      # Background (black)
+        # 0: [0, 0, 0],      # Background (black)
         1: [128, 64, 128], # Road (purple-ish)
-        2: [244, 35, 232], # Sidewalk (pink)
-        3: [70, 70, 70],   # Building (dark gray)
-        4: [102, 102, 156],# Wall (blue-gray)
+        # 2: [244, 35, 232], # Sidewalk (pink)
+        # 3: [70, 70, 70],   # Building (dark gray)
+        # 4: [102, 102, 156],# Wall (blue-gray)
         # Add more classes as needed
     }
     
@@ -528,11 +531,11 @@ def create_colored_mask(mask):
     """Convert segmentation mask to a colored visualization"""
     # Define colors for different classes (BGR format for OpenCV)
     color_map = {
-        0: [0, 0, 0],      # Background (black)
+        # 0: [0, 0, 0],      # Background (black)
         1: [128, 64, 128], # Road (purple-ish)
-        2: [232, 35, 244], # Sidewalk (pink)
-        3: [70, 70, 70],   # Building (dark gray)
-        4: [156, 102, 102],# Wall (blue-gray)
+        # 2: [232, 35, 244], # Sidewalk (pink)
+        # 3: [70, 70, 70],   # Building (dark gray)
+        # 4: [156, 102, 102],# Wall (blue-gray)
     }
     
     # Create empty RGB image
@@ -739,7 +742,8 @@ def main():
     node.create_subscription(Image, IMAGE_TOPIC, camera_callback, 10)
     
     # Publishers for performance metrics
-    node.create_publisher(Float32, )
+    distance_pub = node.create_publisher(Float64, EDGE_DISTANCE_TOPIC, 10)
+    detected_pub = node.create_publisher(Bool, EDGE_DETECTED_TOPIC, 10)
     
     # Start ROS2 spinning in separate thread
     thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
@@ -763,7 +767,7 @@ def main():
                 visualize_result(image, mask, lines_image, left_line, right_line)
 
                 if mask is not None:
-                    height, width = image.shape
+                    height, width, _ = image.shape
                     mask_shape = mask.shape
                     
                     # Resize mask to match original image
@@ -789,10 +793,14 @@ def main():
                         distance_to_edge = math.tan(angle) * distance
                         print("Distance to edge of path: ", distance_to_edge)
                 
-                msg = Float32()
+                msg = Float64()
                 msg.data = distance_to_edge
+                distance_pub.publish(msg)
 
-            
+                msg = Bool()
+                msg.data = extended_right != None
+                detected_pub.publish(msg)
+
             rate.sleep()
             
     except KeyboardInterrupt:
@@ -821,6 +829,7 @@ def main():
     rclpy.shutdown()
 
 if __name__ == '__main__':
+
     import rclpy
     from rclpy.node import Node
     from sensor_msgs.msg import Image
@@ -829,55 +838,3 @@ if __name__ == '__main__':
     br = CvBridge()
     main()
 
-# # Example usage:
-# if __name__ == "__main__":
-#     image_path = "10_59_15.jpg"
-#     model_path = "../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx"
-    
-#     try:
-#         mask, lines_img, left_line, right_line = test_onnx_with_image_debug(image_path, model_path)
-
-#         if mask is not None:
-#             height, width = 720, 1280
-#             mask_shape = mask.shape
-            
-#             # Resize mask to match original image
-#             mask_resized = cv2.resize(mask.astype(np.uint8), 
-#                                     (width, height), 
-#                                     interpolation=cv2.INTER_NEAREST)
-            
-#             # Create colored segmentation mask
-#             segmentation_colored = create_colored_mask(mask_resized)
-            
-#             # Extend lines to image edges
-#             extended_left = extend_line_coordinates(left_line, mask_shape, (height, width)) if left_line else None
-#             extended_right = extend_line_coordinates(right_line, mask_shape, (height, width)) if right_line else None
-            
-#             if extended_right is not None:
-#                 print("Left: ", extended_left)
-#                 print("Right: ", extended_right)
-#                 distance = pixel_to_distance(extended_right[3])
-#                 print("Distance: ", distance)
-#                 print("X point: ", 1280)
-#                 angle = pixel_to_yaw(1280)
-#                 print(angle)
-#                 distance_to_edge = math.tan(angle) * distance
-#                 print("Distance to edge of path: ", distance_to_edge)
-#         print("\n=== FINAL RESULTS ===")
-#         print(f"Left line: {left_line}")
-#         print(f"Right line: {right_line}")
-        
-#         if left_line is None and right_line is None:
-#             print("\nNO LINES DETECTED!")
-#             print("Try adjusting lane detection parameters:")
-#             print("- Lower Canny thresholds (canny_low, canny_high)")
-#             print("- Lower Hough threshold")
-#             print("- Shorter minLineLength")
-#             print("- Check if road_classes [1, 3, 4] match your segmentation model")
-        
-#     except KeyboardInterrupt:
-#         print("Interrupted")
-#     except Exception as e:
-#         print(f"Error: {e}")
-#         import traceback
-#         traceback.print_exc()
