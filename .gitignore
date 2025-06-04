@@ -6,3 +6,4 @@ robotLocalization
 *.pt
 
 project-oval/onnx_segmentation/test_images
+
