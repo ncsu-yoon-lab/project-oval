@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import glob
 from pathlib import Path
+import math
+
+
+MIN_POINT_DISTANCE = 200
 
 class LaneDetector():
 
@@ -247,6 +251,74 @@ class LaneDetector():
 
         return filtered_p1, filtered_p2, filtered_p3, filtered_p4
 
+    def create_overlay_image(self, original_image: np.ndarray, segmented_image: np.ndarray, opacity=0.3):
+        """Create an overlay of the segmented image on the original image with purple transparent pixels"""
+        # Create a copy of the original image
+        overlay_image = original_image.copy()
+        
+        # Handle different segmented image formats
+        if len(segmented_image.shape) == 3:
+            # If segmented image is colored, convert to grayscale
+            seg_gray = cv2.cvtColor(segmented_image, cv2.COLOR_BGR2GRAY)
+        else:
+            seg_gray = segmented_image
+        
+        # Create a purple overlay where white pixels exist in segmented image
+        purple_overlay = np.zeros_like(original_image)
+        purple_color = [128, 0, 128]  # Purple in BGR format
+        
+        # Find white pixels (assuming 255 is white)
+        white_pixels = seg_gray == 255
+        
+        # Set purple color for white pixels
+        purple_overlay[white_pixels] = purple_color
+        
+        # Blend the overlay with the original image using weighted addition
+        overlay_image = cv2.addWeighted(original_image, 1.0, purple_overlay, opacity, 0)
+        
+        return overlay_image
+    
+    def check_points(self, p1, p2, p3, p4):
+
+        def dist(point1, point2):
+            return math.sqrt((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2)
+
+        # Checks the distance between the points
+        try:
+            
+            if (dist(p1, p2) < MIN_POINT_DISTANCE):
+                p1 = self.previous_point1
+                p2 = self.previous_point2
+                print("Point 1 and 2 are too close")
+            elif ((p1[1] - p2[1]) / (p1[0] - p2[0])) > 0:
+                p1 = self.previous_point1
+                p2 = self.previous_point2
+                print("Point 1 and 2 are making a positive slope")
+            elif ((p1[1] - p2[1]) / (p1[0] - p2[0])) > -0.05:
+                p1 = self.previous_point1
+                p2 = self.previous_point2
+                print("Point 1 and 2 are too horizontal")
+        except ZeroDivisionError:
+            print("Point 1 and 2 are vertical")
+        
+        try:
+            if (dist(p3, p4) < MIN_POINT_DISTANCE):
+                p3 = self.previous_point3
+                p4 = self.previous_point4
+                print("Point 3 and 4 are too close")
+            elif ((p3[1] - p4[1]) / (p3[0] - p4[0])) < 0:
+                p3 = self.previous_point3
+                p4 = self.previous_point4
+                print("Point 3 and 4 are making a negative slope")
+            elif ((p3[1] - p4[1]) / (p3[0] - p4[0])) < 0.05:
+                p3 = self.previous_point3
+                p4 = self.previous_point4
+                print("Point 3 and 4 are too horizontal")
+        except ZeroDivisionError:
+            print("Point 3 and 4 are vertical")
+
+        return p1, p2, p3, p4
+
     def process_single_image(self, original_image: np.ndarray, segmented_image: np.ndarray):
         """Process a single image and return the result with lane lines drawn"""
         # Crop the segmented image
@@ -271,35 +343,31 @@ class LaneDetector():
             self.previous_point3 = point3
             self.previous_point4 = point4
         
+        point1, point2, point3, point4 = self.check_points(point1, point2, point3, point4)
+        
         point1, point2, point3, point4 = self.filter_points(point1, point2, point3, point4)
 
-        # Create a copy of the original image to draw on
-        result_image = original_image.copy()
+        # Create overlay image with purple segmentation
+        overlay_image = self.create_overlay_image(original_image, segmented_image)
         
-        # Draw lane lines
-        cv2.line(result_image, (int(point1[0]), int(point1[1])), (int(point2[0]), int(point2[1])), (255, 0, 0), 4)
-        cv2.line(result_image, (int(point3[0]), int(point3[1])), (int(point4[0]), int(point4[1])), (255, 0, 0), 4)
+        # Draw lane lines on the overlay image
+        cv2.line(overlay_image, (int(point1[0]), int(point1[1])), (int(point2[0]), int(point2[1])), (255, 0, 0), 4)
+        cv2.line(overlay_image, (int(point3[0]), int(point3[1])), (int(point4[0]), int(point4[1])), (255, 0, 0), 4)
 
-        return result_image, cropped_image, image_with_edges
+        return overlay_image, cropped_image, image_with_edges
 
-    def create_video_visualization(self, image_folder='test_images', output_video='lane_detection_video.mp4', fps=10):
-        """Create a video visualization of lane detection"""
-        import matplotlib
-        matplotlib.use('Agg')  # Use non-interactive backend
-        import matplotlib.pyplot as plt
-        from io import BytesIO
-        
+    def create_video_visualization(self, image_folder='test_images', output_video='lane_detection_simple.mp4', fps=10):
+        """Create a video visualization without matplotlib - should eliminate squishing"""
         from path_segmentation import PathSegmentation
         path_segmenter = PathSegmentation('../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx')
         
         # Get all image files
-        image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.bmp', '*.tiff']
+        image_extension = '*.jpg'
         image_files = []
-        for ext in image_extensions:
-            image_files.extend(glob.glob(os.path.join(image_folder, ext)))
-            image_files.extend(glob.glob(os.path.join(image_folder, ext.upper())))
+        image_files.extend(glob.glob(os.path.join(image_folder, image_extension)))
+        image_files.extend(glob.glob(os.path.join(image_folder, image_extension.upper())))
         
-        image_files.sort()  # Sort for consistent ordering
+        image_files.sort()
         
         if not image_files:
             print(f"No images found in {image_folder}")
@@ -310,92 +378,38 @@ class LaneDetector():
         # Process first image to get dimensions
         first_image = cv2.imread(image_files[0])
         height, width = first_image.shape[:2]
+        print(f"Video dimensions: {width}x{height}")
         
         # Set up video writer
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter(output_video, fourcc, fps, (width * 2, height * 2))
+        out = cv2.VideoWriter(output_video, fourcc, fps, (width, height))
         
         for i, image_path in enumerate(image_files):
-            print(f"Processing image {i+1}/{len(image_files)}: {os.path.basename(image_path)}")
+            print(f"Processing image {i+1}/{len(image_files)}")
             
             try:
-                # Load the original image
+                # Load and process image
                 original_image = cv2.imread(image_path)
                 if original_image is None:
-                    print(f"Could not read image: {image_path}")
                     continue
                 
-                # Segment the image to get the path
                 seg_image = path_segmenter.segment_image(image_path=image_path, show_image=False)
+                overlay_result, _, _ = self.process_single_image(original_image, seg_image)
                 
-                # Process the image
-                result_image, cropped_image, image_with_edges = self.process_single_image(original_image, seg_image)
+                # Add simple text overlay using OpenCV
+                cv2.putText(overlay_result, f'Frame {i+1}', (10, 30), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
                 
-                # Create 2x2 visualization using the Agg backend
-                fig, axes = plt.subplots(1, 2, figsize=(12, 8), dpi=100)
-                fig.suptitle(f'Lane Detection - Frame {i+1}', fontsize=16)
-                
-                # Original image with lane lines
-                axes[0].imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
-                axes[0].set_title('Original + Lane Lines')
-                axes[0].axis('off')
-                
-                # Segmented image
-                if len(seg_image.shape) == 3:
-                    axes[1].imshow(cv2.cvtColor(seg_image, cv2.COLOR_BGR2RGB))
-                else:
-                    axes[1].imshow(seg_image, cmap='gray')
-                axes[1].set_title('Segmented Image')
-                axes[1].axis('off')
-                
-                # Cropped image
-                # if len(cropped_image.shape) == 3:
-                #     axes[1, 0].imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
-                # else:
-                #     axes[1, 0].imshow(cropped_image, cmap='gray')
-                # axes[1, 0].set_title('Cropped Image')
-                # axes[1, 0].axis('off')
-                
-                # # Image with lane edges
-                # if len(image_with_edges.shape) == 3:
-                #     axes[1, 1].imshow(cv2.cvtColor(image_with_edges, cv2.COLOR_BGR2RGB))
-                # else:
-                #     axes[1, 1].imshow(image_with_edges, cmap='gray')
-                # axes[1, 1].set_title('Lane Edges Detected')
-                # axes[1, 1].axis('off')
-                
-                plt.tight_layout()
-                
-                # Convert matplotlib figure to image using buffer approach
-                buf = BytesIO()
-                fig.savefig(buf, format='png', bbox_inches='tight', dpi=100)
-                buf.seek(0)
-                
-                # Read the image from buffer
-                img_array = np.frombuffer(buf.getvalue(), dtype=np.uint8)
-                buf.close()
-                
-                # Decode the PNG image
-                img_array = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-                
-                # Resize to match expected video dimensions
-                img_array = cv2.resize(img_array, (width * 2, height * 2))
-                
-                # Write frame to video
-                out.write(img_array)
-                
-                plt.close(fig)  # Close figure to free memory
+                # Write directly to video - no matplotlib conversion
+                out.write(overlay_result)
                 
             except Exception as e:
-                print(f"Error processing {image_path}: {str(e)}")
+                print(f"Error: {e}")
                 continue
         
-        # Release video writer
         out.release()
         cv2.destroyAllWindows()
-        
-        print(f"Video saved as: {output_video}")
-        print(f"Video specifications: {len(image_files)} frames at {fps} FPS")
+        print(f"Simple video saved as: {output_video}")
 
 if __name__ == "__main__":
     lane_detector = LaneDetector()
