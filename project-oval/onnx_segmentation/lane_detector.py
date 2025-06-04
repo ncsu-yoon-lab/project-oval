@@ -2,7 +2,9 @@ import numpy as np
 import cv2
 import os
 import matplotlib.pyplot as plt
-import random
+from matplotlib.animation import FuncAnimation
+import glob
+from pathlib import Path
 
 class LaneDetector():
 
@@ -225,7 +227,8 @@ class LaneDetector():
         
         return image_with_edges, point1, point2, point3, point4
 
-    def detect_lane_edges(self, original_image: np.ndarray, segmented_image: np.ndarray, image_name: str = ""):
+    def process_single_image(self, original_image: np.ndarray, segmented_image: np.ndarray):
+        """Process a single image and return the result with lane lines drawn"""
         # Crop the segmented image
         cropped_image, cropped_top, cropped_bottom = self._crop_image(segmented_image)
         
@@ -234,71 +237,143 @@ class LaneDetector():
         
         # Find edges and get image with edge points
         image_with_edges, point1, point2, point3, point4 = self._find_edges(cropped_image, path_center)
-        print(cropped_bottom)
-        print(cropped_top)
-        print(point1, point2, point3, point4)
+        
+        # Adjust points back to original image coordinates
         point1 = (point1[0], point1[1] + cropped_top + cropped_bottom)
         point2 = (point2[0], point2[1] + cropped_top + cropped_bottom)
         point3 = (point3[0], point3[1] + cropped_top + cropped_bottom)
-        point4 = (point4[0], point4[1] + cropped_top + cropped_bottom)  
-        print(point1, point2, point3, point4)
+        point4 = (point4[0], point4[1] + cropped_top + cropped_bottom)
 
-        cv2.line(original_image, (int(point1[0]), int(point1[1])), (int(point2[0]), int(point2[1])), (255, 0, 0), 4)
-        cv2.line(original_image, (int(point3[0]), int(point3[1])), (int(point4[0]), int(point4[1])), (255, 0, 0), 4)
+        # Create a copy of the original image to draw on
+        result_image = original_image.copy()
+        
+        # Draw lane lines
+        cv2.line(result_image, (int(point1[0]), int(point1[1])), (int(point2[0]), int(point2[1])), (255, 0, 0), 4)
+        cv2.line(result_image, (int(point3[0]), int(point3[1])), (int(point4[0]), int(point4[1])), (255, 0, 0), 4)
 
-        # Create the visualization
-        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-        fig.suptitle(f'Lane Detection Results - {image_name}', fontsize=16)
+        return result_image, cropped_image, image_with_edges
+
+    def create_video_visualization(self, image_folder='test_images', output_video='lane_detection_video.mp4', fps=10):
+        """Create a video visualization of lane detection"""
+        import matplotlib
+        matplotlib.use('Agg')  # Use non-interactive backend
+        import matplotlib.pyplot as plt
+        from io import BytesIO
         
-        # Original image
-        if len(original_image.shape) == 3:
-            axes[0, 0].imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
-        else:
-            axes[0, 0].imshow(original_image, cmap='gray')
-        axes[0, 0].set_title('Original Image')
-        axes[0, 0].axis('off')
+        from path_segmentation import PathSegmentation
+        path_segmenter = PathSegmentation('../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx')
         
-        # Segmented image
-        if len(segmented_image.shape) == 3:
-            axes[0, 1].imshow(cv2.cvtColor(segmented_image, cv2.COLOR_BGR2RGB))
-        else:
-            axes[0, 1].imshow(segmented_image, cmap='gray')
-        axes[0, 1].set_title('Segmented Image')
-        axes[0, 1].axis('off')
+        # Get all image files
+        image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.bmp', '*.tiff']
+        image_files = []
+        for ext in image_extensions:
+            image_files.extend(glob.glob(os.path.join(image_folder, ext)))
+            image_files.extend(glob.glob(os.path.join(image_folder, ext.upper())))
         
-        # Cropped image
-        if len(cropped_image.shape) == 3:
-            axes[1, 0].imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
-        else:
-            axes[1, 0].imshow(cropped_image, cmap='gray')
-        axes[1, 0].set_title('Cropped Image')
-        axes[1, 0].axis('off')
+        image_files.sort()  # Sort for consistent ordering
         
-        # Image with lane edges
-        if len(image_with_edges.shape) == 3:
-            axes[1, 1].imshow(cv2.cvtColor(image_with_edges, cv2.COLOR_BGR2RGB))
-        else:	
-            axes[1, 1].imshow(image_with_edges, cmap='gray')
-        axes[1, 1].set_title('Lane Edges Detected')
-        axes[1, 1].axis('off')
+        if not image_files:
+            print(f"No images found in {image_folder}")
+            return
         
-        plt.tight_layout()
-        plt.show()
+        print(f"Found {len(image_files)} images")
+        
+        # Process first image to get dimensions
+        first_image = cv2.imread(image_files[0])
+        height, width = first_image.shape[:2]
+        
+        # Set up video writer
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(output_video, fourcc, fps, (width * 2, height * 2))
+        
+        for i, image_path in enumerate(image_files):
+            print(f"Processing image {i+1}/{len(image_files)}: {os.path.basename(image_path)}")
+            
+            try:
+                # Load the original image
+                original_image = cv2.imread(image_path)
+                if original_image is None:
+                    print(f"Could not read image: {image_path}")
+                    continue
+                
+                # Segment the image to get the path
+                seg_image = path_segmenter.segment_image(image_path=image_path, show_image=False)
+                
+                # Process the image
+                result_image, cropped_image, image_with_edges = self.process_single_image(original_image, seg_image)
+                
+                # Create 2x2 visualization using the Agg backend
+                fig, axes = plt.subplots(2, 2, figsize=(12, 8), dpi=100)
+                fig.suptitle(f'Lane Detection - Frame {i+1}', fontsize=16)
+                
+                # Original image with lane lines
+                axes[0, 0].imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
+                axes[0, 0].set_title('Original + Lane Lines')
+                axes[0, 0].axis('off')
+                
+                # Segmented image
+                if len(seg_image.shape) == 3:
+                    axes[0, 1].imshow(cv2.cvtColor(seg_image, cv2.COLOR_BGR2RGB))
+                else:
+                    axes[0, 1].imshow(seg_image, cmap='gray')
+                axes[0, 1].set_title('Segmented Image')
+                axes[0, 1].axis('off')
+                
+                # Cropped image
+                if len(cropped_image.shape) == 3:
+                    axes[1, 0].imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
+                else:
+                    axes[1, 0].imshow(cropped_image, cmap='gray')
+                axes[1, 0].set_title('Cropped Image')
+                axes[1, 0].axis('off')
+                
+                # Image with lane edges
+                if len(image_with_edges.shape) == 3:
+                    axes[1, 1].imshow(cv2.cvtColor(image_with_edges, cv2.COLOR_BGR2RGB))
+                else:
+                    axes[1, 1].imshow(image_with_edges, cmap='gray')
+                axes[1, 1].set_title('Lane Edges Detected')
+                axes[1, 1].axis('off')
+                
+                plt.tight_layout()
+                
+                # Convert matplotlib figure to image using buffer approach
+                buf = BytesIO()
+                fig.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+                buf.seek(0)
+                
+                # Read the image from buffer
+                img_array = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+                buf.close()
+                
+                # Decode the PNG image
+                img_array = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+                
+                # Resize to match expected video dimensions
+                img_array = cv2.resize(img_array, (width * 2, height * 2))
+                
+                # Write frame to video
+                out.write(img_array)
+                
+                plt.close(fig)  # Close figure to free memory
+                
+            except Exception as e:
+                print(f"Error processing {image_path}: {str(e)}")
+                continue
+        
+        # Release video writer
+        out.release()
+        cv2.destroyAllWindows()
+        
+        print(f"Video saved as: {output_video}")
+        print(f"Video specifications: {len(image_files)} frames at {fps} FPS")
 
 if __name__ == "__main__":
     lane_detector = LaneDetector()
-    from path_segmentation import PathSegmentation
-    path_segmenter = PathSegmentation('../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx')
-
-    for image in os.listdir('test_images'):
-        image_path = os.path.join('test_images', image)
-        print(f"Processing {image_path}")
-        
-        # Load the original image
-        original_image = cv2.imread(image_path)
-        
-        # Segment the image to get the path
-        seg_image = path_segmenter.segment_image(image_path=image_path, show_image=False)
-
-        # Detect lane edges and display all images in one plot
-        lane_detector.detect_lane_edges(original_image, seg_image, image)
+    
+    # Create video visualization at 10 FPS
+    lane_detector.create_video_visualization(
+        image_folder='test_images',
+        output_video='lane_detection_video.mp4',
+        fps=10
+    )
