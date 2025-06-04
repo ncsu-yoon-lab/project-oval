@@ -14,6 +14,7 @@ MAX_INPUT = 100.0
 class DriverNode(Node):
     def __init__(self):
         super().__init__("driver")
+        self.mode = "Manual"
         self.manual_throttle = 0
         self.manual_steer = 0
         self.auto_steer = 0
@@ -42,13 +43,15 @@ class DriverNode(Node):
             print(f"Stop Signal: {self.stop_signal}")
     
     def mode_callback(self, msg):
-        if msg.data:
-            if self.mode == "Auto":
-                self.mode = "Manual"
-            else:
-                self.mode = "Auto"
+        # pass
+        self.mode = "Manual" if msg.data else "Auto"
+        # if msg.data:
+        #     if self.mode == "Auto":
+        #         self.mode = "Manual"
+        #     else:
+        #         self.mode = "Auto"
 
-            print(f"New mode: {self.mode}")
+            # print(f"New mode: {self.mode}")
 
     def lane_follower_steer_callback(self, msg):
         self.auto_steer = msg.data
