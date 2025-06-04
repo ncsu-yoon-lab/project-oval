@@ -66,7 +66,9 @@ def create_colored_mask(mask):
     # Define colors for different classes (BGR format for OpenCV)
     color_map = {
         # 0: [0, 0, 0],      # Background (black)
-        1: [128, 64, 128], # Road (purple-ish)
+
+        1: [255, 255, 255], # Road (purple-ish)
+
         # 2: [232, 35, 244], # Sidewalk (pink)
         # 3: [70, 70, 70],   # Building (dark gray)
         # 4: [156, 102, 102],# Wall (blue-gray)
@@ -148,8 +150,7 @@ def test_onnx_with_image_debug(image_path, model_path):
     print(f"Extended left line: {extended_left}")
     print(f"Extended right line: {extended_right}")
     print(lines_image.shape)
-    # results = lane_detector.calculate_distance_to_path_edge(left_line, right_line, lines_image.shape)
-    # print("Distance: ", results["right_edge_distance"])
+
     # Create line overlay on original image
     line_overlay = img_original.copy()
     
@@ -236,7 +237,9 @@ def test_onnx_with_image_debug(image_path, model_path):
 
 # Example usage:
 if __name__ == "__main__":
+
     image_path = "small_path.jpg"
+
     model_path = "../sidewalk_segmentation/sidewalk_segmentation_model/model.onnx"
     
     try:
