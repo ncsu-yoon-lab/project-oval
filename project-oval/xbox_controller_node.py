@@ -70,17 +70,23 @@ def main(args=None):
 				send_data.data = True
 				mode_pub.publish(send_data)
 				# Publishing for actuation
-				throttle_msg = Int64()
-				throttle_msg.data = throttle
-				throttle_pub.publish(throttle_msg)
-
+			
 				steer_msg = Int64()
 				steer_msg.data = steer
 				steer_pub.publish(steer_msg)
+
+				throttle_msg = Int64()
+				throttle_msg.data = throttle
+				throttle_pub.publish(throttle_msg)
 			else:
 				send_data = Bool()
 				send_data.data = False
 				mode_pub.publish(send_data)
+
+				throttle_msg = Int64()
+				throttle_msg.data = 12
+				throttle_pub.publish(throttle_msg)
+			
 			
 			stdscr.refresh()
 			stdscr.addstr(1, 25, 'Xbox Controller       ')

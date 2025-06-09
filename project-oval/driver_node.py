@@ -23,6 +23,7 @@ class DriverNode(Node):
 
         # Setup VESC
         self.motor = VESC(self.serial_port)
+        
         atexit.register(self.cleanup)
         self.right_id = 115
 
@@ -43,15 +44,8 @@ class DriverNode(Node):
             print(f"Stop Signal: {self.stop_signal}")
     
     def mode_callback(self, msg):
-        # pass
+        
         self.mode = "Manual" if msg.data else "Auto"
-        # if msg.data:
-        #     if self.mode == "Auto":
-        #         self.mode = "Manual"
-        #     else:
-        #         self.mode = "Auto"
-
-            # print(f"New mode: {self.mode}")
 
     def lane_follower_steer_callback(self, msg):
         self.auto_steer = msg.data
@@ -99,6 +93,13 @@ class DriverNode(Node):
             # Convert to duty cycle (-1.0 to 1.0)
             left_duty = left_throttle / MAX_INPUT
             right_duty = right_throttle / MAX_INPUT
+
+            print("Mode: ", self.mode)
+            print("Throttle: ", self.manual_throttle)
+            print("Manual Steer: ", self.manual_steer)
+            print("Auto Steer: ", self.auto_steer)
+            print("Duty:     ", left_throttle)
+            print("          ", right_throttle)
             
             # Send duty cycle to motors
             self.motor.set_duty_cycle(left_duty)
@@ -125,6 +126,7 @@ def main():
     try:
         while rclpy.ok():
             node.send_speeds()
+            print("here")
             time.sleep(0.1)
     except KeyboardInterrupt:
         print("Keyboard interrupt: Serials Closed")

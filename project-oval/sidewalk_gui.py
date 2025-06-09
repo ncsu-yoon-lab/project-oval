@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import PointCloud2, Image, CameraInfo
+from sensor_msgs.msg import PointCloud2, Image
 import cv2
 from cv_bridge import CvBridge
 import numpy as np
