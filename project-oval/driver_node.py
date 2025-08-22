@@ -43,15 +43,8 @@ class DriverNode(Node):
             print(f"Stop Signal: {self.stop_signal}")
     
     def mode_callback(self, msg):
-        # pass
+        
         self.mode = "Manual" if msg.data else "Auto"
-        # if msg.data:
-        #     if self.mode == "Auto":
-        #         self.mode = "Manual"
-        #     else:
-        #         self.mode = "Auto"
-
-            # print(f"New mode: {self.mode}")
 
     def lane_follower_steer_callback(self, msg):
         self.auto_steer = msg.data
