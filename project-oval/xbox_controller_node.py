@@ -41,6 +41,8 @@ def joy_callback(data):
 	elif throttle < (-1 * MAX_THROTTLE_REVERSE):
 		throttle = (-1 * MAX_THROTTLE_REVERSE)
 	
+	throttle *= -1
+	
 	steer = int(-100 * steer_input)
 
 
