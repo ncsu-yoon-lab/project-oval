@@ -151,3 +151,78 @@ python -m pip install pyserial
 cd ~/ros2_ws/src/project-oval/project-oval
 python driver_node.py
 ```
+
+## ZED2i Setup
+Setup process for ZED2i. [All steps here](https://www.stereolabs.com/docs/ros2)
+
+# Step 1 - Download and Install the ZED SDK
+Download [ZED SDK for NVIDIA Jetson Orin](https://www.stereolabs.com/developers/release).
+```shell
+cd ~/Downloads
+chmod +x <ZED-SDK-Installation.zstd.run>
+./<ZED-SDK-Installation.zstd.run>
+```
+
+# Step 2 - Setup ROS2 Package
+```shell
+# Move to the `src` folder of the ROS 2 Workspace
+cd ~/ros2_ws/src/ 
+git clone https://github.com/stereolabs/zed-ros2-wrapper.git
+cd ..
+sudo apt update
+# Install the required dependencies
+rosdep install --from-paths src --ignore-src -r -y
+# Build the wrapper
+colcon build --symlink-install --cmake-args=-DCMAKE_BUILD_TYPE=Release
+# Setup the environment variables
+echo source $(pwd)/install/local_setup.bash >> ~/.bashrc
+source ~/.bashrc
+```
+
+# Step 3 - Run the ROS2 node
+```shell
+ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
+```
+
+## GPS Setup
+Affordable GPS ROS2 Setup
+
+
+## RTK Setup
+Setup process for Swift-Nav RTK GNSS System
+[Swift Navigation Support](https://support.swiftnav.com/support/solutions/articles/44001907919-using-ros-with-swift-navigation-gnss-devices)
+[Swift Navigation ROS2 Repo](https://github.com/swift-nav/swiftnav-ros2)
+
+# Step 1 - Install dependencies
+Install the following dependencies anywhere
+
+```shell
+cd
+git clone https://github.com/swift-nav/libsbp.git
+cd libsbp
+git checkout v4.11.0
+cd c
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON -DCMAKE_CXX_EXTENSIONS=OFF ../ 
+make
+sudo make install
+```
+
+# Step 2 - Make ROS2 Package
+
+```shell
+cd ~/ros2_ws/src
+git clone https://github.com/swift-nav/swiftnav-ros2.git
+cd ..
+source /opt/ros/humble/setup.bash
+sudo apt-get update
+sudo apt-get install libserialport-dev
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+# Step 3 - Configuration
+```shell
+code ros2_ws/src/swiftnav-ros2/config/settings.yaml
+```
