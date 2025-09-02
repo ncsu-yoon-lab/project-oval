@@ -124,29 +124,29 @@ sudo busybox devmem 0x0c303018 w 0x458
 sudo busybox devmem 0x0c303010 w 0x400
 ```
 
-## PyVESC Library Setup
+# PyVESC Library Setup
 Setup process for PyVESC
 
-# Step 1 - Move directories
+## Step 1 - Move directories
 Move the project-oval root directory
 ```shell
 cd ~/ros2_ws/src/project-oval
 ```
 
-# Step 2 - Clone PyVESC
+## Step 2 - Clone PyVESC
 [Most current GitHub](https://github.com/LiamBindle/PyVESC/tree/master) 
 ```shell
 git clone https://github.com/LiamBindle/PyVESC/tree/master
 cd PyVESC
 ```
 
-# Step 3 - Install dependencies
+## Step 3 - Install dependencies
 ```shell
 python -m pip install -e .
 python -m pip install pyserial
 ```
 
-# Step 4 - Test driver node
+## Step 4 - Test driver node
 ```shell
 cd ~/ros2_ws/src/project-oval/project-oval
 python driver_node.py
