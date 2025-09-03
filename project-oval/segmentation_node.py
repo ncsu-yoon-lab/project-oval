@@ -14,8 +14,9 @@ from sidewalk_segmentation.sidewalk_segmentation import SegmentationModel
 
 #Default: stereo image (from both L and R lenses)
 IMAGE_TOPIC = "/zed/zed_node/stereo/image_rect_color"
+MODEL_PATH = "sidewalk_segmentation/sidewalk_segmentation_model/model.safetensors"
 
-seg_model = SegmentationModel()
+seg_model = SegmentationModel(model_path=MODEL_PATH)
 
 br = CvBridge()
 image = None

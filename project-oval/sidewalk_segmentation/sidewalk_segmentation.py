@@ -9,16 +9,6 @@ from transformers import AutoModelForSemanticSegmentation
 from dataclasses import dataclass
 from typing import Tuple, Optional, List
 import math
-import torch
-import numpy as np
-import cv2
-from PIL import Image
-import matplotlib.pyplot as plt
-import torchvision.transforms as transforms
-from safetensors.torch import load_file
-from transformers import AutoModelForSemanticSegmentation
-from dataclasses import dataclass
-from typing import Tuple, Optional, List
 
 VFOV = 68 # degrees
 HFOV = 101 # degrees
@@ -55,10 +45,10 @@ class LaneDetectionConfig:
 
 class SegmentationModel:
     """Handles image segmentation using a pre-trained model"""
-    def __init__(self, model_path: str):
+    def __init__(self, model_path:str="sidewalk_segmentation_model/model.safetensors"):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model_state = load_file(model_path)
-        self.model = AutoModelForSemanticSegmentation.from_pretrained("./sidewalk_segmentation_model")
+        self.model = AutoModelForSemanticSegmentation.from_pretrained("sidewalk_segmentation_model")
         self.model.load_state_dict(self.model_state)
         self.model.to(self.device)
         self.model.eval()
