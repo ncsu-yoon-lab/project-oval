@@ -1,151 +1,169 @@
-#!/usr/bin/env python3
-'''
-IMU Publisher Node - Read Gyro and Accelerometer data from MPU6050 and publish as ROS2 topic
-'''
+#!/usr/bin/env python
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64MultiArray
-import smbus
-import time
+from sensor_msgs.msg import Imu, Image
+import threading
+import csv
+import os
+from datetime import datetime
+from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
+import cv2 as cv # OpenCV library
 
-# MPU6050 Registers and their Address
-PWR_MGMT_1 = 0x6B
-SMPLRT_DIV = 0x19
-CONFIG = 0x1A
-GYRO_CONFIG = 0x1B
-INT_ENABLE = 0x38
-ACCEL_XOUT_H = 0x3B
-ACCEL_YOUT_H = 0x3D
-ACCEL_ZOUT_H = 0x3F
-GYRO_XOUT_H = 0x43
-GYRO_YOUT_H = 0x45
-GYRO_ZOUT_H = 0x47
-
-class ImuPublisher(Node):
+class ZedImuLogger(Node):
     def __init__(self):
-        super().__init__('cheap_imu_publisher')
+        super().__init__("zed_imu_node")
         
-        # Create publisher for IMU data
-        self.imu_publisher = self.create_publisher(
-            Float64MultiArray, 
-            '/cheap_imu', 
-            10
-        )
+        # Initialize timestamp and folders
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.session_timestamp = timestamp
         
-        # Set up MPU6050
-        # Based on the diagnostic results, use bus 7 for Jetson Orin
-        self.bus = smbus.SMBus(7)  # Changed from bus 1 to bus 7
-        self.device_address = 0x68  # MPU6050 device address
+        # Create images folder
+        self.images_folder = f"zed_images_{timestamp}"
+        os.makedirs(self.images_folder, exist_ok=True)
         
-        # Initialize the MPU6050
-        self.mpu_init()
+        # Initialize CSV file
+        self.csv_filename = f"zed_imu_data_{timestamp}.csv"
+        self.csv_file = None
+        self.csv_writer = None
+        self.frame = None
+        self.image_counter = 0
+        self.setup_csv()
+        self.bridge = CvBridge()
         
-        # Create timer that will call the publish_imu_data method at defined frequency
-        self.timer_period = 0.02  # 50 Hz - matches high frequency data collection
-        self.timer = self.create_timer(self.timer_period, self.publish_imu_data)
+        # Subscription to IMU topic
+        self.create_subscription(Imu, "/zed/zed_node/imu/data", self.zed_imu_callback, 10)
+        self.create_subscription(Image, "/zed/zed_node/left/image_rect_color", self.zed_image_callback, 10)
         
-        # Log that we've started up
-        self.get_logger().info('Cheap IMU Publisher Node initialized')
-    
-    def mpu_init(self):
-        """Initialize MPU6050 settings"""
+        self.get_logger().info(f"Starting IMU data logging to: {self.csv_filename}")
+        self.get_logger().info(f"Images will be saved to: {self.images_folder}")
+
+    def zed_image_callback(self, msg):
+        """Callback to receive and store the latest image"""
         try:
-            # Write to sample rate register
-            self.bus.write_byte_data(self.device_address, SMPLRT_DIV, 7)
-            
-            # Write to power management register
-            self.bus.write_byte_data(self.device_address, PWR_MGMT_1, 1)
-            
-            # Write to Configuration register
-            self.bus.write_byte_data(self.device_address, CONFIG, 0)
-            
-            # Write to Gyro configuration register
-            self.bus.write_byte_data(self.device_address, GYRO_CONFIG, 24)
-            
-            # Write to interrupt enable register
-            self.bus.write_byte_data(self.device_address, INT_ENABLE, 1)
-            
-            self.get_logger().info('MPU6050 initialized successfully')
+            # Convert ROS image message to OpenCV format
+            self.frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         except Exception as e:
-            self.get_logger().error(f'Failed to initialize MPU6050: {str(e)}')
-    
-    def read_raw_data(self, addr):
-        """Read raw data from MPU6050 register"""
-        try:
-            # Accelero and Gyro value are 16-bit
-            high = self.bus.read_byte_data(self.device_address, addr)
-            low = self.bus.read_byte_data(self.device_address, addr+1)
+            self.get_logger().error(f"Error converting image: {str(e)}")
+
+    def save_current_image(self):
+        """Save the current frame to disk and return the filename"""
+        if self.frame is not None:
+            # Create filename with timestamp and counter
+            current_time = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]  # microseconds to milliseconds
+            self.image_counter += 1
+            image_filename = f"image_{current_time}_{self.image_counter:06d}.jpg"
+            image_path = os.path.join(self.images_folder, image_filename)
             
-            # Concatenate higher and lower value
-            value = ((high << 8) | low)
-            
-            # To get signed value from MPU6050
-            if(value > 32768):
-                value = value - 65536
-            
-            return value
-        except Exception as e:
-            self.get_logger().error(f'Error reading from MPU6050: {str(e)}')
-            return 0
-    
-    def publish_imu_data(self):
-        """Read IMU data and publish to ROS2 topic"""
-        try:
-            # Read Accelerometer raw value
-            acc_x = self.read_raw_data(ACCEL_XOUT_H)
-            acc_y = self.read_raw_data(ACCEL_YOUT_H)
-            acc_z = self.read_raw_data(ACCEL_ZOUT_H)
-            
-            # Read Gyroscope raw value
-            gyro_x = self.read_raw_data(GYRO_XOUT_H)
-            gyro_y = self.read_raw_data(GYRO_YOUT_H)
-            gyro_z = self.read_raw_data(GYRO_ZOUT_H)
-            
-            # Full scale range +/- 250 degree/C as per sensitivity scale factor
-            # Convert to physical units
-            Ax = acc_x/16384.0  # Convert to g
-            Ay = acc_y/16384.0
-            Az = acc_z/16384.0
-            
-            Gx = gyro_x/131.0  # Convert to deg/s
-            Gy = gyro_y/131.0
-            Gz = gyro_z/131.0
-            
-            # Create message - ordering matters to match the data collector expectations
-            # Order: [gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z]
-            imu_msg = Float64MultiArray()
-            imu_msg.data = [Gx, Gy, Gz, Ax, Ay, Az]
-            
-            # Publish the message
-            self.imu_publisher.publish(imu_msg)
-            
-            # Log at debug level (less frequent)
-            if hasattr(self, 'log_counter'):
-                self.log_counter += 1
+            # Save the image
+            success = cv.imwrite(image_path, self.frame)
+            if success:
+                self.get_logger().info(f"Saved image: {image_filename}")
+                return image_filename
             else:
-                self.log_counter = 0
-                
-            if self.log_counter % 50 == 0:  # Log every ~1 second at 50Hz
-                self.get_logger().debug(
-                    f'Published IMU data: Gx={Gx:.2f} deg/s, Gy={Gy:.2f} deg/s, Gz={Gz:.2f} deg/s, '
-                    f'Ax={Ax:.2f} g, Ay={Ay:.2f} g, Az={Az:.2f} g'
-                )
-                
+                self.get_logger().error(f"Failed to save image: {image_filename}")
+                return ""
+        else:
+            self.get_logger().warn("No image available to save")
+            return ""
+
+    def setup_csv(self):
+        """Initialize the CSV file with headers"""
+        self.csv_file = open(self.csv_filename, 'w', newline='')
+        self.csv_writer = csv.writer(self.csv_file)
+        
+        # Write CSV headers
+        headers = [
+            # Timestamp
+            'timestamp_sec', 'timestamp_nanosec', 'frame_id', 'image_filename',
+            # Orientation (quaternion)
+            'orientation_x', 'orientation_y', 'orientation_z', 'orientation_w',
+            # Orientation covariance (9 elements)
+            'ori_cov_0', 'ori_cov_1', 'ori_cov_2', 'ori_cov_3', 'ori_cov_4',
+            'ori_cov_5', 'ori_cov_6', 'ori_cov_7', 'ori_cov_8',
+            # Angular velocity
+            'angular_vel_x', 'angular_vel_y', 'angular_vel_z',
+            # Angular velocity covariance (9 elements)
+            'ang_vel_cov_0', 'ang_vel_cov_1', 'ang_vel_cov_2', 'ang_vel_cov_3',
+            'ang_vel_cov_4', 'ang_vel_cov_5', 'ang_vel_cov_6', 'ang_vel_cov_7', 'ang_vel_cov_8',
+            # Linear acceleration
+            'linear_accel_x', 'linear_accel_y', 'linear_accel_z',
+            # Linear acceleration covariance (9 elements)
+            'lin_accel_cov_0', 'lin_accel_cov_1', 'lin_accel_cov_2', 'lin_accel_cov_3',
+            'lin_accel_cov_4', 'lin_accel_cov_5', 'lin_accel_cov_6', 'lin_accel_cov_7', 'lin_accel_cov_8'
+        ]
+        
+        self.csv_writer.writerow(headers)
+        self.csv_file.flush()
+
+    def zed_imu_callback(self, data):
+        """Callback function to process and log IMU data"""
+        try:
+            # Save the current image (if available)
+            image_filename = self.save_current_image()
+            
+            # Extract data from the IMU message
+            row = [
+                # Timestamp
+                data.header.stamp.sec,
+                data.header.stamp.nanosec,
+                data.header.frame_id,
+                image_filename,  # Add the saved image filename
+                # Orientation (quaternion)
+                data.orientation.x,
+                data.orientation.y,
+                data.orientation.z,
+                data.orientation.w,
+                # Orientation covariance
+                *data.orientation_covariance,
+                # Angular velocity
+                data.angular_velocity.x,
+                data.angular_velocity.y,
+                data.angular_velocity.z,
+                # Angular velocity covariance
+                *data.angular_velocity_covariance,
+                # Linear acceleration
+                data.linear_acceleration.x,
+                data.linear_acceleration.y,
+                data.linear_acceleration.z,
+                # Linear acceleration covariance
+                *data.linear_acceleration_covariance
+            ]
+            
+            # Write to CSV
+            self.csv_writer.writerow(row)
+            self.csv_file.flush()  # Ensure data is written immediately
+            
+            # Optional: Print some basic info (remove if too verbose)
+            self.get_logger().info(f"Logged IMU data - Accel: [{data.linear_acceleration.x:.3f}, "
+                                 f"{data.linear_acceleration.y:.3f}, {data.linear_acceleration.z:.3f}]")
+            
         except Exception as e:
-            self.get_logger().error(f'Error in publish_imu_data: {str(e)}')
+            self.get_logger().error(f"Error logging IMU data: {str(e)}")
+
+    def cleanup(self):
+        """Close the CSV file properly"""
+        if self.csv_file:
+            self.csv_file.close()
+            self.get_logger().info(f"CSV file closed: {self.csv_filename}")
+            self.get_logger().info(f"Total images saved: {self.image_counter}")
 
 def main(args=None):
     rclpy.init(args=args)
     
     try:
-        imu_publisher = ImuPublisher()
-        rclpy.spin(imu_publisher)
+        # Create the node
+        imu_logger = ZedImuLogger()
+        
+        # Spin the node
+        rclpy.spin(imu_logger)
+        
     except KeyboardInterrupt:
-        print('\nShutting down IMU Publisher Node...')
-    except Exception as e:
-        print(f'Unexpected error: {str(e)}')
+        print("Ctrl+C captured, ending...")
+        
     finally:
         # Cleanup
+        if 'imu_logger' in locals():
+            imu_logger.cleanup()
         rclpy.shutdown()
 
 if __name__ == '__main__':
