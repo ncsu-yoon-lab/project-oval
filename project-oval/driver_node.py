@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int64
-from std_msgs.msg import Bool
+from std_msgs.msg import Int64MultiArray, Bool, Int64
 import sys
 import threading
 import time
@@ -18,19 +17,19 @@ class DriverNode(Node):
         self.manual_throttle = 0
         self.manual_steer = 0
         self.auto_steer = 0
-        self.serial_port = '/dev/ttyTHS0'
+        self.serial_port = '/dev/ttyTHS1'
         self.stop_signal = False
 
         # Setup VESC
         self.motor = VESC(self.serial_port)
+        print("Motor setup")
         atexit.register(self.cleanup)
         self.right_id = 115
 
         self.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
         self.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
         self.create_subscription(Bool, '/xbox_controller/mode', self.mode_callback, 10)
-        self.create_subscription(Int64, '/lane_follower/steer', self.lane_follower_steer_callback, 10)
-        self.create_subscription(Bool, 'lidar_od_signal', self.brake_callback, 10)
+        self.rpm_pub = self.create_publisher(Int64MultiArray, '/motors/rpm', 10)
 
     def steer_callback(self, msg):
         self.manual_steer = msg.data
@@ -118,6 +117,13 @@ def main():
     try:
         while rclpy.ok():
             node.send_speeds()
+
+            rpm_msg = Int64MultiArray()
+            left_rpm = int(node.motor.get_rpm())
+            right_rpm = int(node.motor.get_rpm(can_id=node.right_id))
+            rpm_msg.data = [left_rpm, right_rpm]
+            node.rpm_pub.publish(rpm_msg)
+            
             time.sleep(0.1)
     except KeyboardInterrupt:
         print("Keyboard interrupt: Serials Closed")

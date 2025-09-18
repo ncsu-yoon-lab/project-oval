@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>project-oval</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="anglia@todo.todo">anglia</maintainer>
+  <version>1.0.0</version>
+  <description>Handles all specific functions of the Jetson on-board the OVAL Vehicle</description>
+  <maintainer email="malinchc@gmail.com">malinchc</maintainer>
   <license>TODO: License declaration</license>
 
   <test_depend>ament_copyright</test_depend>
