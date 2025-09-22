@@ -184,6 +184,8 @@ class SegmentationNode(Node):
             
             self.get_logger().info(f"Segmentation completed in {processing_time:.3f}s")
             self.get_logger().info(f"FPS {1/processing_time:.3f}fps")
+            self.get_logger().info(f"Segmentation Mask in {segmentation_mask.shape}, Probabilities in {probabilities.shape}")
+            self.get_logger().info(f"Segmentation Mask in {segmentation_mask}")
             
             
             if self.show_display:
@@ -195,18 +197,56 @@ class SegmentationNode(Node):
         except Exception as e:
             self.get_logger().error(f"Error in processing: {str(e)}")
     
+    def apply_convex_hull_to_mask(self, mask):
+        """
+        Apply convex hull to segmentation mask
+        
+        Args:
+            mask: Segmentation mask (grayscale, 0-255)
+        
+        Returns:
+            convex_hull_mask: Mask with convex hull applied
+        """
+        # Convert to binary mask (assuming non-zero values are the object)
+        binary_mask = (mask > 0).astype(np.uint8)
+        
+        # Find contours
+        contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        if not contours:
+            return mask  # Return original if no contours found
+        
+        # Get largest contour (main object)
+        largest_contour = max(contours, key=cv2.contourArea)
+        
+        # Get convex hull
+        hull = cv2.convexHull(largest_contour)
+        
+        # Create new mask with convex hull
+        convex_hull_mask = np.zeros_like(mask)
+        cv2.fillPoly(convex_hull_mask, [hull], 255)  # Fill with 255 (white)
+        
+        return convex_hull_mask
+    
     def display_results(self, original_image, segmentation_mask, probabilities):
         try:
+
             original_resized = cv2.resize(original_image, (self.image_res, self.image_res))
             colored_mask = cv2.applyColorMap(segmentation_mask, cv2.COLORMAP_JET)
             alpha = 0.6
             overlay = cv2.addWeighted(original_resized, 1-alpha, colored_mask, alpha, 0)
 
-            display_image = np.hstack([original_resized, colored_mask, overlay])
+            convex_hull_mask = self.apply_convex_hull_to_mask(segmentation_mask)
+            colored_hull_mask = cv2.applyColorMap(convex_hull_mask, cv2.COLORMAP_JET)
+            overlay_hull = cv2.addWeighted(original_resized, 1-alpha, colored_hull_mask, alpha, 0)
+
+
+            display_image = np.hstack([original_resized, colored_mask, overlay, overlay_hull])
             
             cv2.putText(display_image, "Original", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             cv2.putText(display_image, "Segmentation", (682, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             cv2.putText(display_image, "Overlay", (1354, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(display_image, "Overlay_Hull", (2036, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             
             # Resize the display image to have width of 672 pixels
             target_width = 672
@@ -226,6 +266,9 @@ class SegmentationNode(Node):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.4 * scale_factor, (255, 255, 255), 1)
             cv2.putText(display_image_resized, "Overlay", 
                     (int(1354 * scale_factor), int(30 * scale_factor)), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.4 * scale_factor, (255, 255, 255), 1)
+            cv2.putText(display_image_resized, "Overlay_Hull", 
+                    (int(2036 * scale_factor), int(30 * scale_factor)), 
                     cv2.FONT_HERSHEY_SIMPLEX, 0.4 * scale_factor, (255, 255, 255), 1)
             
             cv2.imshow("Segmentation Results", display_image_resized)
