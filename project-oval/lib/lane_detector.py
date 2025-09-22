@@ -258,12 +258,11 @@ class LaneDetector:
 
         return p1, p2, p3, p4
 
-    def detect_lanes(self, original_image: np.ndarray, segmented_image: np.ndarray) -> dict:
+    def detect_lanes(self, segmented_image: np.ndarray) -> dict:
         """
         Detect lane edges from images.
         
         Args:
-            original_image: The original input image (used for coordinate reference)
             segmented_image: The segmented image showing the path/lane areas
             
         Returns:
