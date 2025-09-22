@@ -9,3 +9,7 @@ project-oval/onnx_segmentation/test_images
 
 dataset
 log
+models
+trt_cache
+
+.venv/

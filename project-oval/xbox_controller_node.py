@@ -45,7 +45,6 @@ def joy_callback(data):
 	
 	steer = int(-100 * steer_input)
 
-
 def main(args=None):
 
 	rclpy.init(args=args)

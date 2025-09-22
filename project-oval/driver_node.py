@@ -121,6 +121,7 @@ def main():
             rpm_msg = Int64MultiArray()
             left_rpm = int(node.motor.get_rpm())
             right_rpm = int(node.motor.get_rpm(can_id=node.right_id))
+            print(f"Left RPM: {left_rpm}, Right RPM: {right_rpm}")
             rpm_msg.data = [left_rpm, right_rpm]
             node.rpm_pub.publish(rpm_msg)
             
