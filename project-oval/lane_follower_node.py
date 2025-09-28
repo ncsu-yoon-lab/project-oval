@@ -10,7 +10,12 @@ to keep the vehicle at a target distance from lane edges using PID control.
 # Import required ROS2 libraries
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64, Int64, Bool  # Added Bool import (was missing)
+from std_msgs.msg import Int64
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
+
+from lib.lane_detector import LaneDetector
 
 # Other libraries
 import time
@@ -24,9 +29,7 @@ Ki = 0      # Integral gain - how much to correct for accumulated past errors
 target_distance = 2.0
 
 # ROS2 Topic Names
-EDGE_DISTANCE_TOPIC = '/segmentation/edge_distance'  # Input: distance to lane edge
-EDGE_DETECTED_TOPIC = '/segmentation/edge_detected'  # Input: whether edge is detected
-STEER_TOPIC = '/lane_follower/steer'                 # Output: steering command
+SEGMENTATION_TOPIC = '/segmentation/mask'  # Input: distance to lane edge
 
 class LaneFollowerNode(Node):
     """
@@ -47,62 +50,63 @@ class LaneFollowerNode(Node):
 
         # Create subscribers to listen for edge detection data
         self.create_subscription(
-            Float64,                        # Message type
-            EDGE_DISTANCE_TOPIC,           # Topic name
-            self.edge_distance_callback,   # Callback function
+            Image,                        # Message type
+            SEGMENTATION_TOPIC,           # Topic name
+            self.segmentation_mask_callback,   # Callback function
             10                             # Queue size
-        )
-        
-        self.create_subscription(
-            Bool,                          # Message type  
-            EDGE_DETECTED_TOPIC,          # Topic name
-            self.edge_detected_callback,   # Callback function (fixed method name)
-            10                            # Queue size
-        )
-        
-        # Create publisher for steering commands
-        self.steer_pub = self.create_publisher(
-            Int64,              # Message type
-            STEER_TOPIC,        # Topic name (fixed variable name)
-            10                  # Queue size
         )
 
         # State variables for edge detection and distance
-        self.edge_distance = 0.0      # Current distance to lane edge
-        self.edge_detected = True     # Whether an edge is currently detected
+        self.bridge = CvBridge()
+        self.mask_image = None
+        self.lane_detector = LaneDetector()
         
         # PID Controller state variables
         self.previous_error = 0.0     # Previous error for derivative calculation
         self.integral = 0.0           # Accumulated error for integral term
         self.previous_time = time.time()  # Previous timestamp for time delta calculation
 
-    def edge_detected_callback(self, msg: Bool):
+    def segmentation_mask_callback(self, msg: Image):
         """
         Callback for edge detection status messages
         
         Args:
-            msg: ROS2 Bool message indicating if edge is detected
+            msg: ROS2 Image message for segmentation mask
         """
-        self.edge_detected = msg.data
+        self.mask_image = self.bridge.imgmsg_to_cv2(msg)
 
-    def edge_distance_callback(self, msg: Float64):
+
+        lanes_detected = self.lane_detector.detect_lanes(self.mask_image)
+
+        if lanes_detected is not None:
+            left_lane = lanes_detected['left_lane']
+            right_lane = lanes_detected['right_lane']
+            lane_center = lanes_detected['path_center']
+
+            distance = abs((self.mask_image.shape[0] / 2) - lane_center)
+
+            self.find_steering(self, distance)
+
+        cv2.imshow()
+            
+            
+
+    def find_steering(self, distance: float):
         """
         Main callback that processes edge distance and calculates steering
         
         Args:
             msg: ROS2 message containing distance to lane edge
         """
-        # Store the received edge distance
-        self.edge_distance = msg.data
 
         # Only calculate steering if an edge is detected
         if self.edge_detected:  # Fixed variable reference (was edge_detected without self)
             # Calculate error: how far we are from target distance
-            error = self.edge_distance - target_distance
+            error = distance - target_distance
             
             # Use PID controller to calculate steering correction
             steer = self.PID(error)
-            print(f"Edge detected. Distance: {self.edge_distance}, Error: {error}, Steer: {steer}")
+            print(f"Edge detected. Distance: {distance}, Error: {error}, Steer: {steer}")
         else:
             # No edge detected - don't steer (go straight)
             steer = 0

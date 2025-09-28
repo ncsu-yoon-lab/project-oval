@@ -8,7 +8,6 @@ import threading
 import time
 import onnxruntime as ort
 import numpy as np
-from std_msgs.msg import Int64
 
 class ONNXSegmentationModel:
     def __init__(self, model_path, device="cuda", use_tensorrt=False, image_res=224):
@@ -151,7 +150,7 @@ class SegmentationNode(Node):
         if self.publish_segmentation:
             self.segmentation_publisher = self.create_publisher(
                 Image,
-                '/segmentation_mask',
+                '/segmentation/mask',
                 10
             )
         
