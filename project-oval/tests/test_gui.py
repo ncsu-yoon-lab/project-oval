@@ -1,10 +1,7 @@
-import json
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-import numpy as np
 from lib.path_planner import PathPlanner
 
 class NavigationGUI:
