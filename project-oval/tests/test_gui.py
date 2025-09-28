@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
-from path_planner import PathPlanner
+from lib.path_planner import PathPlanner
 
 class NavigationGUI:
     def __init__(self, root):
