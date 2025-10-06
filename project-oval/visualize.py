@@ -21,7 +21,7 @@ class LaneVisualizer(Node):
         # Subscriber to the visualization topic
         self.create_subscription(
             Image,
-            '/lane_detection/visualization',
+            'segmentation/control_visualization',
             self.image_callback,
             10
         )
