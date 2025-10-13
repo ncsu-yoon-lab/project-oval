@@ -2,7 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
-from std_msgs.msg import Int64, Bool
+from std_msgs.msg import Int64, Bool, String
 import threading
 import curses
 import time
@@ -15,6 +15,7 @@ MAX_THROTTLE_REVERSE = 100
 
 # steer should be bounded between [-100, +100]
 manual = True
+toggle_flag = False
 steer = 0
 throttle = 0
 switch_time = time.time()
@@ -45,6 +46,12 @@ def joy_callback(data):
 	
 	steer = int(-100 * steer_input)
 
+def telemetry_callback(data):
+	global manual, switch_time
+	if (data.data == "cmd:mode_switch" and time.time() - switch_time > 0.5):
+		manual = not manual
+		switch_time = time.time()
+
 def main(args=None):
 
 	rclpy.init(args=args)
@@ -52,16 +59,20 @@ def main(args=None):
 
 	# Subscription to joy topic - gets info from controller
 	joy_sub = node.create_subscription(Joy, "joy", joy_callback, 5)
+	tel_msg_sub = node.create_subscription(String, "/telemetry_command", telemetry_callback, 5)
 	# Publishers to manual throttle and steer - publishes bounded number pre-PWM
 	throttle_pub = node.create_publisher(Int64, "/xbox_controller/throttle", 10)
 	steer_pub = node.create_publisher(Int64, "/xbox_controller/steer", 10)
 	mode_pub = node.create_publisher(Bool, "/xbox_controller/mode", 10)
-
+	tel_msg_pub = node.create_publisher(String, "/telemetry_message", 10)
+	
 	thread = threading.Thread(target=rclpy.spin, args=(node, ), daemon=True)
 	thread.start()
 
 	rate = node.create_rate(20, node.get_clock())
-        
+
+	prev_manual = manual  # Track previous manual state
+		
 	while rclpy.ok():
 
 		try:
@@ -78,11 +89,19 @@ def main(args=None):
 				steer_msg = Int64()
 				steer_msg.data = steer
 				steer_pub.publish(steer_msg)
+
 			else:
 				send_data = Bool()
 				send_data.data = False
 				mode_pub.publish(send_data)
 			
+			# Only publish telemetry message when manual changes
+			if manual != prev_manual:
+				tel_msg = String()
+				tel_msg.data = f'mode:{"manual" if manual else "auto"}'
+				tel_msg_pub.publish(tel_msg)
+				prev_manual = manual
+
 			stdscr.refresh()
 			stdscr.addstr(1, 25, 'Xbox Controller       ')
 			stdscr.addstr(2, 25, 'Throttle: %.2f  ' % throttle)

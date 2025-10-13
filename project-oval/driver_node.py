@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int64MultiArray, Bool, Int64
+from std_msgs.msg import Int64MultiArray, Bool, Int64, String
 import sys
 import threading
 import time
@@ -30,6 +30,13 @@ class DriverNode(Node):
         self.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
         self.create_subscription(Bool, '/xbox_controller/mode', self.mode_callback, 10)
         self.rpm_pub = self.create_publisher(Int64MultiArray, '/motors/rpm', 10)
+        
+        ## Adding Gemini Controls
+        self.create_subscription(Int64, '/gemini/throttle', self.lane_follower_steer_callback, 10)
+        self.create_subscription(Int64, '/gemini/steering', self.lane_follower_steer_callback, 10)
+
+        ## Adding 
+        self.telemetry_message = self.create_publisher(String, '/telemetry_message', 10)
 
     def steer_callback(self, msg):
         self.manual_steer = msg.data
@@ -46,7 +53,12 @@ class DriverNode(Node):
         self.mode = "Manual" if msg.data else "Auto"
 
     def lane_follower_steer_callback(self, msg):
-        self.auto_steer = msg.data
+        if (msg.data > MAX_INPUT):
+            self.auto_steer = MAX_INPUT
+        elif (msg.data < -MAX_INPUT):
+            self.auto_steer = -MAX_INPUT
+        else:
+            self.auto_steer = msg.data
 
     def throttle_callback(self, msg):
         if (msg.data > MAX_INPUT):
@@ -87,6 +99,17 @@ class DriverNode(Node):
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.auto_steer)
             else:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
+
+            print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+            
+            ## Sending telemetry message
+            tel_l_msg = String()
+            tel_l_msg.data = f'Throttle_L:{left_throttle:.2f}'
+            self.telemetry_message.publish(tel_l_msg)
+            
+            tel_r_msg = String()
+            tel_r_msg.data = f'Throttle_R:{right_throttle:.2f}'
+            self.telemetry_message.publish(tel_r_msg)
             
             # Convert to duty cycle (-1.0 to 1.0)
             left_duty = left_throttle / MAX_INPUT
@@ -118,18 +141,18 @@ def main():
         while rclpy.ok():
             node.send_speeds()
 
-            rpm_msg = Int64MultiArray()
-            left_rpm = int(node.motor.get_rpm())
-            right_rpm = int(node.motor.get_rpm(can_id=node.right_id))
-            print(f"Left RPM: {left_rpm}, Right RPM: {right_rpm}")
-            rpm_msg.data = [left_rpm, right_rpm]
-            node.rpm_pub.publish(rpm_msg)
+            # rpm_msg = Int64MultiArray()
+            # left_rpm = int(node.motor.get_rpm())
+            # right_rpm = int(node.motor.get_rpm(can_id=node.right_id))
+            # print(f"Left RPM: {left_rpm}, Right RPM: {right_rpm}")
+            # rpm_msg.data = [left_rpm, right_rpm]
+            # node.rpm_pub.publish(rpm_msg)
             
             time.sleep(0.1)
     except KeyboardInterrupt:
         print("Keyboard interrupt: Serials Closed")
     except Exception as e:
-        print("Exception caught: ", e)
+        print("Exception caught: ", e)  
     finally:
         rclpy.shutdown()
 

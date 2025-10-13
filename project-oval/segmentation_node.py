@@ -77,6 +77,8 @@ class ONNXSegmentationModel:
         # Get model input/output info
         self.input_name = self.session.get_inputs()[0].name
         self.output_name = self.session.get_outputs()[0].name
+        self.input_name = self.session.get_inputs()[0].name
+        self.output_name = self.session.get_outputs()[0].name
         
         print(f"Input name: {self.input_name}")
         print(f"Output name: {self.output_name}")
@@ -153,7 +155,21 @@ class SegmentationNode(Node):
                 '/segmentation/mask',
                 10
             )
-        
+
+            # Segmentation original image publisher
+            self.segmentation_original = self.create_publisher(
+                Image, 
+                '/segmentation/original', 
+                10
+            )
+            
+            # Segmentation overlay publisher 
+            self.segmentation_overlay = self.create_publisher(
+                Image, 
+                '/segmentation/overlay', 
+                10
+            )
+            
         self.timer = self.create_timer(1.0 / self.frequency, self.process_timer_callback)
         
         self.get_logger().info(f"Segmentation node initialized")
@@ -180,7 +196,6 @@ class SegmentationNode(Node):
             start_time = time.time()
             segmentation_mask, probabilities = self.seg_model.segment_image(image_to_process)
 
-            
             processing_time = time.time() - start_time
             
             self.get_logger().info(f"Segmentation completed in {processing_time:.3f}s")
@@ -194,7 +209,7 @@ class SegmentationNode(Node):
             if self.publish_segmentation:
                 # Convert to convex hull
                 segmentation_mask = self.apply_convex_hull_to_mask(segmentation_mask)
-                self.publish_segmentation_mask(segmentation_mask)
+                self.publish_segmentation_mask(segmentation_mask) # Publish the mask
             
             
 
@@ -270,7 +285,9 @@ class SegmentationNode(Node):
             convex_hull_mask = self.apply_convex_hull_to_mask(segmentation_mask)
             colored_hull_mask = cv2.applyColorMap(convex_hull_mask, cv2.COLORMAP_JET)
             overlay_hull = cv2.addWeighted(original_resized, 1-alpha, colored_hull_mask, alpha, 0)
-
+            
+            self.publish_original_image(original_resized)
+            self.publish_overlay_image(overlay)
 
             display_image = np.hstack([original_resized, colored_mask, overlay, overlay_hull])
             
@@ -309,6 +326,24 @@ class SegmentationNode(Node):
         except Exception as e:
             self.get_logger().error(f"Error in display: {str(e)}")
     
+    def publish_original_image(self, original_image):
+        try:
+            original_msg = self.br.cv2_to_imgmsg(original_image, "bgr8")
+            original_msg.header.stamp = self.get_clock().now().to_msg()
+            original_msg.header.frame_id = "camera_frame"
+            self.segmentation_original.publish(original_msg)
+        except Exception as e:
+            self.get_logger().error(f"Error publishing original image: {str(e)}")
+    
+    def publish_overlay_image(self, overlay_image):
+        try:
+            overlay_msg = self.br.cv2_to_imgmsg(overlay_image, "bgr8")
+            overlay_msg.header.stamp = self.get_clock().now().to_msg()
+            overlay_msg.header.frame_id = "camera_frame"
+            self.segmentation_overlay.publish(overlay_msg)
+        except Exception as e:
+            self.get_logger().error(f"Error publishing overlay image: {str(e)}")
+    
     def publish_segmentation_mask(self, segmentation_mask):
         try:
             mask_msg = self.br.cv2_to_imgmsg(segmentation_mask, "mono8")
@@ -323,7 +358,7 @@ def main(args=None):
     
     try:
         node = SegmentationNode(
-            model_path="/home/wolfwagen/Documents/gitproject/project-oval/project-oval/models/dino_segmentation_2.onnx",  
+            model_path="/home/wolfwagen1/ros2_ws/src/project-oval/project-oval/models/dino_segmentation_2.onnx",  
             image_topic="/zed/zed_node/left/image_rect_color",
             device="cuda",
             use_tensorrt=False,

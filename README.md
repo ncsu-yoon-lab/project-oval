@@ -36,6 +36,57 @@ ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
 
 ---
 
+### **Lidar Node**
+
+Outputs Lidar Pointcloud.
+
+```bash
+ros2 launch velodyne velodyne-all-nodes-VLP16-launch.py
+```
+
+To viz:
+
+```bash
+rviz2 ## change to velodyne frame
+```
+
+---
+
+---
+
+### **Message Display**
+
+Show the Team and other messages
+
+```bash
+python message_display.py ## To show GUI
+python oval_message.py ## To send messages for GUI
+```
+
+---
+
+---
+
+### **Gemini Voice Controller**
+
+Control the robot using voice commands
+
+```bash
+python wolfwagen_live_demo.py ## To show GUI and listen
+```
+
+
+---
+
+### **Radio Raspberry Pi Control**
+
+Show the Team and other messages
+
+```bash
+python telemetry_ros2.py ## To connect to Radio
+```
+
+---
 ### **ZED Camera Node**
 
 Outputs ZED camera topics. Documentation: [Stereolabs ZED ROS2 Node](https://www.stereolabs.com/docs/ros/zed-node).
