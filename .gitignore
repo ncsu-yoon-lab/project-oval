@@ -12,4 +12,7 @@ log
 models
 trt_cache
 
+
 .venv/
+
+.env
