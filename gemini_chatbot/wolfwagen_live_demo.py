@@ -131,6 +131,9 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
     global current_session_handle
     input_stream = None
     output_stream = None
+    input_text_accum = ""
+    output_text_accum = ""
+    input_printed = False
 
     try:
         input_stream = p.open(
@@ -159,6 +162,40 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
             nonlocal is_speaking
             try:
                 async for message in session.receive():
+                    # A message can contain multiple parts; process all of them.
+                    nonlocal input_text_accum, output_text_accum, input_printed
+                    server_content = getattr(message, "server_content", None)
+
+                    # Aggregate input transcription; we'll decide when to flush below based on server signals.
+                    if server_content and getattr(server_content, "input_transcription", None):
+                        try:
+                            chunk = server_content.input_transcription.text or ""
+                            if chunk:
+                                input_text_accum += chunk
+                        except Exception:
+                            pass
+
+                    # Aggregate output transcription; print once generation completes below.
+                    if server_content and getattr(server_content, "output_transcription", None):
+                        try:
+                            # If model starts streaming text/audio, flush user's transcript once (end-of-speech implied).
+                            if (not input_printed) and input_text_accum.strip():
+                                print(f"[Transcript][User]: {input_text_accum.strip()}")
+                                input_text_accum = ""
+                                input_printed = True
+                            chunk = server_content.output_transcription.text or ""
+                            if chunk:
+                                output_text_accum += chunk
+                        except Exception:
+                            pass
+
+                    # If the model has started sending any content (e.g., audio in model_turn), flush user's transcript once.
+                    if server_content and getattr(server_content, "model_turn", None):
+                        if (not input_printed) and input_text_accum.strip():
+                            print(f"[Transcript][User]: {input_text_accum.strip()}")
+                            input_text_accum = ""
+                            input_printed = True
+
                     if getattr(message, "data", None) is not None:
                         if not is_speaking:
                             gui_queue.put(("status", "Speaking..."))
@@ -182,6 +219,13 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
 
                     server_content = getattr(message, "server_content", None)
                     if server_content and getattr(server_content, "generation_complete", False):
+                        if (not input_printed) and input_text_accum.strip():
+                            print(f"[Transcript][User]: {input_text_accum.strip()}")
+                            input_text_accum = ""
+                            input_printed = True
+                        if output_text_accum.strip():
+                            print(f"[Transcript][Wolfwagen]: {output_text_accum.strip()}")
+                            output_text_accum = ""
                         print("[Wolfwagen] Server indicates generation complete.")
                         if not (hasattr(message, "tool_call") and message.tool_call):
                             turn_ended.set()
@@ -302,6 +346,8 @@ async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
         while True:
             base_config = {
                 "response_modalities": ["AUDIO"],
+                "input_audio_transcription": {},
+                "output_audio_transcription": {},
                 "speech_config": {"voice_config": {"prebuilt_voice_config": {"voice_name": "Puck"}}},
                 "system_instruction": SYSTEM_PROMPT,
                 "tools": build_tools(),
