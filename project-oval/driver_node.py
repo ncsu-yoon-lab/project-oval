@@ -6,7 +6,8 @@ import sys
 import threading
 import time
 from pyvesc import VESC
-import atexit            
+import atexit
+import time         
 
 MAX_INPUT = 100.0
 
@@ -16,6 +17,7 @@ class DriverNode(Node):
         self.mode = "Manual"
         self.manual_throttle = 0
         self.manual_steer = 0
+        self.auto_throttle = 0
         self.auto_steer = 0
         self.serial_port = '/dev/ttyTHS1'
         self.stop_signal = False
@@ -24,7 +26,7 @@ class DriverNode(Node):
         self.motor = VESC(self.serial_port)
         print("Motor setup")
         atexit.register(self.cleanup)
-        self.right_id = 115
+        self.left_id = 115
 
         self.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
         self.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
@@ -32,11 +34,12 @@ class DriverNode(Node):
         self.rpm_pub = self.create_publisher(Int64MultiArray, '/motors/rpm', 10)
         
         ## Adding Gemini Controls
-        self.create_subscription(Int64, '/gemini/throttle', self.lane_follower_steer_callback, 10)
-        self.create_subscription(Int64, '/gemini/steering', self.lane_follower_steer_callback, 10)
+        self.create_subscription(Int64, '/gemini/throttle', self.auto_throttle_callback, 10)
+        self.create_subscription(Int64, '/gemini/steering', self.auto_steer_callback, 10)
 
         ## Adding 
         self.telemetry_message = self.create_publisher(String, '/telemetry_message', 10)
+        self.telemetry_command = self.create_subscription(String, "/telemetry_command", self.telemetry_command_callback, 5)
 
     def steer_callback(self, msg):
         self.manual_steer = msg.data
@@ -52,13 +55,35 @@ class DriverNode(Node):
         
         self.mode = "Manual" if msg.data else "Auto"
 
-    def lane_follower_steer_callback(self, msg):
-        if (msg.data > MAX_INPUT):
-            self.auto_steer = MAX_INPUT
-        elif (msg.data < -MAX_INPUT):
-            self.auto_steer = -MAX_INPUT
+    def auto_steer_callback(self, msg):
+        self.auto_steer = msg.data
+
+    def telemetry_command_callback(self, msg):
+        if (msg.data == "cmd:left"):
+            self.auto_steer = 20
+            self.auto_throttle = 20
+            print("Received Left Command")
+            time.sleep(1)
+            self.auto_steer = 0
+            self.auto_throttle = 0
+        elif (msg.data == "cmd:right"):
+            self.auto_steer = 20
+            self.auto_throttle = 20
+            print("Received Right Command")
+            time.sleep(1)
+            self.auto_steer = 0
+            self.auto_throttle = 0
         else:
-            self.auto_steer = msg.data
+            self.auto_steer = 0
+            self.auto_throttle = 0
+
+    def auto_throttle_callback(self, msg):
+        if (msg.data > MAX_INPUT):
+            self.auto_throttle = MAX_INPUT
+        elif (msg.data < -MAX_INPUT):
+            self.auto_throttle = -MAX_INPUT
+        else:
+            self.auto_throttle = msg.data
 
     def throttle_callback(self, msg):
         if (msg.data > MAX_INPUT):
@@ -70,7 +95,7 @@ class DriverNode(Node):
 
     def arcade_drive(self, throttle, steer):
         throttle *= -1.0
-        steer *= -1.0
+        
         if self.stop_signal and throttle > 0:
             throttle = 0
         maximum = max(abs(steer), abs(throttle))
@@ -96,7 +121,7 @@ class DriverNode(Node):
     def send_speeds(self):
         try:
             if self.mode == "Auto":
-                left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.auto_steer)
+                left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
             else:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
 
@@ -114,10 +139,12 @@ class DriverNode(Node):
             # Convert to duty cycle (-1.0 to 1.0)
             left_duty = left_throttle / MAX_INPUT
             right_duty = right_throttle / MAX_INPUT
+
+            right_duty *= -1
             
             # Send duty cycle to motors
-            self.motor.set_duty_cycle(left_duty)
-            self.motor.set_duty_cycle(right_duty, can_id=self.right_id)
+            self.motor.set_duty_cycle(right_duty)
+            self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
             
             return True
         except Exception as e:

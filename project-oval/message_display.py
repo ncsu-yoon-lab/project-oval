@@ -56,12 +56,12 @@ def color_loop(root, labels):
 # ---------- GUI setup ----------
 def create_gui():
     root = tk.Tk()
-    root.title("NC State OVAL Project")
-    root.geometry("900x600")
+    root.title("NC State Project OVAL")
+    root.geometry("900x650")
 
     # Title
     title_label = tk.Label(
-        root, text="NC State OVAL Project",
+        root, text="NC State Project OVAL",
         font=("Helvetica", 48, "bold"),
         fg="white", bg="black")
     title_label.pack(pady=30)
@@ -72,7 +72,7 @@ def create_gui():
     bottom_label = tk.Label(
         root,
         textvariable=message_var,
-        font=("Helvetica", 25),
+        font=("Helvetica", 20),
         fg="white",
         bg="black",
         pady=20

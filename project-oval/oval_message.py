@@ -21,11 +21,10 @@ def main():
     try:
         # Example messages (you can modify these)
         messages = [
-            "Welcome to the NC State OVAL Project!",
-            "It's an autonomous small patrol vehicle built by Yoon Lab \n in the NC State University Department of Computer Science.",
-            "Students are testing the car around the Oval!",
-            "Stay tuned for our next milestone!",
-            "Cole Malinchock \n Jack Elia \n Pratik Thapa \n Rosemary Bumgardner \n Sophie Noble \n Harper Martin \n Ryan Atack \n Dinesh Karnati \n Tyler Arnold \n Suchir Madap \n Jimin Yu \n Dhruva UP \n Dr. Man-Ki Yoon"
+            "Project OVAL @ RIoT 2025!\n\nIt's an autonomous small patrol vehicle built by\n\nYoon Lab @ NC State",
+            "Dept. of Computer Science \n\n Dept. of Mechanical and Aerospace Engineering \n\n Dept. of Electrical and Computer Engineering",
+            "Cole Malinchock \n Jack Elia \n Pratik Thapa \n Rosemary Bumgardner \n Sophie Noble \n Harper Martin \n Suchir Madap \n Dinesh Karnati \n Tyler Arnold \n Ryan Atack \n Jimin Yu \n Ashwikaa Balasubramaniyan \n Dhruva UP \n Yuheng Zhu",
+            "Students are testing the car around the Oval!\n\nWe are looking for collaboration (and sponsorships)!\n\nStay tuned for our next milestone!"
         ]
 
         while True:

@@ -59,7 +59,6 @@ def main(args=None):
 
 	# Subscription to joy topic - gets info from controller
 	joy_sub = node.create_subscription(Joy, "joy", joy_callback, 5)
-	tel_msg_sub = node.create_subscription(String, "/telemetry_command", telemetry_callback, 5)
 	# Publishers to manual throttle and steer - publishes bounded number pre-PWM
 	throttle_pub = node.create_publisher(Int64, "/xbox_controller/throttle", 10)
 	steer_pub = node.create_publisher(Int64, "/xbox_controller/steer", 10)

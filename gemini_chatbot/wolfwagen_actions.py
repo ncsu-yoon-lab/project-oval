@@ -48,7 +48,7 @@ class WolfwagenController:
     async def turn_left(self) -> Dict[str, any]:
         """Publishes a command to turn the vehicle left."""
         
-        self._publish_command(throttle=0, steering=50)
+        self._publish_command(throttle=0, steering=-20)
         await asyncio.sleep(2.0)
         self._publish_command(throttle=0, steering=0) # Stop
         
@@ -57,7 +57,7 @@ class WolfwagenController:
     async def turn_right(self) -> Dict[str, any]:
         """Publishes a command to turn the vehicle right."""
 
-        self._publish_command(throttle=0, steering=-50)
+        self._publish_command(throttle=0, steering=20)
         await asyncio.sleep(2.0)
         self._publish_command(throttle=0, steering=0) # Stop
         
@@ -66,11 +66,20 @@ class WolfwagenController:
     async def go_straight(self) -> Dict[str, any]:
         """Publishes a command to go straight"""
         
-        self._publish_command(throttle=20, steering=0)
+        self._publish_command(throttle=-20, steering=0)
         await asyncio.sleep(2.0)
         self._publish_command(throttle=0, steering=0) # Stop
         
         return {"status": "success", "summary": "Going straight for 2 seconds."}
+
+    async def go_back(self) -> Dict[str, any]:
+        """Publishes a command to go back"""
+        
+        self._publish_command(throttle=20, steering=0)
+        await asyncio.sleep(2.0)
+        self._publish_command(throttle=0, steering=0) # Stop
+        
+        return {"status": "success", "summary": "Going back for 2 seconds."}
     
     async def execute_sequence(self, steps: List[Dict[str, any]]) -> Dict[str, any]:
         """Executes a sequence of primitive actions sequentially."""
@@ -79,6 +88,7 @@ class WolfwagenController:
             "turn_left": self.turn_left,
             "turn_right": self.turn_right,
             "go_straight": self.go_straight,
+            "go_back": self.go_back,
         }
 
         for step in steps:
@@ -146,6 +156,14 @@ def get_function_declarations() -> List[dict]:
                 },
             },
             {
+                "name": "go_back",
+                "description": "Apply throttle and go back.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                },
+            },
+            {
                 "name": "execute_sequence",
                 "description": "Execute a sequence of primitive maneuvers (e.g., two left turns for a U-turn).",
                 "parameters": {
@@ -158,7 +176,7 @@ def get_function_declarations() -> List[dict]:
                                 "properties": {
                                     "action": {
                                         "type": "string",
-                                        "enum": ["turn_left", "turn_right", "go_straight"],
+                                        "enum": ["turn_left", "turn_right", "go_straight", "go_back"],
                                         "description": "Primitive maneuver to execute"
                                     },
                                     "repeat": {
@@ -185,5 +203,6 @@ def get_handlers(controller_instance: WolfwagenController) -> Dict:
         "turn_left": controller_instance.turn_left,
         "turn_right": controller_instance.turn_right,
         "go_straight": controller_instance.go_straight,
+        "go_back": controller_instance.go_back,
         "execute_sequence": controller_instance.execute_sequence,
     }

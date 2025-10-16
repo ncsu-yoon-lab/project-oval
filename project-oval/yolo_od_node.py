@@ -32,7 +32,7 @@ class ImageSubscriber(Node):
         for result in predictions:
             boxes = result.boxes  # Boxes object for bounding box outputs
             for box in boxes:
-                box = box.numpy()
+                box = box.cpu().numpy()
                 label = model.names.get(box.cls.item())
                 (x,y,w,h) = box.xyxy[0]
                 conf = box.conf.item()
