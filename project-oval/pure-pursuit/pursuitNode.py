@@ -116,7 +116,7 @@ class PursuitNode(Node):
         self.create_subscription(GPSFix, "/gpsfix", self.gps_update, 10)
 
         # TODO: path planning node here
-        self.create_subscription(Int64MultiArray, "/path_planning/path", self.path_update, 10)
+        self.create_subscription(Float64MultiArray, "/path_planning/path", self.path_update, 10)
 
         self.throttle_publisher = self.create_publisher(Float64, "/pure_pursuit/throttle", 10)
         self.steer_publisher = self.create_publisher(Float64, "/pure_pursuit/steer", 10)
