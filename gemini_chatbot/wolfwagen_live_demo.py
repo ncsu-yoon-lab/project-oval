@@ -151,8 +151,8 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
             frames_per_buffer=FRAMES_PER_BUFFER,
         )
         
-        gui_queue.put(("status", "Listening..."))
-        gui_queue.put(("detail", ""))
+        gui_queue.put(("status", "Welcome to NC State! Go Wolfpack!"))
+        gui_queue.put(("detail", "Think and Do"))
         print("\n[Wolfwagen] Listening... Speak now.")
 
         turn_ended = asyncio.Event()
