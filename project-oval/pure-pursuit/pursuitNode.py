@@ -8,14 +8,15 @@ import numpy as np
 import rclpy
 from gps_msgs.msg import GPSFix
 from rclpy.node import Node
-from std_msgs.msg import Float64, Int64MultiArray
+from std_msgs.msg import Float64, Float64MultiArray
+from nmea_msgs.msg import Gprmc
 
 from PIDController import PIDController
 
 TIMEOUT_ERR_THRESHOLD = 5  # 5 seconds
 
-MAX_DRIVE_SPEED_M_S = 0.5
-MAX_TURN_SPEED_RADS_SEC = math.pi / 4
+MAX_DRIVE_SPEED_M_S = 100
+MAX_TURN_SPEED_RADS_SEC = 100
 ACCEPTABLE_TURN_ERR_TO_DRIVE = math.pi / 4
 
 
@@ -101,8 +102,8 @@ class PursuitNode(Node):
         self.last_updates = {"rtk": 0.0, "path": 0.0, "heading": 0.0}
         self.rtk_data = None
 
-        self.path = []
-        self._new_path = False
+        # self.path = [-1, 37, 36, 35]
+        # self._new_path = True
 
         # TODO: change to filepath on the Jetson
         with open("oval_points.json") as file:
@@ -113,10 +114,14 @@ class PursuitNode(Node):
         self.current_pos = self.all_points["origin"]
         self.current_heading = 0
 
-        self.create_subscription(GPSFix, "/gpsfix", self.gps_update, 10)
+        self.create_subscription(Gprmc, "/gps/gprmc", self.gps_update, 10)
 
         # TODO: path planning node here
-        self.create_subscription(Float64MultiArray, "/path_planning/path", self.path_update, 10)
+        # self.create_subscription(Float64MultiArray, "/path_planning/path", self.path_update, 10)
+
+        self._new_path = True
+        self.last_updates["path"] = time.time()
+        self.path = [-1, 37, 36, 35]
 
         self.throttle_publisher = self.create_publisher(Float64, "/pure_pursuit/throttle", 10)
         self.steer_publisher = self.create_publisher(Float64, "/pure_pursuit/steer", 10)
@@ -125,8 +130,10 @@ class PursuitNode(Node):
         thread = threading.Thread(target=rclpy.spin, args=(self, ), daemon=True)
         thread.start()
 
+        self.drive_path(self.path)
+
     def gps_update(self, msg):
-        if not np.isnan(msg.latitude) and not np.isnan(msg.longitude):
+        if not np.isnan(msg.lat) and not np.isnan(msg.lon):
             # self.rtk_data = {
             #     "latitude": msg.latitude,
             #     "longitude": msg.longitude,
@@ -134,13 +141,21 @@ class PursuitNode(Node):
             #     "track": msg.track,
             #     "rtk_sats": msg.status.satellites_used
             # }
-            self.current_pos = [msg.latitude, msg.longitude]
+            self.current_pos = [self.gps_converter(msg.lat), self.gps_converter(msg.lon)]
             self.current_heading = math.radians(msg.track)
             self.last_updates["rtk"] = time.time()
             self.get_logger().debug("Received RTK GPS data")
+            print(f"Current pos: {self.current_pos}, heading: {math.degrees(self.current_heading)}")
         else:
             self.get_logger().warn("Received invalid RTK GPS data (NaN values)")
 
+    def gps_converter(self, point):
+        """Convert GPS coordinates from NMEA format to decimal degrees"""
+        degrees = np.floor(point / 100)
+        minutes = point - degrees * 100
+        return degrees + minutes / 60
+
+            
     def _is_fresh(self, topic):
         return (time.time() - self.last_updates[topic]) < TIMEOUT_ERR_THRESHOLD
 
@@ -166,9 +181,9 @@ class PursuitNode(Node):
 
     def drive_to_node(self, node_id: int):
         # TODO: dont forget about this
-        if not self._is_fresh("rtk"):
-            self.get_logger().error("RTK data stale.")
-            return
+        # if not self._is_fresh("rtk"):
+        #     self.get_logger().error("RTK data stale.")
+        #     return
         # where we going
         target_loc = self.get_node_loc(node_id)
         # distance there
@@ -198,8 +213,9 @@ class PursuitNode(Node):
         turn_output = clamp(turn_output, -1 * MAX_TURN_SPEED_RADS_SEC, MAX_TURN_SPEED_RADS_SEC)
 
         # publish
-        self.throttle_publisher.publish(drive_output)
-        self.steer_publisher.publish(turn_output)
+        # print(f"drive: {drive_output}, turn: {turn_output}, dist: {dist}, heading err: {math.degrees(heading_err)}")
+        # self.throttle_publisher.publish(drive_output)
+        # self.steer_publisher.publish(turn_output)
 
     def drive_path(self, points: list, acceptable_err: float=0.25):
         """
@@ -227,8 +243,4 @@ class PursuitNode(Node):
         target_loc = self.get_node_loc(node_id)
         return haversine_dist(self.current_pos[0], self.current_pos[1], target_loc[0], target_loc[1])
 
-with open("oval_points.json") as file:
-    all_points = json.load(file)
-
-with open("points.json") as file:
-    path_points = json.load(file)
+node = PursuitNode(None)
