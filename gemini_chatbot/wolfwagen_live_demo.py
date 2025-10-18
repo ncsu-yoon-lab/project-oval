@@ -11,6 +11,8 @@ from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 
+from PIL import Image, ImageTk  # Import Pillow library
+
 # GUI Imports
 import tkinter as tk
 from tkinter import font as tkFont
@@ -70,34 +72,69 @@ class WolfwagenGUI:
     def __init__(self, root: tk.Tk, q: queue.Queue):
         self.root = root
         self.queue = q
-        self.root.title("Wolfwagen Control")
+        self.root.title("Project Oval")
         self.root.geometry("1200x400")
         self.root.configure(bg="#2B2B2B") # Dark grey background
 
+        # --- Layouts ---
+        self.main_frame = tk.Frame(self.root, bg="#2B2B2B")
+        self.main_frame.pack(fill="both", expand=True)
+
+        # Left layout for logo
+        self.left_frame = tk.Frame(self.main_frame, bg="#FFFFFF", width=600, height=340)
+        self.left_frame.pack(side="left", fill="y")
+        self.left_frame.pack_propagate(False)  # Prevent frame from resizing to fit content
+
+        # Right layout for text fields
+        self.right_frame = tk.Frame(self.main_frame, bg="#BB271A", width=800, height=340)
+        self.right_frame.pack(side="right", fill="both", expand=True)
+        self.right_frame.pack_propagate(False)
+
+        # --- Left: Logo ---
+        self.logo_label = tk.Label(self.left_frame, bg="#FFFFFF")
+        self.logo_label.pack(fill="both", expand=True, padx=20, pady=20)
+        self.logo_image = Image.open("wolfpack.jpg")  # Replace with your mascot file path
+        self.logo_image = self.logo_image.resize((600, 450), Image.ANTIALIAS)  # Resize the image as needed
+        self.logo_image = ImageTk.PhotoImage(self.logo_image)  # Convert to PhotoImage for Tkinter
+        self.logo_label.config(image=self.logo_image)
+
         # Fonts
-        self.status_font = tkFont.Font(family="Helvetica", size=36, weight="bold")
-        self.detail_font = tkFont.Font(family="Helvetica", size=20)
+        self.status_font = tkFont.Font(family="Helvetica", size=42, weight="bold")
+        self.detail_font = tkFont.Font(family="Helvetica", size=32)
+        self.transcription_font = tkFont.Font(family="Helvetica", size=36)
 
         # Main status label
         self.status_label = tk.Label(
-            self.root,
+            self.right_frame,
             text="Initializing...",
             font=self.status_font,
             fg="#E0E0E0", # Light grey text
-            bg="#2B2B2B"
+            bg="#BB271A"
         )
         self.status_label.pack(pady=(30, 10), fill="x", expand=True)
 
         # Detail label for tool calls
         self.detail_label = tk.Label(
-            self.root,
+            self.right_frame,
             text="",
             font=self.detail_font,
             fg="#A9A9A9", # Dimmer grey text
-            bg="#2B2B2B",
+            bg="#BB271A",
             wraplength=550 # Wrap long sequence descriptions
         )
         self.detail_label.pack(pady=(0, 20), fill="x", expand=True)
+
+        # Output transcription label
+        self.output_label = tk.Label(
+            self.right_frame,
+            text="Output: ",
+            font=self.transcription_font,
+            fg="#FFFFFF",  # White text
+            bg="#BB271A",
+            wraplength=1100
+        )
+        self.output_label.pack(pady=(10, 10), fill="x", expand=True)
+
 
         self.default_bg = "#2B2B2B"
         self.speaking_bg = "#2ECC40"  # Green when speaking
@@ -117,8 +154,10 @@ class WolfwagenGUI:
                     self.status_label.config(text=value)
                 elif message_type == "detail":
                     self.detail_label.config(text=value)
+                elif message_type == "output":
+                    self.output_label.config(text=f"Output: {value}")
         finally:
-            self.root.after(1000, self.process_queue) # Check again in 100ms
+            self.root.after(50, self.process_queue) # Check again in 100ms
 
 
 def build_tools() -> List[types.Tool]:
@@ -183,9 +222,11 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
                                 print(f"[Transcript][User]: {input_text_accum.strip()}")
                                 input_text_accum = ""
                                 input_printed = True
+                                gui_queue.put(("output", ""))  # Clear output while input is displayed
                             chunk = server_content.output_transcription.text or ""
                             if chunk:
                                 output_text_accum += chunk
+                                gui_queue.put(("output", output_text_accum))
                         except Exception:
                             pass
 
@@ -225,6 +266,7 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
                             input_printed = True
                         if output_text_accum.strip():
                             print(f"[Transcript][Wolfwagen]: {output_text_accum.strip()}")
+                            gui_queue.put(("output", output_text_accum))
                             output_text_accum = ""
                         print("[Wolfwagen] Server indicates generation complete.")
                         if not (hasattr(message, "tool_call") and message.tool_call):
