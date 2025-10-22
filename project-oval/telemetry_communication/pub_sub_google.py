@@ -40,7 +40,7 @@ class PubSubGoogleNode(Node):
 
         # OpenCV Video Capture
         self.bridge = CvBridge()
-        self.cap = cv2.VideoCapture('/dev/video2')
+        self.cap = cv2.VideoCapture('/dev/video4')
         
         # Pub/Sub Publisher and Subscriber for Google Cloud
         self.publisher = pubsub_v1.PublisherClient()
@@ -192,7 +192,7 @@ class PubSubGoogleNode(Node):
                 height, width = frame.shape[:2]
                 left_frame = frame[:, :width//2]
                 
-                _, buffer = cv2.imencode('.jpg', left_frame, [cv2.IMWRITE_JPEG_QUALITY, 20])
+                _, buffer = cv2.imencode('.jpg', left_frame, [cv2.IMWRITE_JPEG_QUALITY, 50])
                 image_bytes = buffer.tobytes()
                 
                 image_base64 = base64.b64encode(image_bytes).decode('utf-8')

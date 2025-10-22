@@ -114,14 +114,15 @@ class PursuitNode(Node):
         self.current_pos = self.all_points["origin"]
         self.current_heading = 0
 
-        self.create_subscription(Gprmc, "/gps/gprmc", self.gps_update, 10)
+        self.create_subscription(GPSFix, "/gpsfix", self.gps_update, 10)
 
         # TODO: path planning node here
         # self.create_subscription(Float64MultiArray, "/path_planning/path", self.path_update, 10)
 
         self._new_path = True
+        self.path = [-3]
         self.last_updates["path"] = time.time()
-        self.path = [-1, 37, 36, 35]
+        # self.path = [-1, 37, 36, 35]
 
         self.throttle_publisher = self.create_publisher(Float64, "/pure_pursuit/throttle", 10)
         self.steer_publisher = self.create_publisher(Float64, "/pure_pursuit/steer", 10)
@@ -130,10 +131,12 @@ class PursuitNode(Node):
         thread = threading.Thread(target=rclpy.spin, args=(self, ), daemon=True)
         thread.start()
 
-        self.drive_path(self.path)
+        self._log = {"pos": [], "heading": [], "throttle": [], "steer": [], "target_node": -3}
+
+        # self.drive_path(self.path)
 
     def gps_update(self, msg):
-        if not np.isnan(msg.lat) and not np.isnan(msg.lon):
+        if not np.isnan(msg.latitude) and not np.isnan(msg.longitude):
             # self.rtk_data = {
             #     "latitude": msg.latitude,
             #     "longitude": msg.longitude,
@@ -141,13 +144,15 @@ class PursuitNode(Node):
             #     "track": msg.track,
             #     "rtk_sats": msg.status.satellites_used
             # }
-            self.current_pos = [self.gps_converter(msg.lat), self.gps_converter(msg.lon)]
+            self.current_pos = [msg.latitude, msg.longitude]
             self.current_heading = math.radians(msg.track)
             self.last_updates["rtk"] = time.time()
+            self._log["pos"].append(self.current_pos)
+            self._log["heading"].append(self.current_heading)
             self.get_logger().debug("Received RTK GPS data")
             print(f"Current pos: {self.current_pos}, heading: {math.degrees(self.current_heading)}")
         else:
-            self.get_logger().warn("Received invalid RTK GPS data (NaN values)")
+            print("Received invalid RTK GPS data (NaN values)")
 
     def gps_converter(self, point):
         """Convert GPS coordinates from NMEA format to decimal degrees"""
@@ -161,6 +166,7 @@ class PursuitNode(Node):
 
     def path_update(self, msg):
         points = msg.data
+        # TODO: we have a  new path, how start path w/o breaking thread? async? Process()?
         self._new_path = True
         self.last_updates["path"] = time.time()
         self.path = points
@@ -213,9 +219,16 @@ class PursuitNode(Node):
         turn_output = clamp(turn_output, -1 * MAX_TURN_SPEED_RADS_SEC, MAX_TURN_SPEED_RADS_SEC)
 
         # publish
+        drive_msg = Float64()
+        drive_msg.data = float(drive_output)
+        turn_msg = Float64()
+        turn_msg.data = float(turn_output)
+        self._log["throttle"].append(drive_output)
+        self._log["steer"].append(turn_output)
+        # self.get_logger().debug(f"turn out: {turn_output}")
         # print(f"drive: {drive_output}, turn: {turn_output}, dist: {dist}, heading err: {math.degrees(heading_err)}")
-        # self.throttle_publisher.publish(drive_output)
-        # self.steer_publisher.publish(turn_output)
+        self.throttle_publisher.publish(drive_msg)
+        self.steer_publisher.publish(turn_msg)
 
     def drive_path(self, points: list, acceptable_err: float=0.25):
         """
@@ -243,4 +256,11 @@ class PursuitNode(Node):
         target_loc = self.get_node_loc(node_id)
         return haversine_dist(self.current_pos[0], self.current_pos[1], target_loc[0], target_loc[1])
 
-node = PursuitNode(None)
+try:
+    node = PursuitNode(None)
+    node.drive_path([-3])
+except KeyboardInterrupt:
+    print("Shutting down pure pursuit node.")
+    with open("pursuit_log.json", "w") as logfile:
+        json.dump(node._log, logfile)
+    rclpy.shutdown()
