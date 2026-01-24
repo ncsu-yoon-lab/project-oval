@@ -1,0 +1,165 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/bluebotics/shrimp/protos/Shrimp.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation -0.31880474844062145 0.48019001528199934 0.8171787329557625 1.3042676836728135
+  position -4.099373279718792 -7.079004557983456 6.246666219876282
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+}
+Shrimp {
+  translation -2.22 0.57 0
+}
+Robot {
+  translation -0.00889644 0.0819893 0.0398605
+  rotation 8.54207899835149e-09 -4.789166250460252e-08 0.9999999999999987 -2.7885800000000005
+  children [
+    Lidar {
+      translation 0.06 0 0.05
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.5 1 1
+          }
+          geometry Cylinder {
+            height 0.05
+            radius 0.03
+          }
+        }
+      ]
+      rotationStep 0.261799
+      fieldOfView 5
+      numberOfLayers 1
+    }
+    DEF BODY Shape {
+      appearance PBRAppearance {
+        baseColor 0.917647 0.145098 0.145098
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.2 0.1 0.05
+      }
+    }
+    DEF WHEEL1 HingeJoint {
+      jointParameters HingeJointParameters {
+        position 6.783155583043955e-12
+        axis 0 1 0
+        anchor 0.05 0.06 0
+      }
+      device [
+        RotationalMotor {
+          name "wheel1"
+        }
+      ]
+      endPoint Solid {
+        translation 0.05 0.06 0
+        rotation 1 7.12228720052642e-11 -7.12231336219616e-11 1.5708
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+              roughness 1
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.04
+              subdivision 24
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics Physics {
+        }
+      }
+    }
+    DEF WHEEL2 HingeJoint {
+      jointParameters HingeJointParameters {
+        position 6.783200626419587e-12
+        axis 0 1 0
+        anchor 0.05 -0.06 0
+      }
+      device [
+        RotationalMotor {
+          name "wheel2"
+        }
+      ]
+      endPoint Solid {
+        translation 0.05 -0.06 0
+        rotation 1 7.122334495897104e-11 -7.12236065774057e-11 1.5708
+        children [
+          USE WHEEL
+        ]
+        name "solid(1)"
+        boundingObject USE WHEEL
+        physics Physics {
+        }
+      }
+    }
+    DEF WHEEL3 HingeJoint {
+      jointParameters HingeJointParameters {
+        position 6.783066543737865e-12
+        axis 0 1 0
+        anchor -0.05 0.06 0
+      }
+      device [
+        RotationalMotor {
+          name "wheel3"
+        }
+      ]
+      endPoint Solid {
+        translation -0.05 0.06 0
+        rotation 1 7.122193709598436e-11 -7.122219870924764e-11 1.5708
+        children [
+          USE WHEEL
+        ]
+        name "solid(2)"
+        boundingObject USE WHEEL
+        physics Physics {
+        }
+      }
+    }
+    DEF WHEEL4 HingeJoint {
+      jointParameters HingeJointParameters {
+        position 6.783457891774051e-12
+        axis 0 1 0
+        anchor -0.05 -0.06 0
+      }
+      device [
+        RotationalMotor {
+          name "wheel4"
+        }
+      ]
+      endPoint Solid {
+        translation -0.05 -0.06 0
+        rotation 1 7.122604623527056e-11 -7.122630786362763e-11 1.5708
+        children [
+          USE WHEEL
+        ]
+        name "solid(3)"
+        boundingObject USE WHEEL
+        physics Physics {
+        }
+      }
+    }
+  ]
+  name "my_robot"
+  boundingObject USE BODY
+  physics Physics {
+    density -1
+    mass 1
+  }
+  controller "<extern>"
+}
