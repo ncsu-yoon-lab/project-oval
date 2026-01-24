@@ -27,6 +27,10 @@ class SimDriverNode:
         self.__time = 0.0
         self.__brake = False   # updated from /brake
 
+        self.__max_velocity = 6.5 # m/s -> ~15 mph. Can be tuned for car
+        self.__max_angular_velocity = self.__max_velocity / WHEEL_RADIUS
+
+
         # add motors to the motor devices
         for motor_name in self.__motor_names:
             motor = self.__robot.getDevice(motor_name)
@@ -73,9 +77,12 @@ class SimDriverNode:
     velocity sent to the motors will be similar to the velocity of the motors
 
     '''
-    def duty_cycle_to_velocity(duty_cycle):
+    def duty_cycle_to_angular_velocity(self, duty_cycle):
         # duty cycle: [-1, 1] where sign indicates direction and magnitude indicates is the PWM duty cycle
-
+        # For now, the conversion will just be using the duty cycle as a percentage of the max angular cycle
+        # TODO: Potentially find a better conversion method (or we could ignore duty cycle entirely)
+        angular_velocity = duty_cycle * self.__max_angular_velocity
+        return angular_velocity
 
     def set_all_speed(self, speed: float):
         for motor in self.__motor_devices:
@@ -118,6 +125,42 @@ class SimDriverNode:
     
     # End callbacks from DriverNode
 
+
+    # Modified send_speeds function for the simulator
+    def send_speeds(self):
+        try:
+            if self.mode == "Auto":
+                left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+            else:
+                left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
+
+            print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+            
+            # Convert to duty cycle (-1.0 to 1.0)
+            left_duty = left_throttle / MAX_INPUT
+            right_duty = right_throttle / MAX_INPUT
+
+            right_duty *= -1
+            
+            # wheel 1 and 3 represent the left drivetrain on car
+            # wheel 2 and 4 represent right drivetrain on car.
+            # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
+            left_drive_train = [self.__motor_devices[0], self.__motor_devices[2]]
+            right_drive_train = [self.__motor_devices[1], self.__motor_devices[3]]
+            # Send duty cycle to motors
+            left_omega = self.duty_cycle_to_angular_velocity(left_duty)
+            right_omega = self.duty_cycle_to_angular_velocity(right_duty)
+
+            for m in left_drive_train:
+                m.setVelocity(left_omega)
+            for m in right_drive_train:
+                m.setVelocity(right_omega)
+            
+            return True
+        except Exception as e:
+            print(f"Error: {e}")
+            return False 
+
     def __brake_callback(self, msg: Bool):
         self.__brake = msg.data
         self.__node.get_logger().info(f"Received brake={self.__brake}")
@@ -127,5 +170,5 @@ class SimDriverNode:
         # process incoming ROS messages (including /brake)
         rclpy.spin_once(self.__node, timeout_sec=0.0)
 
-        # otherwise move in squiggly oval
-        self.drive_oval()
+        # send speeds to car
+        self.send_speeds()
