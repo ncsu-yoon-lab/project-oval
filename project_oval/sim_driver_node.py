@@ -1,15 +1,15 @@
 import math
+import time
 
 import rclpy
-from std_msgs.msg import Bool
+from std_msgs.msg import Int64MultiArray, Bool, Int64, String
 
-# import some of the methods from the driver node
-from driver_node import arcade_drive, 
 
 HALF_DISTANCE_BETWEEN_WHEELS = 0.045
 WHEEL_RADIUS = 0.025
 
-
+# On sim, max input is 10
+MAX_INPUT = 30
 '''
 This is the driver for the simulated car. Ideally this should work like driver_node as much as possible.
 '''
@@ -27,8 +27,10 @@ class SimDriverNode:
         self.__time = 0.0
         self.__brake = False   # updated from /brake
 
-        self.__max_velocity = 6.5 # m/s -> ~15 mph. Can be tuned for car
-        self.__max_angular_velocity = self.__max_velocity / WHEEL_RADIUS
+        self.__max_velocity = 10 # m/s Can be tuned for car
+        self.__max_angular_velocity = self.__max_velocity
+
+        # TODO: correct formula: self.__max_angular_velocity = self.__max_velocity / WHEEL_RADIUS
 
 
         # add motors to the motor devices
@@ -54,9 +56,9 @@ class SimDriverNode:
         self.__node = rclpy.create_node('sim_driver_node')
 
         # Subcribe to the xbox controller nodes
-        self.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
-        self.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
-        self.create_subscription(Bool, '/xbox_controller/mode', self.mode_callback, 10)
+        self.__node.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
+        self.__node.create_subscription(Int64, '/xbox_controller/throttle', self.throttle_callback, 10)
+        self.__node.create_subscription(Bool, '/xbox_controller/mode', self.mode_callback, 10)
 
         # TODO: add support for gemini steering
         # self.create_subscription(Int64, '/gemini/throttle', self.auto_throttle_callback, 10)
@@ -82,6 +84,8 @@ class SimDriverNode:
         # For now, the conversion will just be using the duty cycle as a percentage of the max angular cycle
         # TODO: Potentially find a better conversion method (or we could ignore duty cycle entirely)
         angular_velocity = duty_cycle * self.__max_angular_velocity
+        print(duty_cycle)
+        print(self.__max_angular_velocity)
         return angular_velocity
 
     def set_all_speed(self, speed: float):
@@ -125,6 +129,34 @@ class SimDriverNode:
     
     # End callbacks from DriverNode
 
+    # Start Helper functions from DriverNode
+    def arcade_drive(self, throttle, steer):
+        throttle *= -1.0
+        
+        if self.stop_signal and throttle > 0:
+            throttle = 0
+        maximum = max(abs(steer), abs(throttle))
+        total, difference = throttle + steer, throttle - steer
+
+        if throttle >= 0:
+            if steer >= 0:  # I quadrant
+                throttle_left = maximum
+                throttle_right = difference
+            else:            # II quadrant
+                throttle_left = total
+                throttle_right = maximum
+        else:
+            if steer >= 0:  # IV quadrant
+                throttle_left = total
+                throttle_right = -maximum
+            else:            # III quadrant
+                throttle_left = -maximum
+                throttle_right = difference
+
+        return throttle_left, throttle_right
+
+    # End Helper function from DriverNode
+
 
     # Modified send_speeds function for the simulator
     def send_speeds(self):
@@ -134,7 +166,7 @@ class SimDriverNode:
             else:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
 
-            print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+            #print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
             
             # Convert to duty cycle (-1.0 to 1.0)
             left_duty = left_throttle / MAX_INPUT
@@ -150,7 +182,8 @@ class SimDriverNode:
             # Send duty cycle to motors
             left_omega = self.duty_cycle_to_angular_velocity(left_duty)
             right_omega = self.duty_cycle_to_angular_velocity(right_duty)
-
+            print(left_omega)
+            print(right_omega)
             for m in left_drive_train:
                 m.setVelocity(left_omega)
             for m in right_drive_train:
