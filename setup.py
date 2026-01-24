@@ -33,7 +33,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'my_robot_driver = project_oval.my_robot_driver:main',
+            'my_robot_driver = project_oval.sim_driver_node:main',
         ],
     },
 )

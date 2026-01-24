@@ -3,7 +3,7 @@
     <webots>
         <device reference="lidar" type="Lidar">
             <ros>
-                <topicName>/lidar_data</topicName>
+                <topicName>/scan</topicName>
                 <alwaysOn>true</alwaysOn>
             </ros>
         </device>
