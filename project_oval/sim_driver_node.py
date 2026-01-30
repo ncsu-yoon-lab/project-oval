@@ -11,6 +11,8 @@ WHEEL_RADIUS = 0.025
 # On sim, max input is 10
 MAX_INPUT = 30
 '''
+Launch executable is in install/project-oval/share/project-oval/launch/
+ros2 launch project-oval car_sim_launch.py
 This is the driver for the simulated car. Ideally this should work like driver_node as much as possible.
 '''
 class SimDriverNode:
