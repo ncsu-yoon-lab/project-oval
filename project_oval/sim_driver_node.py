@@ -17,6 +17,10 @@ This is the driver for the simulated car. Ideally this should work like driver_n
 '''
 class SimDriverNode:
     def init(self, webots_node, properties):
+        
+        #Convert
+        max_motor_torque=25450
+        max_motor_torque = max_motor_torque / 1000
 
         self.current_speed = 1.0
         self.__robot = webots_node.robot
@@ -32,14 +36,16 @@ class SimDriverNode:
         self.__max_velocity = 10 # m/s Can be tuned for car
         self.__max_angular_velocity = self.__max_velocity
 
-        # TODO: correct formula: self.__max_angular_velocity = self.__max_velocity / WHEEL_RADIUS
-
+       
+        # Contains methods for converting throttle to torque to be sent to motor
+        self.driver_lib = SimDriverLib()
 
         # add motors to the motor devices
         for motor_name in self.__motor_names:
             motor = self.__robot.getDevice(motor_name)
             motor.setPosition(float("inf"))
             motor.setVelocity(0.0)
+            motor.setMaxTorque(max_motor_torque)
             self.__motor_devices.append(motor)
 
         # Ensure the car begins at rest. Possible to remove this
@@ -73,22 +79,6 @@ class SimDriverNode:
             self.__brake_callback,
             10
         )
-
-    '''
-    The sim accepts velocity commands, but the actual motor driver uses PWM.
-    This method converts the PWM signal to a velocity output for the sim to use.
-    This is one area where the sim will likely differ from real life. Ideally, the 
-    velocity sent to the motors will be similar to the velocity of the motors
-
-    '''
-    def duty_cycle_to_angular_velocity(self, duty_cycle):
-        # duty cycle: [-1, 1] where sign indicates direction and magnitude indicates is the PWM duty cycle
-        # For now, the conversion will just be using the duty cycle as a percentage of the max angular cycle
-        # TODO: Potentially find a better conversion method (or we could ignore duty cycle entirely)
-        angular_velocity = duty_cycle * self.__max_angular_velocity
-        print(duty_cycle)
-        print(self.__max_angular_velocity)
-        return angular_velocity
 
     def set_all_speed(self, speed: float):
         for motor in self.__motor_devices:
@@ -167,30 +157,37 @@ class SimDriverNode:
                 left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
             else:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
-
-            #print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
             
-            # Convert to duty cycle (-1.0 to 1.0)
-            left_duty = left_throttle / MAX_INPUT
-            right_duty = right_throttle / MAX_INPUT
 
-            right_duty *= -1
-            
+            left_throttle_abs = abs(left_throttle)
+            right_throttle_abs = abs()
+
             # wheel 1 and 3 represent the left drivetrain on car
             # wheel 2 and 4 represent right drivetrain on car.
             # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
             left_drive_train = [self.__motor_devices[0], self.__motor_devices[2]]
             right_drive_train = [self.__motor_devices[1], self.__motor_devices[3]]
-            # Send duty cycle to motors
-            left_omega = self.duty_cycle_to_angular_velocity(left_duty)
-            right_omega = self.duty_cycle_to_angular_velocity(right_duty)
-            print(left_omega)
-            print(right_omega)
+
+            left_speeds = [left_drive_train[0].getVelocity(), left_drive_train[1].getVelocity()]
+            right_speeds = [right_drive_train[0].getVelocity(), right_drive_train[1].getVelocity()]
+
+            left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
+            per_motor_left = left_torque / 2
+
+            left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
+            per_motor_left = left_torque / 2
+            
+
             for m in left_drive_train:
-                m.setVelocity(left_omega)
+                m.set
             for m in right_drive_train:
                 m.setVelocity(right_omega)
-            
+
+            print("---------")
+            print("max vel:", m.getMaxVelocity())
+            print("avail torque:", m.getAvailableTorque())
+            print("max torque:", m.getMaxTorque())
+            print("---------")      
             return True
         except Exception as e:
             print(f"Error: {e}")
