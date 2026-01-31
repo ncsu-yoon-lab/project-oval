@@ -3,10 +3,18 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/bluebotics/shrimp/protos/Shrimp.proto"
 
 WorldInfo {
   basicTimeStep 16
+  contactProperties [
+    ContactProperties {
+      coulombFriction [
+        1.1
+      ]
+      frictionRotation 0.01 0.01
+      rollingFriction 0.002 0.002 0.002
+    }
+  ]
 }
 Viewpoint {
   orientation -0.31880474844062145 0.48019001528199934 0.8171787329557625 1.3042676836728135
@@ -17,9 +25,6 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Floor {
-}
-Shrimp {
-  translation -2.22 0.57 0
 }
 Robot {
   translation -0.00889644 0.0819893 0.0398605
@@ -65,7 +70,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.05 0.06 0
-        rotation 1 7.12228720052642e-11 -7.12231336219616e-11 1.5708
+        rotation 1 7.800600267243222e-11 -7.800628920500555e-11 1.5708
         children [
           DEF WHEEL Shape {
             appearance PBRAppearance {
@@ -82,6 +87,8 @@ Robot {
         ]
         boundingObject USE WHEEL
         physics Physics {
+          density -1
+          mass 1
         }
       }
     }
@@ -98,13 +105,15 @@ Robot {
       ]
       endPoint Solid {
         translation 0.05 -0.06 0
-        rotation 1 7.122334495897104e-11 -7.12236065774057e-11 1.5708
+        rotation 1 7.800652066934924e-11 -7.80068072038253e-11 1.5708
         children [
           USE WHEEL
         ]
         name "solid(1)"
         boundingObject USE WHEEL
         physics Physics {
+          density -1
+          mass 1
         }
       }
     }
@@ -121,13 +130,15 @@ Robot {
       ]
       endPoint Solid {
         translation -0.05 0.06 0
-        rotation 1 7.122193709598436e-11 -7.122219870924764e-11 1.5708
+        rotation 1 7.800497872417336e-11 -7.800526525298551e-11 1.5708
         children [
           USE WHEEL
         ]
         name "solid(2)"
         boundingObject USE WHEEL
         physics Physics {
+          density -1
+          mass 1
         }
       }
     }
@@ -144,13 +155,15 @@ Robot {
       ]
       endPoint Solid {
         translation -0.05 -0.06 0
-        rotation 1 7.122604623527056e-11 -7.122630786362763e-11 1.5708
+        rotation 1 7.800947921005824e-11 -7.800976575540169e-11 1.5708
         children [
           USE WHEEL
         ]
         name "solid(3)"
         boundingObject USE WHEEL
         physics Physics {
+          density -1
+          mass 1
         }
       }
     }
@@ -159,7 +172,7 @@ Robot {
   boundingObject USE BODY
   physics Physics {
     density -1
-    mass 1
+    mass 30
   }
   controller "<extern>"
 }
