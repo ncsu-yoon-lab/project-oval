@@ -1,6 +1,6 @@
 import math
 import time
-
+from project_oval.sim_driver_lib import SimDriverLib
 import rclpy
 from std_msgs.msg import Int64MultiArray, Bool, Int64, String
 
@@ -11,6 +11,8 @@ WHEEL_RADIUS = 0.025
 # On sim, max input is 10
 MAX_INPUT = 30
 '''
+colcon build --packages-select project-oval --symlink-install
+
 Launch executable is in install/project-oval/share/project-oval/launch/
 ros2 launch project-oval car_sim_launch.py
 This is the driver for the simulated car. Ideally this should work like driver_node as much as possible.
@@ -33,8 +35,6 @@ class SimDriverNode:
         self.__time = 0.0
         self.__brake = False   # updated from /brake
 
-        self.__max_velocity = 10 # m/s Can be tuned for car
-        self.__max_angular_velocity = self.__max_velocity
 
        
         # Contains methods for converting throttle to torque to be sent to motor
@@ -45,7 +45,7 @@ class SimDriverNode:
             motor = self.__robot.getDevice(motor_name)
             motor.setPosition(float("inf"))
             motor.setVelocity(0.0)
-            motor.setMaxTorque(max_motor_torque)
+            #motor.setMaxTorque(max_motor_torque)
             self.__motor_devices.append(motor)
 
         # Ensure the car begins at rest. Possible to remove this
@@ -124,7 +124,7 @@ class SimDriverNode:
     # Start Helper functions from DriverNode
     def arcade_drive(self, throttle, steer):
         throttle *= -1.0
-        
+        print("Arcade throttle: ", throttle)
         if self.stop_signal and throttle > 0:
             throttle = 0
         maximum = max(abs(steer), abs(throttle))
@@ -158,8 +158,8 @@ class SimDriverNode:
             else:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
             
-
-
+            print("left throttle: ", left_throttle)
+            print("right throttle: ", right_throttle)            
             # wheel 1 and 3 represent the left drivetrain on car
             # wheel 2 and 4 represent right drivetrain on car.
             # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
@@ -174,17 +174,19 @@ class SimDriverNode:
 
             right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_right = right_torque / 2
-            
+
+            print("Right motor: ", per_motor_right)
+            print("left motor: ", per_motor_left)
             for m in left_drive_train:
                 m.setTorque(per_motor_left)
             for m in right_drive_train:
                 m.setTorque(per_motor_right)
 
-            print("---------")
-            print("max vel:", m.getMaxVelocity())
-            print("avail torque:", m.getAvailableTorque())
-            print("max torque:", m.getMaxTorque())
-            print("---------")      
+            #print("---------")
+            #print("max vel:", m.getMaxVelocity())
+            #print("avail torque:", m.getAvailableTorque())
+            #print("max torque:", m.getMaxTorque())
+            #print("---------")      
             return True
         except Exception as e:
             print(f"Error: {e}")

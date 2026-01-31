@@ -56,7 +56,7 @@ class SimDriverLib():
 
         #  Motor constants
         no_load_speed = self.rpm_to_rads(9475)   # rad/s, positive
-        stall_torque = self.stall_torque         # N·m, positive magnitude
+        stall_torque = self.stall_torque         # Nm, positive magnitude
 
         # Available torque depends on speed magnitude (NOT direction)
         speed_ratio = abs(motor_speed) / no_load_speed

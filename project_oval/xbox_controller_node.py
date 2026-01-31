@@ -33,7 +33,8 @@ def joy_callback(data):
 
 	# If the a button is being pressed, we want to be in turbo mode
 	throttle_input = (data.axes[1]**3) * (1 if a_button_pressed else 0.3)
-	steer_input = (data.axes[2]**3) * (1 if a_button_pressed else 0.3)
+	# changed this from 2, to 3 so steering wasnt mapped to left trigger
+	steer_input = (data.axes[3]**3) * (1 if a_button_pressed else 0.3)
 
 	# Convert this to [-20, +20] for throttle and [-100, 100] for steer
 	throttle = int(100 * throttle_input)
