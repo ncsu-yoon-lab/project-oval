@@ -159,8 +159,6 @@ class SimDriverNode:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
             
 
-            left_throttle_abs = abs(left_throttle)
-            right_throttle_abs = abs()
 
             # wheel 1 and 3 represent the left drivetrain on car
             # wheel 2 and 4 represent right drivetrain on car.
@@ -174,14 +172,13 @@ class SimDriverNode:
             left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_left = left_torque / 2
 
-            left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
-            per_motor_left = left_torque / 2
+            right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
+            per_motor_right = right_torque / 2
             
-
             for m in left_drive_train:
-                m.set
+                m.setTorque(per_motor_left)
             for m in right_drive_train:
-                m.setVelocity(right_omega)
+                m.setTorque(per_motor_right)
 
             print("---------")
             print("max vel:", m.getMaxVelocity())
