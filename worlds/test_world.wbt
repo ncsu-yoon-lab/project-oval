@@ -9,10 +9,10 @@ WorldInfo {
   contactProperties [
     ContactProperties {
       coulombFriction [
-        1.1
+        2
       ]
-      frictionRotation 0.01 0.01
-      rollingFriction 0.002 0.002 0.002
+      frictionRotation 0.02 0.02
+      rollingFriction 0.003 0.003 0.003
     }
   ]
 }

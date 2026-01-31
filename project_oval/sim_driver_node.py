@@ -175,6 +175,9 @@ class SimDriverNode:
             right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_right = right_torque / 2
 
+            per_motor_right /= 20
+            per_motor_left /= 20
+
             print("Right motor: ", per_motor_right)
             print("left motor: ", per_motor_left)
             for m in left_drive_train:
