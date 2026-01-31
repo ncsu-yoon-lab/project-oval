@@ -43,26 +43,40 @@ class SimDriverLib():
         return (95 -  0.03958333333 * current_torque)/100
 
     def get_torque_input(self, throttle, current_wheel_speeds, pedal_function):
+
+        """
+        modified to support direction
+        """
+
+        # Average wheel speed (signed)
         avg_wheel_speed = sum(current_wheel_speeds) / len(current_wheel_speeds)
-        motor_speed = avg_wheel_speed*self.gear_ratio
 
-        # constants from 190kv motor datasheet
-        no_load_speed = self.rpm_to_rads(9475)
+        # 2) Motor speed from gearing (signed)
+        motor_speed = avg_wheel_speed * self.gear_ratio
 
-        stall_torque = self.stall_torque
+        #  Motor constants
+        no_load_speed = self.rpm_to_rads(9475)   # rad/s, positive
+        stall_torque = self.stall_torque         # N·m, positive magnitude
 
-        # Calculate the current available torque, given the current speed. 
-        torque_avail = stall_torque * (1 - motor_speed/no_load_speed)
-        torque_avail = max(0, torque_avail)
+        # Available torque depends on speed magnitude (NOT direction)
+        speed_ratio = abs(motor_speed) / no_load_speed
+        torque_avail = stall_torque * (1.0 - speed_ratio)
+        torque_avail = max(0.0, torque_avail)
 
+        # Throttle sign controls direction; pedal map shapes magnitude only
+        #    Clamp throttle to [-1, 1] for safety.
+        throttle = max(-1.0, min(1.0, float(throttle)))
+        throttle_sign = 1.0 if throttle > 0 else (-1.0 if throttle < 0 else 0.0)
+        throttle_mag = abs(throttle)
 
-        # Change throttle based on the pedal function
-        adjusted_throttle = pedal_function(throttle)
+        adjusted_throttle_mag = pedal_function(throttle_mag)  # expects [0,1] to [0,1]
+        adjusted_throttle_mag = max(0.0, min(1.0, float(adjusted_throttle_mag)))
 
-        # Calculate torque to send to motors
-        motor_torque = adjusted_throttle * torque_avail
+        #  Motor torque (signed)
+        motor_torque = throttle_sign * adjusted_throttle_mag * torque_avail
 
-        # Calculate axel torque
-        axel_torque = motor_torque * self.gear_ratio * self.drivetrain_eff
+        # Axle torque (signed). gear_ratio and drivetrain_eff are positive scalars.
+        axle_torque = motor_torque * self.gear_ratio * self.drivetrain_eff
 
-        return axel_torque
+        return axle_torque
+
