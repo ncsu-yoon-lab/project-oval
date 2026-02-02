@@ -12,6 +12,7 @@ WHEEL_RADIUS = 0.025
 MAX_INPUT = 30
 '''
 colcon build --packages-select project-oval --symlink-install
+source install/setup.bash
 
 Launch executable is in install/project-oval/share/project-oval/launch/
 ros2 launch project-oval car_sim_launch.py
@@ -43,13 +44,11 @@ class SimDriverNode:
         # add motors to the motor devices
         for motor_name in self.__motor_names:
             motor = self.__robot.getDevice(motor_name)
-            motor.setPosition(float("inf"))
-            motor.setVelocity(0.0)
+           
             #motor.setMaxTorque(max_motor_torque)
             self.__motor_devices.append(motor)
 
-        # Ensure the car begins at rest. Possible to remove this
-        self.set_all_speed(0.0)
+
 
         # Start Class arguments from DriverNode
         self.mode = "Manual"
@@ -80,9 +79,6 @@ class SimDriverNode:
             10
         )
 
-    def set_all_speed(self, speed: float):
-        for motor in self.__motor_devices:
-            motor.setVelocity(speed)
 
     
     # Start callbacks from DriverNode
@@ -144,6 +140,8 @@ class SimDriverNode:
             else:            # III quadrant
                 throttle_left = -maximum
                 throttle_right = difference
+        
+
 
         return throttle_left, throttle_right
 
@@ -154,12 +152,28 @@ class SimDriverNode:
     def send_speeds(self):
         try:
             if self.mode == "Auto":
+                steer_cmd = self.auto_steer
                 left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
             else:
+                steer_cmd = self.manual_steer
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
-            
+
+            # --- Anti-deadlock for sim skid-steer ---
+            # If we're steering but one side hits exactly 0, force a tiny counter-command
+            # so the contact solver breaks symmetry and you get yaw.
+            if abs(steer_cmd) > 1 and (right_throttle == 0 or left_throttle == 0):
+                eps = 2  # in "throttle units" (tune 1-5)
+                if right_throttle == 0:
+                    right_throttle = -eps if left_throttle > 0 else eps
+                if left_throttle == 0:
+                    left_throttle = -eps if right_throttle > 0 else eps
+        # # --------------------------------------
+            print("-----")
             print("left throttle: ", left_throttle)
-            print("right throttle: ", right_throttle)            
+            print("right throttle: ", right_throttle)  
+
+
+          
             # wheel 1 and 3 represent the left drivetrain on car
             # wheel 2 and 4 represent right drivetrain on car.
             # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
@@ -175,15 +189,26 @@ class SimDriverNode:
             right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_right = right_torque / 2
 
-            per_motor_right /= 20
-            per_motor_left /= 20
+            if per_motor_right > 0 and per_motor_left > 0 or per_motor_right < 0 and per_motor_left < 0:
+                per_motor_right /= 20
+                per_motor_left  /= 20
+            else:
+                per_motor_left /= 5
+                per_motor_right /= 5
+
+            # if per_motor_left != 0 and per_motor_right == 0:
+            #     per_motor_right = per_motor_left * 0.1
+            
+            # if per_motor_right != 0 and per_motor_left == 0:
+            #     per_motor_left = per_motor_right * 0.1
 
             print("Right motor: ", per_motor_right)
             print("left motor: ", per_motor_left)
+            print("-----")
             for m in left_drive_train:
-                m.setTorque(per_motor_left)
+                m.setForce(per_motor_left)
             for m in right_drive_train:
-                m.setTorque(per_motor_right)
+                m.setForce(per_motor_right)
 
             #print("---------")
             #print("max vel:", m.getMaxVelocity())
