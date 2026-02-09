@@ -1,0 +1,3 @@
+[console_scripts]
+my_robot_driver = project_oval.sim_driver_node:main
+
