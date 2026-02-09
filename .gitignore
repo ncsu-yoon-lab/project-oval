@@ -12,6 +12,9 @@ log
 models
 trt_cache
 
+.venv/
+project_oval.egg-info/
+__pycache__/
 
 .venv/
 
