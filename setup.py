@@ -1,16 +1,29 @@
 from setuptools import setup
 
+
+# ROS package name
 package_name = 'project-oval'
+
+# Python import package (had to change -, to _ so it could be importable by python)
+python_package = 'project_oval'
+
+# build data files array
+data_files = []
+
+# OG data files
+data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
+data_files.append(('share/' + package_name, ['package.xml']))
+
+# Webots resources
+data_files.append(('share/' + package_name + '/launch', ['launch/car_sim_launch.py']))
+data_files.append(('share/' + package_name + '/worlds', ['worlds/test_world.wbt']))
+data_files.append(('share/' + package_name + '/resource', ['resource/my_robot.urdf']))
 
 setup(
     name=package_name,
     version='0.0.0',
-    packages=[package_name],
-    data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-    ],
+    packages=[python_package],
+    data_files=data_files,
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='anglia',
@@ -20,6 +33,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'my_robot_driver = project_oval.sim_driver_node:main',
         ],
     },
 )
