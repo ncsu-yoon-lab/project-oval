@@ -6,6 +6,7 @@ robotLocalization
 *.pt
 
 project-oval/onnx_segmentation/test_images
-
+project-oval/onnx_segmentation/__pycache__
+project-oval/sidewalk_segmentation/__pycache__
 dataset
 log

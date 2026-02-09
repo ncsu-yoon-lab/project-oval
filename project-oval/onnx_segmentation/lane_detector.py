@@ -7,6 +7,8 @@ import glob
 from pathlib import Path
 import math
 
+from natsort import natsort
+
 
 MIN_POINT_DISTANCE = 200
 
@@ -44,7 +46,7 @@ class LaneDetector():
 
         return cropped_image, cropped_top, cropped_bottom
     
-    def _find_main_path(self, image: np.ndarray) -> tuple[float, float]:
+    def _find_main_path(self, image):
 
         num_rows, num_columns, _ = image.shape
 
@@ -71,7 +73,7 @@ class LaneDetector():
 
         return center_point
     
-    def _find_edges(self, image: np.ndarray, path_center: tuple[float, float]) -> tuple[tuple[float, float], tuple[float, float]]:
+    def _find_edges(self, image: np.ndarray, path_center):
         # Create a copy for visualization
         image_with_edges = image.copy()
         
@@ -354,7 +356,7 @@ class LaneDetector():
         cv2.line(overlay_image, (int(point1[0]), int(point1[1])), (int(point2[0]), int(point2[1])), (255, 0, 0), 4)
         cv2.line(overlay_image, (int(point3[0]), int(point3[1])), (int(point4[0]), int(point4[1])), (255, 0, 0), 4)
 
-        return overlay_image, cropped_image, image_with_edges
+        return overlay_image, (point1, point2), (point3, point4)
 
     def create_video_visualization(self, image_folder='test_images', output_video='lane_detection_simple.mp4', fps=10):
         """Create a video visualization without matplotlib - should eliminate squishing"""

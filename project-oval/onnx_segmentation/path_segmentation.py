@@ -30,7 +30,7 @@ class PathSegmentation():
         
         return colored_mask
 
-    def segment_image(self, frame: np.ndarray=None, image_path: str=None, show_image: bool=False) -> np.ndarray:
+    def segment_image(self, frame=None, image_path=None, show_image=False):
         """
         Run the onnx model on the image to segment it and output as a cv2 np array
         """
