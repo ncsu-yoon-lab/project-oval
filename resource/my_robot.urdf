@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<robot name="My robot">
+    <webots>
+        <device reference="lidar" type="Lidar">
+            <ros>
+                <topicName>/scan</topicName>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <plugin type="project_oval.sim_driver_node.SimDriverNode" />
+    </webots>
+</robot>

@@ -4,9 +4,19 @@
   <name>project-oval</name>
   <version>1.0.0</version>
   <description>Handles all specific functions of the Jetson on-board the OVAL Vehicle</description>
+
   <maintainer email="malinchc@gmail.com">malinchc</maintainer>
   <license>TODO: License declaration</license>
 
+  <!-- ament_python -->
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <!-- Webots dependencies -->
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>webots_ros2_driver</depend>
+
+  <!-- tests -->
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
