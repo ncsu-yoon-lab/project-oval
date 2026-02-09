@@ -7,8 +7,7 @@ class LaneDetector:
     """
     A class for detecting lane edges from segmented images.
     
-    Takes in an original image and its segmented version, and returns
-    the detected lane edge points.
+    Takes in a grayscale segmented image and returns the detected lane edge points.
     """
     
     def __init__(self):
@@ -22,19 +21,28 @@ class LaneDetector:
 
     def _crop_image(self, image: np.ndarray) -> tuple:
         """Crop the image to focus on the relevant area."""
-        num_rows, num_columns, _ = image.shape
+        # Handle both grayscale (2D) and color (3D) images
+        if len(image.shape) == 2:
+            num_rows, num_columns = image.shape
+        else:
+            num_rows, num_columns, _ = image.shape
 
         cropped_top = int(num_rows / 2)
         cropped_image = image[cropped_top:, 0:num_columns]
 
-        num_rows, num_columns, _ = cropped_image.shape
+        if len(cropped_image.shape) == 2:
+            num_rows, num_columns = cropped_image.shape
+        else:
+            num_rows, num_columns, _ = cropped_image.shape
 
         left_point = (0, num_rows - 1)
         right_point = (num_columns - 1, num_rows - 1)
 
         # Move the points up until they reach the first black pixel
-        while(any(cropped_image[int(left_point[1]), int(left_point[0])]) and 
-              any(cropped_image[int(right_point[1]), int(right_point[0])]) and 
+        # For grayscale: check if pixel value > 0
+        # For color: check if any channel > 0
+        while(self._is_white_pixel(cropped_image, left_point) and 
+              self._is_white_pixel(cropped_image, right_point) and 
               (right_point[1] > 0 and left_point[1] > 0)):
             left_point = (left_point[0], left_point[1] - 1)
             right_point = (right_point[0], right_point[1] - 1)
@@ -44,9 +52,24 @@ class LaneDetector:
 
         return cropped_image, cropped_top, cropped_bottom
     
+    def _is_white_pixel(self, image: np.ndarray, point: tuple) -> bool:
+        """Check if a pixel is white (non-zero) in grayscale or color image."""
+        y, x = int(point[1]), int(point[0])
+        pixel = image[y, x]
+        
+        # For grayscale (scalar value)
+        if isinstance(pixel, (np.integer, np.floating, int, float)):
+            return pixel > 0
+        # For color (array of values)
+        else:
+            return any(pixel)
+    
     def _find_main_path(self, image: np.ndarray) -> tuple:
         """Find the center point of the main path."""
-        num_rows, num_columns, _ = image.shape
+        if len(image.shape) == 2:
+            num_rows, num_columns = image.shape
+        else:
+            num_rows, num_columns, _ = image.shape
 
         boxes = 5
         box_width = num_columns / boxes
@@ -86,7 +109,7 @@ class LaneDetector:
 
             if point1[0] == 0 and direction == "left":
                 direction = "up"
-            elif not any(image[int(point1[1]), int(point1[0])]) and direction == "left":
+            elif not self._is_white_pixel(image, point1) and direction == "left":
                 point1 = (point1[0] + 1, point1[1])
                 direction = "up"
 
@@ -103,7 +126,7 @@ class LaneDetector:
             elif point1[1] > image.shape[0] - 1:
                 point1 = (point1[0], image.shape[0] - 1)
                 point1_on_path = False
-            elif not any(image[int(point1[1]), int(point1[0])]) and direction == "up":
+            elif not self._is_white_pixel(image, point1) and direction == "up":
                 point1 = (point1[0], point1[1] + 1)
                 point1_on_path = False
 
@@ -118,7 +141,7 @@ class LaneDetector:
                 
             if point2[1] == 0 and direction == "up":
                 direction = "left"
-            elif not any(image[int(point2[1]), int(point2[0])]) and direction == "up":
+            elif not self._is_white_pixel(image, point2) and direction == "up":
                 point2 = (point2[0], point2[1] + 1)
                 direction = "left"
 
@@ -135,7 +158,7 @@ class LaneDetector:
             elif point2[1] > image.shape[0] - 1:
                 point2 = (point2[0], image.shape[0] - 1)
                 point2_on_path = False
-            elif not any(image[int(point2[1]), int(point2[0])]) and direction == "left":
+            elif not self._is_white_pixel(image, point2) and direction == "left":
                 point2 = (point2[0] + 1, point2[1])
                 point2_on_path = False
         
@@ -150,7 +173,7 @@ class LaneDetector:
 
             if point3[0] == image.shape[1] - 1 and direction == "right":
                 direction = "up"
-            elif not any(image[int(point3[1]), int(point3[0])]) and direction == "right":
+            elif not self._is_white_pixel(image, point3) and direction == "right":
                 point3 = (point3[0] - 1, point3[1])
                 direction = "up"
             
@@ -167,7 +190,7 @@ class LaneDetector:
             elif point3[1] > image.shape[0] - 1:
                 point3 = (point3[0], image.shape[0] - 1)
                 point3_on_path = False
-            elif not any(image[int(point3[1]), int(point3[0])]) and direction == "up":
+            elif not self._is_white_pixel(image, point3) and direction == "up":
                 point3 = (point3[0], point3[1] + 1)
                 point3_on_path = False
         
@@ -182,7 +205,7 @@ class LaneDetector:
                 
             if point4[1] == 0 and direction == "up":
                 direction = "right"
-            elif not any(image[int(point4[1]), int(point4[0])]) and direction == "up":
+            elif not self._is_white_pixel(image, point4) and direction == "up":
                 point4 = (point4[0], point4[1] + 1)
                 direction = "right"
 
@@ -199,7 +222,7 @@ class LaneDetector:
             elif point4[1] > image.shape[0] - 1:
                 point4 = (point4[0], image.shape[0] - 1)
                 point4_on_path = False
-            elif not any(image[int(point4[1]), int(point4[0])]) and direction == "right":
+            elif not self._is_white_pixel(image, point4) and direction == "right":
                 point4 = (point4[0] - 1, point4[1])
                 point4_on_path = False
         
@@ -264,6 +287,7 @@ class LaneDetector:
         
         Args:
             segmented_image: The segmented image showing the path/lane areas
+                            Can be grayscale (H, W) or color (H, W, C)
             
         Returns:
             dict: Dictionary containing lane edge information with keys:

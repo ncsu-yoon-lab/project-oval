@@ -1,0 +1,8340 @@
+header:
+  stamp:
+    sec: 1760739121
+    nanosec: 921327317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739121
+    nanosec: 941487317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739121
+    nanosec: 961647317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739121
+    nanosec: 981807317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 1967317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 22127317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 42287317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 62447317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 82607317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 102767317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 122927317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 143087317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 163247317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 183407317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 203567317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 223727317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 243887317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 264047317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 284207317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 304367317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 324527317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 344687317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 364847317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 385007317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 405167317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 425327317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 445487317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 465647317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 485807317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 505967317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 526127317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 546287317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 566447317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 586607317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 606767317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 626927317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 647087317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 667247317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 687407317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 707567317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 727727317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 747887317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 768047317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 788207317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 808367317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 828527317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 848687317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 868847317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 889007317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 909167317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 929327317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 949487317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 969647317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739122
+    nanosec: 989807317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 9967317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 30127317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 50287317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 70447317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 90607317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 110767317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 130927317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 151087317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 171252317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 191432317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 211612317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 231792317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 251972317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 272152317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 292332317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 312512317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 332692317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 352872317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 373052317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 393232317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 413412317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 433592317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 453772317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 473952317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 494132317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 514312317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 534492317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 554672317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 574852317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 595032317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 615212317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 635392317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 655572317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 675752317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 695932317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 716112317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 736292317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 756472317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 776652317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 796832317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 817012317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 837192317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 857372317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 877552317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 897732317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 917912317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 938092317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 958272317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 978452317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739123
+    nanosec: 998632317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 18812317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 38992317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 59172317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 79352317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 99532317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 119712317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -4.375e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 139892317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 6.25e-08
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 160072317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 180252317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 200432317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 220612317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 240792317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 260972317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 281152317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 301332317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 321512317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 341692317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 361872317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -4.375e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 382052317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 402232317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 422412317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 442592317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 462772317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 482952317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 503132317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 523312317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 543492317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 563672317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 583852317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 604032317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 624212317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 644392317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 664572317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 684752317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 704932317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 725112317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 745292317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 765472317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 785652317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 805832317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 826012317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 846192317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 866372317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 886552317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 906732317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 926912317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 947092317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 967272317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739124
+    nanosec: 987452317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 7632317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 27812317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 47992317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 68172317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 88352317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 108532317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 128712317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 148892317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 169072317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 189252317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 209432317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 229612317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 249792317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 269972317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 290152317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 310332317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 330512317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 350692317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 370872317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 391052317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 411232317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 431412317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 451592317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 471772317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 491952317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 512132317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 532312317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 552492317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 572672317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 592852317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 613032317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 633212317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 653392317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 673572317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 693752317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 713932317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 734112317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 754292317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 774472317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 794652317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 814832317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 835012317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 855192317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 875372317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 895552317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 915732317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 935912317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 956092317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 976272317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739125
+    nanosec: 996452317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 16632317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 36812317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 56992317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 77172317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 97352317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 117532317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 137712317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 157892317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 178072317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 198252317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 218432317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 238612317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 258792317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 278972317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 299152317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 319332317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 339512317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 359692317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 379872317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 400052317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 420232317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 440412317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 460592317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 480772317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 500952317
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 521114817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 541274817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 561434817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 581594817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 601754817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 621914817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 642074817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 662234817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 682394817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 702554817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 722714817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 742874817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 763034817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 783194817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 803354817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 823514817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 843674817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 863834817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 883994817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.875e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 904154817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 924314817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 944474817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 964634817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739126
+    nanosec: 984794817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 4954817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 25114817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 45274817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 65434817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 85594817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 105754817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 125914817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 146074817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 166234817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 186394817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 206554817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 226714817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 246874817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 267034817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 287194817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 307354817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 327514817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 347674817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 367834817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 387994817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 408154817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 428314817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 448474817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 468634817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 488794817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 508954817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 529114817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 549274817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 569434817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 589594817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 609754817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 629914817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 650074817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 670234817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 690394817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 710554817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 730714817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 750874817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 771034817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 791194817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 811354817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 831514817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 851674817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 871834817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 891994817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 912154817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 932314817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.5624999999999998e-06
+  y: 6.25e-08
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 952474817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 972634817
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739127
+    nanosec: 992793809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 12953809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 33113809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 53273809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 73433809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 93593809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 113753809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 133913809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 154073809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 174233809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 194393809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 214553809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 234713809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 254873809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 275033809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 295193809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 315353809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 335513809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 355673809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 375833809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 395993809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 416153809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 436313809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 456473809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 476633809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 496793809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 516953809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 537113809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 557273809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 577433809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 597593809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 617753809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 637913809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 658073809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 678233809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 698393809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 718553809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 738713809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 758873809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 779033809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 799193809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 819353809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 839513809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 859673809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 879833809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 899993809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 920153809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 940313809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 960473809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739128
+    nanosec: 980633809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 793809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 20953809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 41113809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 61273809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 81433809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 101593809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 121753809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 141913809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 162073809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 182233809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 202393809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 222553809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 242713809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 262873809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 3.1249999999999997e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 283033809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 303193809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 323353809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 343513809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 363673809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 383833809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 3.1249999999999997e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 403993809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 424153809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 444313809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 464473809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 484633809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 504793809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 524953809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -4.375e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 545113809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 565273809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 585433809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 605593809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 625753809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 645913809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 666073809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 686233809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 706393809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 726553809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 746713809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 766873809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 787033809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 807193809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 827353809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 847513809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 867673809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 887833809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 907993809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 928153809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 948313809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 968473809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 1.875e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739129
+    nanosec: 988633809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 8793809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 28953809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 49113809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 69273809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.8125e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 89433809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 109593809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 129753809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 149913809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 170073809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 190233809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.625e-06
+  y: 1.875e-07
+  z: -6.249999999999999e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 210393809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.875e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 230553809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 250713809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 270873809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.875e-06
+  y: 2.5e-07
+  z: -5.0e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 291033809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.6875e-06
+  y: 1.25e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---
+header:
+  stamp:
+    sec: 1760739130
+    nanosec: 311193809
+  frame_id: zed_imu_link
+magnetic_field:
+  x: 3.7499999999999997e-06
+  y: 2.5e-07
+  z: -5.625e-07
+magnetic_field_covariance:
+- 3.9e-08
+- 0.0
+- 0.0
+- 0.0
+- 3.7e-08
+- 0.0
+- 0.0
+- 0.0
+- 4.7e-08
+---

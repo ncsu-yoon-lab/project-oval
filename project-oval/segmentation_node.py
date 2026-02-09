@@ -77,6 +77,8 @@ class ONNXSegmentationModel:
         # Get model input/output info
         self.input_name = self.session.get_inputs()[0].name
         self.output_name = self.session.get_outputs()[0].name
+        self.input_name = self.session.get_inputs()[0].name
+        self.output_name = self.session.get_outputs()[0].name
         
         print(f"Input name: {self.input_name}")
         print(f"Output name: {self.output_name}")
@@ -153,7 +155,21 @@ class SegmentationNode(Node):
                 '/segmentation/mask',
                 10
             )
-        
+
+            # Segmentation original image publisher
+            self.segmentation_original = self.create_publisher(
+                Image, 
+                '/segmentation/original', 
+                10
+            )
+            
+            # Segmentation overlay publisher 
+            self.segmentation_overlay = self.create_publisher(
+                Image, 
+                '/segmentation/overlay', 
+                10
+            )
+            
         self.timer = self.create_timer(1.0 / self.frequency, self.process_timer_callback)
         
         self.get_logger().info(f"Segmentation node initialized")
@@ -179,20 +195,24 @@ class SegmentationNode(Node):
         try:
             start_time = time.time()
             segmentation_mask, probabilities = self.seg_model.segment_image(image_to_process)
+
             processing_time = time.time() - start_time
             
             self.get_logger().info(f"Segmentation completed in {processing_time:.3f}s")
             self.get_logger().info(f"FPS {1/processing_time:.3f}fps")
             self.get_logger().info(f"Segmentation Mask in {segmentation_mask.shape}, Probabilities in {probabilities.shape}")
             self.get_logger().info(f"Segmentation Mask in {segmentation_mask}")
-            
-            
+                 
             if self.show_display:
-                +                self.display_results(image_to_process, segmentation_mask, probabilities)
+                self.display_results(image_to_process, segmentation_mask, probabilities)
             
             if self.publish_segmentation:
-                self.publish_segmentation_mask(segmentation_mask)
-                
+                # Convert to convex hull
+                segmentation_mask = self.apply_convex_hull_to_mask(segmentation_mask)
+                self.publish_segmentation_mask(segmentation_mask) # Publish the mask
+            
+            
+
         except Exception as e:
             self.get_logger().error(f"Error in processing: {str(e)}")
     
@@ -206,6 +226,33 @@ class SegmentationNode(Node):
         Returns:
             convex_hull_mask: Mask with convex hull applied
         """
+        # binary_mask = (mask > 127).astype(np.uint8) * 255
+    
+        # # Step 1: Aggressive closing to fill all gaps
+        # kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
+        # closed = cv2.morphologyEx(binary_mask, cv2.MORPH_CLOSE, kernel_close)
+        
+        # # Step 2: Remove small islands
+        # kernel_open = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+        # opened = cv2.morphologyEx(closed, cv2.MORPH_OPEN, kernel_open)
+        
+        # # Step 3: Dilate slightly to ensure continuous lane
+        # kernel_dilate = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+        # dilated = cv2.dilate(opened, kernel_dilate, iterations=1)
+        
+        # # Step 4: Bilateral filter for edge-preserving smoothing
+        # # (smooths interior but keeps edges defined)
+        # bilateral = cv2.bilateralFilter(dilated, 9, 75, 75)
+        
+        # # Step 5: Final Gaussian smoothing
+        # smoothed = cv2.GaussianBlur(bilateral, (11, 11), 0)
+        
+        # # Step 6: Clean threshold
+        # _, lane_mask = cv2.threshold(smoothed, 127, 255, cv2.THRESH_BINARY)
+        
+        # return lane_mask
+        
+        
         # Convert to binary mask (assuming non-zero values are the object)
         binary_mask = (mask > 0).astype(np.uint8)
         
@@ -238,7 +285,9 @@ class SegmentationNode(Node):
             convex_hull_mask = self.apply_convex_hull_to_mask(segmentation_mask)
             colored_hull_mask = cv2.applyColorMap(convex_hull_mask, cv2.COLORMAP_JET)
             overlay_hull = cv2.addWeighted(original_resized, 1-alpha, colored_hull_mask, alpha, 0)
-
+            
+            self.publish_original_image(original_resized)
+            self.publish_overlay_image(overlay)
 
             display_image = np.hstack([original_resized, colored_mask, overlay, overlay_hull])
             
@@ -276,6 +325,24 @@ class SegmentationNode(Node):
             
         except Exception as e:
             self.get_logger().error(f"Error in display: {str(e)}")
+    
+    def publish_original_image(self, original_image):
+        try:
+            original_msg = self.br.cv2_to_imgmsg(original_image, "bgr8")
+            original_msg.header.stamp = self.get_clock().now().to_msg()
+            original_msg.header.frame_id = "camera_frame"
+            self.segmentation_original.publish(original_msg)
+        except Exception as e:
+            self.get_logger().error(f"Error publishing original image: {str(e)}")
+    
+    def publish_overlay_image(self, overlay_image):
+        try:
+            overlay_msg = self.br.cv2_to_imgmsg(overlay_image, "bgr8")
+            overlay_msg.header.stamp = self.get_clock().now().to_msg()
+            overlay_msg.header.frame_id = "camera_frame"
+            self.segmentation_overlay.publish(overlay_msg)
+        except Exception as e:
+            self.get_logger().error(f"Error publishing overlay image: {str(e)}")
     
     def publish_segmentation_mask(self, segmentation_mask):
         try:
