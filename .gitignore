@@ -16,3 +16,8 @@ trt_cache
 .venv/
 
 .env
+
+__pycache__/
+.ipynb_checkpoints/
+project_oval.egg-info/*
+.DS_Store
