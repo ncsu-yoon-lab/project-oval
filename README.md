@@ -185,6 +185,118 @@ python driver_node.py
 
 ---
 
+# GitHub Contribution Guidelines
+
+This repository follows a lightweight but strict Git workflow to keep development organized, reviewable, and stable—especially important for autonomous vehicle development where software, simulation, and hardware intersect.
+
+Please read and follow these rules before contributing.
+
+---
+
+## 1. Branch Lifespan
+
+**Branches should be short-lived.**
+
+- If you create a new branch, it should be **merged or closed within 7 days**.
+- If work is ongoing past a week:
+  - Open a pull request with incremental progress, or
+  - Clearly note why the branch is staying open.
+
+This helps prevent abandoned branches and keeps development moving.
+
+---
+
+## 2. Pull Requests for All Changes
+
+**All changes must go through pull requests.**
+
+- Any successful or functional change—no matter how small—should be submitted as a pull request.
+- Draft pull requests are encouraged for incomplete or in-progress work.
+- This applies even if you are the only one working on the branch.
+
+Pull requests are used to track changes to `main`, discuss design decisions, and preserve project history.
+
+---
+
+## 3. One Purpose per Branch
+
+**Each branch should have a single, clear purpose.**
+
+- Avoid mixing unrelated changes in the same branch.
+- Examples of unrelated changes:
+  - Sensor drivers + visualization tweaks
+  - Control logic + documentation cleanup
+
+Keeping branches focused makes reviews, testing, and debugging significantly easier.
+
+---
+
+## 5. Pull Request Descriptions
+
+**Every pull request must include:**
+
+- **What changed**
+- **Why it changed**
+- **How it was tested**
+  - Simulation
+  - Hardware
+  - Log playback
+  - Or explicitly state if it was not tested
+
+Clear PR descriptions save time and reduce misunderstandings.
+
+---
+
+## 6. No Direct Pushes to `main`
+
+**Direct pushes to `main` are not allowed.**
+
+- All changes must be merged through pull requests.
+- This rule applies to everyone, regardless of role.
+
+This ensures visibility, review, and traceability of all changes.
+
+---
+
+## 7. Keep `main` Runnable
+
+**The `main` branch must always build and run.**
+
+- Do not merge changes that break:
+  - Builds
+  - Simulation
+  - Deployment pipelines
+- If a change introduces a breaking issue, it must be fixed before merging.
+
+`main` should always represent a stable, usable state of the project.
+
+---
+
+## 8. Commit Hygiene
+
+**Commits should be clear and intentional.**
+
+- Use descriptive commit messages.
+- Avoid vague messages like:
+  - `wip`
+  - `fix`
+  - `stuff`
+- Each commit should represent a coherent, logical change.
+
+Good commit history makes debugging, reverting, and collaboration far easier.
+
+---
+
+## Final Notes
+
+These rules exist to:
+- Prevent branch sprawl
+- Keep `main` stable
+- Make collaboration and review painless
+- Save time during testing, deployment, and field work
+
+If something doesn’t fit neatly into these rules, communicate early via a pull request or discussion.
+
 ### **Additional Recommendations for README**
 
 1. **System Requirements:** List Jetson OS version, ROS2 version, Python version, and minimum hardware requirements.
