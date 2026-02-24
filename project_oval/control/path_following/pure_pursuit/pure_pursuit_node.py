@@ -8,7 +8,7 @@ class PurePursuitNode(Node):
     def __init__(self):
         super().__init__("pure_pursuit_node")
 
-        # lookahead and wheelbase will be modifiable node parameters.
+        # lookahead will be modifiable parameters.
         self.declare_parameters(namespace="", parameters=[("lookahead_distance", 1.0),],)
 
         self._init_controller()
