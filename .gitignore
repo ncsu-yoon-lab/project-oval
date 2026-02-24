@@ -4,6 +4,14 @@
 robotLocalization
 *.pth
 *.pt
+*.venv/
+build/
+install/
+log/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
 project-oval/onnx_segmentation/test_images
 

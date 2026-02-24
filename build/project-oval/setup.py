@@ -1,1 +1,0 @@
-/home/patchy/lab_work/lab_ros_ws/src/project-oval/setup.py
