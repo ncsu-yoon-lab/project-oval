@@ -30,6 +30,11 @@ Robot {
   translation -0.00889644 0.0819893 0.0398605
   rotation 8.54207899835149e-09 -4.789166250460252e-08 0.9999999999999987 -2.7885800000000005
   children [
+    InertialUnit {
+      name "imu"
+    }
+    GPS {
+    }
     Lidar {
       translation 0.06 0 0.05
       children [
@@ -70,7 +75,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.05 0.06 0
-        rotation 1 7.800600267243222e-11 -7.800628920500555e-11 1.5708
+        rotation 1 8.478913333960024e-11 -8.478944478804953e-11 1.5708
         children [
           DEF WHEEL Shape {
             appearance PBRAppearance {
@@ -105,7 +110,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.05 -0.06 0
-        rotation 1 7.800652066934924e-11 -7.80068072038253e-11 1.5708
+        rotation 1 8.478969637972745e-11 -8.479000783024489e-11 1.5708
         children [
           USE WHEEL
         ]
@@ -130,7 +135,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.05 0.06 0
-        rotation 1 7.800497872417336e-11 -7.800526525298551e-11 1.5708
+        rotation 1 8.478802035236235e-11 -8.47883317967234e-11 1.5708
         children [
           USE WHEEL
         ]
@@ -155,7 +160,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.05 -0.06 0
-        rotation 1 7.800947921005824e-11 -7.800976575540169e-11 1.5708
+        rotation 1 8.479291218484592e-11 -8.479322364717575e-11 1.5708
         children [
           USE WHEEL
         ]

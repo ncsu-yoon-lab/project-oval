@@ -36,7 +36,6 @@ class SimDriverNode:
         self.__time = 0.0
         self.__brake = False   # updated from /brake
 
-
        
         # Contains methods for converting throttle to torque to be sent to motor
         self.driver_lib = SimDriverLib()
@@ -47,8 +46,6 @@ class SimDriverNode:
            
             #motor.setMaxTorque(max_motor_torque)
             self.__motor_devices.append(motor)
-
-
 
         # Start Class arguments from DriverNode
         self.mode = "Manual"
@@ -71,6 +68,9 @@ class SimDriverNode:
         # self.create_subscription(Int64, '/gemini/throttle', self.auto_throttle_callback, 10)
         # self.create_subscription(Int64, '/gemini/steering', self.auto_steer_callback, 10)
 
+        # TODO: Added GPS and IMU to sim robot
+        
+
         # Subscribe to brake signal
         self.__brake_sub = self.__node.create_subscription(
             Bool,
@@ -78,7 +78,6 @@ class SimDriverNode:
             self.__brake_callback,
             10
         )
-
 
     
     # Start callbacks from DriverNode
@@ -120,7 +119,7 @@ class SimDriverNode:
     # Start Helper functions from DriverNode
     def arcade_drive(self, throttle, steer):
         throttle *= -1.0
-        print("Arcade throttle: ", throttle)
+        #print("Arcade throttle: ", throttle)
         if self.stop_signal and throttle > 0:
             throttle = 0
         maximum = max(abs(steer), abs(throttle))
@@ -157,7 +156,7 @@ class SimDriverNode:
             else:
                 steer_cmd = self.manual_steer
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
-
+            
             # --- Anti-deadlock for sim skid-steer ---
             # If we're steering but one side hits exactly 0, force a tiny counter-command
             # so the contact solver breaks symmetry and you get yaw.
@@ -168,9 +167,8 @@ class SimDriverNode:
                 if left_throttle == 0:
                     left_throttle = -eps if right_throttle > 0 else eps
         # # --------------------------------------
-            print("-----")
-            print("left throttle: ", left_throttle)
-            print("right throttle: ", right_throttle)  
+
+
 
 
           
@@ -202,9 +200,8 @@ class SimDriverNode:
             # if per_motor_right != 0 and per_motor_left == 0:
             #     per_motor_left = per_motor_right * 0.1
 
-            print("Right motor: ", per_motor_right)
-            print("left motor: ", per_motor_left)
-            print("-----")
+   
+            
             for m in left_drive_train:
                 m.setForce(per_motor_left)
             for m in right_drive_train:

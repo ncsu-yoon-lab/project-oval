@@ -8,6 +8,20 @@
             </ros>
         </device>
 
+        <device reference="imu" type="InertialUnit">
+        <ros>
+            <topicName>/imu</topicName>
+            <alwaysOn>true</alwaysOn>
+        </ros>
+        </device>
+
+        <device reference="gps" type="GPS">
+        <ros>
+            <topicName>/gps</topicName>
+            <alwaysOn>true</alwaysOn>
+        </ros>
+        </device>
+
         <plugin type="project_oval.sim_driver_node.SimDriverNode" />
     </webots>
 </robot>

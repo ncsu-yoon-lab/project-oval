@@ -7,7 +7,7 @@ from .pure_pursuit import PurePursuit
 class PurePursuitNode(Node):
     def __init__(self):
         super().__init__("pure_pursuit_node")
-
+        # TODO: Added GPS and IMU to sim robot, subscribe to those and use them to provide state estimation to pure pursuit algorithm
         # lookahead will be modifiable parameters.
         self.declare_parameters(namespace="", parameters=[("lookahead_distance", 1.0),],)
 
