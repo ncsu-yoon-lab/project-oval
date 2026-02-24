@@ -30,6 +30,10 @@ Robot {
   translation -0.00889644 0.0819893 0.0398605
   rotation 8.54207899835149e-09 -4.789166250460252e-08 0.9999999999999987 -2.7885800000000005
   children [
+    Accelerometer {
+    }
+    Gyro {
+    }
     InertialUnit {
       name "imu"
     }
@@ -75,7 +79,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.05 0.06 0
-        rotation 1 8.478913333960024e-11 -8.478944478804953e-11 1.5708
+        rotation 1 9.157226400676824e-11 -9.15726003710935e-11 1.5708
         children [
           DEF WHEEL Shape {
             appearance PBRAppearance {
@@ -110,7 +114,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.05 -0.06 0
-        rotation 1 8.478969637972745e-11 -8.479000783024489e-11 1.5708
+        rotation 1 9.157287209010564e-11 -9.157320845666447e-11 1.5708
         children [
           USE WHEEL
         ]
@@ -135,7 +139,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.05 0.06 0
-        rotation 1 8.478802035236235e-11 -8.47883317967234e-11 1.5708
+        rotation 1 9.157106198055137e-11 -9.157139834046128e-11 1.5708
         children [
           USE WHEEL
         ]
@@ -160,7 +164,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.05 -0.06 0
-        rotation 1 8.479291218484592e-11 -8.479322364717575e-11 1.5708
+        rotation 1 9.157634515963358e-11 -9.157668153894981e-11 1.5708
         children [
           USE WHEEL
         ]

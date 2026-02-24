@@ -8,12 +8,15 @@
             </ros>
         </device>
 
-        <device reference="imu" type="InertialUnit">
-        <ros>
-            <topicName>/imu</topicName>
-            <alwaysOn>true</alwaysOn>
-        </ros>
-        </device>
+        <plugin type="webots_ros2_driver::Ros2IMU">
+        <enabled>true</enabled>
+        <topicName>/imu</topicName>
+        <alwaysOn>true</alwaysOn>
+        <frameName>imu_link</frameName>
+        <inertialUnitName>imu</inertialUnitName>
+        <gyroName>gyro</gyroName>
+        <accelerometerName>accelerometer</accelerometerName>
+        </plugin>
 
         <device reference="gps" type="GPS">
         <ros>
