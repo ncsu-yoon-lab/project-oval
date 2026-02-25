@@ -34,9 +34,7 @@ class PurePursuit:
 
         self.path = []
 
-        # May remove points from path as it is traversed for efficency
-        # Will store untraversed points in this array.
-        self.untraversed_path = []
+        self.path_length = 0
 
         self.x = 0.0
         self.y = 0.0
@@ -53,6 +51,8 @@ class PurePursuit:
             y = float(point[1])
             current_point = PathPoint2D(x, y)
             self.path.append(current_point)
+        
+        self.path_length = len(self.path)
 
         # naturally, the first point in the path hase zero cumulative distance
         self.path[0].set_arc_length(0.0)
@@ -88,8 +88,16 @@ class PurePursuit:
     # there are two ways to find the target point. 
     # One uses vector projection, and the other uses circle-line intersection
     # For this implementation I'm going to use vector circle-line intersection. This is how the original pure pursuit works.
-    def compute_target_point(self):
-        # search for the closest point
+    def compute_target_point(self, robot_pose):
+        for i in range(self.last_closest_index, self.path_length):
+            segment_start = self.path[i]
+            segment_end = self.path[i+1]
+            target_points = line_circle_intersection(robot_pose, segment_start, segment_end, self.lookahead_distance)
+            if len(target_points) = 1:
+                return target_points[0]
+            if len(target_points) == 2:
+                
+
     
 
 # helper function: sgn(num)
@@ -101,7 +109,7 @@ def sgn (num):
         return -1
     
 
-def line_circle_intersection (robot_pose, segment_start, segment_end, lookahead):
+def line_circle_intersection(robot_pose, segment_start, segment_end, lookahead):
 
     center = robot_pose.get_point()
     start = segment_start.get_point()
@@ -120,12 +128,12 @@ def line_circle_intersection (robot_pose, segment_start, segment_end, lookahead)
     floating_point_error = 1.0e-12
 
     discriminant = b**2 - 4.0 * a * c
-    intersections = ()
+    intersections = []
 
     if discriminant < -floating_point_error:  # no intersection for target point
         return None
-    
-    elif math.abs(discriminant) <= floating_point_error: # equals zero, one intersection
+    # t should be between 0 and 1 so that the point is on the segment
+    elif abs(discriminant) <= floating_point_error: # equals zero, one intersection
         t = -b / (2.0 * a)
         if 0.0 <= t <= 1.0:
             intersections.append(start + t * direction)
