@@ -29,19 +29,16 @@ class PathPoint2D:
 
 
 class PurePursuit:
-    def __init__(self, lookahead_distance):
+    def __init__(self, lookahead_distance, velocity):
         self.lookahead_distance = float(lookahead_distance)
+        self.lookahead = self.lookahead_distance
 
         self.path = []
-
         self.path_length = 0
-
-        self.x = 0.0
-        self.y = 0.0
-        self.yaw = 0.0
-        self.velocity = 0.0
-
         self.last_closest_index = 0
+        # tuning parameter for how much we want to slow down around turns, for now zero since the car is pretty low speed.
+        self.alpha = 0
+        self.velocity = velocity # maximum operating speed for pure pursuit
 
     def init_path(self, path):
         # init the path.
@@ -77,81 +74,102 @@ class PurePursuit:
 
         self.last_closest_index = 0
 
-
-    
-
    
-    def update_state(self, x, y, yaw, velocity):
-        
-        pass
+    def update_state(self, robot_pose, yaw, velocity):
+        target_point = compute_target_point(robot_pose)
+        if target_point is None:
+            print("No target point found")
+            return None
+        else:
+            kappa = curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
+            desired_angular_velocity = float(vmax) / (1.0 + float(self.alpha) * abs(float(kappa)))
+            return desired_angular_velocity # we will now take this value to a controller for robot control.
+
+
+    # compute the curbature
+    def curvature_from_target(robot_pose, robotyaw, target, lookahead):
+        dx = target[0] - robot_pose[0]
+        dy = target[1] - robot_pose[1]
+
+        c = math.cos(robotyaw)
+        s = math.sin(robotyaw)
+
+        xprime = c * dx + s * dy
+        yprime = -s * dx + c * dy
+
+        kappa = 2.0 * yprime / (lookahead * lookahead)
+        return kappa
 
     # there are two ways to find the target point. 
     # One uses vector projection, and the other uses circle-line intersection
     # For this implementation I'm going to use vector circle-line intersection. This is how the original pure pursuit works.
     def compute_target_point(self, robot_pose):
-        for i in range(self.last_closest_index, self.path_length):
+        for i in range(self.last_closest_index, self.path_length - 1):
             segment_start = self.path[i]
             segment_end = self.path[i+1]
             target_points = line_circle_intersection(robot_pose, segment_start, segment_end, self.lookahead_distance)
-            if len(target_points) = 1:
+            if target_points and len(target_points) > 0:
+                self.last_closest_index = i
                 return target_points[0]
-            if len(target_points) == 2:
+        return None
                 
-
     
 
-# helper function: sgn(num)
-# returns -1 if num is negative, 1 otherwise
-def sgn (num):
-    if num >= 0:
-        return 1
-    else:
-        return -1
-    
+    def line_circle_intersection(robot_pose, segment_start, segment_end, lookahead):
 
-def line_circle_intersection(robot_pose, segment_start, segment_end, lookahead):
+        center = robot_pose.get_point()
+        start = segment_start.get_point()
+        end = segment_end.get_point()
 
-    center = robot_pose.get_point()
-    start = segment_start.get_point()
-    end = segment_end.get_point()
+        # the line will be p(t) = segment_start + d*t where t is between 0 and 1
+        # thank you calc 3. I guess.
 
-     # the line will be p(t) = segment_start + d*t where t is between 0 and 1
-     # thank you calc 3. I guess.
+        direction = end - start
+        startToCenter = start - center
 
-    direction = end - start
-    startToCenter = start - center
+        a = float(np.dot(direction, direction))
+        b = 2.0 * float(np.dot(startToCenter, direction))
+        c = float(np.dot(startToCenter, startToCenter)) - float(lookahead * lookahead)
 
-    a = float(np.dot(direction, direction))
-    b = 2.0 * float(np.dot(startToCenter, direction))
-    c = float(np.dot(startToCenter, startToCenter)) - float(lookahead * lookahead)
+        floating_point_error = 1.0e-12
 
-    floating_point_error = 1.0e-12
+        discriminant = b**2 - 4.0 * a * c
+        intersections = [] # this appearing as a list is not needed for how I choose between two possible target points
 
-    discriminant = b**2 - 4.0 * a * c
-    intersections = []
-
-    if discriminant < -floating_point_error:  # no intersection for target point
-        return None
-    # t should be between 0 and 1 so that the point is on the segment
-    elif abs(discriminant) <= floating_point_error: # equals zero, one intersection
-        t = -b / (2.0 * a)
-        if 0.0 <= t <= 1.0:
-            intersections.append(start + t * direction)
-        return intersections
-    
-    elif discriminant > 0: # two intersections
-        root = float(np.sqrt(discriminant))
-        t1 = (-b - root) / (2.0 * a)
-        t2 = (-b + root) / (2.0 * a)
-        if 0.0 <= t1 <= 1.0:
-            intersections.append(start + t1 * direction)
-        if 0.0 <= t2 <= 1.0:
-            intersections.append(start + t2 * direction)
+        if discriminant < -floating_point_error:  # no intersection for target point
+            return None
+        # t should be between 0 and 1 so that the point is on the segment
+        elif abs(discriminant) <= floating_point_error: # equals zero, one intersection
+            t = -b / (2.0 * a)
+            if 0.0 <= t <= 1.0:
+                intersections.append(start + t * direction)
+            return intersections
         
-        return intersections
-    else:
-        print("[WARNING] line circle intersection returned an unusual value: " + str(discriminant))
-        return None
+        elif discriminant > 0.0:
+            root = float(np.sqrt(discriminant))
+            t1 = (-b - root) / (2.0 * a)
+            t2 = (-b + root) / (2.0 * a)
+
+            # eliminate roots not on the segment
+            if not (0.0 <= t1 <= 1.0):
+                t1 = -1.0
+            if not (0.0 <= t2 <= 1.0):
+                t2 = -1.0
+            
+            # if no valid roots, return none
+            if t1 < 0.0 and t2 < 0.0:
+                return None
+
+            # Select the root farther along the line segment
+            t = max(t1, t2)
+            
+            intersections = [start + t * direction]
+            return intersections
+            
+            return intersections
+        else:
+            print("[WARNING] line circle intersection returned an unusual value: " + str(discriminant))
+            return None
 
    
 
