@@ -26,8 +26,6 @@ class PathPoint2D:
     def get_point(self):
         return self.point
 
-
-
 class PurePursuit:
     def __init__(self, lookahead_distance, velocity):
         self.lookahead_distance = float(lookahead_distance)
@@ -39,6 +37,9 @@ class PurePursuit:
         # tuning parameter for how much we want to slow down around turns, for now zero since the car is pretty low speed.
         self.alpha = 0
         self.velocity = velocity # maximum operating speed for pure pursuit
+
+        # end condition tolerance (meters)
+        self.goal_tolerance = 0.10
 
     def init_path(self, path):
         # init the path.
@@ -76,20 +77,38 @@ class PurePursuit:
 
    
     def update_state(self, robot_pose, yaw, velocity):
-        target_point = compute_target_point(robot_pose)
+        # end condition (close enough to final waypoint)
+        if self.path_length == 0:
+            return (0.0, 0.0)
+
+        robot_xy = robot_pose.get_point()
+        goal_xy = self.path[-1].get_point()
+        if np.linalg.norm(robot_xy - goal_xy) <= self.goal_tolerance:
+            return (0.0, 0.0)
+
+        target_point = self.compute_target_point(robot_pose)
         if target_point is None:
             print("No target point found")
-            return None
-        else:
-            kappa = curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
-            desired_angular_velocity = float(vmax) / (1.0 + float(self.alpha) * abs(float(kappa)))
-            return desired_angular_velocity # we will now take this value to a controller for robot control.
+            # fallback when no point is found, follow the last closest index
+            target_point = self.path[self.last_closest_index].get_point()
+
+        kappa = self.curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
+
+        # curvature based speed scaling. computes desired linear velocity
+        vcmd = float(self.velocity) / (1.0 + float(self.alpha) * abs(float(kappa)))
+
+        # differential drive relation omega = v * kappa
+        wcmd = vcmd * kappa
+
+        # we will now take this value to a controller for robot control.
+        return (vcmd, wcmd)
 
 
     # compute the curbature
-    def curvature_from_target(robot_pose, robotyaw, target, lookahead):
-        dx = target[0] - robot_pose[0]
-        dy = target[1] - robot_pose[1]
+    def curvature_from_target(self, robot_pose, robotyaw, target, lookahead):
+        robot_xy = robot_pose.get_point()
+        dx = target[0] - robot_xy[0]
+        dy = target[1] - robot_xy[1]
 
         c = math.cos(robotyaw)
         s = math.sin(robotyaw)
@@ -107,7 +126,7 @@ class PurePursuit:
         for i in range(self.last_closest_index, self.path_length - 1):
             segment_start = self.path[i]
             segment_end = self.path[i+1]
-            target_points = line_circle_intersection(robot_pose, segment_start, segment_end, self.lookahead_distance)
+            target_points = self.line_circle_intersection(robot_pose, segment_start, segment_end, self.lookahead_distance)
             if target_points and len(target_points) > 0:
                 self.last_closest_index = i
                 return target_points[0]
@@ -115,7 +134,7 @@ class PurePursuit:
                 
     
 
-    def line_circle_intersection(robot_pose, segment_start, segment_end, lookahead):
+    def line_circle_intersection(self, robot_pose, segment_start, segment_end, lookahead):
 
         center = robot_pose.get_point()
         start = segment_start.get_point()
@@ -143,7 +162,7 @@ class PurePursuit:
             t = -b / (2.0 * a)
             if 0.0 <= t <= 1.0:
                 intersections.append(start + t * direction)
-            return intersections
+            return intersections if len(intersections) > 0 else None
         
         elif discriminant > 0.0:
             root = float(np.sqrt(discriminant))
@@ -164,8 +183,6 @@ class PurePursuit:
             t = max(t1, t2)
             
             intersections = [start + t * direction]
-            return intersections
-            
             return intersections
         else:
             print("[WARNING] line circle intersection returned an unusual value: " + str(discriminant))
