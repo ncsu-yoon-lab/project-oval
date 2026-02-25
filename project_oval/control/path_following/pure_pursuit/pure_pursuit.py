@@ -6,7 +6,8 @@ Pure Pursuit Algorithm:
 Current considerations:
 - Pure pursuit should work in any frame. odometry or map (gps)
 - Webots publishes odometry which will work for simple testing
-- Webots also supports a gps sensor
+- Webots also supports a gps sensor.
+- For odometry on car, we will use RTK gps and onboard IMU
 '''
 
 # Point along the path will be a 2D tuple of floats
