@@ -162,6 +162,9 @@ class PurePursuit:
         c = float(np.dot(startToCenter, startToCenter)) - float(lookahead * lookahead)
 
         floating_point_error = 1.0e-12
+        # handle degenerate segment start==end
+        if abs(a) <= floating_point_error:
+            return None
 
         discriminant = b**2 - 4.0 * a * c
         intersections = [] # this appearing as a list is not needed for how I choose between two possible target points
