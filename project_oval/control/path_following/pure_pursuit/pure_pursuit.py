@@ -28,8 +28,9 @@ class PathPoint2D:
 
 class PurePursuit:
     def __init__(self, lookahead_distance, velocity):
-        self.lookahead_distance = float(lookahead_distance)
-        self.lookahead = self.lookahead_distance
+        self.lookahead_distance = float(lookahead_distance)   # current runtime value
+        self.base_lookahead_distance = float(lookahead_distance)  # fixed base
+        self.lookahead_scaling = 0.3
 
         self.path = []
         self.path_length = 0
@@ -51,6 +52,11 @@ class PurePursuit:
             self.path.append(current_point)
         
         self.path_length = len(self.path)
+
+        # if path is empty, nothing to do
+        if self.path_length == 0:
+            self.last_closest_index = 0
+            return
 
         # naturally, the first point in the path hase zero cumulative distance
         self.path[0].set_arc_length(0.0)
@@ -77,6 +83,11 @@ class PurePursuit:
 
    
     def update_state(self, robot_pose, yaw, velocity):
+        # velocity value is not required, some pure pursuit implementations
+        # use current velocity to choose lookahead distance, we can have that too.
+        # velocity-scaled lookahead (no accumulation)
+        self.lookahead_distance = self.base_lookahead_distance + self.lookahead_scaling * velocity
+
         # end condition (close enough to final waypoint)
         if self.path_length == 0:
             return (0.0, 0.0)
@@ -188,8 +199,10 @@ class PurePursuit:
             print("[WARNING] line circle intersection returned an unusual value: " + str(discriminant))
             return None
 
-   
-
-
     def reset(self):
-        pass
+        # reset progress
+        self.last_closest_index = 0
+
+        # clear path
+        self.path = []
+        self.path_length = 0
