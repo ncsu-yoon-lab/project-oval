@@ -5,9 +5,6 @@ import rclpy
 from std_msgs.msg import Int64MultiArray, Bool, Int64, String, Float64
 
 
-HALF_DISTANCE_BETWEEN_WHEELS = 0.045
-WHEEL_RADIUS = 0.025
-
 # On sim, max input is 10
 MAX_INPUT = 30
 '''

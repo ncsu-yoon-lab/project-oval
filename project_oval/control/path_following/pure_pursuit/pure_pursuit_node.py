@@ -22,9 +22,16 @@ from .pure_pursuit_pid import PurePursuitPid
 
 # distance from center of wheel to, robot center line
 
-# THIS IS THE PHYSICAL CAR DIMENSIONS FOR CENTER LINE DISTANCE
-center_line_distance = 9.5 # in
-center_line_distance = center_line_distance * 0.0254 # meters
+# THIS IS THE PHYSICAL CAR DIMENSION FOR CENTER LINE DISTANCE
+############
+# center_line_distance = 9.5 # in
+# center_line_distance = center_line_distance * 0.0254 # meters
+################
+
+# THIS IS THE SIM CAR DIMENSION FOR CENTER LINE DISTANCE
+##############
+center_line_distance = 0.06  # meters
+#############
 
 
 
@@ -88,7 +95,7 @@ class PurePursuitNode(Node):
         self.create_subscription(Imu, "/imu", self._imu_callback, 10)
 
         # callback for path
-        self.create_subscription(Path, path_topic, self.path_callback, 10)
+        self.create_subscription(Path, "/pure_pursuit/path", self.path_callback, 10)
 
         # measured angular velocity
         self.create_subscription(Float64, "/left_wheel/angular_velocity", self.left_wheel_vel_callback, 10)
@@ -189,13 +196,6 @@ class PurePursuitNode(Node):
         self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
         self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
         
-
-        
-        
-        
-        
-
-
 
 
 def main(args=None):

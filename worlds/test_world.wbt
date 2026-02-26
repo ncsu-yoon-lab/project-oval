@@ -30,6 +30,9 @@ Robot {
   translation -0.00889644 0.0819893 0.0398605
   rotation 8.54207899835149e-09 -4.789166250460252e-08 0.9999999999999987 -2.7885800000000005
   children [
+    Pen {
+      translation 0 0 0.03
+    }
     Accelerometer {
     }
     Gyro {
