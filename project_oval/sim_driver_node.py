@@ -227,26 +227,13 @@ class SimDriverNode:
                 per_motor_left  /= 20
             else:
                 per_motor_left /= 5
-                per_motor_right /= 5
+                per_motor_right /= 
 
-            # if per_motor_left != 0 and per_motor_right == 0:
-            #     per_motor_right = per_motor_left * 0.1
-            
-            # if per_motor_right != 0 and per_motor_left == 0:
-            #     per_motor_left = per_motor_right * 0.1
-
-   
-            
             for m in left_drive_train:
                 m.setForce(per_motor_left)
             for m in right_drive_train:
                 m.setForce(per_motor_right)
 
-            #print("---------")
-            #print("max vel:", m.getMaxVelocity())
-            #print("avail torque:", m.getAvailableTorque())
-            #print("max torque:", m.getMaxTorque())
-            #print("---------")      
             return True
         except Exception as e:
             print(f"Error: {e}")
@@ -258,8 +245,5 @@ class SimDriverNode:
 
 
     def step(self):
-        # process incoming ROS messages (including /brake)
         rclpy.spin_once(self.__node, timeout_sec=0.0)
-
-        # send speeds to car
         self.send_speeds()
