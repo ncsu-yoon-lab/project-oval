@@ -14,7 +14,7 @@ class PurePursuitPid:
         # Compute D
         derivative = 0
         if dt > 0:
-            derivative = (error - self.prev_error) / d
+            derivative = (error - self.prev_error) / dt
 
         p = self.kp * error
         i = self.ki * self.integral

@@ -6,12 +6,13 @@ from .pure_pursuit import PathPoint2D
 
 from sensor_msgs.msg import Imu
 # FIXED
-from nav_msgs.msg import Odometry, Path
+from nav_msgs.msg import Path
 # FIXED
-from std_msgs.msg import Float64, Bool
+from std_msgs.msg import Float64, Bool, Float32
 
 # https://docs.ros.org/en/humble/p/tf_transformations/
 from tf_transformations import euler_from_quaternion
+from geometry_msgs.msg import PointStamped
 
 # import the pure pursuit algorithm.
 from .pure_pursuit import PurePursuit
@@ -101,9 +102,9 @@ class PurePursuitNode(Node):
     def init_subscribers(self):
         # GPS pose and speed data
         # FIXED
-        self.create_subscription(Odometry,"/gps", self.gps_callback, 10)
+        self.create_subscription(PointStamped,"/gps", self.gps_callback, 10)
         # FIXED
-        self.create_subscription(Float64, "/gps/speed", self.speed_callback, 10)
+        self.create_subscription(Float32, "/gps/speed", self.speed_callback, 10)
         
         # IMU data
         # FIXED
@@ -117,12 +118,12 @@ class PurePursuitNode(Node):
         self.create_subscription(Float64, "/right_wheel/angular_velocity", self.right_wheel_vel_callback, 10)
     
     # Callback for gps data
-    def gps_callback(self, msg: Odometry):
-        self.x = msg.pose.pose.position.x
-        self.y = msg.pose.pose.position.y
+    def gps_callback(self, msg: PointStamped):
+        self.x = msg.point.x
+        self.y = msg.point.y
 
     # Callback for speed data
-    def speed_callback(self, msg: Float64):
+    def speed_callback(self, msg: Float32):
         self.v = msg.data
 
     # Callback for imu data
@@ -132,7 +133,7 @@ class PurePursuitNode(Node):
 
         # Data recieved from sim GPS is a quaternion, need to convert it to aquire yaw.
         # https://docs.ros.org/en/jade/api/tf/html/python/transformations.html#tf.transformations.euler_from_quaternion
-        _, self.omega_measured, self.yaw = euler_from_quaternion(quat)
+        _, _, self.yaw = euler_from_quaternion(quat)
     
     # callbacks for measured angular velocity
     def left_wheel_vel_callback(self, msg: Float64):
@@ -142,6 +143,7 @@ class PurePursuitNode(Node):
         self.right_wheel_vel = msg.data
 
     def path_callback(self, msg):
+        print("[SUCCESS] Path Recieved")
         self.path = msg
         self.points = []
 
@@ -176,6 +178,9 @@ class PurePursuitNode(Node):
         odom_data = [self.x, self.y, self.yaw, self.v]
 
         if None in odom_data:
+            for i in range(0, len(odom_data)):
+                if odom_data[i] is None:
+                    print("Odom data missing: " + str(i+1))
             print("[WARNING] Pure pursuit has not recieved odom data from sensors")
             return
 
@@ -209,7 +214,7 @@ class PurePursuitNode(Node):
         now = self.get_clock().now()
         dt = (now - self.last_time).nanoseconds * 1e-9
         self.last_time = now
-
+        print("[DEBUG] Running PID")
         omega_right_desired = (velocity_linear_desired + center_line_distance * omega_desired) / wheel_radius
         omega_left_desired  = (velocity_linear_desired - center_line_distance * omega_desired) / wheel_radius
 
@@ -219,7 +224,7 @@ class PurePursuitNode(Node):
         throttle_right = self.right_pid.update(error_right, dt)
         throttle_left  = self.left_pid.update(error_left, dt)
 
-        # Publish throttle data to 
+        # Publish throttle data to driver
         self.pp_use_throttle_pub.publish(Bool(data=True))
         self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
         self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
