@@ -182,8 +182,8 @@ class SimDriverNode:
                 steer_cmd = self.manual_steer
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
             
-            # --- Anti-deadlock for sim skid-steer ---
-            # If we're steering but one side hits exactly 0, force a tiny counter-command
+            # --- Anti deadlock for sim skid steer ---
+            # If we're steering but one side hits exactly 0, force a tiny counter throttle
             # so the contact solver breaks symmetry and you get yaw.
             if abs(steer_cmd) > 1 and (right_throttle == 0 or left_throttle == 0):
                 eps = 2  # in "throttle units" (tune 1-5)
@@ -191,7 +191,7 @@ class SimDriverNode:
                     right_throttle = -eps if left_throttle > 0 else eps
                 if left_throttle == 0:
                     left_throttle = -eps if right_throttle > 0 else eps
-        # # --------------------------------------
+            # # --------------------------------------
           
             # wheel 1 and 3 represent the left drivetrain on car
             # wheel 2 and 4 represent right drivetrain on car.
@@ -222,18 +222,33 @@ class SimDriverNode:
             right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_right = right_torque / 2
 
+            # TODO: This some sketchy scaling to improve turning. 
+            # May have to look over this.
             if per_motor_right > 0 and per_motor_left > 0 or per_motor_right < 0 and per_motor_left < 0:
                 per_motor_right /= 20
                 per_motor_left  /= 20
             else:
                 per_motor_left /= 5
-                per_motor_right /= 
+                per_motor_right /= 5
 
+            # if per_motor_left != 0 and per_motor_right == 0:
+            #     per_motor_right = per_motor_left * 0.1
+            
+            # if per_motor_right != 0 and per_motor_left == 0:
+            #     per_motor_left = per_motor_right * 0.1
+
+   
+            
             for m in left_drive_train:
                 m.setForce(per_motor_left)
             for m in right_drive_train:
                 m.setForce(per_motor_right)
 
+            #print("---------")
+            #print("max vel:", m.getMaxVelocity())
+            #print("avail torque:", m.getAvailableTorque())
+            #print("max torque:", m.getMaxTorque())
+            #print("---------")      
             return True
         except Exception as e:
             print(f"Error: {e}")
@@ -245,5 +260,8 @@ class SimDriverNode:
 
 
     def step(self):
+        # process incoming ROS messages (including /brake)
         rclpy.spin_once(self.__node, timeout_sec=0.0)
+
+        # send speeds to car
         self.send_speeds()
