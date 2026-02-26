@@ -2,7 +2,7 @@ import math
 import time
 from project_oval.sim_driver_lib import SimDriverLib
 import rclpy
-from std_msgs.msg import Int64MultiArray, Bool, Int64, String
+from std_msgs.msg import Int64MultiArray, Bool, Int64, String, Float64
 
 
 HALF_DISTANCE_BETWEEN_WHEELS = 0.045
@@ -56,8 +56,20 @@ class SimDriverNode:
         self.stop_signal = False
         # End Class arguments from DriverNode
 
+        # Pure pursuit params
+        # TODO: Add these to driver node
+        self.pp_left_throttle = 0.0
+        self.pp_right_throttle = 0.0
+        self.pp_use_throttle = False
+
+
         rclpy.init(args=None)
         self.__node = rclpy.create_node('sim_driver_node')
+
+        # publishers for measured wheel angular velocities
+        self.left_wheel_vel_pub = self.__node.create_publisher(Float64, "/left_wheel/angular_velocity", 10)
+
+        self.right_wheel_vel_pub = self.__node.create_publisher(Float64, "/right_wheel/angular_velocity",10)
 
         # Subcribe to the xbox controller nodes
         self.__node.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
@@ -68,18 +80,26 @@ class SimDriverNode:
         # self.create_subscription(Int64, '/gemini/throttle', self.auto_throttle_callback, 10)
         # self.create_subscription(Int64, '/gemini/steering', self.auto_steer_callback, 10)
 
-        # TODO: Added GPS and IMU to sim robot
-        
+        # Pure pursuit subs
+        self.__node.create_subscription(Float64, "/pure_pursuit/left_throttle", self.pp_left_throttle_callback, 10)
+        self.__node.create_subscription(Float64, "/pure_pursuit/right_throttle", self.pp_right_throttle_callback, 10)
+        self.__node.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
 
         # Subscribe to brake signal
-        self.__brake_sub = self.__node.create_subscription(
-            Bool,
-            "/brake",
-            self.__brake_callback,
-            10
-        )
+        self.__brake_sub = self.__node.create_subscription(Bool,"/brake", self.__brake_callback, 10)
 
-    
+
+    # Callbacks for left and right throttle in pure pursuit
+    # TODO: Add an equivalent in the driver node
+    def pp_left_throttle_callback(self, msg: Float64):
+        self.pp_left_throttle = msg.data
+
+    def pp_right_throttle_callback(self, msg: Float64):
+        self.pp_right_throttle = msg.data
+
+    def pp_use_throttle_callback(self, msg: Bool):
+        self.pp_use_throttle = msg.data
+
     # Start callbacks from DriverNode
     def steer_callback(self, msg):
         self.manual_steer = msg.data
@@ -90,6 +110,7 @@ class SimDriverNode:
         
         if self.stop_signal:
             print(f"Stop Signal: {self.stop_signal}")
+
     
     def mode_callback(self, msg):
         
@@ -150,9 +171,16 @@ class SimDriverNode:
     # Modified send_speeds function for the simulator
     def send_speeds(self):
         try:
+      
             if self.mode == "Auto":
-                steer_cmd = self.auto_steer
-                left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+                # TODO: Add this support to driver node as well.
+                if self.pp_use_throttle: # pure pursuit automatic control
+                    left_throttle = self.pp_left_throttle
+                    right_throttle = self.pp_right_throttle
+                    steer_cmd = 0
+                else:
+                    steer_cmd = self.auto_steer
+                    left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
             else:
                 steer_cmd = self.manual_steer
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
@@ -167,10 +195,6 @@ class SimDriverNode:
                 if left_throttle == 0:
                     left_throttle = -eps if right_throttle > 0 else eps
         # # --------------------------------------
-
-
-
-
           
             # wheel 1 and 3 represent the left drivetrain on car
             # wheel 2 and 4 represent right drivetrain on car.
@@ -181,6 +205,20 @@ class SimDriverNode:
             left_speeds = [left_drive_train[0].getVelocity(), left_drive_train[1].getVelocity()]
             right_speeds = [right_drive_train[0].getVelocity(), right_drive_train[1].getVelocity()]
 
+            # average per drivetrain
+            left_avg = sum(left_speeds) / len(left_speeds)
+            right_avg = sum(right_speeds) / len(right_speeds)
+
+            # publish measured angular velocity (rad/s)
+            left_msg = Float64()
+            left_msg.data = left_avg
+            self.left_wheel_vel_pub.publish(left_msg)
+
+            right_msg = Float64()
+            right_msg.data = right_avg
+            self.right_wheel_vel_pub.publish(right_msg)
+
+            # now calculate torque
             left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_left = left_torque / 2
 

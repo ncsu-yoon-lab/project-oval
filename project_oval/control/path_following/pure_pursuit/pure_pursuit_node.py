@@ -20,6 +20,14 @@ from .pure_pursuit_pid import PurePursuitPid
 # This node is written to work with the simulation. I do not yet know how subscription names will differ when run on the car.
 # We will figure that out, should not require major refactoring.
 
+# distance from center of wheel to, robot center line
+
+# THIS IS THE PHYSICAL CAR DIMENSIONS FOR CENTER LINE DISTANCE
+center_line_distance = 9.5 # in
+center_line_distance = center_line_distance * 0.0254 # meters
+
+
+
 class PurePursuitNode(Node):
     def __init__(self):
         super().__init__("pure_pursuit_node")
@@ -33,10 +41,13 @@ class PurePursuitNode(Node):
         self.yaw = None
         self.v = None
 
-        self.omega_measured = None
+        self.left_wheel_omega = None
+        self.right_wheel_omega = None
 
         self.pure_pursuit = None
-        self.pid_pure_pursuit = None
+        self.pid_left = None
+        self.pid_right = None
+
         self.path = None
         self.path_points = None
 
@@ -57,10 +68,15 @@ class PurePursuitNode(Node):
         self.pure_pursuit = PurePursuit(lookahead_distance, operating_velocity)
 
         # optionally add paramters for he kp, ki, and kd constants in PID
-        self.pure_pursuit_pid = PurePursuitPid()
+        self.right_pid = PurePursuitPid()
+        self.left_pid = PurePursuitPid()
     
+
     def init_publishers(self):
-        pass
+
+        self.pp_left_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/left_throttle", 10)
+        self.pp_right_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/right_throttle", 10)
+        self.pp_use_throttle_pub = self.create_publisher(Bool, "/pure_pursuit/use_throttle", 10)
     
 
     def init_subscribers(self):
@@ -73,6 +89,10 @@ class PurePursuitNode(Node):
 
         # callback for path
         self.create_subscription(Path, path_topic, self.path_callback, 10)
+
+        # measured angular velocity
+        self.create_subscription(Float64, "/left_wheel/angular_velocity", self.left_wheel_vel_callback, 10)
+        self.create_subscription(Float64, "/right_wheel/angular_velocity", self.right_wheel_vel_callback, 10)
     
     # Callback for gps data
     def gps_callback(self, msg: Odometry):
@@ -91,6 +111,13 @@ class PurePursuitNode(Node):
         # Data recieved from sim GPS is a quaternion, need to convert it to aquire yaw.
         # https://docs.ros.org/en/jade/api/tf/html/python/transformations.html#tf.transformations.euler_from_quaternion
         _, self.omega_measured, self.yaw = euler_from_quaternion(quat)
+    
+    # callbacks for measured angular velocity
+    def left_wheel_vel_callback(self, msg: Float64):
+        self.left_wheel_vel = msg.data
+
+    def right_wheel_vel_callback(self, msg: Float64):
+        self.right_wheel_vel = msg.data
 
     def path_callback(self, msg):
         self.path = msg
@@ -109,10 +136,9 @@ class PurePursuitNode(Node):
 
 
     def control_loop(self):
-        # havent written the purepursuit algorithm to handle changes in these values during runtime, will update soon.
+        # havent written the pure pursuit algorithm to handle changes in these values during runtime, will update soon.
         # lookahead_distance = float(self.get_parameter("lookahead_distance").value)
         # operating_velocity = float(self.get_parameter("operating_velocity").value)
-
         if self.pure_pursuit is None:
             print("[WARNING] Pure Pursuit Algorithm was not initialized")
             return
@@ -139,8 +165,9 @@ class PurePursuitNode(Node):
         robot_pose = PathPoint2D(self.x, self.y)
         desired_velocity = self.pure_pursuit.update_state(robot_pose, self.yaw, self.velocity)
 
+        velocity_linear_desired = desired_velocity[0]
         omega_desired = desired_velocity[1]
-        
+
         # TODO: I need to split this into two angular velocitys for the left and right drivetrain
         # This will require wheel encoders on the car, need to check if we have those.
         # Calculate dt, it should roughly equal the 1/frequency of the controol loop timer
@@ -148,11 +175,19 @@ class PurePursuitNode(Node):
         dt = (now - self.last_time).nanoseconds * 1e-9
         self.last_time = now
 
-        # calculate error for PID
-        error = omega_measured - omega_desired
-        
-        # call the PID controller to get throttle
-        throttle = pure_pursuit_pid.update(error, dt)
+        omega_right_desired = (velocity_linear_desired + center_line_distance * omega_desired) / WHEEL_RADIUS
+        omega_left_desired  = (velocity_linear_desired - center_line_distance * omega_desired) / WHEEL_RADIUS
+
+        error_right = omega_right_desired - self.right_wheel_vel # rad/s
+        error_left  = omega_left_desired  - self.left_wheel_vel # rad/s
+
+        throttle_right = self.right_pid.update(error_right, dt)
+        throttle_left  = self.left_pid.update(error_left, dt)
+
+        # Publish throttle data to 
+        self.pp_use_throttle_pub.publish(Bool(data=True))
+        self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
+        self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
         
 
         
