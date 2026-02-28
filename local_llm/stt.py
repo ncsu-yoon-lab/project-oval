@@ -14,8 +14,6 @@ DEFAULT_COMPUTE_TYPE = "float16"
 
 
 class SpeechToText:
-    """Wraps faster-whisper for single-shot transcription of audio buffers."""
-
     def __init__(
         self,
         model_size: str = DEFAULT_MODEL_SIZE,
@@ -28,8 +26,9 @@ class SpeechToText:
         self.model = None
 
     def load(self):
-        """Load the Whisper model. Call once at startup."""
-        print(f"[STT] Loading faster-whisper model '{self.model_size}' on {self.device}...")
+        print(
+            f"[STT] Loading faster-whisper model '{self.model_size}' on {self.device}..."
+        )
         try:
             self.model = WhisperModel(
                 self.model_size,
@@ -48,16 +47,6 @@ class SpeechToText:
         print("[STT] Model loaded.")
 
     def transcribe(self, audio: np.ndarray, sample_rate: int = 16000) -> str:
-        """
-        Transcribe a numpy audio buffer to text.
-
-        Args:
-            audio: float32 numpy array of audio samples, mono, normalized to [-1, 1].
-            sample_rate: Sample rate of the audio (default 16000).
-
-        Returns:
-            Transcribed text string.
-        """
         if self.model is None:
             raise RuntimeError("Model not loaded. Call load() first.")
 

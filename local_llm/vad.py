@@ -40,7 +40,6 @@ class VoiceActivityDetector:
         self.pyaudio_instance = None
 
     def load(self):
-        """Load Silero VAD model."""
         print("[VAD] Loading Silero VAD model...")
         self.model, utils = torch.hub.load(
             repo_or_dir="snakers4/silero-vad",
@@ -51,11 +50,9 @@ class VoiceActivityDetector:
         print("[VAD] Silero VAD loaded.")
 
     def _reset_model(self):
-        """Reset VAD model state between utterances."""
         self.model.reset_states()
 
     def _is_speech(self, audio_chunk: np.ndarray) -> bool:
-        """Run VAD on a single chunk and return True if speech detected."""
         tensor = torch.from_numpy(audio_chunk).float()
         if tensor.max() > 1.0:
             tensor = tensor / 32768.0
@@ -63,13 +60,6 @@ class VoiceActivityDetector:
         return confidence > SPEECH_THRESHOLD
 
     def listen_for_speech(self, pyaudio_instance: pyaudio.PyAudio) -> np.ndarray:
-        """
-        Block until the user speaks and finishes speaking.
-
-        Returns:
-            float32 numpy array of the captured speech audio at self.sample_rate.
-            Returns empty array if no valid speech was captured.
-        """
         self._reset_model()
 
         stream = pyaudio_instance.open(
