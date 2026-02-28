@@ -1,0 +1,84 @@
+"""
+Speech-to-Text module using faster-whisper (CTranslate2 backend).
+Runs on Jetson Orin with CUDA acceleration.
+Falls back to CPU if CUDA is unavailable.
+"""
+
+import numpy as np
+from faster_whisper import WhisperModel
+
+# Default model config
+DEFAULT_MODEL_SIZE = "base.en"
+DEFAULT_DEVICE = "cuda"
+DEFAULT_COMPUTE_TYPE = "float16"
+
+
+class SpeechToText:
+    """Wraps faster-whisper for single-shot transcription of audio buffers."""
+
+    def __init__(
+        self,
+        model_size: str = DEFAULT_MODEL_SIZE,
+        device: str = DEFAULT_DEVICE,
+        compute_type: str = DEFAULT_COMPUTE_TYPE,
+    ):
+        self.model_size = model_size
+        self.device = device
+        self.compute_type = compute_type
+        self.model = None
+
+    def load(self):
+        """Load the Whisper model. Call once at startup."""
+        print(f"[STT] Loading faster-whisper model '{self.model_size}' on {self.device}...")
+        try:
+            self.model = WhisperModel(
+                self.model_size,
+                device=self.device,
+                compute_type=self.compute_type,
+            )
+        except Exception:
+            print("[STT] CUDA unavailable, falling back to CPU with int8...")
+            self.device = "cpu"
+            self.compute_type = "int8"
+            self.model = WhisperModel(
+                self.model_size,
+                device=self.device,
+                compute_type=self.compute_type,
+            )
+        print("[STT] Model loaded.")
+
+    def transcribe(self, audio: np.ndarray, sample_rate: int = 16000) -> str:
+        """
+        Transcribe a numpy audio buffer to text.
+
+        Args:
+            audio: float32 numpy array of audio samples, mono, normalized to [-1, 1].
+            sample_rate: Sample rate of the audio (default 16000).
+
+        Returns:
+            Transcribed text string.
+        """
+        if self.model is None:
+            raise RuntimeError("Model not loaded. Call load() first.")
+
+        # faster-whisper expects float32 numpy array
+        if audio.dtype != np.float32:
+            audio = audio.astype(np.float32)
+
+        # Normalize int16 range to float if needed
+        if audio.max() > 1.0 or audio.min() < -1.0:
+            audio = audio / 32768.0
+
+        segments, info = self.model.transcribe(
+            audio,
+            beam_size=5,
+            language="en",
+            vad_filter=True,
+            vad_parameters=dict(
+                min_silence_duration_ms=500,
+                speech_pad_ms=300,
+            ),
+        )
+
+        text = " ".join(segment.text.strip() for segment in segments)
+        return text.strip()
