@@ -28,6 +28,7 @@ from llm_client import OllamaClient
 # Try to import ROS2 bridge; skip if ROS2 is not available
 try:
     from wolfwagen_actions import WolfwagenController, get_tool_handlers
+
     ROS2_AVAILABLE = True
 except ImportError:
     ROS2_AVAILABLE = False
@@ -38,6 +39,7 @@ TTS_SAMPLE_RATE = 22050
 
 
 # --- GUI ---
+
 
 class WolfwagenGUI:
     """Simple status display GUI matching the existing Gemini chatbot style."""
@@ -59,7 +61,7 @@ class WolfwagenGUI:
 
         tk.Label(
             main_frame,
-            text="WOLFWAGEN LOCAL VOICE ASSISTANT",
+            text="WOLFWAGEN ASSISTANT",
             font=title_font,
             fg="#FFFFFF",
             bg="#BB271A",
@@ -124,6 +126,7 @@ class WolfwagenGUI:
 
 # --- Audio Playback ---
 
+
 def play_audio(audio: np.ndarray, sample_rate: int, pa: pyaudio.PyAudio):
     """Play a float32 numpy audio array through the speakers."""
     if len(audio) == 0:
@@ -145,7 +148,10 @@ def play_audio(audio: np.ndarray, sample_rate: int, pa: pyaudio.PyAudio):
 
 # --- Tool Execution ---
 
-async def execute_tool_calls(tool_calls, handlers, llm: OllamaClient, gui_queue: queue.Queue):
+
+async def execute_tool_calls(
+    tool_calls, handlers, llm: OllamaClient, gui_queue: queue.Queue
+):
     """Execute tool calls from the LLM and send results back."""
     for tool_call in tool_calls:
         func = tool_call.get("function", {})
@@ -178,7 +184,6 @@ async def execute_tool_calls(tool_calls, handlers, llm: OllamaClient, gui_queue:
 
 
 # --- Main Loop ---
-
 def assistant_loop(gui_queue: queue.Queue):
     """Main voice assistant loop running in a background thread."""
 
@@ -213,7 +218,9 @@ def assistant_loop(gui_queue: queue.Queue):
         gui_queue.put(("detail", f"Pulling model {llm.model}..."))
         print(f"[Main] Model {llm.model} not found. Available: {models}")
         gui_queue.put(("status", "ERROR"))
-        gui_queue.put(("detail", f"Model {llm.model} not found. Run: ollama pull {llm.model}"))
+        gui_queue.put(
+            ("detail", f"Model {llm.model} not found. Run: ollama pull {llm.model}")
+        )
         return
 
     # Initialize ROS2 controller if available

@@ -8,12 +8,13 @@ import requests
 from typing import Dict, List, Optional
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "llama3.1:8b"
+# DEFAULT_MODEL = "llama3.1:8b"
+DEFAULT_MODEL = "gemma3:270m"
 
 # System prompt matching the existing Gemini integration persona
 SYSTEM_PROMPT = (
     "ROLE AND IDENTITY:\n"
-    "- I am Wolfwagen, an autonomous small patrol vehicle built by Yoon's Lab "
+    "- I am WolfWagen, an autonomous small patrol vehicle built by Yoon's Lab "
     "in the NC State University Department of Computer Science.\n"
     "- I operate on the Centennial Campus of NC State University.\n"
     "- I speak in first person as a vehicle's personality: concise, helpful, "
@@ -179,9 +180,7 @@ class OllamaClient:
             - "content": str  (the text response, may be empty if tool call)
             - "tool_calls": list  (tool calls to execute, may be empty)
         """
-        self.conversation_history.append(
-            {"role": "user", "content": user_message}
-        )
+        self.conversation_history.append({"role": "user", "content": user_message})
 
         payload = {
             "model": self.model,
@@ -199,7 +198,9 @@ class OllamaClient:
             resp.raise_for_status()
             data = resp.json()
         except requests.ConnectionError:
-            error_msg = "I seem to have lost my neural link. Ollama server is not responding."
+            error_msg = (
+                "I seem to have lost my neural link. Ollama server is not responding."
+            )
             self.conversation_history.append(
                 {"role": "assistant", "content": error_msg}
             )
