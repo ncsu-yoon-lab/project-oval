@@ -4,8 +4,10 @@
 # Speech-to-Text (Whisper)
 faster-whisper>=1.0.0
 
+# Text-to-Speech (Piper)
+piper-tts>=1.4.0
+
 # Voice Activity Detection
-silero-vad>=5.0
 torch>=2.0.0
 torchaudio>=2.0.0
 
