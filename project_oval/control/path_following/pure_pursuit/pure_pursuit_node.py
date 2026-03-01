@@ -5,9 +5,7 @@ from .pure_pursuit import PurePursuit
 from .pure_pursuit import PathPoint2D
 
 from sensor_msgs.msg import Imu
-# FIXED
 from nav_msgs.msg import Path
-# FIXED
 from std_msgs.msg import Float64, Bool, Float32
 
 # https://docs.ros.org/en/humble/p/tf_transformations/
@@ -33,15 +31,11 @@ from .pure_pursuit_pid import PurePursuitPid
 # wheel_radius = wheel_radius * 0.0254 meters
 ################
 
-# THIS IS THE SIM CAR DIMENSIONs FOR CENTER LINE DISTANCE and wheel radius
+# THIS IS THE SIM CAR DIMENSIONS FOR CENTER LINE DISTANCE and wheel radius
 ##############
 center_line_distance = 0.06  # meters
 wheel_radius = 0.04 # meers
 #############
-
-
-
-
 
 class PurePursuitNode(Node):
     def __init__(self):
@@ -69,14 +63,19 @@ class PurePursuitNode(Node):
         # For dynamic path changing
         self.path_changed = False
 
-        # FIXED
+       
         self.left_wheel_vel = None
-        # FIXED
+        
         self.right_wheel_vel = None
 
         # this is for dt (change in time) for 
         self.last_time = self.get_clock().now()
 
+
+        ## added to support physical car, wheel encoders
+        self.left_rpm = None
+        self.right_rpm = None
+       
         self.init_controller()
         self.init_publishers()
         self.init_subscribers()
@@ -101,13 +100,13 @@ class PurePursuitNode(Node):
 
     def init_subscribers(self):
         # GPS pose and speed data
-        # FIXED
+       
         self.create_subscription(PointStamped,"/gps", self.gps_callback, 10)
-        # FIXED
+        
         self.create_subscription(Float32, "/gps/speed", self.speed_callback, 10)
         
         # IMU data
-        # FIXED
+       
         self.create_subscription(Imu, "/imu", self.imu_callback, 10)
 
         # callback for path
@@ -116,6 +115,11 @@ class PurePursuitNode(Node):
         # measured angular velocity
         self.create_subscription(Float64, "/left_wheel/angular_velocity", self.left_wheel_vel_callback, 10)
         self.create_subscription(Float64, "/right_wheel/angular_velocity", self.right_wheel_vel_callback, 10)
+
+
+        ## added to support physical car, wheel encoders
+        self.create_subscription(Int64MultiArray, "/motors/rpm", self.rpm_callback, 10)
+
     
     # Callback for gps data
     def gps_callback(self, msg: PointStamped):
@@ -134,6 +138,21 @@ class PurePursuitNode(Node):
         # Data recieved from sim GPS is a quaternion, need to convert it to aquire yaw.
         # https://docs.ros.org/en/jade/api/tf/html/python/transformations.html#tf.transformations.euler_from_quaternion
         _, _, self.yaw = euler_from_quaternion(quat)
+
+    
+    ## added to support physical car, wheel encoders
+    def rpm_callback(self, msg):
+        if msg.data is None or len(msg.data) < 2:
+            return
+
+        self.left_rpm = msg.data[0]
+        self.right_rpm = msg.data[1]
+
+        rpm_to_rad_per_sec = 2.0 * 3.141592653589793 / 60.0
+        self.left_wheel_vel = float(self.left_rpm) * rpm_to_rad_per_sec
+        self.right_wheel_vel = float(self.right_rpm) * rpm_to_rad_per_sec
+
+    
     
     # callbacks for measured angular velocity
     def left_wheel_vel_callback(self, msg: Float64):
@@ -152,7 +171,7 @@ class PurePursuitNode(Node):
             y = pose_stamped.pose.position.y
             self.points.append((x, y))
         
-        # FIXED
+     
         self.path_points = self.points
 
         self.path_changed = True
@@ -184,9 +203,9 @@ class PurePursuitNode(Node):
             print("[WARNING] Pure pursuit has not recieved odom data from sensors")
             return
 
-        # FIXED
+       
         wheel_data = [self.left_wheel_vel, self.right_wheel_vel]
-        # FIXED
+       
         if None in wheel_data:
             print("[WARNING] Pure pursuit has not recieved wheel velocity data")
             return
@@ -194,7 +213,7 @@ class PurePursuitNode(Node):
         # if the path has been added/changed, all the init path method on the path points
         if self.path_changed:
             self.pure_pursuit.init_path(self.path_points)
-            # FIXED
+           
             self.path_changed = False
         
         # For future implementations, we can improve accuracy of path following by:
@@ -202,7 +221,7 @@ class PurePursuitNode(Node):
         # this is because the gps may update at a faster rate than the IMU. For initial impl. this should 
         # not be a huge problem.
         robot_pose = PathPoint2D(self.x, self.y)
-        # FIXED
+        
         desired_velocity = self.pure_pursuit.update_state(robot_pose, self.yaw, self.v)
 
         velocity_linear_desired = desired_velocity[0]
