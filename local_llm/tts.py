@@ -9,7 +9,7 @@ import numpy as np
 from pathlib import Path
 
 # Default Piper voice model
-DEFAULT_PIPER_MODEL = "en_US-lessac-medium"
+DEFAULT_PIPER_MODEL = "en_US-libritts_r-medium"
 DEFAULT_PIPER_DATA_DIR = Path(__file__).parent / "piper_models"
 DEFAULT_SAMPLE_RATE = 22050
 
