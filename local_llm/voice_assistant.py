@@ -234,6 +234,11 @@ def assistant_loop(gui_queue: queue.Queue):
         except Exception as e:
             print(f"[Main] ROS2 init failed: {e}. Running without motor control.")
 
+    # Disable tool calling if no ROS2
+    if not tool_handlers:
+        llm.use_tools = False
+        print("[Main] Tools disabled (no ROS2).")
+
     pa = pyaudio.PyAudio()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -288,11 +293,24 @@ def assistant_loop(gui_queue: queue.Queue):
                 )
                 # Use the follow-up text response after tool execution
                 response_text = followup.get("content", "Maneuver complete.")
+            elif response["tool_calls"] and not tool_handlers:
+                # LLM wants to call tools but no ROS2 available — ask again without tools
+                print("[Main] Tool calls received but no ROS2. Re-querying without tools.")
+                import requests as req
+                retry = req.post(f"{llm.base_url}/api/chat", json={
+                    "model": llm.model,
+                    "messages": llm.conversation_history[:-1] + [
+                        {"role": "user", "content": text + " (just respond verbally, do not execute any actions)"}
+                    ],
+                    "stream": False,
+                    "options": {"num_predict": 80},
+                }, timeout=60)
+                response_text = retry.json().get("message", {}).get("content", "")
             else:
                 response_text = response["content"]
 
             if not response_text:
-                response_text = "Command executed."
+                response_text = "I heard you, but I'm not sure how to respond."
 
             print(f"[Wolfwagen] {response_text}")
             gui_queue.put(("response", response_text))

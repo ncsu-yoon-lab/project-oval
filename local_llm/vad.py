@@ -18,11 +18,11 @@ FORMAT = pyaudio.paInt16
 CHUNK_SIZE = 512
 
 # VAD thresholds
-SPEECH_THRESHOLD = 0.5
+SPEECH_THRESHOLD = 0.7  # Higher = less sensitive to background noise
 # How many consecutive silent chunks before we consider speech ended
-SILENCE_CHUNKS_TO_END = 30  # ~960ms of silence
+SILENCE_CHUNKS_TO_END = 40  # ~1.3s of silence
 # Minimum speech duration to accept (in chunks)
-MIN_SPEECH_CHUNKS = 10  # ~320ms
+MIN_SPEECH_CHUNKS = 20  # ~640ms - ignores short noises
 # Maximum recording duration in seconds
 MAX_RECORDING_SECONDS = 30
 

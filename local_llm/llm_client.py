@@ -8,8 +8,7 @@ import requests
 from typing import Dict, List, Optional
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
-# DEFAULT_MODEL = "llama3.1:8b"
-DEFAULT_MODEL = "gemma3:270m"
+DEFAULT_MODEL = "llama3.2:3b"
 
 # System prompt matching the existing Gemini integration persona
 SYSTEM_PROMPT = (
@@ -144,6 +143,7 @@ class OllamaClient:
     ):
         self.base_url = base_url.rstrip("/")
         self.model = model
+        self.use_tools = True
         self.conversation_history: List[Dict] = []
         self._reset_history()
 
@@ -185,9 +185,10 @@ class OllamaClient:
         payload = {
             "model": self.model,
             "messages": self.conversation_history,
-            "tools": TOOLS,
             "stream": False,
         }
+        if self.use_tools:
+            payload["tools"] = TOOLS
 
         try:
             resp = requests.post(
@@ -237,9 +238,10 @@ class OllamaClient:
         payload = {
             "model": self.model,
             "messages": self.conversation_history,
-            "tools": TOOLS,
             "stream": False,
         }
+        if self.use_tools:
+            payload["tools"] = TOOLS
 
         try:
             resp = requests.post(
