@@ -1,6 +1,10 @@
 import rclpy
 from rclpy.node import Node
 
+import math
+
+from std_msgs.msg import Int64MultiArray
+
 from .pure_pursuit import PurePursuit
 from .pure_pursuit import PathPoint2D
 
@@ -148,7 +152,7 @@ class PurePursuitNode(Node):
         self.left_rpm = msg.data[0]
         self.right_rpm = msg.data[1]
 
-        rpm_to_rad_per_sec = 2.0 * 3.141592653589793 / 60.0
+        rpm_to_rad_per_sec = 2.0 * math.pi / 60.0
         self.left_wheel_vel = float(self.left_rpm) * rpm_to_rad_per_sec
         self.right_wheel_vel = float(self.right_rpm) * rpm_to_rad_per_sec
 
