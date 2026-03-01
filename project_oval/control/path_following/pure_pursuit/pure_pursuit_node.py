@@ -35,6 +35,17 @@ from .pure_pursuit_pid import PurePursuitPid
 # wheel_radius = wheel_radius * 0.0254 meters
 ################
 
+
+'''
+Testing process on sim
+ros2 launch project-oval car_sim_launch.py
+ros2 run project-oval pure_pursuit_node
+ros2 topic pub --once /xbox_controller/mode std_msgs/msg/Bool "{data: false}"
+
+# test path, hardcoded
+ros2 topic pub --once /pure_pursuit/path nav_msgs/msg/Path "{header: {frame_id: 'map'}, poses: [{pose: {position: {x: 0.0, y: 0.0, z: 0.0}}}, {pose: {position: {x: 1.0, y: 0.5, z: 0.0}}}, {pose: {position: {x: 2.0, y: 1.0, z: 0.0}}}, {pose: {position: {x: 3.0, y: 1.5, z: 0.0}}}]}"
+'''
+
 # THIS IS THE SIM CAR DIMENSIONS FOR CENTER LINE DISTANCE and wheel radius
 ##############
 center_line_distance = 0.06  # meters
