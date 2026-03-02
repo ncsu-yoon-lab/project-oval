@@ -123,16 +123,24 @@ class VoiceOrb:
         self.target_pulse_speed = 0.0
 
         # Static radar rings drawn first so blobs paint over them at center
+        self.rings = []
         for r in range(200, 0, -40):
-            canvas.create_oval(
+            ring = canvas.create_oval(
                 cx - r, cy - r, cx + r, cy + r, outline="#1C1C1C", fill="", width=1
             )
+            self.rings.append((ring, r))
 
         self.layers = [
             canvas.create_polygon([0, 0, 1, 1], smooth=True, fill=c, outline="")
             for c in self.LAYER_COLORS
         ]
         self._animate()
+
+    def update_center(self, cx: int, cy: int):
+        self.cx = cx
+        self.cy = cy
+        for ring, r in self.rings:
+            self.canvas.coords(ring, cx - r, cy - r, cx + r, cy + r)
 
     def set_state(self, state: str):
         if state == "speaking":
@@ -201,9 +209,11 @@ class WolfwagenGUI:
         self.root.geometry("1440x810")
         self.root.configure(bg=self.C_BG)
         self.root.resizable(True, True)
+        self._focus_mode = False
 
         self._build_header()
         self._build_body()
+        self._add_toggle_button()
         self.process_queue()
 
     # ── Header ────────────────────────────────────────────────────────────────
@@ -211,6 +221,7 @@ class WolfwagenGUI:
         hdr = tk.Frame(self.root, bg=self.C_PANEL, height=58)
         hdr.pack(fill="x", side="top")
         hdr.pack_propagate(False)
+        self._hdr_frame = hdr
 
         f_title = tkFont.Font(family="Courier", size=18, weight="bold")
         f_sub = tkFont.Font(family="Courier", size=9)
@@ -243,28 +254,35 @@ class WolfwagenGUI:
         ).pack(anchor="e")
 
         # NC State red hairline under header
-        tk.Frame(self.root, bg=self.C_RED, height=2).pack(fill="x", side="top")
+        self._red_line = tk.Frame(self.root, bg=self.C_RED, height=2)
+        self._red_line.pack(fill="x", side="top")
 
     # ── Body ──────────────────────────────────────────────────────────────────
     def _build_body(self):
         body = tk.Frame(self.root, bg=self.C_BG)
         body.pack(fill="both", expand=True)
+        self._body = body
 
         # Column frames
         left = tk.Frame(body, bg=self.C_PANEL, width=280)
         left.pack(side="left", fill="y")
         left.pack_propagate(False)
+        self._left_col = left
 
-        tk.Frame(body, bg=self.C_BORDER, width=1).pack(side="left", fill="y")
+        self._left_div = tk.Frame(body, bg=self.C_BORDER, width=1)
+        self._left_div.pack(side="left", fill="y")
 
         center = tk.Frame(body, bg=self.C_BG, width=460)
         center.pack(side="left", fill="y")
         center.pack_propagate(False)
+        self._center_col = center
 
-        tk.Frame(body, bg=self.C_BORDER, width=1).pack(side="left", fill="y")
+        self._right_div = tk.Frame(body, bg=self.C_BORDER, width=1)
+        self._right_div.pack(side="left", fill="y")
 
         right = tk.Frame(body, bg=self.C_BG)
         right.pack(side="left", fill="both", expand=True)
+        self._right_col = right
 
         self._build_left_col(left)
         self._build_center_col(center)
@@ -352,6 +370,75 @@ class WolfwagenGUI:
             anchor="nw",
         ).pack(anchor="nw")
 
+    # ── Focus toggle ──────────────────────────────────────────────────────────
+    def _add_toggle_button(self):
+        f_btn = tkFont.Font(family="Courier", size=9, weight="bold")
+        self._toggle_btn = tk.Button(
+            self.root,
+            text="[ FOCUS ]",
+            font=f_btn,
+            fg=self.C_DIM,
+            bg=self.C_PANEL,
+            activebackground=self.C_PANEL,
+            activeforeground=self.C_RED,
+            bd=0,
+            highlightthickness=1,
+            highlightbackground=self.C_BORDER,
+            relief="flat",
+            padx=10,
+            pady=4,
+            cursor="hand2",
+            command=self.toggle_focus,
+        )
+        self._toggle_btn.place(relx=0.99, rely=0.01, anchor="ne")
+
+        f_focus_title = tkFont.Font(family="Courier", size=36, weight="bold")
+        self._focus_title = tk.Label(
+            self.root,
+            text="WOLFWAGEN",
+            font=f_focus_title,
+            fg=self.C_RED,
+            bg=self.C_BG,
+        )
+
+        f_focus_output = tkFont.Font(family="Helvetica", size=26, weight="bold")
+        self._focus_output = tk.Label(
+            self.root,
+            text="",
+            font=f_focus_output,
+            fg=self.C_TEXT,
+            bg=self.C_BG,
+            wraplength=1100,
+            justify="center",
+        )
+
+    def toggle_focus(self):
+        self._focus_mode = not self._focus_mode
+        if self._focus_mode:
+            self._hdr_frame.pack_forget()
+            self._red_line.pack_forget()
+            self._left_col.pack_forget()
+            self._left_div.pack_forget()
+            self._right_div.pack_forget()
+            self._right_col.pack_forget()
+            self._center_col.pack_forget()
+            self._center_col.pack(fill="both", expand=True)
+            self._focus_title.place(relx=0.5, rely=0.06, anchor="n")
+            self._focus_output.place(relx=0.5, rely=0.92, anchor="s")
+            self._toggle_btn.config(text="[ EXIT ]", fg=self.C_RED)
+        else:
+            self._focus_title.place_forget()
+            self._focus_output.place_forget()
+            self._center_col.pack_forget()
+            self._hdr_frame.pack(fill="x", side="top", before=self._body)
+            self._red_line.pack(fill="x", side="top", after=self._hdr_frame)
+            self._left_col.pack(side="left", fill="y")
+            self._left_div.pack(side="left", fill="y")
+            self._center_col.pack(side="left", fill="y")
+            self._right_div.pack(side="left", fill="y")
+            self._right_col.pack(side="left", fill="both", expand=True)
+            self._toggle_btn.config(text="[ FOCUS ]", fg=self.C_DIM)
+
     # ── Center column: voice orb ──────────────────────────────────────────────
     def _build_center_col(self, panel):
         orb_canvas = tk.Canvas(
@@ -359,6 +446,11 @@ class WolfwagenGUI:
         )
         orb_canvas.pack(fill="both", expand=True)
         self.voice_orb = VoiceOrb(orb_canvas, cx=230, cy=360, base_r=88)
+
+        def on_resize(event):
+            self.voice_orb.update_center(event.width // 2, event.height // 2)
+
+        orb_canvas.bind("<Configure>", on_resize)
 
     # ── Right column: status cards + text ─────────────────────────────────────
     def _build_right_col(self, panel):
@@ -464,6 +556,7 @@ class WolfwagenGUI:
                     self.detail_label.config(text=value if value else "—")
                 elif message_type == "output":
                     self.output_label.config(text=value)
+                    self._focus_output.config(text=value)
         finally:
             self.root.after(50, self.process_queue)  # Check again in 100ms
 
