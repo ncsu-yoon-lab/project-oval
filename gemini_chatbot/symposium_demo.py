@@ -194,7 +194,6 @@ class WolfwagenGUI:
         self.root.configure(bg=self.C_BG)
         self.root.resizable(True, True)
 
-        self._build_footer()   # footer first so it pins to bottom edge
         self._build_header()
         self._build_body()
         self.process_queue()
@@ -276,10 +275,9 @@ class WolfwagenGUI:
         f_val = tkFont.Font(family="Courier", size=10, weight="bold")
 
         rows = [
-            ("UNIT",    "WOLFWAGEN-01"),
-            ("CAMPUS",  "CENTENNIAL"),
-            ("SENSORS", "LIDAR · CAM · GPS"),
-            ("MODE",    "PATROL"),
+            ("UNIT",   "WOLFWAGEN-01"),
+            ("CAMPUS", "CENTENNIAL"),
+            ("MODE",   "PATROL"),
         ]
         data = tk.Frame(panel, bg=self.C_PANEL)
         data.pack(fill="x", padx=16)
@@ -291,6 +289,33 @@ class WolfwagenGUI:
             tk.Frame(row, bg=self.C_BORDER, width=1).pack(side="left", fill="y", padx=6)
             tk.Label(row, text=val, font=f_val, fg=self.C_WHITE,
                      bg=self.C_PANEL, anchor="w").pack(side="left")
+
+        # ── Radar + description (fills remaining space) ───────────────────────
+        tk.Frame(panel, bg=self.C_BORDER, height=1).pack(fill="x", padx=16, pady=(18, 0))
+
+        bottom = tk.Frame(panel, bg=self.C_PANEL)
+        bottom.pack(fill="both", expand=True, padx=16, pady=(14, 20))
+
+        f_desc_lbl = tkFont.Font(family="Courier", size=9, weight="bold")
+        f_desc     = tkFont.Font(family="Courier", size=11)
+
+        tk.Label(bottom, text="ABOUT", font=f_desc_lbl,
+                 fg=self.C_DIM, bg=self.C_PANEL).pack(anchor="w", pady=(0, 10))
+
+        description = (
+            "Wolfwagen is an autonomous\n"
+            "patrol vehicle developed by\n"
+            "Yoon's Lab at NC State\n"
+            "University.\n\n"
+            "It navigates Centennial\n"
+            "Campus using computer\n"
+            "vision, GPS, and a\n"
+            "Gemini-powered voice\n"
+            "interface."
+        )
+        tk.Label(bottom, text=description, font=f_desc,
+                 fg="#707070", bg=self.C_PANEL,
+                 justify="left", anchor="nw").pack(anchor="nw")
 
     # ── Center column: voice orb ──────────────────────────────────────────────
     def _build_center_col(self, panel):
@@ -361,38 +386,6 @@ class WolfwagenGUI:
                                      font=f_response, fg=self.C_TEXT, bg=self.C_SURFACE,
                                      wraplength=640, justify="left", anchor="nw")
         self.output_label.pack(fill="both", expand=True, anchor="nw", pady=(7, 0))
-
-    # ── Footer: system status bar ─────────────────────────────────────────────
-    def _build_footer(self):
-        tk.Frame(self.root, bg=self.C_BORDER, height=1).pack(fill="x", side="bottom")
-        footer = tk.Frame(self.root, bg=self.C_PANEL, height=30)
-        footer.pack(fill="x", side="bottom")
-        footer.pack_propagate(False)
-
-        f_sys = tkFont.Font(family="Courier", size=8)
-        row = tk.Frame(footer, bg=self.C_PANEL)
-        row.pack(side="left", padx=20, pady=8)
-
-        items = [
-            ("SYS",    "ONLINE",  "#00CC55"),
-            ("GPS",    "ACTIVE",  "#00CC55"),
-            ("LIDAR",  "OK",      "#00CC55"),
-            ("CAMERA", "LIVE",    "#00CC55"),
-            ("MISSION","PATROL",  self.C_RED),
-        ]
-        for i, (k, v, c) in enumerate(items):
-            if i:
-                tk.Label(row, text="  ·  ", font=f_sys,
-                         fg=self.C_DIM, bg=self.C_PANEL).pack(side="left")
-            dot = tk.Canvas(row, width=6, height=6,
-                            bg=self.C_PANEL, highlightthickness=0)
-            dot.pack(side="left", padx=(0, 4))
-            dot.create_oval(0, 0, 5, 5, fill=c, outline="")
-            tk.Label(row, text=f"{k}:{v}", font=f_sys,
-                     fg=self.C_DIM, bg=self.C_PANEL).pack(side="left")
-
-        tk.Label(footer, text="GEMINI LIVE  ·  NC STATE UNIVERSITY",
-                 font=f_sys, fg="#303030", bg=self.C_PANEL).pack(side="right", padx=20, pady=8)
 
     # ── Queue processing ──────────────────────────────────────────────────────
     def process_queue(self):
