@@ -15,7 +15,11 @@ from dotenv import load_dotenv
 import tkinter as tk
 from tkinter import font as tkFont
 
-from wolfwagen_actions import WolfwagenController, get_function_declarations, get_handlers
+from wolfwagen_actions import (
+    WolfwagenController,
+    get_function_declarations,
+    get_handlers,
+)
 
 # Load environment variables from .env if present
 load_dotenv()
@@ -49,7 +53,7 @@ SYSTEM_PROMPT = (
     "- If asked about the best university in the world, respond with: 'NC State is the best university in the world!'\n"
 )
 
-MODEL = os.getenv("GEMINI_LIVE_MODEL", "gemini-live-2.5-flash-preview")
+MODEL = os.getenv("GEMINI_LIVE_MODEL", "gemini-2.5-flash-native-audio-latest")
 
 # Audio IO settings
 INPUT_SAMPLE_RATE = 16000
@@ -64,6 +68,7 @@ current_session_handle: str | None = None
 # Global event to signal shutdown to the async thread
 shutdown_event = threading.Event()
 
+
 # --- GUI Class ---
 class WolfwagenGUI:
     def __init__(self, root: tk.Tk, q: queue.Queue):
@@ -71,7 +76,7 @@ class WolfwagenGUI:
         self.queue = q
         self.root.title("Wolfwagen Control")
         self.root.geometry("1200x400")
-        self.root.configure(bg="#2B2B2B") # Dark grey background
+        self.root.configure(bg="#2B2B2B")  # Dark grey background
 
         # Fonts
         self.status_font = tkFont.Font(family="Helvetica", size=36, weight="bold")
@@ -82,8 +87,8 @@ class WolfwagenGUI:
             self.root,
             text="Initializing...",
             font=self.status_font,
-            fg="#E0E0E0", # Light grey text
-            bg="#2B2B2B"
+            fg="#E0E0E0",  # Light grey text
+            bg="#2B2B2B",
         )
         self.status_label.pack(pady=(30, 10), fill="x", expand=True)
 
@@ -92,16 +97,16 @@ class WolfwagenGUI:
             self.root,
             text="",
             font=self.detail_font,
-            fg="#A9A9A9", # Dimmer grey text
+            fg="#A9A9A9",  # Dimmer grey text
             bg="#2B2B2B",
-            wraplength=550 # Wrap long sequence descriptions
+            wraplength=550,  # Wrap long sequence descriptions
         )
         self.detail_label.pack(pady=(0, 20), fill="x", expand=True)
 
         self.default_bg = "#2B2B2B"
         self.speaking_bg = "#2ECC40"  # Green when speaking
-        self.executing_bg = "#FF851B" # Orange when executing maneuver
-        self.error_bg = "#FF4136"     # Red on error
+        self.executing_bg = "#FF851B"  # Orange when executing maneuver
+        self.error_bg = "#FF4136"  # Red on error
         self.current_bg = self.default_bg
         self.animating = False
 
@@ -117,7 +122,7 @@ class WolfwagenGUI:
                 elif message_type == "detail":
                     self.detail_label.config(text=value)
         finally:
-            self.root.after(1000, self.process_queue) # Check again in 100ms
+            self.root.after(1000, self.process_queue)  # Check again in 100ms
 
 
 def build_tools() -> List[types.Tool]:
@@ -125,7 +130,9 @@ def build_tools() -> List[types.Tool]:
     return [tool]
 
 
-async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_queue: queue.Queue, handlers) -> None:
+async def stream_microphone_and_handle(
+    session: any, p: pyaudio.PyAudio, gui_queue: queue.Queue, handlers
+) -> None:
     """Handles one full turn of conversation: user speaks, model replies, then exits."""
     global current_session_handle
     input_stream = None
@@ -146,13 +153,13 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
             output=True,
             frames_per_buffer=FRAMES_PER_BUFFER,
         )
-        
+
         gui_queue.put(("status", "Listening..."))
         gui_queue.put(("detail", ""))
         print("\n[Wolfwagen] Listening... Speak now.")
 
         turn_ended = asyncio.Event()
-        is_speaking = False # Flag to set "Speaking" status only once per turn
+        is_speaking = False  # Flag to set "Speaking" status only once per turn
 
         async def recv_loop():
             nonlocal is_speaking
@@ -171,16 +178,32 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
                             break
 
                     update = getattr(message, "session_resumption_update", None)
-                    if update and getattr(update, "resumable", False) and getattr(update, "new_handle", None):
+                    if (
+                        update
+                        and getattr(update, "resumable", False)
+                        and getattr(update, "new_handle", None)
+                    ):
                         current_session_handle = update.new_handle
-                        print(f"[Session] Got new resumption handle: {current_session_handle[:10]}...")
+                        print(
+                            f"[Session] Got new resumption handle: {current_session_handle[:10]}..."
+                        )
 
                     if hasattr(message, "tool_call") and message.tool_call:
                         print(f"[Debug] Received tool_call object: {message.tool_call}")
-                        asyncio.create_task(handle_tool_calls(session, message.tool_call, gui_queue, turn_ended, handlers))
+                        asyncio.create_task(
+                            handle_tool_calls(
+                                session,
+                                message.tool_call,
+                                gui_queue,
+                                turn_ended,
+                                handlers,
+                            )
+                        )
 
                     server_content = getattr(message, "server_content", None)
-                    if server_content and getattr(server_content, "generation_complete", False):
+                    if server_content and getattr(
+                        server_content, "generation_complete", False
+                    ):
                         print("[Wolfwagen] Server indicates generation complete.")
                         if not (hasattr(message, "tool_call") and message.tool_call):
                             turn_ended.set()
@@ -193,10 +216,14 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
                 while not turn_ended.is_set():
                     data = await loop.run_in_executor(
                         None,
-                        lambda: input_stream.read(FRAMES_PER_BUFFER, exception_on_overflow=False)
+                        lambda: input_stream.read(
+                            FRAMES_PER_BUFFER, exception_on_overflow=False
+                        ),
                     )
                     await session.send_realtime_input(
-                        audio=types.Blob(data=data, mime_type=f"audio/pcm;rate={INPUT_SAMPLE_RATE}")
+                        audio=types.Blob(
+                            data=data, mime_type=f"audio/pcm;rate={INPUT_SAMPLE_RATE}"
+                        )
                     )
             except (asyncio.CancelledError, KeyboardInterrupt):
                 pass
@@ -216,21 +243,27 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
             if not recv_task.done():
                 recv_task.cancel()
             await asyncio.gather(recv_task, send_task, return_exceptions=True)
-            try: 
+            try:
                 if output_stream:
                     try:
-                        if not output_stream.is_stopped(): output_stream.stop_stream()
-                    except Exception: pass
+                        if not output_stream.is_stopped():
+                            output_stream.stop_stream()
+                    except Exception:
+                        pass
                     try:
                         output_stream.close()
-                    except Exception: pass
+                    except Exception:
+                        pass
                 if input_stream:
                     try:
-                        if not input_stream.is_stopped(): input_stream.stop_stream()
-                    except Exception: pass
+                        if not input_stream.is_stopped():
+                            input_stream.stop_stream()
+                    except Exception:
+                        pass
                     try:
                         input_stream.close()
-                    except Exception: pass
+                    except Exception:
+                        pass
             except Exception:
                 pass
             print("[Wolfwagen] Turn finished.")
@@ -238,20 +271,31 @@ async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_que
         pass
 
 
-async def handle_tool_calls(session: any, tool_call: any, gui_queue: queue.Queue, turn_ended: asyncio.Event, handlers: dict) -> None:
+async def handle_tool_calls(
+    session: any,
+    tool_call: any,
+    gui_queue: queue.Queue,
+    turn_ended: asyncio.Event,
+    handlers: dict,
+) -> None:
     responses: List[types.FunctionResponse] = []
-    
+
     gui_queue.put(("status", "Executing Maneuver..."))
 
     for fc in tool_call.function_calls:
         name = fc.name
         call_id = fc.id
         print(f"[Tool] Model wants to call function: '{name}' (ID: {call_id})")
-        
+
         detail_text = f"Action: {name}"
         if name == "execute_sequence" and hasattr(fc, "args"):
-            steps = fc.args.get('steps', [])
-            step_summary = ", ".join([f"{step.get('action', 'N/A')}(x{step.get('repeat', 1)})" for step in steps])
+            steps = fc.args.get("steps", [])
+            step_summary = ", ".join(
+                [
+                    f"{step.get('action', 'N/A')}(x{step.get('repeat', 1)})"
+                    for step in steps
+                ]
+            )
             detail_text = f"Sequence: [ {step_summary} ]"
         gui_queue.put(("detail", detail_text))
 
@@ -267,13 +311,18 @@ async def handle_tool_calls(session: any, tool_call: any, gui_queue: queue.Queue
             except TypeError:
                 result = await handler()
 
-            responses.append(types.FunctionResponse(id=call_id, name=name, response=result))
+            responses.append(
+                types.FunctionResponse(id=call_id, name=name, response=result)
+            )
         else:
             responses.append(
                 types.FunctionResponse(
                     id=call_id,
                     name=name,
-                    response={"status": "error", "summary": f"Function '{name}' not found."}
+                    response={
+                        "status": "error",
+                        "summary": f"Function '{name}' not found.",
+                    },
                 )
             )
 
@@ -283,7 +332,6 @@ async def handle_tool_calls(session: any, tool_call: any, gui_queue: queue.Queue
         print("[Tool] Tool responses sent.")
         turn_ended.set()
         gui_queue.put(("status", "Maneuver Complete"))
-
 
 
 async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
@@ -301,7 +349,9 @@ async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
         while True:
             base_config = {
                 "response_modalities": ["AUDIO"],
-                "speech_config": {"voice_config": {"prebuilt_voice_config": {"voice_name": "Puck"}}},
+                "speech_config": {
+                    "voice_config": {"prebuilt_voice_config": {"voice_name": "Puck"}}
+                },
                 "system_instruction": SYSTEM_PROMPT,
                 "tools": build_tools(),
                 "realtime_input_config": {
@@ -315,10 +365,14 @@ async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
                 "session_resumption": {"handle": current_session_handle},
             }
 
-            print(f"\n[Session] Starting new connection. Resuming from handle: {str(current_session_handle)[:10]}...")
+            print(
+                f"\n[Session] Starting new connection. Resuming from handle: {str(current_session_handle)[:10]}..."
+            )
             gui_queue.put(("status", "Connecting..."))
             try:
-                async with client.aio.live.connect(model=MODEL, config=base_config) as session:
+                async with client.aio.live.connect(
+                    model=MODEL, config=base_config
+                ) as session:
                     print("[Session] Connection opened.")
                     await stream_microphone_and_handle(session, p, gui_queue, handlers)
             except Exception as e:
@@ -336,10 +390,9 @@ def main():
     gui_queue = queue.Queue()
     root = tk.Tk()
     gui = WolfwagenGUI(root, gui_queue)
-    
+
     robot_controller = WolfwagenController()
     tool_handlers = get_handlers(robot_controller)
-
 
     def run_loop():
         loop = asyncio.new_event_loop()
@@ -350,14 +403,13 @@ def main():
             loop.close()
 
     async_thread = threading.Thread(target=run_loop, daemon=True)
-    
+
     def on_closing():
         print("[Main] Close signal received. Shutting down.")
         shutdown_event.set()
         robot_controller.shutdown()
         root.after(200, root.destroy)
-    
-    
+
     async_thread.start()
 
     try:
@@ -365,7 +417,8 @@ def main():
     except KeyboardInterrupt:
         print("\n[Main] KeyboardInterrupt caught.")
     finally:
-        if not shutdown_event.is_set(): on_closing()
+        if not shutdown_event.is_set():
+            on_closing()
         async_thread.join(timeout=2.0)
         print("[Main] Application exited.")
 

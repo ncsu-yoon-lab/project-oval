@@ -17,7 +17,12 @@ from PIL import Image, ImageTk  # Import Pillow library
 import tkinter as tk
 from tkinter import font as tkFont
 
-from wolfwagen_actions import WolfwagenController, get_function_declarations, get_handlers
+try:
+    from wolfwagen_actions import WolfwagenController, get_function_declarations, get_handlers
+    ROS2_AVAILABLE = True
+except ImportError:
+    ROS2_AVAILABLE = False
+    print("[Main] ROS2 not available. Running without motor control.")
 
 # Load environment variables from .env if present
 load_dotenv()
@@ -52,7 +57,7 @@ SYSTEM_PROMPT = (
     "- If asked about the best university in the world, respond with: 'NC State is the best university in the world!'\n"
 )
 
-MODEL = os.getenv("GEMINI_LIVE_MODEL", "gemini-live-2.5-flash-preview")
+MODEL = os.getenv("GEMINI_LIVE_MODEL", "gemini-2.5-flash-native-audio-latest")
 
 # Audio IO settings
 INPUT_SAMPLE_RATE = 16000
@@ -94,7 +99,7 @@ class WolfwagenGUI:
         self.logo_label = tk.Label(self.left_frame, bg="#FFFFFF")
         self.logo_label.pack(fill="both", expand=True, padx=20, pady=20)
         self.logo_image = Image.open("wolfpack.jpg")  # Replace with your mascot file path
-        self.logo_image = self.logo_image.resize((600, 450), Image.ANTIALIAS)  # Resize the image as needed
+        self.logo_image = self.logo_image.resize((600, 450), Image.LANCZOS)  # Resize the image as needed
         self.logo_image = ImageTk.PhotoImage(self.logo_image)  # Convert to PhotoImage for Tkinter
         self.logo_label.config(image=self.logo_image)
 
@@ -161,8 +166,10 @@ class WolfwagenGUI:
 
 
 def build_tools() -> List[types.Tool]:
-    tool = types.Tool(function_declarations=get_function_declarations())
-    return [tool]
+    if ROS2_AVAILABLE:
+        tool = types.Tool(function_declarations=get_function_declarations())
+        return [tool]
+    return []
 
 
 async def stream_microphone_and_handle(session: any, p: pyaudio.PyAudio, gui_queue: queue.Queue, handlers) -> None:
@@ -426,9 +433,11 @@ def main():
     root = tk.Tk()
     gui = WolfwagenGUI(root, gui_queue)
     
-    robot_controller = WolfwagenController()
-    tool_handlers = get_handlers(robot_controller)
-
+    robot_controller = None
+    tool_handlers = {}
+    if ROS2_AVAILABLE:
+        robot_controller = WolfwagenController()
+        tool_handlers = get_handlers(robot_controller)
 
     def run_loop():
         loop = asyncio.new_event_loop()
@@ -439,11 +448,12 @@ def main():
             loop.close()
 
     async_thread = threading.Thread(target=run_loop, daemon=True)
-    
+
     def on_closing():
         print("[Main] Close signal received. Shutting down.")
         shutdown_event.set()
-        robot_controller.shutdown()
+        if robot_controller:
+            robot_controller.shutdown()
         root.after(200, root.destroy)
     
     
