@@ -1,5 +1,7 @@
 import math
 import numpy as np
+
+import pdb
 '''
 Pure Pursuit Algorithm:
 
@@ -99,13 +101,16 @@ class PurePursuit:
             return (0.0, 0.0)
 
         target_point = self.compute_target_point(robot_pose)
+        print("TARGET POINT: ")
         if target_point is None:
             print("No target point found")
             # fallback when no point is found, follow the last closest index
             target_point = self.path[self.last_closest_index].get_point()
+        print("x: ", target_point[0])
+        print("y: ", target_point[1])
 
         kappa = self.curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
-
+        print("Kappa: ", kappa)
         # curvature based speed scaling. computes desired linear velocity
         vcmd = float(self.velocity) / (1.0 + float(self.alpha) * abs(float(kappa)))
 

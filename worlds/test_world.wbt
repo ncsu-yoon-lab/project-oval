@@ -78,11 +78,13 @@ Robot {
       device [
         RotationalMotor {
           name "wheel1"
+          maxVelocity 100
+          maxTorque 100
         }
       ]
       endPoint Solid {
         translation 0.05 0.06 0
-        rotation 1 9.157226400676824e-11 -9.15726003710935e-11 1.5708
+        rotation 1 9.835539467393624e-11 -9.835575595413748e-11 1.5708
         children [
           DEF WHEEL Shape {
             appearance PBRAppearance {
@@ -113,11 +115,13 @@ Robot {
       device [
         RotationalMotor {
           name "wheel2"
+          maxVelocity 100
+          maxTorque 100
         }
       ]
       endPoint Solid {
         translation 0.05 -0.06 0
-        rotation 1 9.157287209010564e-11 -9.157320845666447e-11 1.5708
+        rotation 1 9.835604780048385e-11 -9.835640908308406e-11 1.5708
         children [
           USE WHEEL
         ]
@@ -138,11 +142,13 @@ Robot {
       device [
         RotationalMotor {
           name "wheel3"
+          maxVelocity 100
+          maxTorque 100
         }
       ]
       endPoint Solid {
         translation -0.05 0.06 0
-        rotation 1 9.157106198055137e-11 -9.157139834046128e-11 1.5708
+        rotation 1 9.835410360874037e-11 -9.835446488419916e-11 1.5708
         children [
           USE WHEEL
         ]
@@ -163,11 +169,13 @@ Robot {
       device [
         RotationalMotor {
           name "wheel4"
+          maxVelocity 100
+          maxTorque 100
         }
       ]
       endPoint Solid {
         translation -0.05 -0.06 0
-        rotation 1 9.157634515963358e-11 -9.157668153894981e-11 1.5708
+        rotation 1 9.835977813442125e-11 -9.836013943072387e-11 1.5708
         children [
           USE WHEEL
         ]

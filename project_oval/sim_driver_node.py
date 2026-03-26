@@ -198,7 +198,7 @@ class SimDriverNode:
             # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
             left_drive_train = [self.__motor_devices[0], self.__motor_devices[2]]
             right_drive_train = [self.__motor_devices[1], self.__motor_devices[3]]
-
+            
             left_speeds = [left_drive_train[0].getVelocity(), left_drive_train[1].getVelocity()]
             right_speeds = [right_drive_train[0].getVelocity(), right_drive_train[1].getVelocity()]
 
@@ -214,13 +214,16 @@ class SimDriverNode:
             right_msg = Float64()
             right_msg.data = right_avg
             self.right_wheel_vel_pub.publish(right_msg)
-
+            print("setting torque values")
+            
             # now calculate torque
             left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_left = left_torque / 2
 
             right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
             per_motor_right = right_torque / 2
+            print(left_torque)
+            print(right_torque)
 
             # TODO: This some sketchy scaling to improve turning. 
             # May have to look over this.

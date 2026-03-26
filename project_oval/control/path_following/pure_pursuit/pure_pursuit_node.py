@@ -236,6 +236,14 @@ class PurePursuitNode(Node):
         # this is because the gps may update at a faster rate than the IMU. For initial impl. this should 
         # not be a huge problem.
         robot_pose = PathPoint2D(self.x, self.y)
+
+        print("ROBOT POSE BELOW")
+        print("x:", robot_pose.get_point()[0])
+        print("y:", robot_pose.get_point()[1])
+        print("ROBOT YAW BELOW")
+        print(self.yaw)
+        print("ROBOT POSE Velocity")
+        print(self.v)
         
         desired_velocity = self.pure_pursuit.update_state(robot_pose, self.yaw, self.v)
 
@@ -251,6 +259,13 @@ class PurePursuitNode(Node):
         print("[DEBUG] Running PID")
         omega_right_desired = (velocity_linear_desired + center_line_distance * omega_desired) / wheel_radius
         omega_left_desired  = (velocity_linear_desired - center_line_distance * omega_desired) / wheel_radius
+
+        print(self.right_wheel_vel)
+        print(self.left_wheel_vel)
+        print("----------------------")
+        print(omega_right_desired)
+        print(omega_left_desired)
+        print("----------------------")
 
         error_right = omega_right_desired - self.right_wheel_vel # rad/s
         error_left  = omega_left_desired  - self.left_wheel_vel # rad/s
