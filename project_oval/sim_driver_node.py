@@ -15,6 +15,9 @@ source install/setup.bash
 Launch executable is in install/project-oval/share/project-oval/launch/
 ros2 launch project-oval car_sim_launch.py
 This is the driver for the simulated car. Ideally this should work like driver_node as much as possible.
+
+For rviz testing:
+ros2 run rviz2 rviz2
 '''
 class SimDriverNode:
     def init(self, webots_node, properties):
@@ -34,6 +37,9 @@ class SimDriverNode:
         self.__time = 0.0
         self.__brake = False   # updated from /brake
 
+        # self.__pen = self.__robot.getDevice('pen')
+        # self.__pen.write(True)
+        # self.__pen.setInkColor(0xFF0000, 1)  # red, full opacity
        
         # Contains methods for converting throttle to torque to be sent to motor
         self.driver_lib = SimDriverLib()

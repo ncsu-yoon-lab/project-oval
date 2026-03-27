@@ -38,8 +38,18 @@ class PurePursuit:
         self.path = []
         self.path_length = 0
         self.last_closest_index = 0
-        # tuning parameter for how much we want to slow down around turns, for now zero since the car is pretty low speed.
-        self.alpha = 0
+        # tuning parameter for how much we want to slow down around turns
+        self.alpha = 0.01
+
+        # tuning parameter for what percentage along the path we want to start slowing down before goal.
+        # should always be between 0 and 1
+        self.beta = 0.85 # start scaling down velocity when we are 85% of the way to the goal.
+
+        # Tuning parameter for how aggressively we slow down as we reach the goal point.
+        # Higher zeta = much slower approach to goal.
+        # should always be between 0 and 1
+        self.zeta = 0.65
+
         self.velocity = velocity # maximum operating speed for pure pursuit
 
         # end condition tolerance (meters)
@@ -111,14 +121,54 @@ class PurePursuit:
 
         kappa = self.curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
         print("Kappa: ", kappa)
+
         # curvature based speed scaling. computes desired linear velocity
         vcmd = float(self.velocity) / (1.0 + float(self.alpha) * abs(float(kappa)))
+
+        # When getting to the goal, the car occasionally overshoots the target due to momentum.
+        # This will scale the velocity commands down as we get closer to teh goal
+
+        # get total distance of path and the total distance traveled so far along the path
+        distance_traveled, total_distance = self.get_estimated_travel_distance(robot_xy)
+
+        ratio = distance_traveled / total_distance
+        if ratio >= self.beta: # if we are in that range of scaling down, lets scale down velocity
+            vcmd = vcmd - (vcmd * ratio * self.zeta) # scal back velocity by how close we are to the goal, and parameter zeta
+        
+        # 
 
         # differential drive relation omega = v * kappa
         wcmd = vcmd * kappa
 
         # we will now take this value to a controller for robot control.
         return (vcmd, wcmd)
+    
+    # When getting to the goal, the car occasionally overshoots the target due to momentum.
+    # This method will be used for getting an estimation of how far along the path the car is.
+    # This way, we can scale velocity down as the car gets closer to the goal.
+    def get_estimated_travel_distance(self, robot_xy):
+        seg_start = self.path[self.last_closest_index].get_point()
+        seg_end = self.path[self.last_closest_index + 1].get_point()
+
+        segment_vector = seg_end - seg_start
+
+        seg_length = np.linalg.norm(segment_vector)
+
+        # we can use vector projection to estimate how far along the robot is for the current segment
+        # project robot's position onto current segment
+        robot_vector = robot_xy - seg_start # line from the segment start to the robot.
+
+        # (a dot b) / (b^2) is the mag of the vector projected. Assuming the car is not past this segment, t between [0, 1]
+        t = np.dot(robot_vector, segment_vector) / (seg_length * seg_length)
+
+        # Only time when this should be a problem is if we are moving fast and move beyond the segment before finishing this calc.
+        t = np.clip(t, 0.0, 1.0) # clip it just in case. 
+
+        # Estimated distance traveled along the path. Not perfect, but a really good estimate.
+        distance_traveled = self.path[self.last_closest_index].get_arc_length() + t * seg_length
+        distance_total = self.path[-1].get_arc_length()
+
+        return distance_traveled, distance_total
 
 
     # compute the curbature

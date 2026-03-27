@@ -12,6 +12,8 @@ from .pure_pursuit import PathPoint2D
 from sensor_msgs.msg import Imu
 from nav_msgs.msg import Path
 from std_msgs.msg import Float64, Bool, Float32
+from geometry_msgs.msg import PoseStamped
+
 
 # https://docs.ros.org/en/humble/p/tf_transformations/
 from tf_transformations import euler_from_quaternion
@@ -58,7 +60,7 @@ class PurePursuitNode(Node):
         super().__init__("pure_pursuit_node")
         # TODO: Added GPS and IMU to sim robot, subscribe to those and use them to provide state estimation to pure pursuit algorithm
         # lookahead will be modifiable parameters.
-        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 1.0), ("operating_velocity", 1.0),],)
+        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 0.6), ("operating_velocity", 1.0),],)
 
         # State parameters for pure pursuit
         self.x = None
@@ -91,6 +93,10 @@ class PurePursuitNode(Node):
         ## added to support physical car, wheel encoders
         self.left_rpm = None
         self.right_rpm = None
+
+        # rviz params
+        self.trajectory_msg = Path()
+        self.trajectory_msg.header.frame_id = "map"
        
         self.init_controller()
         self.init_publishers()
@@ -109,6 +115,10 @@ class PurePursuitNode(Node):
 
     def init_publishers(self):
         self.pp_omega_pub = self.create_publisher(Float64MultiArray, "/pure_pursuit/omega", 10)
+
+        # For Rviz, so we can watch the path in real time
+        self.path_viz_pub = self.create_publisher(Path, "/viz/planned_path", 10)
+        self.trajectory_pub = self.create_publisher(Path, "/viz/trajectory", 10)
 
         # Once again, these will be removed eventually, assuming Pyvesc handles PID for us.
         # self.pp_left_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/left_throttle", 10)
@@ -181,8 +191,14 @@ class PurePursuitNode(Node):
 
     def path_callback(self, msg):
         print("[SUCCESS] Path Recieved")
+        # send to rviz
+        self.path_viz_pub.publish(msg)
+
+        # process
         self.path = msg
         self.points = []
+
+        
 
         for pose_stamped in self.path.poses:
             x = pose_stamped.pose.position.x
@@ -279,6 +295,17 @@ class PurePursuitNode(Node):
         # self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
         # self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
 
+        # For Rviz
+        pose = PoseStamped()
+        pose.header.frame_id = "map"
+        pose.header.stamp = self.get_clock().now().to_msg()
+        pose.pose.position.x = self.x
+        pose.pose.position.y = self.y
+        self.trajectory_msg.poses.append(pose)
+        self.trajectory_msg.header.stamp = self.get_clock().now().to_msg()
+        self.trajectory_pub.publish(self.trajectory_msg)
+
+        # send to controller
         omega_right_desired = (velocity_linear_desired + center_line_distance * omega_desired) / wheel_radius
         omega_left_desired  = (velocity_linear_desired - center_line_distance * omega_desired) / wheel_radius
         print("sending speeds: ")
