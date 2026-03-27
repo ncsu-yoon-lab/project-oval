@@ -4,6 +4,7 @@ from rclpy.node import Node
 import math
 
 from std_msgs.msg import Int64MultiArray
+from std_msgs.msg import Float64MultiArray
 
 from .pure_pursuit import PurePursuit
 from .pure_pursuit import PathPoint2D
@@ -40,9 +41,9 @@ from .pure_pursuit_pid import PurePursuitPid
 Testing process on sim
 ros2 launch project-oval car_sim_launch.py
 ros2 run project-oval pure_pursuit_node
-ros2 topic pub --once /xbox_controller/mode std_msgs/msg/Bool "{data: false}"
 
 # test path, hardcoded
+ros2 topic pub --once /pure_pursuit/use_throttle std_msgs/msg/Bool "{data: true}"
 ros2 topic pub --once /pure_pursuit/path nav_msgs/msg/Path "{header: {frame_id: 'map'}, poses: [{pose: {position: {x: 0.0, y: 0.0, z: 0.0}}}, {pose: {position: {x: 1.0, y: 0.5, z: 0.0}}}, {pose: {position: {x: 2.0, y: 1.0, z: 0.0}}}, {pose: {position: {x: 3.0, y: 1.5, z: 0.0}}}]}"
 '''
 
@@ -57,7 +58,7 @@ class PurePursuitNode(Node):
         super().__init__("pure_pursuit_node")
         # TODO: Added GPS and IMU to sim robot, subscribe to those and use them to provide state estimation to pure pursuit algorithm
         # lookahead will be modifiable parameters.
-        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 1.0), ("operating_velocity", 5.0),],)
+        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 1.0), ("operating_velocity", 1.0),],)
 
         # State parameters for pure pursuit
         self.x = None
@@ -107,10 +108,12 @@ class PurePursuitNode(Node):
     
 
     def init_publishers(self):
+        self.pp_omega_pub = self.create_publisher(Float64MultiArray, "/pure_pursuit/omega", 10)
 
-        self.pp_left_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/left_throttle", 10)
-        self.pp_right_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/right_throttle", 10)
-        self.pp_use_throttle_pub = self.create_publisher(Bool, "/pure_pursuit/use_throttle", 10)
+        # Once again, these will be removed eventually, assuming Pyvesc handles PID for us.
+        # self.pp_left_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/left_throttle", 10)
+        # self.pp_right_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/right_throttle", 10)
+        # self.pp_use_throttle_pub = self.create_publisher(Bool, "/pure_pursuit/use_throttle", 10)
     
 
     def init_subscribers(self):
@@ -221,9 +224,9 @@ class PurePursuitNode(Node):
        
         wheel_data = [self.left_wheel_vel, self.right_wheel_vel]
        
-        if None in wheel_data:
-            print("[WARNING] Pure pursuit has not recieved wheel velocity data")
-            return
+        # if None in wheel_data:
+        #     print("[WARNING] Pure pursuit has not recieved wheel velocity data")
+        #     return
 
         # if the path has been added/changed, all the init path method on the path points
         if self.path_changed:
@@ -246,37 +249,45 @@ class PurePursuitNode(Node):
         print(self.v)
         
         desired_velocity = self.pure_pursuit.update_state(robot_pose, self.yaw, self.v)
-
+        
         velocity_linear_desired = desired_velocity[0]
         omega_desired = desired_velocity[1]
 
-        # TODO: I need to split this into two angular velocitys for the left and right drivetrain
-        # This will require wheel encoders on the car, need to check if we have those.
+        # We have wheel encoders, yay!
+
+        # Pyvesc supports PID natively, so we may not need a PID controller at this level.
         # Calculate dt, it should roughly equal the 1/frequency of the controol loop timer
-        now = self.get_clock().now()
-        dt = (now - self.last_time).nanoseconds * 1e-9
-        self.last_time = now
-        print("[DEBUG] Running PID")
+        # now = self.get_clock().now()
+        # dt = (now - self.last_time).nanoseconds * 1e-9
+        # self.last_time = now
+        # print("[DEBUG] Running PID")
+        # print(self.right_wheel_vel)
+        # print(self.left_wheel_vel)
+        # print("----------------------")
+        # print(omega_right_desired)
+        # print(omega_left_desired)
+        # print("----------------------")
+
+        # error_right = omega_right_desired - self.right_wheel_vel # rad/s
+        # error_left  = omega_left_desired  - self.left_wheel_vel # rad/s
+
+        # throttle_right = self.right_pid.update(error_right, dt)
+        # throttle_left  = self.left_pid.update(error_left, dt)
+
+        # # Publish throttle data to driver
+        # self.pp_use_throttle_pub.publish(Bool(data=True))
+        # self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
+        # self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
+
         omega_right_desired = (velocity_linear_desired + center_line_distance * omega_desired) / wheel_radius
         omega_left_desired  = (velocity_linear_desired - center_line_distance * omega_desired) / wheel_radius
-
-        print(self.right_wheel_vel)
-        print(self.left_wheel_vel)
-        print("----------------------")
-        print(omega_right_desired)
+        print("sending speeds: ")
         print(omega_left_desired)
-        print("----------------------")
-
-        error_right = omega_right_desired - self.right_wheel_vel # rad/s
-        error_left  = omega_left_desired  - self.left_wheel_vel # rad/s
-
-        throttle_right = self.right_pid.update(error_right, dt)
-        throttle_left  = self.left_pid.update(error_left, dt)
-
-        # Publish throttle data to driver
-        self.pp_use_throttle_pub.publish(Bool(data=True))
-        self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
-        self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
+        print(omega_right_desired)
+        print("------")
+        omega_msg = Float64MultiArray()
+        omega_msg.data = [omega_left_desired, omega_right_desired]
+        self.pp_omega_pub.publish(omega_msg)
         
 
 

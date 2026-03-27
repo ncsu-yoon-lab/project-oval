@@ -50,7 +50,7 @@ def main():
     pp.goal_tolerance = 0.10
     pp.init_path(path)
 
-    robot = RobotPose2D(0.5, -0.6)  # start near the first segment
+    robot = RobotPose2D(1, -2)  # start near the first segment
     yaw = 0.0
     vcurrent = 0.0
     dt = 0.05

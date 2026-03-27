@@ -3,6 +3,7 @@ import time
 from project_oval.sim_driver_lib import SimDriverLib
 import rclpy
 from std_msgs.msg import Int64MultiArray, Bool, Int64, String, Float64
+from std_msgs.msg import Float64MultiArray
 
 
 # On sim, max input is 10
@@ -40,6 +41,8 @@ class SimDriverNode:
         # add motors to the motor devices
         for motor_name in self.__motor_names:
             motor = self.__robot.getDevice(motor_name)
+            motor.setPosition(float('inf'))  # enable velocity control mode
+            motor.setVelocity(0.0)
            
             #motor.setMaxTorque(max_motor_torque)
             self.__motor_devices.append(motor)
@@ -55,8 +58,10 @@ class SimDriverNode:
 
         # Pure pursuit params
         # TODO: Add these to driver node
-        self.pp_left_throttle = 0.0
-        self.pp_right_throttle = 0.0
+        # self.pp_left_throttle = 0.0
+        # self.pp_right_throttle = 0.0
+        self.pp_left_omega = 0.0
+        self.pp_right_omega = 0.0
         self.pp_use_throttle = False
 
 
@@ -77,10 +82,15 @@ class SimDriverNode:
         # self.create_subscription(Int64, '/gemini/throttle', self.auto_throttle_callback, 10)
         # self.create_subscription(Int64, '/gemini/steering', self.auto_steer_callback, 10)
 
-        # Pure pursuit subs
-        self.__node.create_subscription(Float64, "/pure_pursuit/left_throttle", self.pp_left_throttle_callback, 10)
-        self.__node.create_subscription(Float64, "/pure_pursuit/right_throttle", self.pp_right_throttle_callback, 10)
+        # Pure pursuit sub for throttle
+        # self.__node.create_subscription(Float64, "/pure_pursuit/left_throttle", self.pp_left_throttle_callback, 10)
+        # self.__node.create_subscription(Float64, "/pure_pursuit/right_throttle", self.pp_right_throttle_callback, 10)
+        # self.__node.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
+
+        self.__node.create_subscription(Float64MultiArray, "/pure_pursuit/omega", self.pp_omega_callback, 10)
         self.__node.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
+
+        # self.__node.create_subscription(Float64)
 
         # Subscribe to brake signal
         self.__brake_sub = self.__node.create_subscription(Bool,"/brake", self.__brake_callback, 10)
@@ -88,14 +98,19 @@ class SimDriverNode:
 
     # Callbacks for left and right throttle in pure pursuit
     # TODO: Add an equivalent in the driver node
-    def pp_left_throttle_callback(self, msg: Float64):
-        self.pp_left_throttle = msg.data
+    # def pp_left_throttle_callback(self, msg: Float64):
+    #     self.pp_left_throttle = msg.data
 
-    def pp_right_throttle_callback(self, msg: Float64):
-        self.pp_right_throttle = msg.data
+    # def pp_right_throttle_callback(self, msg: Float64):
+    #     self.pp_right_throttle = msg.data
 
     def pp_use_throttle_callback(self, msg: Bool):
         self.pp_use_throttle = msg.data
+
+    def pp_omega_callback(self, msg: Float64MultiArray):
+        print("Got speeds! yay")
+        self.pp_left_omega = msg.data[0]
+        self.pp_right_omega = msg.data[1]
 
     # Start callbacks from DriverNode
     def steer_callback(self, msg):
@@ -167,91 +182,103 @@ class SimDriverNode:
 
     # Modified send_speeds function for the simulator
     def send_speeds(self):
+        
+        # TODO: We need throttle for control from Xbox controller
+        # For control code, for a differential drive robot it is better to use something like setRPM where PyVesc handles PID for us.
         try:
       
-            if self.mode == "Auto":
-                # TODO: Add this support to driver node as well.
-                if self.pp_use_throttle: # pure pursuit automatic control
-                    left_throttle = self.pp_left_throttle
-                    right_throttle = self.pp_right_throttle
-                    steer_cmd = 0
-                else:
-                    steer_cmd = self.auto_steer
-                    left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
-            else:
-                steer_cmd = self.manual_steer
-                left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
+        #     if self.mode == "Auto":
+        #         # TODO: Add this support to driver node as well.
+        #         if self.pp_use_throttle: # pure pursuit automatic control
+        #             left_throttle = self.pp_left_throttle
+        #             right_throttle = self.pp_right_throttle
+        #             steer_cmd = 0
+        #         else:
+        #             steer_cmd = self.auto_steer
+        #             left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+        #     else:
+        #         steer_cmd = self.manual_steer
+        #         left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
             
-            # --- Anti deadlock for sim skid steer ---
-            # If we're steering but one side hits exactly 0, force a tiny counter throttle
-            # so the contact solver breaks symmetry and you get yaw.
-            if abs(steer_cmd) > 1 and (right_throttle == 0 or left_throttle == 0):
-                eps = 2  # in "throttle units" (tune 1-5)
-                if right_throttle == 0:
-                    right_throttle = -eps if left_throttle > 0 else eps
-                if left_throttle == 0:
-                    left_throttle = -eps if right_throttle > 0 else eps
-            # # --------------------------------------
+        #     # --- Anti deadlock for sim skid steer ---
+        #     # If we're steering but one side hits exactly 0, force a tiny counter throttle
+        #     # so the contact solver breaks symmetry and you get yaw.
+        #     if abs(steer_cmd) > 1 and (right_throttle == 0 or left_throttle == 0):
+        #         eps = 2  # in "throttle units" (tune 1-5)
+        #         if right_throttle == 0:
+        #             right_throttle = -eps if left_throttle > 0 else eps
+        #         if left_throttle == 0:
+        #             left_throttle = -eps if right_throttle > 0 else eps
+        #     # # --------------------------------------
           
-            # wheel 1 and 3 represent the left drivetrain on car
-            # wheel 2 and 4 represent right drivetrain on car.
-            # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
+        #     # wheel 1 and 3 represent the left drivetrain on car
+        #     # wheel 2 and 4 represent right drivetrain on car.
+        #     # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
             left_drive_train = [self.__motor_devices[0], self.__motor_devices[2]]
             right_drive_train = [self.__motor_devices[1], self.__motor_devices[3]]
             
-            left_speeds = [left_drive_train[0].getVelocity(), left_drive_train[1].getVelocity()]
-            right_speeds = [right_drive_train[0].getVelocity(), right_drive_train[1].getVelocity()]
+        #     left_speeds = [left_drive_train[0].getVelocity(), left_drive_train[1].getVelocity()]
+        #     right_speeds = [right_drive_train[0].getVelocity(), right_drive_train[1].getVelocity()]
 
-            # average per drivetrain
-            left_avg = sum(left_speeds) / len(left_speeds)
-            right_avg = sum(right_speeds) / len(right_speeds)
+        #     # average per drivetrain
+        #     left_avg = sum(left_speeds) / len(left_speeds)
+        #     right_avg = sum(right_speeds) / len(right_speeds)
 
-            # publish measured angular velocity (rad/s)
-            left_msg = Float64()
-            left_msg.data = left_avg
-            self.left_wheel_vel_pub.publish(left_msg)
+        #     # publish measured angular velocity (rad/s)
+        #     left_msg = Float64()
+        #     left_msg.data = left_avg
+        #     self.left_wheel_vel_pub.publish(left_msg)
 
-            right_msg = Float64()
-            right_msg.data = right_avg
-            self.right_wheel_vel_pub.publish(right_msg)
-            print("setting torque values")
+        #     right_msg = Float64()
+        #     right_msg.data = right_avg
+        #     self.right_wheel_vel_pub.publish(right_msg)
+        #     print("setting torque values")
             
-            # now calculate torque
-            left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
-            per_motor_left = left_torque / 2
+        #     # now calculate torque
+        #     left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
+        #     per_motor_left = left_torque / 2
 
-            right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
-            per_motor_right = right_torque / 2
-            print(left_torque)
-            print(right_torque)
+        #     right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
+        #     per_motor_right = right_torque / 2
+        #     print(left_torque)
+        #     print(right_torque)
 
-            # TODO: This some sketchy scaling to improve turning. 
-            # May have to look over this.
-            if per_motor_right > 0 and per_motor_left > 0 or per_motor_right < 0 and per_motor_left < 0:
-                per_motor_right /= 20
-                per_motor_left  /= 20
-            else:
-                per_motor_left /= 5
-                per_motor_right /= 5
+        #     # TODO: This some sketchy scaling to improve turning. 
+        #     # May have to look over this.
+        #     if per_motor_right > 0 and per_motor_left > 0 or per_motor_right < 0 and per_motor_left < 0:
+        #         per_motor_right /= 20
+        #         per_motor_left  /= 20
+        #     else:
+        #         per_motor_left /= 5
+        #         per_motor_right /= 5
 
-            # if per_motor_left != 0 and per_motor_right == 0:
-            #     per_motor_right = per_motor_left * 0.1
+        #     # if per_motor_left != 0 and per_motor_right == 0:
+        #     #     per_motor_right = per_motor_left * 0.1
             
-            # if per_motor_right != 0 and per_motor_left == 0:
-            #     per_motor_left = per_motor_right * 0.1
+        #     # if per_motor_right != 0 and per_motor_left == 0:
+        #     #     per_motor_left = per_motor_right * 0.1
 
    
             
-            for m in left_drive_train:
-                m.setForce(per_motor_left)
-            for m in right_drive_train:
-                m.setForce(per_motor_right)
+        #     for m in left_drive_train:
+        #         m.setForce(per_motor_left)
+        #     for m in right_drive_train:
+        #         m.setForce(per_motor_right)
 
             #print("---------")
             #print("max vel:", m.getMaxVelocity())
             #print("avail torque:", m.getAvailableTorque())
             #print("max torque:", m.getMaxTorque())
-            #print("---------")      
+            #print("---------")
+
+            if self.pp_use_throttle:
+                for m in right_drive_train:
+                    m.setVelocity(self.pp_right_omega)
+                for m in left_drive_train:
+                    m.setVelocity(self.pp_left_omega)
+
+
+
             return True
         except Exception as e:
             print(f"Error: {e}")
