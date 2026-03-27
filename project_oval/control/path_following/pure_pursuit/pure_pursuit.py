@@ -101,12 +101,15 @@ class PurePursuit:
         # velocity-scaled lookahead (no accumulation)
         self.lookahead_distance = self.base_lookahead_distance + self.lookahead_scaling * velocity
 
-        # end condition (close enough to final waypoint)
+       
         if self.path_length == 0:
             return (0.0, 0.0)
 
+
         robot_xy = robot_pose.get_point()
         goal_xy = self.path[-1].get_point()
+
+         # end condition (close enough to final waypoint)
         if np.linalg.norm(robot_xy - goal_xy) <= self.goal_tolerance:
             return (0.0, 0.0)
 
@@ -116,8 +119,16 @@ class PurePursuit:
             print("No target point found")
             # fallback when no point is found, follow the last closest index
             target_point = self.path[self.last_closest_index].get_point()
+        
         print("x: ", target_point[0])
         print("y: ", target_point[1])
+
+        # Special case, pure pursuit does not handle it well when the target point is behind (~180) the robot, you end up with very wide turns
+        # that could take the car into the grass, or a wall. It is better, and safer to rotate in place until we are facing the target point.
+        heading_error = self.get_heading_error(yaw)
+        if heading_error > math.radians(80): # if car is facing too far in the other direction, rotate
+
+            return (0, self.velocity) # no, forward velocity, but angular velocity 
 
         kappa = self.curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
         print("Kappa: ", kappa)
@@ -169,7 +180,18 @@ class PurePursuit:
         distance_total = self.path[-1].get_arc_length()
 
         return distance_traveled, distance_total
+    
+    def get_heading_error(self, yaw):
+        seg_start = self.path[self.last_closest_index].get_point()
+        seg_end = self.path[self.last_closest_index + 1].get_point()
 
+        dx = seg_end[0] - seg_start[0]
+        dy = seg_end[1] - seg_start[1]
+
+        segment_angle = math.atan2(dy, dx)
+
+        heading_error = abs(yaw - segment_angle)
+        return heading_error
 
     # compute the curbature
     def curvature_from_target(self, robot_pose, robotyaw, target, lookahead):

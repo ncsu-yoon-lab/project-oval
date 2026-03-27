@@ -60,7 +60,7 @@ class PurePursuitNode(Node):
         super().__init__("pure_pursuit_node")
         # TODO: Added GPS and IMU to sim robot, subscribe to those and use them to provide state estimation to pure pursuit algorithm
         # lookahead will be modifiable parameters.
-        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 0.6), ("operating_velocity", 1.0),],)
+        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 0.5), ("operating_velocity", 1.0),],)
 
         # State parameters for pure pursuit
         self.x = None
