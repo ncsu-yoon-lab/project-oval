@@ -18,7 +18,7 @@ class RobotPose2D:
         self.point = np.array([float(x), float(y)])
 
 
-def interpolate_polyline(points, resolution=0.05):
+def interpolate_polyline(points, resolution=0.5):
     dense = []
     for i in range(len(points) - 1):
         p0 = np.array(points[i], dtype=float)

@@ -29,6 +29,13 @@ class PathPoint2D:
     def get_point(self):
         return self.point
 
+class Segment2D:
+    def __init__(self, point1, point2, t=None, index=0):
+        self.point1 = point1
+        self.point2 = point2
+        self.t = None
+        self.index = index
+
 class PurePursuit:
     def __init__(self, lookahead_distance, velocity):
         self.lookahead_distance = float(lookahead_distance)   # current runtime value
@@ -55,14 +62,25 @@ class PurePursuit:
         # end condition tolerance (meters)
         self.goal_tolerance = 0.10
 
+        self.current_segment = None
+
     def init_path(self, path):
         # init the path.
         self.path = []
+    
         for point in path:
+            p += 1
             x = float(point[0])
             y = float(point[1])
             current_point = PathPoint2D(x, y)
+        
             self.path.append(current_point)
+        
+        for i in range(0, len(path) - 1):
+            
+
+
+        
         
         self.path_length = len(self.path)
 
@@ -77,7 +95,7 @@ class PurePursuit:
         # pre-compute each point's cumulative distance along the path
         for i in range(1, len(self.path)):
             current_point = self.path[i]
-            previous_point = self.path[i-  1]
+            previous_point = self.path[i-1]
 
             x1, y1 = current_point.get_point()
             x0, y0 = previous_point.get_point()
@@ -173,7 +191,7 @@ class PurePursuit:
         t = np.dot(robot_vector, segment_vector) / (seg_length * seg_length)
 
         # Only time when this should be a problem is if we are moving fast and move beyond the segment before finishing this calc.
-        t = np.clip(t, 0.0, 1.0) # clip it just in case. 
+        t = np.clip(t, 0.0, 1.0) # clip it just in case. f
 
         # Estimated distance traveled along the path. Not perfect, but a really good estimate.
         distance_traveled = self.path[self.last_closest_index].get_arc_length() + t * seg_length
@@ -215,8 +233,16 @@ class PurePursuit:
         for i in range(self.last_closest_index, self.path_length - 1):
             segment_start = self.path[i]
             segment_end = self.path[i+1]
-            target_points = self.line_circle_intersection(robot_pose, segment_start, segment_end, self.lookahead_distance)
+            target_points, t = self.line_circle_intersection(robot_pose, segment_start, segment_end, self.lookahead_distance)
             if target_points and len(target_points) > 0:
+                # check current segment if exists
+                if self.current_segment is not None:
+
+                      
+                else:
+                    # update current segment
+                    self.current_segment = Segment2D(segment_start, segment_end, target_points[0][1], i)
+                    
                 self.last_closest_index = i
                 return target_points[0]
         return None
@@ -254,7 +280,7 @@ class PurePursuit:
             t = -b / (2.0 * a)
             if 0.0 <= t <= 1.0:
                 intersections.append(start + t * direction)
-            return intersections if len(intersections) > 0 else None
+            return intersections, t if len(intersections) > 0 else None
         
         elif discriminant > 0.0:
             root = float(np.sqrt(discriminant))
@@ -274,8 +300,8 @@ class PurePursuit:
             # Select the root farther along the line segment
             t = max(t1, t2)
             
-            intersections = [start + t * direction]
-            return intersections
+            intersections = start + t * direction
+            return intersections, t
         else:
             print("[WARNING] line circle intersection returned an unusual value: " + str(discriminant))
             return None
