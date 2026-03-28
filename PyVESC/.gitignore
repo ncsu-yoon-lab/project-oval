@@ -1,7 +1,0 @@
-.idea
-__pycache__/
-venv/
-docs/build/
-MANIFEST
-dist/
-pyvesc.egg-info/
