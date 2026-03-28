@@ -34,7 +34,7 @@ def joy_callback(data):
 	# If the a button is being pressed, we want to be in turbo mode
 	throttle_input = (data.axes[1]**3) * (1 if a_button_pressed else 0.3)
 	# changed this from 2, to 3 so steering wasnt mapped to left trigger
-	steer_input = (data.axes[3]**3) * (1 if a_button_pressed else 0.3)
+	steer_input = (data.axes[2]**3) * (1 if a_button_pressed else 0.3)
 
 	# Convert this to [-20, +20] for throttle and [-100, 100] for steer
 	throttle = int(100 * throttle_input)
@@ -42,8 +42,6 @@ def joy_callback(data):
 		throttle = MAX_THROTTLE_FORWARD
 	elif throttle < (-1 * MAX_THROTTLE_REVERSE):
 		throttle = (-1 * MAX_THROTTLE_REVERSE)
-	
-	throttle *= -1
 	
 	steer = int(-100 * steer_input)
 
@@ -87,14 +85,14 @@ def main(args=None):
 				steer_msg.data = steer
 				steer_pub.publish(steer_msg)
 
+				throttle_msg = Int64()
+				throttle_msg.data = throttle
+				throttle_pub.publish(throttle_msg)
+
 			else:
 				send_data = Bool()
 				send_data.data = False
 				mode_pub.publish(send_data)
-
-				throttle_msg = Int64()
-				throttle_msg.data = 12
-				throttle_pub.publish(throttle_msg)
 			
 			
 			# Only publish telemetry message when manual changes

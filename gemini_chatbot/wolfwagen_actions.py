@@ -66,7 +66,7 @@ class WolfwagenController:
     async def go_straight(self) -> Dict[str, any]:
         """Publishes a command to go straight"""
         
-        self._publish_command(throttle=-20, steering=0)
+        self._publish_command(throttle=17.5, steering=0)
         await asyncio.sleep(2.0)
         self._publish_command(throttle=0, steering=0) # Stop
         
@@ -75,7 +75,7 @@ class WolfwagenController:
     async def go_back(self) -> Dict[str, any]:
         """Publishes a command to go back"""
         
-        self._publish_command(throttle=20, steering=0)
+        self._publish_command(throttle=-17.5, steering=0)
         await asyncio.sleep(2.0)
         self._publish_command(throttle=0, steering=0) # Stop
         

@@ -7,9 +7,20 @@ import threading
 import time
 from pyvesc import VESC
 import atexit
-import time         
+import time
+import math
+import pdb
 
 MAX_INPUT = 100.0
+
+WHEEL_DIAMETER = 6 * 0.0254
+WHEEL_CIRC = WHEEL_DIAMETER * math.pi
+ROBOT_MAX_SPEED_M_S = 1
+WHEEL_MAX_RPS = ROBOT_MAX_SPEED_M_S / WHEEL_CIRC
+# WHEEL:MOTOR
+GEAR_RATIO = 72 / 15
+# should be around 600 or so +/- 500
+MOTOR_MAX_RPM = 60 * WHEEL_MAX_RPS * GEAR_RATIO
 
 class DriverNode(Node):
     def __init__(self):
@@ -21,9 +32,11 @@ class DriverNode(Node):
         self.auto_steer = 0
         self.serial_port = '/dev/ttyTHS1'
         self.stop_signal = False
+        self.prev_left_throttle = 0.0
+        self.prev_right_throttle = 0.0
 
         # Setup VESC
-        self.motor = VESC(self.serial_port)
+        self.motor = VESC(self.serial_port, has_sensor=True, timeout=1)
         print("Motor setup")
         atexit.register(self.cleanup)
         self.left_id = 115
@@ -45,14 +58,12 @@ class DriverNode(Node):
         self.manual_steer = msg.data
     
     def brake_callback(self, msg):
-
         self.stop_signal = msg.data
         
         if self.stop_signal:
             print(f"Stop Signal: {self.stop_signal}")
     
     def mode_callback(self, msg):
-        
         self.mode = "Manual" if msg.data else "Auto"
 
     def auto_steer_callback(self, msg):
@@ -94,8 +105,6 @@ class DriverNode(Node):
             self.manual_throttle = msg.data
 
     def arcade_drive(self, throttle, steer):
-        throttle *= -1.0
-        
         if self.stop_signal and throttle > 0:
             throttle = 0
         maximum = max(abs(steer), abs(throttle))
@@ -116,7 +125,7 @@ class DriverNode(Node):
                 throttle_left = -maximum
                 throttle_right = difference
 
-        return throttle_left, throttle_right
+        return throttle_left, -throttle_right
 
     def send_speeds(self):
         try:
@@ -125,7 +134,11 @@ class DriverNode(Node):
             else:
                 left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
 
-            print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+            # Only prints when the throttle changes
+            if self.prev_left_throttle != left_throttle or self.prev_right_throttle != right_throttle:
+                # print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+                self.prev_left_throttle = left_throttle
+                self.prev_right_throttle = right_throttle
             
             ## Sending telemetry message
             tel_l_msg = String()
@@ -137,14 +150,20 @@ class DriverNode(Node):
             self.telemetry_message.publish(tel_r_msg)
             
             # Convert to duty cycle (-1.0 to 1.0)
-            left_duty = left_throttle / MAX_INPUT
-            right_duty = right_throttle / MAX_INPUT
+            left_duty = left_throttle / 30.0
+            right_duty = right_throttle / -30.0
 
-            right_duty *= -1
+            left_rpm = round(left_duty * MOTOR_MAX_RPM)
+            right_rpm = round(right_duty * MOTOR_MAX_RPM)
             
             # Send duty cycle to motors
-            self.motor.set_duty_cycle(right_duty)
-            self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
+            # self.motor.set_duty_cycle(right_duty)
+            # self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
+            #time.sleep(1)
+            pdb.set_trace()
+            right_rrpm = self.motor.get_measurements
+            left_rrpm = self.motor.get_rpm(can_id=self.left_id)
+            print("RPMS: ", left_rrpm, right_rrpm)
             
             return True
         except Exception as e:
@@ -154,7 +173,7 @@ class DriverNode(Node):
     def cleanup(self):
         """Stop motors and close connection"""
         self.motor.set_duty_cycle(0)
-        self.motor.set_duty_cycle(0, can_id=self.right_id)
+        self.motor.set_duty_cycle(0, can_id=self.left_id)
         self.motor.stop_heartbeat()
 
 def main():
@@ -167,6 +186,7 @@ def main():
     try:
         while rclpy.ok():
             node.send_speeds()
+            # node.arcade_drive()
 
             # rpm_msg = Int64MultiArray()
             # left_rpm = int(node.motor.get_rpm())
@@ -181,6 +201,7 @@ def main():
     except Exception as e:
         print("Exception caught: ", e)  
     finally:
+        node.cleanup()
         rclpy.shutdown()
 
 if __name__ == '__main__':
