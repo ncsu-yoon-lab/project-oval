@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 import math
+import numpy as np
 
 from std_msgs.msg import Int64MultiArray
 from std_msgs.msg import Float64MultiArray
@@ -60,7 +61,7 @@ class PurePursuitNode(Node):
         super().__init__("pure_pursuit_node")
         # TODO: Added GPS and IMU to sim robot, subscribe to those and use them to provide state estimation to pure pursuit algorithm
         # lookahead will be modifiable parameters.
-        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 0.5), ("operating_velocity", 1.0),],)
+        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 0.4), ("operating_velocity", 0.8),],)
 
         # State parameters for pure pursuit
         self.x = None
@@ -206,7 +207,7 @@ class PurePursuitNode(Node):
             self.points.append((x, y))
         
      
-        self.path_points = self.points
+        self.path_points = self.interpolate_path(self.points)
 
         self.path_changed = True
 
@@ -315,6 +316,17 @@ class PurePursuitNode(Node):
         omega_msg = Float64MultiArray()
         omega_msg.data = [omega_left_desired, omega_right_desired]
         self.pp_omega_pub.publish(omega_msg)
+
+    def interpolate_path(self, points, resolution=0.05):
+        dense = []
+        for i in range(len(points) - 1):
+            p0 = np.array(points[i], dtype=float)
+            p1 = np.array(points[i + 1], dtype=float)
+            dist = float(np.linalg.norm(p1 - p0))
+            steps = max(2, int(dist / resolution))
+            for t in np.linspace(0.0, 1.0, steps):
+                dense.append(tuple(p0 + t * (p1 - p0)))
+        return dense
         
 
 

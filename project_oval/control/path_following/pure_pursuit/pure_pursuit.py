@@ -33,13 +33,13 @@ class PurePursuit:
     def __init__(self, lookahead_distance, velocity):
         self.lookahead_distance = float(lookahead_distance)   # current runtime value
         self.base_lookahead_distance = float(lookahead_distance)  # fixed base
-        self.lookahead_scaling = 0.3
+        self.lookahead_scaling = 0
 
         self.path = []
         self.path_length = 0
         self.last_closest_index = 0
         # tuning parameter for how much we want to slow down around turns
-        self.alpha = 0.01
+        self.alpha = 0.3
 
         # tuning parameter for what percentage along the path we want to start slowing down before goal.
         # should always be between 0 and 1
@@ -125,10 +125,10 @@ class PurePursuit:
 
         # Special case, pure pursuit does not handle it well when the target point is behind (~180) the robot, you end up with very wide turns
         # that could take the car into the grass, or a wall. It is better, and safer to rotate in place until we are facing the target point.
-        heading_error = self.get_heading_error(yaw)
-        if heading_error > math.radians(80): # if car is facing too far in the other direction, rotate
+        # heading_error = self.get_heading_error(yaw)
+        # if heading_error > math.radians(90): # if car is facing too far in the other direction, rotate
 
-            return (0, self.velocity) # no, forward velocity, but angular velocity 
+        #     return (0, self.velocity) # no, forward velocity, but angular velocity 
 
         kappa = self.curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
         print("Kappa: ", kappa)

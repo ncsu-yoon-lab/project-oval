@@ -42,7 +42,7 @@ def main():
         (11.6, 0.5),
         (13.0, 2.2),
     ]
-    path = interpolate_polyline(base_path, resolution=0.05)
+    path = base_path
 
     pp = PurePursuit(lookahead_distance=0.7, velocity=0.8)
     pp.alpha = 0.0               # constant speed for clarity
