@@ -188,7 +188,6 @@ class SimDriverNode:
 
     # Modified send_speeds function for the simulator
     def send_speeds(self):
-        
         # TODO: We need throttle for control from Xbox controller
         # For control code, for a differential drive robot it is better to use something like setRPM where PyVesc handles PID for us.
         try:

@@ -6,6 +6,12 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/buildings/protos/Building.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Grass.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/RedBricks.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Pavement.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/RoughConcrete.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/FormedConcrete.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/CementTiles.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Copper.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/trees/protos/Forest.proto"
 
 WorldInfo {
   basicTimeStep 16
@@ -20,190 +26,426 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.3171096770277398 -0.4307764517965499 0.8449101143393523 4.793240999214377
-  position 4.581528320544854 44.256336339100834 26.089041687529754
+  orientation 0.1313487655958996 0.1390777894004138 -0.9815318997729658 1.6644238679085321
+  position 3.349946565247008 33.55467955644393 5.6529276824134875
   follow "my_robot"
   followType "Mounted Shot"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
+  luminosity 0.5
 }
 Floor {
-  size 100 100
+  size 600 600
   appearance Grass {
   }
 }
+Forest {
+  translation 103.59 -42.15 0.36
+  rotation 0 0 1 0.523599
+  type "hackberry tree"
+  maxHeight 18
+  minHeight 6
+}
+Forest {
+  translation 140.67 165.42 2.88
+  rotation 0 0 1 0.523599
+  shape [
+    60 -60
+    60 -60
+    -60 -60
+    -60 60
+  ]
+  density 0.1
+  type "hackberry tree"
+  maxHeight 18
+  minHeight 6
+}
 Solid {
-  translation 0.73854 -0.633792 0.01
+  translation 4.6 130.56 0.06
+  rotation 0 0 1 -2.0943853071795866
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 41.61 130.29 0.06
+  rotation 0 0 1 -1.3089853071795865
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 39.29 134.08 0.06
+  rotation 0 0 -1 0.785387
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 35.24 137.96 0.06
+  rotation 0 0 1 -0.5235853071795864
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 30.97 138.56 0.06
+  rotation 0 0 1 1.3387e-05
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 25.74 138.39 0.06
+  rotation 0 0 1 1.3466792007898343e-05
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 21.41 138.91 0.06
+  rotation 0 0 1 1.3466792007898343e-05
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 7.8 134.77 0.06
+  rotation 0 0 1 -2.356185307179586
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 11.29 136.95 0.06
+  rotation 0 0 1 -2.8797853071795863
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+Solid {
+  translation 16.32 138.94 0.06
+  rotation 0 0 1 -3.1415853071795863
+  children [
+    Shape {
+      appearance RedBricks {
+      }
+      geometry Box {
+        size 6 6 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
+}
+DirectionalLight {
+  ambientIntensity 1
+  color 0.960784 0.760784 0.0666667
+  direction 1 1 -1
+  intensity 2
+  castShadows TRUE
+  castLensFlares TRUE
+}
+Solid {
+  translation 4.43 -3.8 0.06
   rotation 0 0 -1 -0.261795307179586
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(7)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 0.649609 0.0713344 0.01
+  translation 3.9 0.43 0.06
   rotation 0 0 1 -5.307179586466759e-06
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(1)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 7.01961 0.271301 0.01
+  translation 42.12 1.63 0.06
   rotation 0 0 1 -5.307179586466759e-06
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(6)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 1.00568 -1.09326 0.01
+  translation 6.03 -6.56 0.06
   rotation 0 0 1 1.0472
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(8)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 1.77394 -1.42905 0.01
+  translation 10.64 -8.57 0.06
   rotation 0 0 1 1.309
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(9)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 2.56345 -1.591 0.01
+  translation 15.38 -9.55 0.06
   rotation 0 0 1 1.5708
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(10)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 3.52345 -1.601 0.01
+  translation 21.2 -9.61 0.06
   rotation 0 0 1 1.5708
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(11)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 4.53345 -1.601 0.01
+  translation 27.2 -9.61 0.06
   rotation 0 0 1 1.5708
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(12)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 5.52345 -1.601 0.01
+  translation 33.14 -9.61 0.06
   rotation 0 0 1 1.5708
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(13)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 6.15865 -1.46522 0.01
+  translation 36.95 -8.79 0.06
   rotation 0 0 1 -2.617985307179586
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(14)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 6.67887 -0.981463 0.01
+  translation 40.07 -5.89 0.06
   rotation 0 0 -1 2.09439
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(15)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 6.99067 -0.198186 0.01
+  translation 41.94 -1.19 0.06
   rotation 0 0 -1 1.83259
   children [
     Shape {
       appearance RedBricks {
       }
       geometry Box {
-        size 1 1 0.01
+        size 6 6 0.06
       }
     }
   ]
   name "road(16)"
+  boundingObject Box {
+    size 6 6 0.06
+  }
 }
 Solid {
-  translation 0.65 7 0.01
+  translation 3.9 42 0.06
   children [
     Shape {
       appearance RedBricks {
@@ -212,14 +454,17 @@ Solid {
         }
       }
       geometry Box {
-        size 1 13 0.01
+        size 6 78 0.06
       }
     }
   ]
   name "long_road"
+  boundingObject Box {
+    size 6 78 0.06
+  }
 }
 Solid {
-  translation 6.98 7 0.01
+  translation 41.88 42 0.06
   children [
     Shape {
       appearance RedBricks {
@@ -228,14 +473,17 @@ Solid {
         }
       }
       geometry Box {
-        size 1 13 0.01
+        size 6 78 0.06
       }
     }
   ]
   name "long_road(1)"
+  boundingObject Box {
+    size 6 78 0.06
+  }
 }
 Solid {
-  translation 6.98 18.5 0.01
+  translation 41.88 104.82 0.06
   children [
     Shape {
       appearance RedBricks {
@@ -244,14 +492,17 @@ Solid {
         }
       }
       geometry Box {
-        size 1 10 0.01
+        size 6 48 0.06
       }
     }
   ]
   name "long_road(2)"
+  boundingObject Box {
+    size 6 48 0.06
+  }
 }
 Solid {
-  translation 0.66 18.5 0.01
+  translation 3.96 104.94 0.06
   children [
     Shape {
       appearance RedBricks {
@@ -260,14 +511,77 @@ Solid {
         }
       }
       geometry Box {
-        size 1 10 0.01
+        size 6 48 0.06
       }
     }
   ]
   name "long_road(3)"
+  boundingObject Box {
+    size 6 48 0.06
+  }
 }
 Solid {
-  translation 3.92 13.02 0.01
+  translation 22.86 78.12 0.06
+  rotation 0 0 -0.9999999999999999 1.5707953071795862
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 1 10
+        }
+      }
+      geometry Box {
+        size 6 33 0.06
+      }
+    }
+  ]
+  name "road(5)"
+  boundingObject Box {
+    size 6 33 0.06
+  }
+}
+Solid {
+  translation -15.6 86.22 0.06
+  rotation 0 0 -0.9999999999999999 1.5707953071795862
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 1 10
+        }
+      }
+      geometry Box {
+        size 6 33 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 33 0.06
+  }
+}
+Solid {
+  translation 61.38 86.22 0.06
+  rotation 0 0 -0.9999999999999999 1.5707953071795862
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 1 10
+        }
+      }
+      geometry Box {
+        size 6 33 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 33 0.06
+  }
+}
+Solid {
+  translation 22.86 110.94 0.06
   rotation 0 0 1 -1.5707953071795862
   children [
     Shape {
@@ -277,14 +591,97 @@ Solid {
         }
       }
       geometry Box {
-        size 1 5.5 0.01
+        size 6 33 0.06
       }
     }
   ]
-  name "road(5)"
+  name "road(2)"
+  boundingObject Box {
+    size 6 33 0.06
+  }
 }
 Solid {
-  translation 3.82792 2.14229 0.01
+  translation -5.69 148.43 0.06
+  rotation 0 0 1 -2.3561953071795863
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 1 10
+        }
+      }
+      geometry Box {
+        size 6 33 0.06
+      }
+    }
+  ]
+  name "road(2)"
+  boundingObject Box {
+    size 6 33 0.06
+  }
+}
+Solid {
+  translation 22.86 152.76 0.06
+  rotation 0 0 -1 -5.307179586466759e-06
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 10 10
+        }
+      }
+      geometry Box {
+        size 36 24 0.06
+      }
+    }
+  ]
+  name "eb2_courtyard"
+  boundingObject Box {
+    size 36 24 0.06
+  }
+}
+Solid {
+  translation 22.86 175.58 0.06
+  rotation 0 0 -1 -5.307179586466759e-06
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 10 10
+        }
+      }
+      geometry Box {
+        size 36 24 0.06
+      }
+    }
+  ]
+  name "eb2_courtyard(2)"
+  boundingObject Box {
+    size 36 24 0.06
+  }
+}
+Solid {
+  translation 58.86 152.76 0.06
+  rotation 0 0 -1 -5.307179586466759e-06
+  children [
+    Shape {
+      appearance RedBricks {
+        textureTransform TextureTransform {
+          scale 10 10
+        }
+      }
+      geometry Box {
+        size 36 24 0.06
+      }
+    }
+  ]
+  name "eb2_courtyard(1)"
+  boundingObject Box {
+    size 36 24 0.06
+  }
+}
+Solid {
+  translation 22.97 12.85 0.06
   rotation 0 0 -1 1.309
   children [
     Shape {
@@ -294,14 +691,17 @@ Solid {
         }
       }
       geometry Box {
-        size 1 6 0.01
+        size 6 36 0.06
       }
     }
   ]
   name "road(17)"
+  boundingObject Box {
+    size 6 36 0.06
+  }
 }
 Solid {
-  translation 3.95733 6.60424 0.01
+  translation 23.74 39.63 0.06
   rotation 0 0 1 1.04719
   children [
     Shape {
@@ -311,46 +711,159 @@ Solid {
         }
       }
       geometry Box {
-        size 1 7 0.01
+        size 6 42 0.06
       }
     }
   ]
   name "road(18)"
+  boundingObject Box {
+    size 6 42 0.06
+  }
 }
 Building {
-  translation -3.23296 1.48575 0
+  translation -19.4 8.91 0
   rotation 0 0 -1 -1.5708053071795867
   name "Hunt"
-  floorHeight 1
-  floorNumber 1
+  floorHeight 4
+  floorNumber 2
   corners [
-    1 1
-    1 -1
-    -5 -5
-    -5 5
+    6 6
+    6 -6
+    -30 -30
+    -30 30
   ]
-  roofHeight 1
+  wallAppearance FormedConcrete {
+  }
+  roofAppearance CementTiles {
+  }
 }
 Building {
-  translation -5.57376 10.7741 0
+  translation -33.44 52.22 0
   rotation 0 0 1 1.5708
-  name "EB1"
-  floorHeight 1
+  name "fits"
+  floorHeight 4
+  floorNumber 2
+  corners [
+    30 6
+    30 -30
+    -30 -30
+    -30 6
+  ]
+  wallAppearance Pavement {
+    type "slate"
+    colorOverride 0.964706 0.380392 0.317647
+  }
+  roofAppearance CementTiles {
+  }
+}
+Building {
+  translation 54.16 52.22 0
+  rotation 0 0 1 1.5708
+  name "ovalDining"
+  floorHeight 4
+  floorNumber 2
+  corners [
+    30 6
+    30 -30
+    -30 -30
+    -30 6
+  ]
+  wallAppearance RoughConcrete {
+    colorOverride 0.603922 0.6 0.588235
+  }
+  roofAppearance Copper {
+  }
+}
+Building {
+  translation -33.44 122.9 0
+  rotation 0 0 1 1.5708
+  name "eb1"
+  floorHeight 4
+  corners [
+    18 6
+    18 -30
+    -30 -30
+    -30 6
+  ]
+  wallAppearance Pavement {
+    type "slate"
+    colorOverride 0.964706 0.380392 0.317647
+  }
+}
+Building {
+  translation 53.86 122.9 0
+  rotation 0 0 1 1.5708
+  name "eb3"
+  floorHeight 4
+  corners [
+    18 6
+    18 -30
+    -30 -30
+    -30 6
+  ]
+  wallAppearance Pavement {
+    type "slate"
+    colorOverride 0.964706 0.380392 0.317647
+  }
+  roofAppearance Copper {
+  }
+}
+Building {
+  translation -15.3 179.63 0
+  rotation 0 0 1 1.5708
+  name "eb2_2"
+  floorHeight 4
+  corners [
+    30 6
+    36 -30
+    -30 -30
+    -30 6
+  ]
+  wallAppearance Pavement {
+    type "slate"
+    colorOverride 0.964706 0.380392 0.317647
+  }
+}
+Building {
+  translation 39.18 179.63 0
+  rotation 0 0 1 1.5708
+  name "eb2_1"
+  floorHeight 4
+  corners [
+    30 6
+    36 -30
+    -30 -30
+    -30 6
+  ]
+  wallAppearance Pavement {
+    type "slate"
+    colorOverride 0.964706 0.380392 0.317647
+  }
+}
+Building {
+  translation 24.12 158.99 12.18
+  rotation 0.9999999999964793 2.6535899999906573e-06 1.2723699999955203e-14 3.14159
+  name "eb2_roof"
+  floorHeight 4
   floorNumber 1
   corners [
-    5 1
-    5 -5
-    -5 -5
-    -5 1
+    30 6
+    36 -30
+    -30 -30
+    -30 6
   ]
-  roofHeight 1
+  wallAppearance Pavement {
+    type "slate"
+    colorOverride 0.964706 0.380392 0.317647
+  }
+  roofShape "flat roof"
 }
 Robot {
-  translation 0.620766 2.36831 0.0698605
+  translation 3.72 14.21 0.31
   rotation 3.26788e-08 6.3079e-08 -1 1.47959
   children [
     Pen {
-      translation 0 0 0.03
+      translation 0 0 0.135
     }
     Accelerometer {
     }
@@ -362,15 +875,15 @@ Robot {
     GPS {
     }
     Lidar {
-      translation 0.06 0 0.05
+      translation 0.27 0 0.225
       children [
         Shape {
           appearance PBRAppearance {
             baseColor 0.5 1 1
           }
           geometry Cylinder {
-            height 0.05
-            radius 0.03
+            height 0.225
+            radius 0.135
           }
         }
       ]
@@ -385,14 +898,14 @@ Robot {
         metalness 0
       }
       geometry Box {
-        size 0.2 0.1 0.05
+        size 0.9 0.45 0.225
       }
     }
     DEF WHEEL1 HingeJoint {
       jointParameters HingeJointParameters {
         position 6.783155583043955e-12
         axis 0 1 0
-        anchor 0.05 0.06 0
+        anchor 0.225 0.27 0
       }
       device [
         RotationalMotor {
@@ -402,8 +915,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.05 0.06 0
-        rotation 1 1.254879173426083e-10 -1.254883782863134e-10 1.5708
+        translation 0.225 0.27 0
+        rotation 1 1.458373093441123e-10 -1.4583784503544536e-10 1.5708
         children [
           DEF WHEEL Shape {
             appearance PBRAppearance {
@@ -412,8 +925,8 @@ Robot {
               metalness 0
             }
             geometry Cylinder {
-              height 0.02
-              radius 0.04
+              height 0.09
+              radius 0.18
               subdivision 24
             }
           }
@@ -429,7 +942,7 @@ Robot {
       jointParameters HingeJointParameters {
         position 6.783200626419587e-12
         axis 0 1 0
-        anchor 0.05 -0.06 0
+        anchor 0.225 -0.27 0
       }
       device [
         RotationalMotor {
@@ -439,8 +952,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.05 -0.06 0
-        rotation 1 1.2548875064199663e-10 -1.2548921158876244e-10 1.5708
+        translation 0.225 -0.27 0
+        rotation 1 1.4583827777313123e-10 -1.458388134680212e-10 1.5708
         children [
           USE WHEEL
         ]
@@ -456,7 +969,7 @@ Robot {
       jointParameters HingeJointParameters {
         position 6.783066543737865e-12
         axis 0 1 0
-        anchor -0.05 0.06 0
+        anchor -0.225 0.27 0
       }
       device [
         RotationalMotor {
@@ -466,8 +979,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.05 0.06 0
-        rotation 1 1.2548627012149634e-10 -1.2548673105915068e-10 1.5708
+        translation -0.225 0.27 0
+        rotation 1 1.458353950060634e-10 -1.4583593069036434e-10 1.5708
         children [
           USE WHEEL
         ]
@@ -483,7 +996,7 @@ Robot {
       jointParameters HingeJointParameters {
         position 6.783457891774051e-12
         axis 0 1 0
-        anchor -0.05 -0.06 0
+        anchor -0.225 -0.27 0
       }
       device [
         RotationalMotor {
@@ -493,8 +1006,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.05 -0.06 0
-        rotation 1 1.2549351003357202e-10 -1.254939709978201e-10 1.5708
+        translation -0.225 -0.27 0
+        rotation 1 1.4584380895793513e-10 -1.4584434467314227e-10 1.5708
         children [
           USE WHEEL
         ]
