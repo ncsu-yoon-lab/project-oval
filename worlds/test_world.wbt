@@ -12,6 +12,9 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/CementTiles.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Copper.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/trees/protos/Forest.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/humans/pedestrian/protos/Pedestrian.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/trees/protos/SimpleTree.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/trees/protos/Sassafras.proto"
 
 WorldInfo {
   basicTimeStep 16
@@ -26,8 +29,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.1313487655958996 0.1390777894004138 -0.9815318997729658 1.6644238679085321
-  position 3.349946565247008 33.55467955644393 5.6529276824134875
+  orientation -0.11249745928694177 -0.122465793190459 0.986076290736277 4.630653449288189
+  position 4.829692753564468 34.10877575426123 4.591291048861722
   follow "my_robot"
   followType "Mounted Shot"
 }
@@ -41,9 +44,188 @@ Floor {
   appearance Grass {
   }
 }
+Sassafras {
+  translation 15.29 62.61 0
+}
+Solid {
+  translation 0.31 12.35 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(2)"
+}
+Solid {
+  translation 0.31 14.64 0
+  rotation 0 0 1 -2.3561953071795863
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(3)"
+}
+Solid {
+  translation 7.47 5.3 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree"
+}
+Solid {
+  translation 7.47 12.35 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(1)"
+}
+Solid {
+  translation 7.47 44.88 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(4)"
+}
+Solid {
+  translation 7.47 55.4 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(7)"
+}
+Solid {
+  translation 7.47 58.74 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(8)"
+}
+Solid {
+  translation 0.15 58.74 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(9)"
+}
+Solid {
+  translation 0.15 52.44 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(10)"
+}
+Solid {
+  translation 0.15 44.4 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(11)"
+}
+Solid {
+  translation 0.15 36.62 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(12)"
+}
+Solid {
+  translation 0.15 24.5 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(13)"
+}
+Solid {
+  translation 7.47 34.18 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(5)"
+}
+Solid {
+  translation 15.81 34.18 0
+  children [
+    SimpleTree {
+      subdivision 3
+    }
+  ]
+  name "tree(6)"
+}
+Solid {
+  translation 41.98 126.98 0
+  children [
+    Shape {
+      geometry Sphere {
+        radius 0.1
+      }
+    }
+  ]
+  name "waypoint_sphere"
+}
+Pedestrian {
+  translation 2.27634 5.29382 1.39
+  rotation 0 0 1 1.5708
+  controllerArgs [
+    "--trajectory=3 5,3 11,3 15,3 14,3 16,3 19,3 22, 3 30, 6 27"
+  ]
+  enableBoundingObject TRUE
+}
+Pedestrian {
+  translation 19.3163 -5.92618 1.49
+  rotation 0 0 1 2.3562
+  name "pedestrian(2)"
+  controllerArgs [
+    "--speed=5"
+    "--trajectory=19.3 -5.93,20 0,20 39, 5 40,30 60,30 70, 30 80,40 90,40 100, 3 120, 3 50, 30 39, 40 30 "
+  ]
+  shirtColor 0.752941 0.109804 0.156863
+  pantsColor 0 0 0
+  enableBoundingObject TRUE
+}
+Pedestrian {
+  translation 5.56634 5.29382 1.49
+  rotation 0 0 1 1.5708
+  name "pedestrian(1)"
+  controllerArgs [
+    "--speed=2"
+    "--trajectory=4 5,4 11,4 15,3 14,3 16,3 19,4 22,3 25,3 30, 3 40, 3 50, 3 55, 3 60, 3 70, 3 80, 3 90, 3 100, 3 120, 3 130"
+  ]
+  shirtColor 0.239216 0.219608 0.27451
+  enableBoundingObject TRUE
+}
 Forest {
-  translation 103.59 -42.15 0.36
-  rotation 0 0 1 0.523599
+  translation 30.5728 -22.7823 0.36
+  rotation 0 0 -1 -0.261795307179586
+  type "hackberry tree"
+  maxHeight 18
+  minHeight 6
+}
+Forest {
+  translation 54.9157 1.94779 0.36
+  rotation 0 0 1 1.30899
   type "hackberry tree"
   maxHeight 18
   minHeight 6
@@ -859,8 +1041,8 @@ Building {
   roofShape "flat roof"
 }
 Robot {
-  translation 3.72 14.21 0.31
-  rotation 3.26788e-08 6.3079e-08 -1 1.47959
+  translation 3.68815 14.5579 0.31
+  rotation -3.26788e-08 -6.3079e-08 1 -1.479585307179586
   children [
     Pen {
       translation 0 0 0.135
@@ -916,7 +1098,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.225 0.27 0
-        rotation 1 1.458373093441123e-10 -1.4583784503544536e-10 1.5708
+        rotation 1 2.0688548534862472e-10 -2.06886245282841e-10 1.5708
         children [
           DEF WHEEL Shape {
             appearance PBRAppearance {
@@ -953,7 +1135,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.225 -0.27 0
-        rotation 1 1.4583827777313123e-10 -1.458388134680212e-10 1.5708
+        rotation 1 2.0688685916653498e-10 -2.0688761910579787e-10 1.5708
         children [
           USE WHEEL
         ]
@@ -980,7 +1162,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.225 0.27 0
-        rotation 1 1.458353950060634e-10 -1.4583593069036434e-10 1.5708
+        rotation 1 2.0688276965976438e-10 -2.0688352958400546e-10 1.5708
         children [
           USE WHEEL
         ]
@@ -1007,7 +1189,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.225 -0.27 0
-        rotation 1 1.4584380895793513e-10 -1.4584434467314227e-10 1.5708
+        rotation 1 2.0689470573102445e-10 -2.0689546569910906e-10 1.5708
         children [
           USE WHEEL
         ]
