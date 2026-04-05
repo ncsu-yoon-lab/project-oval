@@ -5,6 +5,9 @@ datasheet for motor, used to inform some of the sim decision: https://cdn.shopif
 Contains methods for driving the sim car.
 
 Torque constant = 48.1 Nm/A
+
+max_motor_torque=25450
+max_motor_torque = max_motor_torque / 1000
 '''
 class SimDriverLib():
     # gear ratio and drivetrain efficiency should be tuned.

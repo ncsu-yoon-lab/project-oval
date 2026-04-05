@@ -4,10 +4,12 @@ from project_oval.sim_driver_lib import SimDriverLib
 import rclpy
 from std_msgs.msg import Int64MultiArray, Bool, Int64, String, Float64
 from std_msgs.msg import Float64MultiArray
+from geometry_msgs.msg import Twist
+from enum import Enum
 
 
 # On sim, max input is 10
-MAX_INPUT = 30
+# MAX_INPUT = 30
 '''
 colcon build --packages-select project-oval --symlink-install
 source install/setup.bash
@@ -19,12 +21,19 @@ This is the driver for the simulated car. Ideally this should work like driver_n
 For rviz testing:
 ros2 run rviz2 rviz2
 '''
+WHEEL_RADIUS = 0.18
+TRACK_WIDTH = 0.54
+
+
+# Control modes
+class DriveMode(Enum):
+    XBOX = 0
+    TELEOP = 1
+    PURE_PURSUIT = 2
+
 class SimDriverNode:
     def init(self, webots_node, properties):
         
-        #Convert
-        max_motor_torque=25450
-        max_motor_torque = max_motor_torque / 1000
 
         self.current_speed = 1.0
         self.__robot = webots_node.robot
@@ -35,11 +44,9 @@ class SimDriverNode:
         self.__motor_devices = [] 
 
         self.__time = 0.0
-        self.__brake = False   # updated from /brake
 
-        # self.__pen = self.__robot.getDevice('pen')
-        # self.__pen.write(True)
-        # self.__pen.setInkColor(0xFF0000, 1)  # red, full opacity
+        # Brake command to prevent collisions and other potential uses (stopping for tours)
+        self.__brake = False 
        
         # Contains methods for converting throttle to torque to be sent to motor
         self.driver_lib = SimDriverLib()
@@ -63,21 +70,17 @@ class SimDriverNode:
         # End Class arguments from DriverNode
 
         # Pure pursuit params
-        # TODO: Add these to driver node
-        # self.pp_left_throttle = 0.0
-        # self.pp_right_throttle = 0.0
         self.pp_left_omega = 0.0
         self.pp_right_omega = 0.0
         self.pp_use_throttle = False
 
+        # Teleoperation mode:
+        self.teleop_left_omega = 0.0
+        self.teleop_right_omega = 0.0
+
 
         rclpy.init(args=None)
         self.__node = rclpy.create_node('sim_driver_node')
-
-        # publishers for measured wheel angular velocities
-        self.left_wheel_vel_pub = self.__node.create_publisher(Float64, "/left_wheel/angular_velocity", 10)
-
-        self.right_wheel_vel_pub = self.__node.create_publisher(Float64, "/right_wheel/angular_velocity",10)
 
         # Subcribe to the xbox controller nodes
         self.__node.create_subscription(Int64, '/xbox_controller/steer', self.steer_callback, 10)
@@ -88,51 +91,42 @@ class SimDriverNode:
         # self.create_subscription(Int64, '/gemini/throttle', self.auto_throttle_callback, 10)
         # self.create_subscription(Int64, '/gemini/steering', self.auto_steer_callback, 10)
 
-        # Pure pursuit sub for throttle
-        # self.__node.create_subscription(Float64, "/pure_pursuit/left_throttle", self.pp_left_throttle_callback, 10)
-        # self.__node.create_subscription(Float64, "/pure_pursuit/right_throttle", self.pp_right_throttle_callback, 10)
-        # self.__node.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
-
+        # pure puresuit subscribers
         self.__node.create_subscription(Float64MultiArray, "/pure_pursuit/omega", self.pp_omega_callback, 10)
-        self.__node.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
-
-        # self.__node.create_subscription(Float64)
 
         # Subscribe to brake signal
         self.__brake_sub = self.__node.create_subscription(Bool,"/brake", self.__brake_callback, 10)
 
+        # Teleoperation mode
+        self.__node.create_subscription(Twist, "/cmd_vel", self.cmd_vel_callback, 10)
 
-    # Callbacks for left and right throttle in pure pursuit
-    # TODO: Add an equivalent in the driver node
-    # def pp_left_throttle_callback(self, msg: Float64):
-    #     self.pp_left_throttle = msg.data
+        # Mode callback for changing modes (what is sending velocity commands)
+        self.__node.create_subscription(String, "/driver/mode", self.mode_callback, 10)
 
-    # def pp_right_throttle_callback(self, msg: Float64):
-    #     self.pp_right_throttle = msg.data
 
-    def pp_use_throttle_callback(self, msg: Bool):
-        self.pp_use_throttle = msg.data
-
+    # Pure pursuit control callbacks
     def pp_omega_callback(self, msg: Float64MultiArray):
-        print("Got speeds! yay")
         self.pp_left_omega = msg.data[0]
         self.pp_right_omega = msg.data[1]
+
+    # teleoperation mode callbacks
+    def cmd_vel_callback(self, msg: Twist):
+        linear = msg.linear.x
+        angular = msg.angular.z
+        self.teleop_left_omega = (linear - angular * TRACK_WIDTH / 2.0) / WHEEL_RADIUS
+        self.teleop_right_omega = (linear + angular * TRACK_WIDTH / 2.0) / WHEEL_RADIUS
 
     # Start callbacks from DriverNode
     def steer_callback(self, msg):
         self.manual_steer = msg.data
     
     def brake_callback(self, msg):
-
         self.stop_signal = msg.data
-        
         if self.stop_signal:
             print(f"Stop Signal: {self.stop_signal}")
 
-    
     def mode_callback(self, msg):
-        
-        self.mode = "Manual" if msg.data else "Auto"
+        self.mode = DriveMode(int(msg.data))
 
     def auto_steer_callback(self, msg):
         self.auto_steer = msg.data
@@ -188,101 +182,22 @@ class SimDriverNode:
 
     # Modified send_speeds function for the simulator
     def send_speeds(self):
-        # TODO: We need throttle for control from Xbox controller
         # For control code, for a differential drive robot it is better to use something like setRPM where PyVesc handles PID for us.
         try:
-      
-        #     if self.mode == "Auto":
-        #         # TODO: Add this support to driver node as well.
-        #         if self.pp_use_throttle: # pure pursuit automatic control
-        #             left_throttle = self.pp_left_throttle
-        #             right_throttle = self.pp_right_throttle
-        #             steer_cmd = 0
-        #         else:
-        #             steer_cmd = self.auto_steer
-        #             left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
-        #     else:
-        #         steer_cmd = self.manual_steer
-        #         left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
-            
-        #     # --- Anti deadlock for sim skid steer ---
-        #     # If we're steering but one side hits exactly 0, force a tiny counter throttle
-        #     # so the contact solver breaks symmetry and you get yaw.
-        #     if abs(steer_cmd) > 1 and (right_throttle == 0 or left_throttle == 0):
-        #         eps = 2  # in "throttle units" (tune 1-5)
-        #         if right_throttle == 0:
-        #             right_throttle = -eps if left_throttle > 0 else eps
-        #         if left_throttle == 0:
-        #             left_throttle = -eps if right_throttle > 0 else eps
-        #     # # --------------------------------------
-          
-        #     # wheel 1 and 3 represent the left drivetrain on car
-        #     # wheel 2 and 4 represent right drivetrain on car.
-        #     # We may need to modify sim car somehow if we want it to be more mechanically similar to Oval Car
             left_drive_train = [self.__motor_devices[0], self.__motor_devices[2]]
             right_drive_train = [self.__motor_devices[1], self.__motor_devices[3]]
-            
-        #     left_speeds = [left_drive_train[0].getVelocity(), left_drive_train[1].getVelocity()]
-        #     right_speeds = [right_drive_train[0].getVelocity(), right_drive_train[1].getVelocity()]
 
-        #     # average per drivetrain
-        #     left_avg = sum(left_speeds) / len(left_speeds)
-        #     right_avg = sum(right_speeds) / len(right_speeds)
-
-        #     # publish measured angular velocity (rad/s)
-        #     left_msg = Float64()
-        #     left_msg.data = left_avg
-        #     self.left_wheel_vel_pub.publish(left_msg)
-
-        #     right_msg = Float64()
-        #     right_msg.data = right_avg
-        #     self.right_wheel_vel_pub.publish(right_msg)
-        #     print("setting torque values")
-            
-        #     # now calculate torque
-        #     left_torque = self.driver_lib.get_torque_input(left_throttle, left_speeds, lambda x: self.driver_lib.soft_pedal(x))
-        #     per_motor_left = left_torque / 2
-
-        #     right_torque = self.driver_lib.get_torque_input(right_throttle, right_speeds, lambda x: self.driver_lib.soft_pedal(x))
-        #     per_motor_right = right_torque / 2
-        #     print(left_torque)
-        #     print(right_torque)
-
-        #     # TODO: This some sketchy scaling to improve turning. 
-        #     # May have to look over this.
-        #     if per_motor_right > 0 and per_motor_left > 0 or per_motor_right < 0 and per_motor_left < 0:
-        #         per_motor_right /= 20
-        #         per_motor_left  /= 20
-        #     else:
-        #         per_motor_left /= 5
-        #         per_motor_right /= 5
-
-        #     # if per_motor_left != 0 and per_motor_right == 0:
-        #     #     per_motor_right = per_motor_left * 0.1
-            
-        #     # if per_motor_right != 0 and per_motor_left == 0:
-        #     #     per_motor_left = per_motor_right * 0.1
-
-   
-            
-        #     for m in left_drive_train:
-        #         m.setForce(per_motor_left)
-        #     for m in right_drive_train:
-        #         m.setForce(per_motor_right)
-
-            #print("---------")
-            #print("max vel:", m.getMaxVelocity())
-            #print("avail torque:", m.getAvailableTorque())
-            #print("max torque:", m.getMaxTorque())
-            #print("---------")
-
-            if self.pp_use_throttle:
+            if self.mode == DriveMode.TELEOP:
+                for m in left_drive_train:
+                    m.setVelocity(self.teleop_left_omega)
                 for m in right_drive_train:
-                    m.setVelocity(self.pp_right_omega)
+                    m.setVelocity(self.teleop_right_omega)
+
+            elif self.mode == DriveMode.PURE_PURSUIT:
                 for m in left_drive_train:
                     m.setVelocity(self.pp_left_omega)
-
-
+                for m in right_drive_train:
+                    m.setVelocity(self.pp_right_omega)
 
             return True
         except Exception as e:
