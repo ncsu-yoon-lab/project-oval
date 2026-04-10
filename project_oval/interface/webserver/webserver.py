@@ -1,35 +1,37 @@
-# fast api imports
-from fastapi import FastAPI, HTTPException, Request
-
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-# uvicorn
 import uvicorn
 
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# lib files, still developing
 import config
-from lib.graph import load_data, build_graph
+from lib.graph       import load_data, build_graph
+from lib.pathfinding import astar, path_distance
+from lib.car_client  import send_path_to_car # not complete yet
 
 
-# Startup config files.
+# Startup
 
-DATA         = load_data(config.DATA_FILE)
-COORDS, ADJ  = build_graph(DATA)
-VALID_IDS    = set(COORDS.keys())
+DATA  = load_data(config.DATA_FILE)
+COORDS, ADJ = build_graph(DATA)
+VALID_IDS = set(COORDS.keys())
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-# Routes
+# routes
 
+# Serve the frontend.
 @app.get("/")
 async def index():
     return FileResponse("static/index.html")
 
-# get fraph for frontend
+
+# Return full graph data for the frontend to render.
 @app.get("/graph")
 async def graph():
-    # should be fine, comes from config file on car.
     adj_serialized = {}
     for k, neighbors in ADJ.items():
         adj_serialized[str(k)] = {}
@@ -44,6 +46,7 @@ async def graph():
     }
 
 
+# Compute A* path between two nodes.
 @app.post("/find_path")
 async def find_path(request):
     body  = await request.json()
@@ -59,9 +62,8 @@ async def find_path(request):
 
     path_ids = astar(start, goal, COORDS, ADJ)
     if not path_ids:
-        raise HTTPException(status_code=404, detail=f"No path from {start} to {goal}")
+        raise HTTPException(status_code=404, detail="No path from " + str(start) + " to " + str(goal))
 
-    # Build path from astar
     coords = []
     for i in path_ids:
         coords.append({"id": i, "latlon": COORDS[i]})
@@ -73,6 +75,7 @@ async def find_path(request):
     }
 
 
+# Send computed path to the car over mTLS.
 @app.post("/send_path")
 async def send_path(request: Request):
     body     = await request.json()
@@ -96,7 +99,15 @@ async def send_path(request: Request):
     return {"status": "ok", "car_status": result["status"]}
 
 
-# Entry point.
+# Entry point
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=config.HOST, port=config.PORT)
+    uvicorn.run(
+        app,
+        host=config.HOST,
+        port=config.PORT,
+        ssl_certfile=config.CERT_FILE,
+        ssl_keyfile=config.KEY_FILE,
+        ssl_ca_certs=config.CA_FILE,
+        ssl_cert_reqs="required",
+    )
