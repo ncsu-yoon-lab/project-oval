@@ -1,101 +1,97 @@
+#!/usr/bin/env python3
 import json
 import math
-import httpx
-import networkx as nx
+import heapq
+from pathlib import Path
 
+import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import uvicorn
 
-CERT_FILE = "/etc/gateway/webserver.crt"
-KEY_FILE = "/etc/gateway/webserver.key"
-CA_FILE = "/etc/gateway/root-ca.crt"
-
-PORT = 8443
-
-GATEWAY_URL = "https://car.local:8443"
+# --- Config ---
+PORT        = 8443
+DATA_FILE   = Path("oval_points.json")
+CAR_URL     = "https://car.local:8443/path"
+CERT_FILE   = "/etc/gateway/webserver.crt"
+KEY_FILE    = "/etc/gateway/webserver.key"
+CA_FILE     = "/etc/gateway/root-ca.crt"
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-with open("map.json", "r") as f:
-    map_data = json.load(f)
-
-nodes = {node["id"]: node for node in map_data["nodes"]}
-edges = map_data["edges"]
-
-G = nx.Graph()
-
-for node in map_data["nodes"]:
-    G.add_node(node["id"], x=node["x"], y=node["y"])
-
-for edge in map_data["edges"]:
-    a = nodes[edge["from"]]
-    b = nodes[edge["to"]]
-    weight = math.sqrt((a["x"] - b["x"]) ** 2 + (a["y"] - b["y"]) ** 2)
-    G.add_edge(edge["from"], edge["to"], weight=weight)
 
 
-def heuristic(a, b):
-    return math.sqrt((G.nodes[a]["x"] - G.nodes[b]["x"]) ** 2 + (G.nodes[a]["y"] - G.nodes[b]["y"]) ** 2)
-
+# 
 
 @app.get("/")
 async def index():
     return FileResponse("static/index.html")
 
 
-@app.get("/map_data")
-async def get_map_data():
-    return map_data
-
 
 @app.post("/find_path")
 async def find_path(request: Request):
     body = await request.json()
-    start_id = body.get("start")
-    goal_id = body.get("goal")
+    start = body.get("start")
+    goal  = body.get("goal")
 
-    if not start_id or not goal_id:
-        raise HTTPException(status_code=400, detail="Start and goal required")
-
-    try:
-        path = nx.astar_path(G, start_id, goal_id, heuristic=heuristic, weight="weight")
-    except nx.NetworkXNoPath:
-        raise HTTPException(status_code=404, detail="No path found")
-    except nx.NodeNotFound:
+    if start is None or goal is None:
+        raise HTTPException(status_code=400, detail="start and goal required")
+    if start not in VALID_IDS or goal not in VALID_IDS:
         raise HTTPException(status_code=400, detail="Invalid node id")
+    if start == goal:
+        raise HTTPException(status_code=400, detail="Start and goal must differ")
 
-    return {"path": path, "points": [{"x": nodes[n]["x"], "y": nodes[n]["y"]} for n in path]}
+    path_ids = astar(start, goal)
+    if not path_ids:
+        raise HTTPException(status_code=404, detail=f"No path from {start} to {goal}")
+
+    path_coords = [{"id": i, "latlon": COORDS[i]} for i in path_ids]
+    total_dist  = sum(
+        haversine(COORDS[path_ids[i]], COORDS[path_ids[i + 1]])
+        for i in range(len(path_ids) - 1)
+    )
+
+    return {
+        "path":       path_ids,
+        "coords":     path_coords,
+        "distance_m": round(total_dist, 1),
+    }
 
 
 @app.post("/send_path")
 async def send_path(request: Request):
-    points = await request.json()
+    body = await request.json()
+    path_ids = body.get("path", [])
+    if len(path_ids) < 2:
+        raise HTTPException(status_code=400, detail="Path must have at least 2 points")
 
-    if not points:
-        raise HTTPException(status_code=400, detail="No points provided")
+    payload = {
+        "start":     {"id": path_ids[0],  "latlon": COORDS[path_ids[0]]},
+        "waypoints": [{"id": i, "latlon": COORDS[i]} for i in path_ids[1:-1]],
+        "finish":    {"id": path_ids[-1], "latlon": COORDS[path_ids[-1]]},
+    }
 
-    async with httpx.AsyncClient(
-        cert=(CERT_FILE, KEY_FILE),
-        verify=CA_FILE
-    ) as client:
-        response = await client.post(f"{GATEWAY_URL}/path", json=points)
+    try:
+        async with httpx.AsyncClient(
+            cert=(CERT_FILE, KEY_FILE),
+            verify=CA_FILE,
+            timeout=3.0,
+        ) as client:
+            r = await client.post(CAR_URL, json=payload)
+        if r.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"Car rejected path: {r.status_code}")
+        return {"status": "ok", "car_status": r.status_code}
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=502, detail="Gateway rejected the path")
+    except httpx.ConnectError:
+        raise HTTPException(status_code=503, detail="Could not reach car — is it online?")
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Car connection timed out")
 
-    return {"status": "ok"}
 
-
-def main():
-    uvicorn.run(
-        app,
-        host="127.0.0.1",
-        port=PORT
-    )
-
+# Entry point.
 
 if __name__ == "__main__":
-    main()
+    uvicorn.run(app, host="0.0.0.0", port=PORT)

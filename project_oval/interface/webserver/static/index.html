@@ -3,562 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Oval — Mission Control</title>
+<title>Project OVAL — Mission Control</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:wght@300;400;500&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --red:     #CC0000;
-    --red-dk:  #990000;
-    --red-lt:  #ff3333;
-    --white:   #FFFFFF;
-    --gray-1:  #F5F5F5;
-    --gray-2:  #E0E0E0;
-    --gray-3:  #9E9E9E;
-    --gray-4:  #616161;
-    --gray-5:  #212121;
-    --black:   #111111;
-    --node:    #CC0000;
-    --edge:    #D0D0D0;
-    --path:    #212121;
-    --bg:      #F5F5F5;
-    --panel:   #FFFFFF;
-    --border:  #E0E0E0;
-    --mono:    'Roboto Condensed', sans-serif;
-    --sans:    'Roboto', sans-serif;
+    --red:    #CC0000;
+    --red-dk: #990000;
+    --white:  #FFFFFF;
+    --g1:     #F5F5F5;
+    --g2:     #E0E0E0;
+    --g3:     #9E9E9E;
+    --g4:     #616161;
+    --g5:     #212121;
+    --mono:   'Roboto Condensed', sans-serif;
+    --sans:   'Roboto', sans-serif;
   }
 
-  html, body { height: 100%; background: var(--bg); color: var(--gray-5); font-family: var(--sans); font-weight: 400; overflow: hidden; }
+  html, body { height: 100%; background: var(--g1); font-family: var(--sans); overflow: hidden; }
 
-  #app { display: grid; grid-template-columns: 1fr 300px; grid-template-rows: 56px 1fr; height: 100vh; }
+  #app { display: grid; grid-template-columns: 1fr 300px; grid-template-rows: 52px 1fr; height: 100vh; }
 
+  /* Header */
   header {
     grid-column: 1 / -1;
     background: var(--red);
     display: flex;
     align-items: center;
-    padding: 0 24px;
-    gap: 16px;
-    border-bottom: 4px solid var(--red-dk);
+    padding: 0 20px;
+    gap: 14px;
+    border-bottom: 3px solid var(--red-dk);
   }
+  .h-logo { font-family: var(--mono); font-weight: 700; font-size: 18px; color: var(--white); letter-spacing: .06em; text-transform: uppercase; }
+  .h-div  { width: 1px; height: 22px; background: rgba(255,255,255,.3); }
+  .h-title{ font-family: var(--mono); font-size: 13px; color: rgba(255,255,255,.85); letter-spacing: .08em; text-transform: uppercase; }
+  .h-sep  { flex: 1; }
+  #h-state{ font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,.7); letter-spacing: .1em; background: rgba(0,0,0,.2); padding: 3px 10px; border-radius: 2px; }
 
-  .header-logo {
-    font-family: var(--mono);
-    font-weight: 700;
-    font-size: 20px;
-    color: var(--white);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+  /* Map */
+  #map { width: 100%; height: 100%; }
 
-  .header-divider {
-    width: 1px;
-    height: 24px;
-    background: rgba(255,255,255,0.3);
-  }
+  /* Sidebar */
+  #sidebar { background: var(--white); display: flex; flex-direction: column; border-left: 1px solid var(--g2); overflow: hidden; }
 
-  .header-title {
-    font-family: var(--mono);
-    font-weight: 400;
-    font-size: 14px;
-    color: rgba(255,255,255,0.85);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+  .sb-hd { background: var(--g5); padding: 11px 16px; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--white); letter-spacing: .15em; text-transform: uppercase; }
 
-  header .sep { flex: 1; }
+  .sb-sec { padding: 14px 16px; border-bottom: 1px solid var(--g2); }
 
-  #header-status {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 0.1em;
-    background: rgba(0,0,0,0.2);
-    padding: 4px 10px;
-    border-radius: 2px;
-  }
+  .sb-lbl { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .2em; color: var(--g3); text-transform: uppercase; margin-bottom: 8px; }
 
-  #map-container {
-    background: var(--white);
-    position: relative;
-    overflow: hidden;
-    border-right: 1px solid var(--border);
-  }
+  /* Path list */
+  #path-list { flex: 1; overflow-y: auto; padding: 10px 16px; border-bottom: 1px solid var(--g2); }
+  #path-list::-webkit-scrollbar { width: 3px; }
+  #path-list::-webkit-scrollbar-thumb { background: var(--g2); }
 
-  #map-canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+  .pi { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--g1); font-family: var(--mono); font-size: 12px; }
+  .pi:last-child { border-bottom: none; }
+  .pi-idx   { color: var(--g3); width: 18px; text-align: right; font-size: 10px; }
+  .pi-id    { color: var(--red); font-weight: 700; min-width: 28px; }
+  .pi-name  { color: var(--g4); font-size: 11px; }
+  .pi-dist  { color: var(--g3); font-size: 10px; margin-left: auto; }
+  .no-path  { font-family: var(--mono); font-size: 11px; color: var(--g3); text-align: center; padding: 20px 0; letter-spacing: .05em; }
 
-  #sidebar {
-    background: var(--panel);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-left: 1px solid var(--border);
-  }
+  /* Distance badge */
+  #dist-badge { font-family: var(--mono); font-size: 11px; color: var(--g4); padding: 8px 16px; border-bottom: 1px solid var(--g2); display: none; }
+  #dist-badge span { color: var(--red); font-weight: 700; }
 
-  .sidebar-header {
-    background: var(--gray-5);
-    padding: 12px 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
+  /* Buttons */
+  .act { padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; }
+  .btn { width: 100%; padding: 10px; border: none; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background .1s; }
+  .btn-send  { background: var(--red); color: var(--white); }
+  .btn-send:hover:not(:disabled) { background: var(--red-dk); }
+  .btn-send:disabled { background: var(--g2); color: var(--g3); cursor: not-allowed; }
+  .btn-clear { background: var(--g1); color: var(--g4); border: 1px solid var(--g2); }
+  .btn-clear:hover { background: var(--g2); }
 
-  .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+  /* Status */
+  #status { padding: 9px 16px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--g3); border-top: 1px solid var(--g2); background: var(--g1); min-height: 34px; text-transform: uppercase; }
+  #status.ok  { color: #2e7d32; background: #f1f8f1; }
+  #status.err { color: var(--red-dk); background: #fff5f5; }
 
-  .sidebar-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: var(--gray-3);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
+  /* Instruction box */
+  #instructions { font-family: var(--mono); font-size: 10px; color: var(--g4); letter-spacing: .05em; line-height: 1.7; }
+  #instructions b { color: var(--g5); }
 
-  .mode-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-
-  .mode-btn {
-    padding: 9px 8px;
-    background: var(--white);
-    border: 1px solid var(--gray-2);
-    color: var(--gray-4);
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: all 0.1s;
-    text-transform: uppercase;
-    border-radius: 2px;
-  }
-
-  .mode-btn:hover { border-color: var(--red); color: var(--red); }
-  .mode-btn.active { background: var(--red); border-color: var(--red); color: var(--white); }
-
-  #path-list { flex: 1; overflow-y: auto; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-  #path-list::-webkit-scrollbar { width: 4px; }
-  #path-list::-webkit-scrollbar-thumb { background: var(--gray-2); }
-
-  .path-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--gray-1);
-    font-family: var(--mono);
-    font-size: 12px;
-  }
-
-  .path-item:last-child { border-bottom: none; }
-  .path-index { color: var(--gray-3); width: 20px; text-align: right; font-size: 11px; }
-  .path-node { color: var(--red); font-weight: 700; }
-  .path-arrow { color: var(--gray-3); font-size: 10px; }
-  .path-coords { color: var(--gray-3); font-size: 10px; margin-left: auto; }
-  .no-path { font-family: var(--mono); font-size: 11px; color: var(--gray-3); text-align: center; padding: 24px 0; letter-spacing: 0.05em; }
-
-  .action-btns { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
-
-  .btn {
-    width: 100%;
-    padding: 11px;
-    border: none;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.1s;
-    border-radius: 2px;
-  }
-
-  .btn-send { background: var(--red); color: var(--white); }
-  .btn-send:hover { background: var(--red-dk); }
-  .btn-send:disabled { background: var(--gray-2); color: var(--gray-3); cursor: not-allowed; }
-  .btn-clear { background: var(--gray-1); color: var(--gray-4); border: 1px solid var(--gray-2); }
-  .btn-clear:hover { background: var(--gray-2); }
-
-  #status-bar {
-    padding: 10px 16px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--gray-3);
-    border-top: 1px solid var(--border);
-    background: var(--gray-1);
-    min-height: 36px;
-    text-transform: uppercase;
-  }
-
-  #status-bar.ok { color: #2e7d32; background: #f1f8f1; }
-  #status-bar.err { color: var(--red-dk); background: #fff5f5; }
-
-  .corner-tag {
-    position: absolute;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--gray-3);
-    pointer-events: none;
-    text-transform: uppercase;
-  }
-
-  .corner-tag.tl { top: 10px; left: 12px; }
-  .corner-tag.br { bottom: 10px; right: 12px; }
-
-  .path-count-badge {
-    display: inline-block;
-    background: var(--red);
-    color: var(--white);
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 2px;
-    margin-left: 6px;
-    vertical-align: middle;
-  }
+  /* Leaflet overrides */
+  .leaflet-popup-content-wrapper { border-radius: 2px; font-family: var(--mono); }
+  .leaflet-popup-content { font-size: 12px; }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
-    <span class="header-logo">NC State</span>
-    <span class="header-divider"></span>
-    <span class="header-title">Project Oval — Mission Control</span>
-    <span class="sep"></span>
-    <span id="header-status">READY</span>
+    <span class="h-logo">NC State</span>
+    <span class="h-div"></span>
+    <span class="h-title">Project OVAL — Mission Control</span>
+    <span class="h-sep"></span>
+    <span id="h-state">LOADING</span>
   </header>
 
-  <div id="map-container">
-    <canvas id="map-canvas"></canvas>
-    <span class="corner-tag tl">Map View</span>
-    <span class="corner-tag br" id="coords-tag">X: — &nbsp; Y: —</span>
-  </div>
+  <div id="map"></div>
 
   <div id="sidebar">
-    <div class="sidebar-header">Path Planner</div>
+    <div class="sb-hd">Path Planner</div>
 
-    <div class="sidebar-section">
-      <div class="sidebar-label">Mode</div>
-      <div class="mode-btns">
-        <button class="mode-btn active" id="btn-astar" onclick="setMode('astar')">A* Auto</button>
-        <button class="mode-btn" id="btn-draw" onclick="setMode('draw')">Manual</button>
+    <div class="sb-sec">
+      <div class="sb-lbl">Instructions</div>
+      <div id="instructions">
+        <b>1.</b> Click a node or waypoint to set <b>start</b><br>
+        <b>2.</b> Click another to set <b>goal</b><br>
+        <b>3.</b> A* path computed automatically<br>
+        <b>4.</b> Send to car when ready
       </div>
     </div>
 
-    <div class="sidebar-section">
-      <div class="sidebar-label">
-        Path
-        <span class="path-count-badge" id="path-count">0</span>
-      </div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Path <span id="path-count" style="background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;margin-left:4px;">0</span></div>
     </div>
 
-    <div id="path-list">
-      <div class="no-path">No path defined</div>
+    <div id="path-list"><div class="no-path">No path defined</div></div>
+
+    <div id="dist-badge">Distance: <span id="dist-val">—</span></div>
+
+    <div class="act">
+      <button class="btn btn-send" id="btn-send" disabled onclick="sendPath()">Send to Car</button>
+      <button class="btn btn-clear" onclick="clearPath()">Clear</button>
     </div>
 
-    <div class="action-btns">
-      <button class="btn btn-send" id="btn-send" onclick="sendPath()" disabled>Send to Car</button>
-      <button class="btn btn-clear" onclick="clearPath()">Clear Path</button>
-    </div>
-
-    <div id="status-bar">Awaiting input</div>
+    <div id="status">Awaiting input</div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const canvas = document.getElementById('map-canvas');
-const ctx = canvas.getContext('2d');
-const coordsTag = document.getElementById('coords-tag');
-const statusBar = document.getElementById('status-bar');
-const headerStatus = document.getElementById('header-status');
-const pathList = document.getElementById('path-list');
-const pathCount = document.getElementById('path-count');
-const btnSend = document.getElementById('btn-send');
-
-const NODE_RADIUS = 9;
-const CLICK_RADIUS = 18;
-
-const COLOR_EDGE      = '#D0D0D0';
-const COLOR_NODE_FILL = '#FFFFFF';
-const COLOR_NODE_STR  = '#CC0000';
-const COLOR_PATH      = '#CC0000';
-const COLOR_START     = '#212121';
-const COLOR_GRID      = '#F0F0F0';
-
-let nodes = [];
-let edges = [];
-let path = [];
-let pathPoints = [];
-let mode = 'astar';
-let astarStart = null;
 
 
-async function loadMap() {
-  const res = await fetch('/map_data');
-  const data = await res.json();
-  nodes = data.nodes;
-  edges = data.edges;
-  draw();
-  setStatus('Map loaded — ' + nodes.length + ' nodes, ' + edges.length + ' edges', 'ok');
-}
-
-
-function resizeCanvas() {
-  const container = document.getElementById('map-container');
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
-  draw();
-}
-
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGrid();
-  drawEdges();
-  drawPathEdges();
-  drawNodes();
-}
-
-function drawGrid() {
-  ctx.strokeStyle = COLOR_GRID;
-  ctx.lineWidth = 1;
-  const step = 40;
-  for (let x = 0; x < canvas.width; x += step) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-  }
-  for (let y = 0; y < canvas.height; y += step) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-  }
-}
-
-function drawEdges() {
-  ctx.strokeStyle = COLOR_EDGE;
-  ctx.lineWidth = 1.5;
-  for (const edge of edges) {
-    const a = getNode(edge.from);
-    const b = getNode(edge.to);
-    if (!a || !b) continue;
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-  }
-}
-
-function drawPathEdges() {
-  if (path.length < 2) return;
-  ctx.strokeStyle = COLOR_PATH;
-  ctx.lineWidth = 3;
-  ctx.setLineDash([8, 4]);
-  for (let i = 0; i < path.length - 1; i++) {
-    const a = getNode(path[i]);
-    const b = getNode(path[i + 1]);
-    if (!a || !b) continue;
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-  }
-  ctx.setLineDash([]);
-}
-
-function drawNodes() {
-  for (const node of nodes) {
-    const inPath = path.includes(node.id);
-    const isFirst = path[0] === node.id;
-    const isLast = path[path.length - 1] === node.id;
-    const isAstarStart = astarStart === node.id;
-
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, NODE_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = (isFirst || isAstarStart) ? COLOR_START : isLast ? COLOR_PATH : inPath ? COLOR_PATH : COLOR_NODE_FILL;
-    ctx.strokeStyle = (isFirst || isAstarStart) ? COLOR_START : COLOR_NODE_STR;
-    ctx.lineWidth = inPath || isAstarStart ? 2.5 : 1.5;
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = (inPath || isAstarStart) ? '#FFFFFF' : COLOR_NODE_STR;
-    ctx.font = "bold 10px 'Roboto Condensed', sans-serif";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(node.id, node.x, node.y);
-  }
-}
-
-
-function getNode(id) {
-  return nodes.find(n => n.id === id);
-}
-
-function getNearestNode(x, y) {
-  let nearest = null;
-  let nearestDist = Infinity;
-  for (const node of nodes) {
-    const dist = Math.sqrt((node.x - x) ** 2 + (node.y - y) ** 2);
-    if (dist < CLICK_RADIUS && dist < nearestDist) {
-      nearest = node;
-      nearestDist = dist;
-    }
-  }
-  return nearest;
-}
-
-canvas.addEventListener('mousemove', e => {
-  const rect = canvas.getBoundingClientRect();
-  coordsTag.textContent = 'X: ' + Math.round(e.clientX - rect.left) + '   Y: ' + Math.round(e.clientY - rect.top);
-});
-
-canvas.addEventListener('click', e => {
-  const rect = canvas.getBoundingClientRect();
-  const clicked = getNearestNode(e.clientX - rect.left, e.clientY - rect.top);
-  if (!clicked) return;
-  mode === 'astar' ? handleAstarClick(clicked) : handleDrawClick(clicked);
-});
-
-
-async function handleAstarClick(node) {
-  if (!astarStart) {
-    astarStart = node.id;
-    path = [node.id];
-    setStatus('Start: ' + node.id + ' — click destination', '');
-    draw();
-    return;
-  }
-
-  if (node.id === astarStart) {
-    setStatus('Select a different destination node', 'err');
-    return;
-  }
-
-  setStatus('Computing path...', '');
-
-  const res = await fetch('/find_path', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ start: astarStart, goal: node.id })
-  });
-
-  if (!res.ok) {
-    const data = await res.json();
-    setStatus('Error: ' + data.detail, 'err');
-    astarStart = null;
-    path = [];
-    draw();
-    return;
-  }
-
-  const data = await res.json();
-  path = data.path;
-  pathPoints = data.points;
-  astarStart = null;
-  setStatus('Path found: ' + path.join(' → '), 'ok');
-  updatePathList();
-  draw();
-}
-
-function handleDrawClick(node) {
-  if (path.includes(node.id)) {
-    setStatus('Node ' + node.id + ' already in path', 'err');
-    return;
-  }
-  path.push(node.id);
-  pathPoints = path.map(id => { const n = getNode(id); return { x: n.x, y: n.y }; });
-  setStatus('Added node ' + node.id, '');
-  updatePathList();
-  draw();
-}
-
-
-function setMode(m) {
-  mode = m;
-  astarStart = null;
-  path = [];
-  pathPoints = [];
-  updatePathList();
-  draw();
-  document.getElementById('btn-astar').classList.toggle('active', m === 'astar');
-  document.getElementById('btn-draw').classList.toggle('active', m === 'draw');
-  setStatus(m === 'astar' ? 'A* mode — click start node' : 'Manual mode — click nodes to build path', '');
-}
-
-
-function updatePathList() {
-  pathCount.textContent = path.length;
-  btnSend.disabled = path.length < 2;
-
-  if (path.length === 0) {
-    pathList.innerHTML = '<div class="no-path">No path defined</div>';
-    return;
-  }
-
-  pathList.innerHTML = path.map((id, i) => {
-    const node = getNode(id);
-    return '<div class="path-item">' +
-      '<span class="path-index">' + (i + 1) + '</span>' +
-      '<span class="path-node">' + id + '</span>' +
-      '<span class="path-coords">(' + node.x + ', ' + node.y + ')</span>' +
-      '</div>';
-  }).join('');
-}
-
-
-function clearPath() {
-  path = [];
-  pathPoints = [];
-  astarStart = null;
-  updatePathList();
-  draw();
-  setStatus('Path cleared', '');
-}
-
-
-async function sendPath() {
-  if (pathPoints.length < 2) return;
-
-  btnSend.disabled = true;
-  setStatus('Sending path to car...', '');
-  headerStatus.textContent = 'TRANSMITTING';
-
-  try {
-    const res = await fetch('/send_path', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pathPoints)
-    });
-
-    if (res.ok) {
-      setStatus('Path sent successfully', 'ok');
-      headerStatus.textContent = 'PATH SENT';
-    } else {
-      const data = await res.json();
-      setStatus('Error: ' + (data.detail || 'unknown'), 'err');
-      headerStatus.textContent = 'ERROR';
-    }
-  } catch (err) {
-    setStatus('Connection error: ' + err.message, 'err');
-    headerStatus.textContent = 'DISCONNECTED';
-  }
-
-  btnSend.disabled = false;
-}
-
-
-function setStatus(msg, type) {
-  statusBar.textContent = msg;
-  statusBar.className = type || '';
-}
-
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-loadMap();
+init();
 </script>
 </body>
 </html>
