@@ -42,7 +42,7 @@ def main():
         (11.6, 0.5),
         (13.0, 2.2),
     ]
-    path = base_path
+    path = interpolate_polyline(base_path)
 
     pp = PurePursuit(lookahead_distance=0.7, velocity=0.8)
     pp.alpha = 0.0               # constant speed for clarity
@@ -50,7 +50,7 @@ def main():
     pp.goal_tolerance = 0.10
     pp.init_path(path)
 
-    robot = RobotPose2D(1, -2)  # start near the first segment
+    robot = RobotPose2D(0, 0)  # start near the first segment
     yaw = 0.0
     vcurrent = 0.0
     dt = 0.05

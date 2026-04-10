@@ -52,8 +52,8 @@ ros2 topic pub --once /pure_pursuit/path nav_msgs/msg/Path "{header: {frame_id: 
 
 # THIS IS THE SIM CAR DIMENSIONS FOR CENTER LINE DISTANCE and wheel radius
 ##############
-center_line_distance = 0.06  # meters
-wheel_radius = 0.04 # meers
+center_line_distance = 0.27  # meters
+wheel_radius = 0.18  # meters
 #############
 
 class PurePursuitNode(Node):
@@ -120,11 +120,6 @@ class PurePursuitNode(Node):
         # For Rviz, so we can watch the path in real time
         self.path_viz_pub = self.create_publisher(Path, "/viz/planned_path", 10)
         self.trajectory_pub = self.create_publisher(Path, "/viz/trajectory", 10)
-
-        # Once again, these will be removed eventually, assuming Pyvesc handles PID for us.
-        # self.pp_left_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/left_throttle", 10)
-        # self.pp_right_throttle_pub = self.create_publisher(Float64, "/pure_pursuit/right_throttle", 10)
-        # self.pp_use_throttle_pub = self.create_publisher(Bool, "/pure_pursuit/use_throttle", 10)
     
 
     def init_subscribers(self):

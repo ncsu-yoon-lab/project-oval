@@ -12,6 +12,7 @@ import threading
 app = FastAPI()
 
 PORT = 8080
+
 # certs have readonly perms (400) for ros gateway user
 # recently learned about TPMS, Nvidia Orin supports it.
 # I think that would be a pretty cool addition. Would really lock down the car security-wise
