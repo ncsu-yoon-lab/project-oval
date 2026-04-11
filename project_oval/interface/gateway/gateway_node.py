@@ -14,6 +14,7 @@ import ssl
 
 
 app = FastAPI()
+gateway_node = None
 
 PORT = 8080
 
@@ -78,9 +79,10 @@ class GatewayNode(Node):
         return path
 
 def main(args=None):
+    global gateway_node
     rclpy.init(args=args)
-    node = GatewayNode()
-    rclpy.spin(node)
-    node.destroy_node()
+    gateway_node = GatewayNode()
+    rclpy.spin(gateway_node)
+    gateway_node.destroy_node()
     rclpy.shutdown()
 

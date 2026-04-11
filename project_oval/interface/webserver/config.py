@@ -8,7 +8,7 @@ HOST = "0.0.0.0"
 DATA_FILE = Path("oval_points.json")
 
 # Car endpoint
-CAR_URL = "https://car.local:8443/path"
+CAR_URL = "https://oval.car:8080/path"
 
 # mTLS certs
 CERT_FILE = str(Path("~/pki/webserver/webserver.crt").expanduser())

@@ -33,10 +33,11 @@ async def send_path_to_car(path_ids, coords, car_url, cert_file, key_file, ca_fi
             "status": r.status_code,
             "error":  error_msg,
         }
- 
     except httpx.ConnectError:
         return {"ok": False, "status": None, "error": "Could not reach car — is it online?"}
     except httpx.TimeoutException:
         return {"ok": False, "status": None, "error": "Car connection timed out"}
     except Exception as e:
+        print("FULL ERROR:", type(e).__name__, str(e))
         return {"ok": False, "status": None, "error": str(e)}
+        
