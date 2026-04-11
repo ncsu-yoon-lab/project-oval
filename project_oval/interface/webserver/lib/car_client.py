@@ -1,3 +1,5 @@
+import httpx
+
 # Build a flat list of {x, y} points from path ids and coords.
 # coords values are [lat, lon] — gateway reads these as x and y.
 def build_payload(path_ids, coords):

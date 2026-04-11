@@ -49,7 +49,7 @@ async def graph():
 
 # Compute A* path between two nodes.
 @app.post("/find_path")
-async def find_path(request):
+async def find_path(request: Request):
     body  = await request.json()
     start = body.get("start")
     goal  = body.get("goal")
