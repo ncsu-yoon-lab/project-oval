@@ -42,7 +42,5 @@ async def send_path_to_car(path_ids, coords, car_url, cert_file, key_file, ca_fi
     except httpx.TimeoutException:
         return {"ok": False, "status": None, "error": "Car connection timed out"}
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         return {"ok": False, "status": None, "error": str(e)}
         
