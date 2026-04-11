@@ -4,16 +4,17 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-# lib files, still developing
 import config
 from lib.graph       import load_data, build_graph
 from lib.pathfinding import astar, path_distance
-from lib.car_client  import send_path_to_car # not complete yet
+from lib.car_client  import send_path_to_car
+
+import ssl
 
 
-# Startup
+# startup
 
-DATA  = load_data(config.DATA_FILE)
+DATA = load_data(config.DATA_FILE)
 COORDS, ADJ = build_graph(DATA)
 VALID_IDS = set(COORDS.keys())
 
@@ -109,5 +110,5 @@ if __name__ == "__main__":
         ssl_certfile=config.CERT_FILE,
         ssl_keyfile=config.KEY_FILE,
         ssl_ca_certs=config.CA_FILE,
-        ssl_cert_reqs="required",
+        ssl_cert_reqs=ssl.CERT_REQUIRED,
     )
