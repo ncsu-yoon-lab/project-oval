@@ -1,4 +1,5 @@
 import httpx
+import ssl
 
 # Build a flat list of {x, y} points from path ids and coords.
 # coords values are [lat, lon] — gateway reads these as x and y.
@@ -15,11 +16,14 @@ def build_payload(path_ids, coords):
 # Never raises all errors are captured in the return value.
 async def send_path_to_car(path_ids, coords, car_url, cert_file, key_file, ca_file):
     payload = build_payload(path_ids, coords)
- 
+    
+    ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile=ca_file)
+    ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+    ssl_context.verify_mode = ssl.CERT_REQUIRED
+
     try:
-        async with httpx.AsyncClient( cert=(cert_file, key_file),verify=ca_file,timeout=3.0,) as client:
+        async with httpx.AsyncClient(verify=ssl_context) as client:
             r = await client.post(car_url, json=payload)
-        
         # Any 200 should be fine.
         success = 200 <= r.status_code < 300
  
@@ -38,6 +42,7 @@ async def send_path_to_car(path_ids, coords, car_url, cert_file, key_file, ca_fi
     except httpx.TimeoutException:
         return {"ok": False, "status": None, "error": "Car connection timed out"}
     except Exception as e:
-        print("FULL ERROR:", type(e).__name__, str(e))
+        import traceback
+        traceback.print_exc()
         return {"ok": False, "status": None, "error": str(e)}
         
