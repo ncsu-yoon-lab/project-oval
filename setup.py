@@ -35,6 +35,7 @@ setup(
         'console_scripts': [
             'my_robot_driver = project_oval.sim_driver_node:main', 
             'pure_pursuit_node = project_oval.control.path_following.pure_pursuit.pure_pursuit_node:main',
+            'gateway_node = project_oval.interface.gateway.gateway_node:main',
         ],
     },
 )

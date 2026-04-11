@@ -26,20 +26,6 @@ from .pure_pursuit import PurePursuit
 # Import PID controller for pure pursuit.
 from .pure_pursuit_pid import PurePursuitPid
 
-# This node is written to work with the simulation. I do not yet know how subscription names will differ when run on the car.
-# We will figure that out, should not require major refactoring.
-
-# distance from center of wheel to, robot center line
-
-# THIS IS THE PHYSICAL CAR DIMENSIONS FOR CENTER LINE DISTANCE and wheel radius
-###########
-# center_line_distance = 9.5 # in
-# center_line_distance = center_line_distance * 0.0254 # meters
-# wheel_radius = 3 in
-# wheel_radius = wheel_radius * 0.0254 meters
-################
-
-
 '''
 Testing process on sim
 ros2 launch project-oval car_sim_launch.py

@@ -8,6 +8,10 @@ from fastapi import FastAPI, Request, HTTPException
 import uvicorn
 import threading
 
+import pathlib
+
+import ssl
+
 
 app = FastAPI()
 
@@ -16,22 +20,23 @@ PORT = 8080
 # certs have readonly perms (400) for ros gateway user
 # recently learned about TPMS, Nvidia Orin supports it.
 # I think that would be a pretty cool addition. Would really lock down the car security-wise
-CERT_FILE = "/etc/gateway/car.crt"
-KEY_FILE = "/etc/gateway/car.key"
+CERT_FILE = str(pathlib.Path("~/pki/car/car.crt").expanduser())
+KEY_FILE = str(pathlib.Path("~/pki/car/car.key").expanduser())
+
+
 
 # Lab root CAR cert. For verification of webserver cert.
-CA_FILE = "/etc/gateway/root-ca.crt"
+CA_FILE = str(pathlib.Path("~/pki/root/root-ca.crt").expanduser())
 
 # The gateway node currently, only needs to accept path points.
 @app.post("/path")
-async def receive_path(points: list):
+async def receive_path(request: Request):
+    points = await request.json()
     if gateway_node is None:
-        raise HTTPException(status_code=503, detail="Gateway node not ready for path, please wait.")
-    # build the path from points json and publish it.
+        raise HTTPException(status_code=503, detail="Gateway node not ready.")
     path_msg = gateway_node.build_path_msg(points)
     gateway_node.path_pub.publish(path_msg)
-    
-    return {"status": "success", "path received of length: ": len(points)}
+    return {"status": "ok", "points": len(points)}
 
 
 class GatewayNode(Node):
@@ -53,7 +58,7 @@ class GatewayNode(Node):
             ssl_certfile=CERT_FILE,
             ssl_keyfile=KEY_FILE,
             ssl_ca_certs=CA_FILE, # requires uvicorn check that a cert presented was signed by our root CA.
-            ssl_cert_reqs="required" # If you're thinking of changing this, dont.
+            ssl_cert_reqs=ssl.CERT_REQUIRED # If you're thinking of changing this, dont.
         )
 
     def build_path_msg(self, points):
