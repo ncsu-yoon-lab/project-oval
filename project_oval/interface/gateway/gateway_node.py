@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Twist
 
 # Everything we need for interacting with a web application
 from fastapi import FastAPI, Request, HTTPException
@@ -39,11 +40,26 @@ async def receive_path(request: Request):
     gateway_node.path_pub.publish(path_msg)
     return {"status": "ok", "points": len(points)}
 
+# for teleoperation
+@app.post("/cmd_vel")
+async def receive_cmd_vel(request: Request):
+    body = await request.json()
+    if gateway_node is None:
+        raise HTTPException(status_code=503, detail="Gateway node not ready.")
+   
+    msg = Twist()
+    msg.linear.x = float(body.get("linear_x", 0.0))
+    msg.angular.z = float(body.get("angular_z", 0.0))
+    
+    gateway_node.cmd_vel_pub.publish(msg)
+    return {"status": "ok"}
+
 
 class GatewayNode(Node):
     def __init__(self):
         super().__init__("gateway_node")
         self.path_pub = self.create_publisher(Path, "/pure_pursuit/path", 10)
+        self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.port = 8080
 
         # Start a thread for accepting path requests

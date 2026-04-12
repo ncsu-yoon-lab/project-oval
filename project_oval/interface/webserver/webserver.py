@@ -100,6 +100,24 @@ async def send_path(request: Request):
     return {"status": "ok", "car_status": result["status"]}
 
 
+@app.post("/cmd_vel")
+async def cmd_vel(request: Request):
+    body = await request.json()
+    linear_x = body.get("linear_x", 0.0)
+    angular_z = body.get("angular_z", 0.0)
+    result = await send_cmd_vel_to_car(
+        linear_x,
+        angular_z,
+        config.TELEOP_URL,
+        config.CERT_FILE,
+        config.KEY_FILE,
+        config.CA_FILE,
+    )
+    if not result["ok"]:
+        raise HTTPException(status_code=502, detail=result["error"])
+    return {"status": "ok"}
+
+
 # Entry point
 
 if __name__ == "__main__":

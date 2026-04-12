@@ -43,4 +43,27 @@ async def send_path_to_car(path_ids, coords, car_url, cert_file, key_file, ca_fi
         return {"ok": False, "status": None, "error": "Car connection timed out"}
     except Exception as e:
         return {"ok": False, "status": None, "error": str(e)}
+
+# POST a cmd_vel twist to the car over mTLS.
+# Returns a result dict 
+async def send_cmd_vel_to_car(linear_x, angular_z, car_url, cert_file, key_file, ca_file):
+    payload = {"linear_x": linear_x, "angular_z": angular_z}
+    ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile=ca_file)
+    ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+    ssl_context.verify_mode = ssl.CERT_REQUIRED
+    try:
+        async with httpx.AsyncClient(verify=ssl_context) as client:
+            r = await client.post(car_url, json=payload, timeout=0.1)
+        success = 200 <= r.status_code < 300
+        return {
+            "ok":     success,
+            "status": r.status_code,
+            "error":  None if success else "Car returned " + str(r.status_code),
+        }
+    except httpx.ConnectError:
+        return {"ok": False, "status": None, "error": "Could not reach car — is it online?"}
+    except httpx.TimeoutException:
+        return {"ok": False, "status": None, "error": "Car connection timed out"}
+    except Exception as e:
+        return {"ok": False, "status": None, "error": str(e)}
         
