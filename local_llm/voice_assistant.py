@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Wolfwagen Local Voice Assistant
-Main loop: VAD -> Whisper STT -> Ollama LLM -> Piper TTS -> Speaker
+Main loop: Wakeword -> VAD -> Whisper STT -> Ollama LLM -> Piper TTS -> Speaker
 
 All processing runs locally on the Jetson Orin.
 No cloud APIs required.
@@ -10,20 +10,17 @@ No cloud APIs required.
 import asyncio
 import threading
 import queue
-import sys
-import os
 import numpy as np
 import pyaudio
-
-# GUI
 import tkinter as tk
-from tkinter import font as tkFont
 
 # Local modules
 from vad import VoiceActivityDetector
 from stt import SpeechToText
 from tts import TextToSpeech
 from llm_client import OllamaClient
+from wakeword import WakeWordDetector
+from gui import WolfwagenGUI
 
 # Try to import ROS2 bridge; skip if ROS2 is not available
 try:
@@ -38,90 +35,17 @@ except ImportError:
 TTS_SAMPLE_RATE = 22050
 
 
-# --- GUI ---
+# --- Activation Beep ---
 
-
-class WolfwagenGUI:
-    """Simple status display GUI matching the existing Gemini chatbot style."""
-
-    def __init__(self, root: tk.Tk, gui_queue: queue.Queue):
-        self.root = root
-        self.queue = gui_queue
-        self.root.title("Wolfwagen - Local Voice Assistant")
-        self.root.geometry("900x350")
-        self.root.configure(bg="#2B2B2B")
-
-        main_frame = tk.Frame(self.root, bg="#BB271A")
-        main_frame.pack(fill="both", expand=True, padx=10, pady=10)
-
-        title_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
-        status_font = tkFont.Font(family="Helvetica", size=36, weight="bold")
-        detail_font = tkFont.Font(family="Helvetica", size=18)
-        transcript_font = tkFont.Font(family="Helvetica", size=16)
-
-        tk.Label(
-            main_frame,
-            text="WOLFWAGEN ASSISTANT",
-            font=title_font,
-            fg="#FFFFFF",
-            bg="#BB271A",
-        ).pack(pady=(15, 5))
-
-        self.status_label = tk.Label(
-            main_frame,
-            text="Initializing...",
-            font=status_font,
-            fg="#E0E0E0",
-            bg="#BB271A",
-        )
-        self.status_label.pack(pady=(10, 5))
-
-        self.detail_label = tk.Label(
-            main_frame,
-            text="",
-            font=detail_font,
-            fg="#A9A9A9",
-            bg="#BB271A",
-            wraplength=800,
-        )
-        self.detail_label.pack(pady=(0, 5))
-
-        self.user_label = tk.Label(
-            main_frame,
-            text="",
-            font=transcript_font,
-            fg="#FFFFFF",
-            bg="#BB271A",
-            wraplength=800,
-        )
-        self.user_label.pack(pady=(5, 2))
-
-        self.response_label = tk.Label(
-            main_frame,
-            text="",
-            font=transcript_font,
-            fg="#FFD700",
-            bg="#BB271A",
-            wraplength=800,
-        )
-        self.response_label.pack(pady=(2, 15))
-
-        self._poll_queue()
-
-    def _poll_queue(self):
-        try:
-            while not self.queue.empty():
-                msg_type, value = self.queue.get_nowait()
-                if msg_type == "status":
-                    self.status_label.config(text=value)
-                elif msg_type == "detail":
-                    self.detail_label.config(text=value)
-                elif msg_type == "user":
-                    self.user_label.config(text=f"You: {value}")
-                elif msg_type == "response":
-                    self.response_label.config(text=f"Wolfwagen: {value}")
-        finally:
-            self.root.after(50, self._poll_queue)
+def _activation_beep(sample_rate: int = TTS_SAMPLE_RATE) -> np.ndarray:
+    """Double 880 Hz beep played after wakeword detection."""
+    beep_duration = 0.10
+    gap_duration = 0.06
+    freq = 880
+    t = np.linspace(0, beep_duration, int(sample_rate * beep_duration), endpoint=False)
+    beep = (np.sin(2 * np.pi * freq * t) * 0.3).astype(np.float32)
+    silence = np.zeros(int(sample_rate * gap_duration), dtype=np.float32)
+    return np.concatenate([beep, silence, beep])
 
 
 # --- Audio Playback ---
@@ -190,12 +114,16 @@ def assistant_loop(gui_queue: queue.Queue):
     # Initialize components
     gui_queue.put(("status", "Loading models..."))
 
+    wakeword = WakeWordDetector()
     vad = VoiceActivityDetector()
     stt = SpeechToText()
     tts = TextToSpeech()
     llm = OllamaClient()
 
     # Load models
+    gui_queue.put(("detail", "Loading wakeword model..."))
+    wakeword.load()
+
     gui_queue.put(("detail", "Loading VAD..."))
     vad.load()
 
@@ -243,9 +171,9 @@ def assistant_loop(gui_queue: queue.Queue):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    gui_queue.put(("status", "Ready - Speak!"))
-    gui_queue.put(("detail", "Listening for voice input..."))
-    print("[Main] Voice assistant ready. Speak to interact.")
+    gui_queue.put(("status", "Ready"))
+    gui_queue.put(("detail", f"Say '{wakeword.wakeword}' to activate"))
+    print(f"[Main] Voice assistant ready. Say '{wakeword.wakeword}' to activate.")
 
     # Play startup greeting
     try:
@@ -256,15 +184,23 @@ def assistant_loop(gui_queue: queue.Queue):
 
     try:
         while True:
-            # Step 1: Listen for speech (VAD)
+            # Step 1: Wait for wakeword
+            gui_queue.put(("status", "Waiting..."))
+            gui_queue.put(("detail", f"Say '{wakeword.wakeword}' to activate"))
+            wakeword.wait_for_wakeword(pa)
+
+            # Play activation beep and update status
+            play_audio(_activation_beep(), TTS_SAMPLE_RATE, pa)
             gui_queue.put(("status", "Listening..."))
-            gui_queue.put(("detail", "Waiting for voice input"))
+            gui_queue.put(("detail", "Speak your command"))
+
+            # Step 2: Listen for speech (VAD)
             audio = vad.listen_for_speech(pa)
 
             if len(audio) == 0:
                 continue
 
-            # Step 2: Transcribe speech (Whisper)
+            # Step 3: Transcribe speech (Whisper)
             gui_queue.put(("status", "Transcribing..."))
             gui_queue.put(("detail", "Processing speech with Whisper"))
             text = stt.transcribe(audio)
@@ -274,14 +210,14 @@ def assistant_loop(gui_queue: queue.Queue):
                 continue
 
             print(f"[User] {text}")
-            gui_queue.put(("user", text))
+            gui_queue.put(("output", f"You: {text}"))
 
-            # Step 3: Send to LLM (Ollama)
+            # Step 4: Send to LLM (Ollama)
             gui_queue.put(("status", "Thinking..."))
             gui_queue.put(("detail", f"Querying {llm.model}"))
             response = llm.chat(text)
 
-            # Step 4: Handle tool calls if any
+            # Step 5: Handle tool calls if any
             if response["tool_calls"] and tool_handlers:
                 followup = loop.run_until_complete(
                     execute_tool_calls(
@@ -313,16 +249,16 @@ def assistant_loop(gui_queue: queue.Queue):
                 response_text = "I heard you, but I'm not sure how to respond."
 
             print(f"[Wolfwagen] {response_text}")
-            gui_queue.put(("response", response_text))
+            gui_queue.put(("output", f"Wolfwagen: {response_text}"))
 
-            # Step 5: Speak the response (Piper TTS)
+            # Step 6: Speak the response (Piper TTS)
             gui_queue.put(("status", "Speaking..."))
             gui_queue.put(("detail", "Generating speech with Piper"))
             response_audio = tts.synthesize(response_text)
             play_audio(response_audio, TTS_SAMPLE_RATE, pa)
 
-            gui_queue.put(("status", "Ready - Speak!"))
-            gui_queue.put(("detail", "Listening for voice input..."))
+            gui_queue.put(("status", "Waiting..."))
+            gui_queue.put(("detail", f"Say '{wakeword.wakeword}' to activate"))
 
     except KeyboardInterrupt:
         print("\n[Main] Shutting down...")
