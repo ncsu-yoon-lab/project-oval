@@ -269,29 +269,52 @@ def assistant_loop(gui_queue: queue.Queue):
         loop.close()
 
 
+def _run_headless(gui_queue: queue.Queue):
+    """Drain the GUI queue to stdout when no display is available."""
+    while True:
+        try:
+            msg_type, value = gui_queue.get(timeout=0.1)
+            if msg_type == "status":
+                print(f"[Status] {value}")
+            elif msg_type == "detail":
+                print(f"[Detail] {value}")
+            elif msg_type == "output":
+                print(f"[Output] {value}")
+        except queue.Empty:
+            pass
+
+
 def main():
-    """Start the GUI and assistant loop."""
+    """Start the GUI (or headless fallback) and assistant loop."""
     gui_queue = queue.Queue()
-    root = tk.Tk()
-    gui = WolfwagenGUI(root, gui_queue)
+
+    # Try to start the GUI; fall back to headless if no display is available
+    try:
+        root = tk.Tk()
+        WolfwagenGUI(root, gui_queue)
+        use_gui = True
+    except tk.TclError:
+        print("[Main] No display detected — running in headless (terminal) mode.")
+        use_gui = False
 
     assistant_thread = threading.Thread(
         target=assistant_loop, args=(gui_queue,), daemon=True
     )
     assistant_thread.start()
 
-    def on_closing():
-        print("[Main] Close signal received.")
-        root.destroy()
-
-    root.protocol("WM_DELETE_WINDOW", on_closing)
-
-    try:
-        root.mainloop()
-    except KeyboardInterrupt:
-        print("\n[Main] KeyboardInterrupt.")
-    finally:
-        print("[Main] Application exited.")
+    if use_gui:
+        root.protocol("WM_DELETE_WINDOW", lambda: root.destroy())
+        try:
+            root.mainloop()
+        except KeyboardInterrupt:
+            print("\n[Main] KeyboardInterrupt.")
+        finally:
+            print("[Main] Application exited.")
+    else:
+        try:
+            _run_headless(gui_queue)
+        except KeyboardInterrupt:
+            print("\n[Main] Shutting down.")
 
 
 if __name__ == "__main__":
