@@ -1,15 +1,18 @@
 """
-Text-to-Speech module using Piper TTS (Python library).
-Runs on CPU, leaving GPU free for LLM and Whisper.
-Outputs raw PCM audio that can be played directly via PyAudio.
+Text-to-Speech using the Piper binary (subprocess).
+Outputs raw 16-bit PCM audio for direct playback via PyAudio.
+
+The Piper Python package does not work on aarch64 (Jetson Orin).
+Using the pre-compiled binary installed by setup.sh instead.
 """
 
+import subprocess
 import wave
 import numpy as np
 from pathlib import Path
 
-# Default Piper voice model
-DEFAULT_PIPER_MODEL = "en_US-libritts_r-medium"
+DEFAULT_PIPER_MODEL = "en_US-lessac-medium"
+DEFAULT_PIPER_BINARY = Path(__file__).parent / "piper" / "piper"
 DEFAULT_PIPER_DATA_DIR = Path(__file__).parent / "piper_models"
 DEFAULT_SAMPLE_RATE = 22050
 
@@ -19,51 +22,53 @@ class TextToSpeech:
         self,
         model: str = DEFAULT_PIPER_MODEL,
         data_dir: Path = DEFAULT_PIPER_DATA_DIR,
+        piper_binary: Path = DEFAULT_PIPER_BINARY,
         sample_rate: int = DEFAULT_SAMPLE_RATE,
     ):
         self.model = model
         self.data_dir = data_dir
+        self.piper_binary = piper_binary
         self.sample_rate = sample_rate
-        self.voice = None
+        self._model_path = None
+        self._config_path = None
 
     def load(self):
-        from piper import PiperVoice
-
-        model_path = self.data_dir / f"{self.model}.onnx"
-        config_path = self.data_dir / f"{self.model}.onnx.json"
-
-        if not model_path.exists():
+        if not self.piper_binary.exists():
             raise FileNotFoundError(
-                f"Piper model not found at {model_path}. Run setup.sh to download models."
+                f"Piper binary not found at {self.piper_binary}. Run setup.sh first."
             )
 
-        print(f"[TTS] Loading Piper voice model '{self.model}'...")
-        self.voice = PiperVoice.load(str(model_path), config_path=str(config_path))
-        self.sample_rate = self.voice.config.sample_rate
-        print(f"[TTS] Piper ready (sample_rate={self.sample_rate})")
+        self._model_path = self.data_dir / f"{self.model}.onnx"
+        self._config_path = self.data_dir / f"{self.model}.onnx.json"
+
+        if not self._model_path.exists():
+            raise FileNotFoundError(
+                f"Piper model not found at {self._model_path}. Run setup.sh to download models."
+            )
+
+        print(f"[TTS] Piper ready (model={self.model}, binary={self.piper_binary})")
 
     def synthesize(self, text: str) -> np.ndarray:
-        if self.voice is None:
-            raise RuntimeError("Voice not loaded. Call load() first.")
-
+        if self._model_path is None:
+            raise RuntimeError("Call load() before synthesize()")
         if not text or not text.strip():
             return np.array([], dtype=np.float32)
 
-        # Collect raw PCM from all audio chunks (one per sentence)
-        audio_chunks = []
-        for chunk in self.voice.synthesize(text):
-            audio_chunks.append(chunk.audio_int16_array)
+        cmd = [str(self.piper_binary), "--model", str(self._model_path), "--output-raw"]
+        if self._config_path.exists():
+            cmd += ["--config", str(self._config_path)]
 
-        if not audio_chunks:
-            return np.array([], dtype=np.float32)
+        result = subprocess.run(
+            cmd,
+            input=text.encode(),
+            capture_output=True,
+            check=True,
+        )
 
-        # chunk.audio is a numpy int16 array
-        audio_int16 = np.concatenate(audio_chunks)
-        audio_float = audio_int16.astype(np.float32) / 32768.0
-        return audio_float
+        audio_int16 = np.frombuffer(result.stdout, dtype=np.int16)
+        return audio_int16.astype(np.float32) / 32768.0
 
     def synthesize_to_file(self, text: str, output_path: str):
-        """Synthesize text and save as WAV file."""
         audio = self.synthesize(text)
         if len(audio) == 0:
             return
@@ -74,5 +79,4 @@ class TextToSpeech:
             wf.setsampwidth(2)
             wf.setframerate(self.sample_rate)
             wf.writeframes(audio_int16.tobytes())
-
         print(f"[TTS] Saved to {output_path}")
