@@ -61,8 +61,8 @@ class VoiceActivityDetector:
         Returns float32 audio normalized to [-1, 1].
         """
         stream = pyaudio_instance.open(
-            format=FORMAT, channels=CHANNELS, rate=self.sample_rate,
-            input=True, input_device_index=self.device_index,
+            format=FORMAT, channels=CHANNELS, rate=48000,
+            input=True, input_device_index=24,
             frames_per_buffer=FRAME_SIZE,
         )
 

@@ -64,28 +64,30 @@ class WakeWordDetector:
         print("[Wakeword] Model ready.")
 
     def wait_for_wakeword(self, pyaudio_instance: pyaudio.PyAudio) -> bool:
-        """
-        Block until the wakeword is detected.
-        Returns True on detection.
-        """
         assert self.model is not None, "Call load() before wait_for_wakeword()"
 
-        stream = pyaudio_instance.open(
-            format=FORMAT,
-            channels=CHANNELS,
-            rate=SAMPLE_RATE,
+        CAPTURE_RATE = 48000
+        CAPTURE_CHUNK = 3840  # 80ms at 48000Hz (CHUNK_SIZE * 3)
+
+        stream = pyaudio_instance.open(  # use pyaudio_instance not pa
+            rate=CAPTURE_RATE,
+            channels=1,
+            format=pyaudio.paInt16,
             input=True,
-            input_device_index=self.device_index,
-            frames_per_buffer=CHUNK_SIZE,
+            input_device_index=24,  # use self.device_index not YOUR_USB_INDEX
+            frames_per_buffer=CAPTURE_CHUNK
         )
 
         print(f"[Wakeword] Waiting for '{self.wakeword}'...")
         try:
             while True:
-                raw = stream.read(CHUNK_SIZE, exception_on_overflow=False)
+                raw = stream.read(CAPTURE_CHUNK, exception_on_overflow=False)
                 audio_chunk = np.frombuffer(raw, dtype=np.int16)
 
-                predictions: dict = self.model.predict(audio_chunk)  # type: ignore[union-attr]
+                # Downsample from 48000 -> 16000 for OpenWakeWord
+                audio_16k = audio_chunk[::3]
+
+                predictions: dict = self.model.predict(audio_16k)
                 score = max(predictions.values(), default=0.0)
 
                 if score >= self.threshold:
