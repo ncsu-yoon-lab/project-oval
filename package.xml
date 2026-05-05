@@ -15,6 +15,7 @@
   <depend>rclpy</depend>
   <depend>geometry_msgs</depend>
   <depend>webots_ros2_driver</depend>
+  <depend>gps_msgs</depend>
 
   <!-- tests -->
   <test_depend>ament_copyright</test_depend>

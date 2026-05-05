@@ -1,0 +1,3540 @@
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 7
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771477022805435
+longitude: -78.67285396250465
+altitude: 79.23463474900964
+track: 0.0
+speed: 0.02435159132377184
+climb: -0.038
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.0
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.854209715130137
+err_horz: 5.151083139773856
+err_vert: 4.52178430557251
+err_track: 0.0
+err_speed: 0.5226004654207161
+err_climb: 0.47708478569984436
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9467577338218689
+- -0.4862422049045563
+- 0.9078904390335083
+- -0.4862422049045563
+- 1.2295395135879517
+- -1.3086745738983154
+- 0.9078904390335083
+- -1.3086745738983154
+- 5.111632823944092
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 100000007
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147698628657
+longitude: -78.6728539667947
+altitude: 79.24347691464408
+track: 0.0
+speed: 0.019104973174542798
+climb: 0.011
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.1
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.655795000267066
+err_horz: 4.996846774956719
+err_vert: 4.3967180252075195
+err_track: 0.0
+err_speed: 0.5225506867611306
+err_climb: 0.477053701877594
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8978673815727234
+- -0.45241987705230713
+- 0.8450940847396851
+- -0.45241987705230713
+- 1.160806655883789
+- -1.217610478401184
+- 0.8450940847396851
+- -1.217610478401184
+- 4.83278226852417
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 200000007
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147696559395
+longitude: -78.6728539272666
+altitude: 79.24006473908528
+track: 0.0
+speed: 0.03231098884280702
+climb: -0.049
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.2
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.109736934532656
+err_horz: 5.349039122185072
+err_vert: 4.683603286743164
+err_track: 0.0
+err_speed: 0.5225003697714647
+err_climb: 0.47702232003211975
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0117526054382324
+- -0.5314015746116638
+- 0.99301677942276
+- -0.5314015746116638
+- 1.3204131126403809
+- -1.430145263671875
+- 0.99301677942276
+- -1.430145263671875
+- 5.484035015106201
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 300000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147694746132
+longitude: -78.67285394215146
+altitude: 79.24561171380752
+track: 0.0
+speed: 0.028160255680657446
+climb: 0.008
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.3
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.973826215181025
+err_horz: 5.24350080901464
+err_vert: 4.597820281982422
+err_track: 0.0
+err_speed: 0.5224495289021741
+err_climb: 0.47699058055877686
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9768268465995789
+- -0.5072551369667053
+- 0.9482417702674866
+- -0.5072551369667053
+- 1.271308183670044
+- -1.3651401996612549
+- 0.9482417702674866
+- -1.3651401996612549
+- 5.284987926483154
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 400000007
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147690807118
+longitude: -78.67285393034939
+altitude: 79.25648220030686
+track: 0.0
+speed: 0.007810249675906654
+climb: 0.004
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.4
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.0920741858380545
+err_horz: 5.335080102506453
+err_vert: 4.672733306884766
+err_track: 0.0
+err_speed: 0.5223981384324228
+err_climb: 0.4769584834575653
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0071072578430176
+- -0.5283045768737793
+- 0.9879273772239685
+- -0.5283045768737793
+- 1.3136674165725708
+- -1.421776533126831
+- 0.9879273772239685
+- -1.421776533126831
+- 5.458609580993652
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 500000007
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147688099191
+longitude: -78.67285389857336
+altitude: 79.2713895661296
+track: 0.0
+speed: 0.03280243893371346
+climb: 0.033
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.5
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.904457332770214
+err_horz: 5.189433772900787
+err_vert: 4.554262638092041
+err_track: 0.0
+err_speed: 0.5223461948238054
+err_climb: 0.4769260585308075
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9592021107673645
+- -0.49515271186828613
+- 0.9262271523475647
+- -0.49515271186828613
+- 1.2464097738265991
+- -1.3325542211532593
+- 0.9262271523475647
+- -1.3325542211532593
+- 5.185327529907227
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 600000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147679384122
+longitude: -78.67285391307625
+altitude: 79.28168414036256
+track: 0.0
+speed: 0.041036569057366384
+climb: -0.036
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.6
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.5341729634241075
+err_horz: 4.901734318915202
+err_vert: 4.3206963539123535
+err_track: 0.0
+err_speed: 0.5222936967391278
+err_climb: 0.47689327597618103
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8684664964675903
+- -0.4322953224182129
+- 0.8088853359222412
+- -0.4322953224182129
+- 1.1191281080245972
+- -1.163395881652832
+- 0.8088853359222412
+- -1.163395881652832
+- 4.6671037673950195
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 700000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147674348506
+longitude: -78.672853918317
+altitude: 79.29313995361902
+track: 0.0
+speed: 0.012041594578792296
+climb: -0.026
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.7
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.552162783619955
+err_horz: 4.91561641631645
+err_vert: 4.3321533203125
+err_track: 0.0
+err_speed: 0.5222406311066398
+err_climb: 0.4768601357936859
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8727160096168518
+- -0.4352908730506897
+- 0.8147134780883789
+- -0.4352908730506897
+- 1.1250412464141846
+- -1.1714674234390259
+- 0.8147134780883789
+- -1.1714674234390259
+- 4.691888332366943
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 800000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147670375825
+longitude: -78.67285385053884
+altitude: 79.3059213103424
+track: 0.0
+speed: 0.03306055050963308
+climb: 0.022
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.8
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.551127808921473
+err_horz: 4.914712575856996
+err_vert: 4.331613540649414
+err_track: 0.0
+err_speed: 0.5221869849593108
+err_climb: 0.47682663798332214
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8724246025085449
+- -0.43513748049736023
+- 0.8146332502365112
+- -0.43513748049736023
+- 1.124600887298584
+- -1.1710705757141113
+- 0.8146332502365112
+- -1.1710705757141113
+- 4.690719127655029
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921025
+    nanosec: 900000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147664992575
+longitude: -78.67285385542573
+altitude: 79.31760603382727
+track: 0.0
+speed: 0.027513632984395207
+climb: 0.032
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956243.9
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.586643808790562
+err_horz: 4.9422195656551855
+err_vert: 4.3541178703308105
+err_track: 0.0
+err_speed: 0.5221327462312806
+err_climb: 0.47679275274276733
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8808797597885132
+- -0.44105035066604614
+- 0.8258970379829407
+- -0.44105035066604614
+- 1.1364344358444214
+- -1.187005877494812
+- 0.8258970379829407
+- -1.187005877494812
+- 4.7395853996276855
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 6
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147658268365
+longitude: -78.67285385914525
+altitude: 79.32042887502516
+track: 0.0
+speed: 0.02137755832643195
+climb: -0.059
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.0
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.6612377124556
+err_horz: 5.000081447077917
+err_vert: 4.401280879974365
+err_track: 0.0
+err_speed: 0.5220779227286623
+err_climb: 0.4767584800720215
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8988345861434937
+- -0.4535539150238037
+- 0.8494954705238342
+- -0.4535539150238037
+- 1.1615970134735107
+- -1.220685601234436
+- 0.8494954705238342
+- -1.220685601234436
+- 4.842818260192871
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 100000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476555056594
+longitude: -78.6728538265684
+altitude: 79.33647469988517
+track: 0.0
+speed: 0.025495097567963924
+climb: 0.065
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.1
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.6369244755048
+err_horz: 4.978981328691619
+err_vert: 4.388452053070068
+err_track: 0.0
+err_speed: 0.5284904845908772
+err_climb: 0.4956730902194977
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.89165860414505
+- -0.448142409324646
+- 0.839407205581665
+- -0.448142409324646
+- 1.1539806127548218
+- -1.2129554748535156
+- 0.839407205581665
+- -1.2129554748535156
+- 4.814627647399902
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 200000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147653626985
+longitude: -78.67285382588956
+altitude: 79.33453194022569
+track: 0.0
+speed: 0.029068883707497266
+climb: -0.057
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.2
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.518664597305106
+err_horz: 4.885105478199189
+err_vert: 4.316101551055908
+err_track: 0.0
+err_speed: 0.528436704108138
+err_climb: 0.49563854932785034
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8621958494186401
+- -0.4273432195186615
+- 0.8004909753799438
+- -0.4273432195186615
+- 1.114798665046692
+- -1.1628450155258179
+- 0.8004909753799438
+- -1.1628450155258179
+- 4.657183647155762
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 300000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476504744
+longitude: -78.67285380030376
+altitude: 79.34101565227698
+track: 0.0
+speed: 0.003605551275463989
+climb: 0.012
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.3
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.532304686129358
+err_horz: 4.893781951369333
+err_vert: 4.326881408691406
+err_track: 0.0
+err_speed: 0.5283822151143773
+err_climb: 0.4956034719944
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8643026947975159
+- -0.4284502863883972
+- 0.8026042580604553
+- -0.4284502863883972
+- 1.1199113130569458
+- -1.1717389822006226
+- 0.8026042580604553
+- -1.1717389822006226
+- 4.680476188659668
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 400000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147647220315
+longitude: -78.67285377275077
+altitude: 79.34403823652109
+track: 0.0
+speed: 0.006
+climb: -0.006
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.4
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.5059378268194585
+err_horz: 4.871530355966032
+err_vert: 4.3122406005859375
+err_track: 0.0
+err_speed: 0.528327116794676
+err_climb: 0.4955679774284363
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8570131659507751
+- -0.4230879843235016
+- 0.792595386505127
+- -0.4230879843235016
+- 1.1116397380828857
+- -1.1625807285308838
+- 0.792595386505127
+- -1.1625807285308838
+- 4.6488542556762695
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 500000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147640093866
+longitude: -78.67285375986556
+altitude: 79.34757289528558
+track: 0.0
+speed: 0.03257299494980466
+climb: 0.009
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.5
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.698118489438647
+err_horz: 5.01876768080819
+err_vert: 4.435849666595459
+err_track: 0.0
+err_speed: 0.5282713863536527
+err_climb: 0.4955320656299591
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9018176198005676
+- -0.45374739170074463
+- 0.8500670790672302
+- -0.45374739170074463
+- 1.1771659851074219
+- -1.2524254322052002
+- 0.8500670790672302
+- -1.2524254322052002
+- 4.919190406799316
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 600000006
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147636259395
+longitude: -78.67285374294944
+altitude: 79.3505856942531
+track: 0.0
+speed: 0.007211102550927978
+climb: -0.001
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.6
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.558484983994612
+err_horz: 4.90897813658581
+err_vert: 4.349213600158691
+err_track: 0.0
+err_speed: 0.5282150212898927
+err_climb: 0.4954957365989685
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8674106001853943
+- -0.42970550060272217
+- 0.8050569295883179
+- -0.42970550060272217
+- 1.1302216053009033
+- -1.191088318824768
+- 0.8050569295883179
+- -1.191088318824768
+- 4.728914737701416
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 700000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476355473034
+longitude: -78.6728537598876
+altitude: 79.34960436641337
+track: 0.0
+speed: 0.03676955262170047
+climb: -0.023
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.7
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.696902478580852
+err_horz: 5.01462041947704
+err_vert: 4.4387030601501465
+err_track: 0.0
+err_speed: 0.5281580068839863
+err_climb: 0.4954589903354645
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8994959592819214
+- -0.45159491896629333
+- 0.8460960388183594
+- -0.45159491896629333
+- 1.1777528524398804
+- -1.2567633390426636
+- 0.8460960388183594
+- -1.2567633390426636
+- 4.925520896911621
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 800000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147634627551
+longitude: -78.6728537482281
+altitude: 79.35271572788389
+track: 0.0
+speed: 0.012041594578792296
+climb: -0.009
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.8
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.548484021306169
+err_horz: 4.8983109084030945
+err_vert: 4.346169948577881
+err_track: 0.0
+err_speed: 0.5281003372183749
+err_climb: 0.49542179703712463
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8632177710533142
+- -0.4263375699520111
+- 0.7987989783287048
+- -0.4263375699520111
+- 1.127766489982605
+- -1.1909443140029907
+- 0.7987989783287048
+- -1.1909443140029907
+- 4.722298622131348
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921026
+    nanosec: 900000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476372028474
+longitude: -78.67285372226641
+altitude: 79.35030810022651
+track: 0.0
+speed: 0.029410882339705485
+climb: -0.042
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956244.9
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.5430628199136285
+err_horz: 4.892784421449302
+err_vert: 4.344229698181152
+err_track: 0.0
+err_speed: 0.5280420017917773
+err_climb: 0.49538418650627136
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8610911965370178
+- -0.4246661365032196
+- 0.7956886291503906
+- -0.4246661365032196
+- 1.1263656616210938
+- -1.190492033958435
+- 0.7956886291503906
+- -1.190492033958435
+- 4.718082427978516
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 5
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147630659424
+longitude: -78.67285368480125
+altitude: 79.36111623095088
+track: 0.0
+speed: 0.06395310782127793
+climb: 0.086
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.0
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.448251913542826
+err_horz: 4.818172833801627
+err_vert: 4.285459518432617
+err_track: 0.0
+err_speed: 0.5279829712448189
+err_climb: 0.4953460991382599
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8382002711296082
+- -0.40870827436447144
+- 0.765806257724762
+- -0.40870827436447144
+- 1.0951255559921265
+- -1.1495985984802246
+- 0.765806257724762
+- -1.1495985984802246
+- 4.591290473937988
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 100000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147625662253
+longitude: -78.67285364597262
+altitude: 79.36773609937589
+track: 0.0
+speed: 0.014422205101855956
+climb: -0.013
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.1
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.39135692347804
+err_horz: 4.7729943700198625
+err_vert: 4.250643253326416
+err_track: 0.0
+err_speed: 0.5279232711006314
+err_climb: 0.4953075647354126
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8243746161460876
+- -0.39902380108833313
+- 0.7476744651794434
+- -0.39902380108833313
+- 1.076720952987671
+- -1.1259093284606934
+- 0.7476744651794434
+- -1.1259093284606934
+- 4.51699161529541
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 200000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476230933686
+longitude: -78.67285364638863
+altitude: 79.37009640850722
+track: 0.0
+speed: 0.04080441152620633
+climb: -0.062
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.2
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.326557581044929
+err_horz: 4.7217801240767345
+err_vert: 4.210715293884277
+err_track: 0.0
+err_speed: 0.5278628524922616
+err_climb: 0.4952685534954071
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8089404702186584
+- -0.388254314661026
+- 0.7275061011314392
+- -0.388254314661026
+- 1.055877447128296
+- -1.0987917184829712
+- 0.7275061011314392
+- -1.0987917184829712
+- 4.432530403137207
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 300000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147622242138
+longitude: -78.67285363346905
+altitude: 79.37014539360314
+track: 0.0
+speed: 0.029
+climb: -0.001
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.3
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.286297350048241
+err_horz: 4.689633237997811
+err_vert: 4.186272144317627
+err_track: 0.0
+err_speed: 0.5278017224377016
+err_climb: 0.4952290654182434
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.7992210388183594
+- -0.3814389407634735
+- 0.7147436141967773
+- -0.3814389407634735
+- 1.0431379079818726
+- -1.0825444459915161
+- 0.7147436141967773
+- -1.0825444459915161
+- 4.381218910217285
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 400000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147618821821
+longitude: -78.67285356909423
+altitude: 79.37594205077588
+track: 0.0
+speed: 0.02012461179749811
+climb: 0.015
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.4
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.230736234932249
+err_horz: 4.645713046185399
+err_vert: 4.15203857421875
+err_track: 0.0
+err_speed: 0.5277398663206302
+err_climb: 0.4951891005039215
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.7862024307250977
+- -0.3723702132701874
+- 0.697755753993988
+- -0.3723702132701874
+- 1.025545597076416
+- -1.0596163272857666
+- 0.697755753993988
+- -1.0596163272857666
+- 4.309855937957764
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 500000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147619627946
+longitude: -78.6728534837941
+altitude: 79.37920428477901
+track: 0.0
+speed: 0.016278820596099707
+climb: 0.009
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.5
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.370690504951021
+err_horz: 4.753098969625295
+err_vert: 4.241903781890869
+err_track: 0.0
+err_speed: 0.5276772712963141
+err_climb: 0.4951486587524414
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8170625567436218
+- -0.39350032806396484
+- 0.7373525500297546
+- -0.39350032806396484
+- 1.0712242126464844
+- -1.1225539445877075
+- 0.7373525500297546
+- -1.1225539445877075
+- 4.498437404632568
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 600000005
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476178647305
+longitude: -78.67285342520647
+altitude: 79.38670903950957
+track: 0.0
+speed: 0.04420407221060069
+climb: 0.048
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.6
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.544295319503195
+err_horz: 4.886380717744635
+err_vert: 4.3532843589782715
+err_track: 0.0
+err_speed: 0.5276139122903032
+err_climb: 0.4951077103614807
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8564029335975647
+- -0.4204629361629486
+- 0.7878757119178772
+- -0.4204629361629486
+- 1.1292425394058228
+- -1.2023125886917114
+- 0.7878757119178772
+- -1.2023125886917114
+- 4.737771511077881
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 700000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147622582901
+longitude: -78.67285345301816
+altitude: 79.38848860848802
+track: 0.0
+speed: 0.06440496875241847
+climb: -0.055
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.7
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.786989693626523
+err_horz: 5.073413418625734
+err_vert: 4.508182048797607
+err_track: 0.0
+err_speed: 0.5275456871411532
+err_climb: 0.4950571358203888
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9137886166572571
+- -0.46009811758995056
+- 0.8621559739112854
+- -0.46009811758995056
+- 1.2123937606811523
+- -1.3156607151031494
+- 0.8621559739112854
+- -1.3156607151031494
+- 5.080925941467285
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 800000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476214490995
+longitude: -78.67285337359476
+altitude: 79.40042299694193
+track: 0.0
+speed: 0.03324154027718932
+climb: 0.028
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.8
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.775864820420172
+err_horz: 5.063901287803497
+err_vert: 4.502138137817383
+err_track: 0.0
+err_speed: 0.527866753799877
+err_climb: 0.5025172233581543
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9120931029319763
+- -0.4574123024940491
+- 0.856839656829834
+- -0.4574123024940491
+- 1.2083375453948975
+- -1.3110252618789673
+- 0.856839656829834
+- -1.3110252618789673
+- 5.067312240600586
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921027
+    nanosec: 900000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147620247748
+longitude: -78.6728533241801
+altitude: 79.41142320279961
+track: 0.0
+speed: 0.012529964086141668
+climb: -0.024
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956245.9
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.789890154326333
+err_horz: 5.074624357982155
+err_vert: 4.511185646057129
+err_track: 0.0
+err_speed: 0.5243249321746806
+err_climb: 0.4923059940338135
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9168338179588318
+- -0.4593501389026642
+- 0.860275387763977
+- -0.4593501389026642
+- 1.2129995822906494
+- -1.3173705339431763
+- 0.860275387763977
+- -1.3173705339431763
+- 5.087698459625244
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 4
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147618929776
+longitude: -78.67285329418065
+altitude: 79.41926678764392
+track: 0.0
+speed: 0.016
+climb: 0.008
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.0
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.96910719377486
+err_horz: 5.212664880838104
+err_vert: 4.625643730163574
+err_track: 0.0
+err_speed: 0.5242407131668351
+err_climb: 0.49221453070640564
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.962238073348999
+- -0.48907822370529175
+- 0.9157520532608032
+- -0.48907822370529175
+- 1.276216983795166
+- -1.4033923149108887
+- 0.9157520532608032
+- -1.4033923149108887
+- 5.34914493560791
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 100000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147620474197
+longitude: -78.67285326458092
+altitude: 79.42353239846665
+track: 0.0
+speed: 0.02137755832643195
+climb: -0.016
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.1
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.9012905733428305
+err_horz: 5.160353094696506
+err_vert: 4.582419395446777
+err_track: 0.0
+err_speed: 0.5241555240297733
+err_climb: 0.4921220541000366
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9466668963432312
+- -0.47725191712379456
+- 0.8934224247932434
+- -0.47725191712379456
+- 1.2517949342727661
+- -1.3701322078704834
+- 0.8934224247932434
+- -1.3701322078704834
+- 5.249642372131348
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 200000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476192709706
+longitude: -78.67285326169821
+altitude: 79.43357351577711
+track: 0.0
+speed: 0.024758836806279896
+climb: -0.009
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.2
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.955851526914563
+err_horz: 5.202342436869472
+err_vert: 4.617304801940918
+err_track: 0.0
+err_speed: 0.524069293402035
+err_climb: 0.49202853441238403
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9614377617835999
+- -0.486140638589859
+- 0.9098800420761108
+- -0.486140638589859
+- 1.2710283994674683
+- -1.3962711095809937
+- 0.9098800420761108
+- -1.3962711095809937
+- 5.32987642288208
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 300000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147622834366
+longitude: -78.67285324274548
+altitude: 79.43737388786438
+track: 0.0
+speed: 0.03668787265568828
+climb: -0.048
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.3
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.094294653709719
+err_horz: 5.308926897487937
+err_vert: 4.705774307250977
+err_track: 0.0
+err_speed: 0.52398202057021
+err_climb: 0.4919338822364807
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9975754618644714
+- -0.5095206499099731
+- 0.9534552097320557
+- -0.5095206499099731
+- 1.3208385705947876
+- -1.4640069007873535
+- 0.9534552097320557
+- -1.4640069007873535
+- 5.536077499389648
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 400000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147619766679
+longitude: -78.67285317501923
+altitude: 79.45185957938935
+track: 0.0
+speed: 0.05103920062069938
+climb: 0.06
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.4
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.159305111489756
+err_horz: 5.358947248003558
+err_vert: 4.747350215911865
+err_track: 0.0
+err_speed: 0.5238936667401688
+err_climb: 0.49183815717697144
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0154104232788086
+- -0.5204996466636658
+- 0.9738189578056335
+- -0.5204996466636658
+- 1.3444581031799316
+- -1.4960880279541016
+- 0.9738189578056335
+- -1.4960880279541016
+- 5.634333610534668
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 500000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147622880723
+longitude: -78.6728531625903
+altitude: 79.46245991087436
+track: 0.0
+speed: 0.023259406699226017
+climb: -0.005
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.5
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.984697022003638
+err_horz: 5.224485642931244
+err_vert: 4.635810852050781
+err_track: 0.0
+err_speed: 0.5238042194157255
+err_climb: 0.49174126982688904
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9719645977020264
+- -0.49017730355262756
+- 0.9169233441352844
+- -0.49017730355262756
+- 1.2807867527008057
+- -1.4093810319900513
+- 0.9169233441352844
+- -1.4093810319900513
+- 5.372685432434082
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 600000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476259781544
+longitude: -78.67285306301481
+altitude: 79.48014669590991
+track: 0.0
+speed: 0.018439088914585774
+climb: 0.027
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.6
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.4845016997571365
+err_horz: 5.609036868674879
+err_vert: 4.955448627471924
+err_track: 0.0
+err_speed: 0.5237135685558248
+err_climb: 0.49164190888404846
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.1024619340896606
+- -0.5782337784767151
+- 1.0813782215118408
+- -0.5782337784767151
+- 1.4664520025253296
+- -1.6618963479995728
+- 1.0813782215118408
+- -1.6618963479995728
+- 6.139117240905762
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 700000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147627572474
+longitude: -78.67285303002102
+altitude: 79.49747447423186
+track: 0.0
+speed: 0.01769180601295413
+climb: -0.01
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.7
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.080841601218777
+err_horz: 5.298441735690882
+err_vert: 4.697321891784668
+err_track: 0.0
+err_speed: 0.5236218765383567
+err_climb: 0.4915426969528198
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9964257478713989
+- -0.5067846179008484
+- 0.9475363492965698
+- -0.5067846179008484
+- 1.3151929378509521
+- -1.455986499786377
+- 0.9475363492965698
+- -1.455986499786377
+- 5.516207695007324
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 800000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147623889915
+longitude: -78.67285299840933
+altitude: 79.51946513346412
+track: 0.0
+speed: 0.018027756377319945
+climb: 0.025
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.8
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.828615286928593
+err_horz: 5.104431036383933
+err_vert: 4.535942077636719
+err_track: 0.0
+err_speed: 0.5233996428295292
+err_climb: 0.4880869388580322
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9331426620483398
+- -0.46436387300491333
+- 0.8682072758674622
+- -0.46436387300491333
+- 1.2249294519424438
+- -1.332817792892456
+- 0.8682072758674622
+- -1.332817792892456
+- 5.143692493438721
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921028
+    nanosec: 900000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476239394154
+longitude: -78.67285299166133
+altitude: 79.53524798532847
+track: 0.0
+speed: 0.032557641192199414
+climb: -0.015
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956246.9
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.667425651915884
+err_horz: 4.980399719347242
+err_vert: 4.432852745056152
+err_track: 0.0
+err_speed: 0.5233032710009367
+err_climb: 0.4879652261734009
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.8938975930213928
+- -0.43811672925949097
+- 0.8191156387329102
+- -0.43811672925949097
+- 1.1689378023147583
+- -1.256327509880066
+- 0.8191156387329102
+- -1.256327509880066
+- 4.912545680999756
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 4
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147616510293
+longitude: -78.67285293480371
+altitude: 79.55504038724952
+track: 0.0
+speed: 0.02842534080710379
+climb: 0.042
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.0
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.797226158066577
+err_horz: 5.0807672812067235
+err_vert: 4.515316963195801
+err_track: 0.0
+err_speed: 0.5232066520110119
+err_climb: 0.4878430664539337
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9254229068756104
+- -0.4596403241157532
+- 0.8593335747718811
+- -0.4596403241157532
+- 1.2137352228164673
+- -1.3168991804122925
+- 0.8593335747718811
+- -1.3168991804122925
+- 5.09702205657959
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 100000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.7714761263167
+longitude: -78.67285289879142
+altitude: 79.56716454639405
+track: 0.0
+speed: 0.02942787793912432
+climb: -0.042
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.1
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.651074144273061
+err_horz: 4.968273895581061
+err_vert: 4.421882152557373
+err_track: 0.0
+err_speed: 0.5231087716335442
+err_climb: 0.48771926760673523
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.889951229095459
+- -0.43589717149734497
+- 0.8149182796478271
+- -0.43589717149734497
+- 1.1631667613983154
+- -1.2478411197662354
+- 0.8149182796478271
+- -1.2478411197662354
+- 4.888260841369629
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 200000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147604013822
+longitude: -78.67285285631955
+altitude: 79.59105391908261
+track: 0.0
+speed: 0.03157530680769389
+climb: 0.033
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.2
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.726977555720215
+err_horz: 5.0270634844954625
+err_vert: 4.469995498657227
+err_track: 0.0
+err_speed: 0.5230096254504373
+err_climb: 0.4875943064689636
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9082512259483337
+- -0.4484832286834717
+- 0.8384181261062622
+- -0.4484832286834717
+- 1.1891690492630005
+- -1.2828633785247803
+- 0.8384181261062622
+- -1.2828633785247803
+- 4.99521541595459
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 300000004
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147598158802
+longitude: -78.67285286412091
+altitude: 79.60365028348527
+track: 0.0
+speed: 0.03966106403010388
+climb: -0.084
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.3
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.939108234436833
+err_horz: 5.190851029699175
+err_vert: 4.6050286293029785
+err_track: 0.0
+err_speed: 0.5229091879140357
+err_climb: 0.4874674379825592
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9605217576026917
+- -0.48405587673187256
+- 0.9048835039138794
+- -0.48405587673187256
+- 1.2635436058044434
+- -1.3835844993591309
+- 0.9048835039138794
+- -1.3835844993591309
+- 5.301572322845459
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 400000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147592215729
+longitude: -78.67285287200814
+altitude: 79.62051832680369
+track: 0.0
+speed: 0.018384776310850236
+climb: 0.049
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.4
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.458729568738723
+err_horz: 5.591147071795193
+err_vert: 4.936772346496582
+err_track: 0.0
+err_speed: 0.5228074342053397
+err_climb: 0.4873393774032593
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0954415798187256
+- -0.5755932331085205
+- 1.0759543180465698
+- -0.5755932331085205
+- 1.4555816650390625
+- -1.6440602540969849
+- 1.0759543180465698
+- -1.6440602540969849
+- 6.092930316925049
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 500000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147584339605
+longitude: -78.67285284783024
+altitude: 79.62520011467426
+track: 0.0
+speed: 0.03244996147917591
+climb: -0.022
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.5
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.191340234906734
+err_horz: 5.385587834251837
+err_vert: 4.765586853027344
+err_track: 0.0
+err_speed: 0.5227043180099765
+err_climb: 0.4872094988822937
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0247352123260498
+- -0.5279726386070251
+- 0.9868903160095215
+- -0.5279726386070251
+- 1.3549333810806274
+- -1.5070240497589111
+- 0.9868903160095215
+- -1.5070240497589111
+- 5.677704334259033
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 600000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147581268338
+longitude: -78.6728528814481
+altitude: 79.63506320773023
+track: 0.0
+speed: 0.03
+climb: 0.043
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.6
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.311321144816501
+err_horz: 5.478159889668823
+err_vert: 4.84202241897583
+err_track: 0.0
+err_speed: 0.5225998399428455
+err_climb: 0.4870780110359192
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0560681819915771
+- -0.5494266152381897
+- 1.0269397497177124
+- -0.5494266152381897
+- 1.3995541334152222
+- -1.5672528743743896
+- 1.0269397497177124
+- -1.5672528743743896
+- 5.861294746398926
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 700000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147572016945
+longitude: -78.67285284074671
+altitude: 79.64508864629501
+track: 0.0
+speed: 0.05381449618829484
+climb: 0.001
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.7
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.9166627347502745
+err_horz: 5.174346312694726
+err_vert: 4.589810848236084
+err_track: 0.0
+err_speed: 0.5224939401623482
+err_climb: 0.48694467544555664
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9547383785247803
+- -0.4809877276420593
+- 0.8989707231521606
+- -0.4809877276420593
+- 1.2553435564041138
+- -1.3711878061294556
+- 0.8989707231521606
+- -1.3711878061294556
+- 5.266590595245361
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 800000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771475714188384
+longitude: -78.6728528453722
+altitude: 79.65067423122798
+track: 0.0
+speed: 0.044553338819890924
+climb: -0.032
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.8
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.959540449949217
+err_horz: 5.207576438408625
+err_vert: 4.6169633865356445
+err_track: 0.0
+err_speed: 0.5223866379719163
+err_climb: 0.48680999875068665
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9654101133346558
+- -0.48842141032218933
+- 0.9128113985061646
+- -0.48842141032218933
+- 1.270583152770996
+- -1.3915646076202393
+- 0.9128113985061646
+- -1.3915646076202393
+- 5.329087257385254
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921029
+    nanosec: 900000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147571815208
+longitude: -78.67285278077044
+altitude: 79.65015097568673
+track: 0.0
+speed: 0.00806225774829855
+climb: -0.02
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956247.9
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.090207281303617
+err_horz: 5.306857890843342
+err_vert: 4.701946258544922
+err_track: 0.0
+err_speed: 0.5261243093552057
+err_climb: 0.4977038502693176
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9974760413169861
+- -0.5098775625228882
+- 0.9527454972267151
+- -0.5098775625228882
+- 1.3183401823043823
+- -1.4578219652175903
+- 0.9527454972267151
+- -1.4578219652175903
+- 5.527074337005615
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 3
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147577290454
+longitude: -78.67285273752069
+altitude: 79.64000389691243
+track: 0.0
+speed: 0.015811388300841896
+climb: -0.014
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.0
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.117019039601096
+err_horz: 5.326168417753311
+err_vert: 4.720581531524658
+err_track: 0.0
+err_speed: 0.5260383911669868
+err_climb: 0.4976302683353424
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0033276081085205
+- -0.5135855674743652
+- 0.9595130681991577
+- -0.5135855674743652
+- 1.3287290334701538
+- -1.473310112953186
+- 0.9595130681991577
+- -1.473310112953186
+- 5.570972442626953
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 100000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.7714757915808
+longitude: -78.67285272897783
+altitude: 79.63142830881675
+track: 0.0
+speed: 0.035510561809129405
+climb: 0.051
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.1
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.3045273552378776
+err_horz: 5.4691565152297965
+err_vert: 4.841946601867676
+err_track: 0.0
+err_speed: 0.5259511784145888
+err_climb: 0.497555136680603
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0509307384490967
+- -0.545581042766571
+- 1.0191230773925781
+- -0.545581042766571
+- 1.39884614944458
+- -1.570004940032959
+- 1.0191230773925781
+- -1.570004940032959
+- 5.861111640930176
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 200000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771475855258636
+longitude: -78.67285274956701
+altitude: 79.61433923570654
+track: 0.0
+speed: 0.04522167621838005
+climb: -0.071
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.2
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.0904926786144165
+err_horz: 5.30331890888803
+err_vert: 4.706367492675781
+err_track: 0.0
+err_speed: 0.5258627457617973
+err_climb: 0.4974791705608368
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9946677684783936
+- -0.5072912573814392
+- 0.9474495053291321
+- -0.5072912573814392
+- 1.3201628923416138
+- -1.4641375541687012
+- 0.9474495053291321
+- -1.4641375541687012
+- 5.537473678588867
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 300000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147586262999
+longitude: -78.67285271173145
+altitude: 79.60612786810408
+track: 0.0
+speed: 0.0028284271247461905
+climb: -0.018
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.3
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.028277468190027
+err_horz: 5.254349607833993
+err_vert: 4.6678147315979
+err_track: 0.0
+err_speed: 0.525773058433825
+err_climb: 0.4974021017551422
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.978041410446167
+- -0.4958658814430237
+- 0.9259679913520813
+- -0.4958658814430237
+- 1.2980761528015137
+- -1.4351533651351929
+- 0.9259679913520813
+- -1.4351533651351929
+- 5.447123050689697
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 400000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147589342588
+longitude: -78.67285269303846
+altitude: 79.59772302865935
+track: 0.0
+speed: 0.007615773105863909
+climb: 0.014
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.4
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.049776843170346
+err_horz: 5.269856870173558
+err_vert: 4.682730197906494
+err_track: 0.0
+err_speed: 0.5256820853299754
+err_climb: 0.4973241686820984
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9826235175132751
+- -0.4988115727901459
+- 0.9313284754753113
+- -0.4988115727901459
+- 1.3063632249832153
+- -1.447475552558899
+- 0.9313284754753113
+- -1.447475552558899
+- 5.481990814208984
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 500000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771475917564416
+longitude: -78.67285264781148
+altitude: 79.58603714728775
+track: 0.0
+speed: 0.03383784863137726
+climb: -0.0
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.5
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 6.921039496698416
+err_horz: 5.16986743530441
+err_vert: 4.601440906524658
+err_track: 0.0
+err_speed: 0.5255897663768009
+err_climb: 0.49724462628364563
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 0.9496580362319946
+- -0.47639137506484985
+- 0.8893367648124695
+- -0.47639137506484985
+- 1.2604987621307373
+- -1.3858437538146973
+- 0.8893367648124695
+- -1.3858437538146973
+- 5.2933149337768555
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 600000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147600429715
+longitude: -78.67285267376576
+altitude: 79.56837347038612
+track: 0.0
+speed: 0.04827007354458868
+climb: -0.006
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.6
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.195648107639752
+err_horz: 5.380074593260525
+err_vert: 4.778299808502197
+err_track: 0.0
+err_speed: 0.5254961358839203
+err_climb: 0.49716439843177795
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0181450843811035
+- -0.5225728154182434
+- 0.975408136844635
+- -0.5225728154182434
+- 1.3608577251434326
+- -1.5237431526184082
+- 0.975408136844635
+- -1.5237431526184082
+- 5.708037376403809
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 700000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.771476061335484
+longitude: -78.67285267020301
+altitude: 79.55392737312891
+track: 0.0
+speed: 0.007280109889280518
+climb: -0.017
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.7
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.209738416311643
+err_horz: 5.389587349028987
+err_vert: 4.788807392120361
+err_track: 0.0
+err_speed: 0.5256600880731208
+err_climb: 0.5012632012367249
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.022033929824829
+- -0.5237177014350891
+- 0.9772266149520874
+- -0.5237177014350891
+- 1.3665454387664795
+- -1.5328059196472168
+- 0.9772266149520874
+- -1.5328059196472168
+- 5.7331695556640625
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 800000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147609294025
+longitude: -78.67285266141025
+altitude: 79.5437974379713
+track: 0.0
+speed: 0.026925824035672518
+climb: 0.037
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.8
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.325947709099742
+err_horz: 5.477555668188236
+err_vert: 4.864760398864746
+err_track: 0.0
+err_speed: 0.5255672387262896
+err_climb: 0.5012096762657166
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0524641275405884
+- -0.542776346206665
+- 1.0124711990356445
+- -0.542776346206665
+- 1.4105585813522339
+- -1.5942169427871704
+- 1.0124711990356445
+- -1.5942169427871704
+- 5.916472911834717
+position_covariance_type: 3
+---
+header:
+  stamp:
+    sec: 1777921030
+    nanosec: 900000003
+  frame_id: swiftnav-gnss
+status:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: ''
+  satellites_used: 15
+  satellite_used_prn: []
+  satellites_visible: 0
+  satellite_visible_prn: []
+  satellite_visible_z: []
+  satellite_visible_azimuth: []
+  satellite_visible_snr: []
+  status: 1
+  motion_source: 1
+  orientation_source: 0
+  position_source: 1
+latitude: 35.77147612947703
+longitude: -78.67285263579447
+altitude: 79.53476486396671
+track: 0.0
+speed: 0.00412310562561766
+climb: -0.035
+pitch: 0.0
+roll: 0.0
+dip: 0.0
+time: 1461956248.9
+gdop: 1.71
+pdop: 1.48
+hdop: 0.87
+vdop: 1.2
+tdop: 0.86
+err: 7.282153636139292
+err_horz: 5.442763653391646
+err_vert: 4.83798360824585
+err_track: 0.0
+err_speed: 0.5254730288679459
+err_climb: 0.5011553168296814
+err_time: 0.0
+err_pitch: 0.0
+err_roll: 0.0
+err_dip: 0.0
+position_covariance:
+- 1.0412588119506836
+- -0.5338976979255676
+- 0.995607852935791
+- -0.5338976979255676
+- 1.3944867849349976
+- -1.5733935832977295
+- 0.995607852935791
+- -1.5733935832977295
+- 5.8515214920043945
+position_covariance_type: 3
+---

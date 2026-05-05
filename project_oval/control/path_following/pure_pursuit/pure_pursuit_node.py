@@ -15,9 +15,11 @@ from nav_msgs.msg import Path
 from std_msgs.msg import Float64, Bool, Float32
 from geometry_msgs.msg import PoseStamped
 
+from gps_msgs.msg import GPSFix
+
 
 # https://docs.ros.org/en/humble/p/tf_transformations/
-from tf_transformations import euler_from_quaternion
+# from tf_transformations import euler_from_quaternion
 from geometry_msgs.msg import PointStamped
 
 # import the pure pursuit algorithm.
@@ -37,8 +39,11 @@ ros2 topic pub --once /pure_pursuit/path nav_msgs/msg/Path "{header: {frame_id: 
 '''
 
 ##############
-center_line_distance = 0.27  # meters
-wheel_radius = 0.18  # meters
+# center_line_distance = 0.27  # meters
+# wheel_radius = 0.18  # meters
+
+center_line_distance = 0.46  # meters
+wheel_radius = 0.0762  # meters
 #############
 
 class PurePursuitNode(Node):
@@ -75,6 +80,9 @@ class PurePursuitNode(Node):
         # this is for dt (change in time) for 
         self.last_time = self.get_clock().now()
 
+        self.origin = [35.770730, -78.674728]
+        self.origin_lat = self.origin[0]
+        self.origin_lon = self.origin[1]
 
         ## added to support physical car, wheel encoders
         self.left_rpm = None
@@ -109,14 +117,16 @@ class PurePursuitNode(Node):
 
     def init_subscribers(self):
         # GPS pose and speed data
-       
-        self.create_subscription(PointStamped,"/gps", self.gps_callback, 10)
+        # different data type
+        # in /gpsfix
+        self.sub = self.create_subscription(GPSFix, '/gpsfix', self.gps_callback, 10)
+        # self.create_subscription(PointStamped,"/gps", self.gps_callback, 10)
         
-        self.create_subscription(Float32, "/gps/speed", self.speed_callback, 10)
+        # self.create_subscription(Float32, "/gps/speed", self.speed_callback, 10)
         
         # IMU data
        
-        self.create_subscription(Imu, "/imu", self.imu_callback, 10)
+        # self.create_subscription(Imu, "/imu", self.imu_callback, 10)
 
         # callback for path
         self.create_subscription(Path, "/pure_pursuit/path", self.path_callback, 10)
@@ -131,9 +141,16 @@ class PurePursuitNode(Node):
 
     
     # Callback for gps data
-    def gps_callback(self, msg: PointStamped):
-        self.x = msg.point.x
-        self.y = msg.point.y
+    def gps_callback(self, msg):
+        # self.x = msg.point.x
+        # self.y = msg.point.y
+        coordinates = self.latlon_to_meters(msg.latitude, msg.longitude)
+        self.x = coordinates[0]
+        self.y = coordinates[1]
+        self.v = msg.speed
+
+        self.yaw = msg.track
+        print(self.x, self.y, self.v, self.yaw)
 
     # Callback for speed data
     def speed_callback(self, msg: Float32):
@@ -161,7 +178,32 @@ class PurePursuitNode(Node):
         self.left_wheel_vel = float(self.left_rpm) * rpm_to_rad_per_sec
         self.right_wheel_vel = float(self.right_rpm) * rpm_to_rad_per_sec
 
-    
+
+    def latlon_to_meters(self, lat: float, lon: float) -> Tuple[float, float]:
+        """
+        Convert lat/lon coordinates to X/Y meters relative to origin.
+        
+        Args:
+            lat (float): Latitude in degrees
+            lon (float): Longitude in degrees
+            
+        Returns:
+            Tuple[float, float]: (x_meters, y_meters) relative to origin
+        """
+        if self.origin_lat is None or self.origin_lon is None:
+            return 0.0, 0.0
+        
+        # Constants for conversion
+        LAT_TO_METERS = 111320.0  # meters per degree latitude
+        
+        # Longitude conversion varies by latitude
+        lon_to_meters = LAT_TO_METERS * math.cos(math.radians(self.origin_lat))
+        
+        # Calculate relative position in meters
+        x_meters = (lon - self.origin_lon) * lon_to_meters
+        y_meters = (lat - self.origin_lat) * LAT_TO_METERS
+        
+        return x_meters, y_meters
     
     # callbacks for measured angular velocity
     def left_wheel_vel_callback(self, msg: Float64):
@@ -294,6 +336,16 @@ class PurePursuitNode(Node):
         print(omega_right_desired)
         print("------")
         omega_msg = Float64MultiArray()
+        
+        omega_left_desired *= math.pi/60
+        omega_right_desired *= math.pi/60
+
+        omega_left_desired = (omega_left_desired * 52) / 13
+        omega_right_desired = (omega_right_desired * 52) / 13
+
+        omega_left_desired = (omega_left_desired * 72) / 15
+        omega_right_desired = (omega_right_desired * 72) / 15
+
         omega_msg.data = [omega_left_desired, omega_right_desired]
         self.pp_omega_pub.publish(omega_msg)
 

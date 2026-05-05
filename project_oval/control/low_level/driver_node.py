@@ -25,6 +25,9 @@ class DriverNode(Node):
         self.serial_port = '/dev/ttyTHS1'
         self.stop_signal = False
 
+        self.pp_left_omega = 0.0
+        self.pp_right_omega = 0.0
+
         # Setup VESC
         self.motor = VESC(self.serial_port)
         print("Motor setup")
@@ -49,10 +52,11 @@ class DriverNode(Node):
         self.pp_right_throttle = 0.0
         self.pp_use_throttle = False
 
-        self.create_subscription(Float64, "/pure_pursuit/left_throttle", self.pp_left_throttle_callback, 10)
-        self.create_subscription(Float64, "/pure_pursuit/right_throttle", self.pp_right_throttle_callback, 10)
-        self.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
+        # self.create_subscription(Float64, "/pure_pursuit/left_throttle", self.pp_left_throttle_callback, 10)
+        # self.create_subscription(Float64, "/pure_pursuit/right_throttle", self.pp_right_throttle_callback, 10)
+        # self.create_subscription(Bool, "/pure_pursuit/use_throttle", self.pp_use_throttle_callback, 10)
         ## 
+        self.create_subscription(Float64MultiArray, "/pure_pursuit/omega", self.pp_omega_callback, 10)
 
     def steer_callback(self, msg):
         self.manual_steer = msg.data
@@ -105,6 +109,11 @@ class DriverNode(Node):
             self.manual_throttle = -MAX_INPUT
         else:
             self.manual_throttle = msg.data
+    
+    # Pure pursuit control callbacks
+    def pp_omega_callback(self, msg: Float64MultiArray):
+        self.pp_left_omega = msg.data[0]
+        self.pp_right_omega = msg.data[1]
 
     def arcade_drive(self, throttle, steer):
         throttle *= -1.0
@@ -145,39 +154,42 @@ class DriverNode(Node):
 
     def send_speeds(self):
         try:
-            if self.mode == "Auto":
-                ## Adding to handle pure pursuit
-                if self.pp_use_throttle:
-                    left_throttle = self.pp_left_throttle
-                    right_throttle = self.pp_right_throttle
-                else:
-                    left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+            # if self.mode == "Auto":
+            #     ## Adding to handle pure pursuit
+            #     if self.pp_use_throttle:
+            #         left_throttle = self.pp_left_throttle
+            #         right_throttle = self.pp_right_throttle
+            #     else:
+            #         left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
     
-                # left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+            #     # left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
              
-            else:
-                left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
-            ##
-            print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+            # else:
+            #     left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
+            # ##
+            # print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
             
-            ## Sending telemetry message
-            tel_l_msg = String()
-            tel_l_msg.data = f'Throttle_L:{left_throttle:.2f}'
-            self.telemetry_message.publish(tel_l_msg)
+            # ## Sending telemetry message
+            # tel_l_msg = String()
+            # tel_l_msg.data = f'Throttle_L:{left_throttle:.2f}'
+            # self.telemetry_message.publish(tel_l_msg)
             
-            tel_r_msg = String()
-            tel_r_msg.data = f'Throttle_R:{right_throttle:.2f}'
-            self.telemetry_message.publish(tel_r_msg)
+            # tel_r_msg = String()
+            # tel_r_msg.data = f'Throttle_R:{right_throttle:.2f}'
+            # self.telemetry_message.publish(tel_r_msg)
             
-            # Convert to duty cycle (-1.0 to 1.0)
-            left_duty = left_throttle / MAX_INPUT
-            right_duty = right_throttle / MAX_INPUT
+            # # Convert to duty cycle (-1.0 to 1.0)
+            # left_duty = left_throttle / MAX_INPUT
+            # right_duty = right_throttle / MAX_INPUT
 
-            right_duty *= -1
+            # right_duty *= -1
             
-            # Send duty cycle to motors
-            self.motor.set_duty_cycle(right_duty)
-            self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
+            # # Send duty cycle to motors
+            # self.motor.set_duty_cycle(right_duty)
+            # self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
+
+            self.motor.set_rpm(self.pp_right_omega)
+            self.motor.set_rpm(self.pp_left_omega, can_id=self.left_id)
             
             return True
         except Exception as e:
