@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int64MultiArray, Bool, Int64, String
+from std_msgs.msg import Int64MultiArray, Bool, Int64, String, Float64MultiArray
 
 from std_msgs.msg import Float64
 
@@ -10,7 +10,9 @@ import threading
 import time
 from pyvesc import VESC
 import atexit
-import time         
+import time    
+
+import pdb
 
 MAX_INPUT = 100.0
 
@@ -154,42 +156,43 @@ class DriverNode(Node):
 
     def send_speeds(self):
         try:
-            # if self.mode == "Auto":
-            #     ## Adding to handle pure pursuit
-            #     if self.pp_use_throttle:
-            #         left_throttle = self.pp_left_throttle
-            #         right_throttle = self.pp_right_throttle
-            #     else:
-            #         left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+            if self.mode == "Auto":
+                ## Adding to handle pure pursuit
+                # if self.pp_use_throttle:
+                #     left_throttle = self.pp_left_throttle
+                #     right_throttle = self.pp_right_throttle
+                # else:
+                #     left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
     
-            #     # left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+                # left_throttle, right_throttle = self.arcade_drive(self.auto_throttle, self.auto_steer)
+                print(f"AUTO: Left RPM {self.pp_left_omega}, Right RPM {self.pp_right_omega}")
+                self.motor.set_rpm(int(self.pp_right_omega))
+                self.motor.set_rpm(int(self.pp_left_omega), can_id=self.left_id)
              
-            # else:
-            #     left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
-            # ##
-            # print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
-            
-            # ## Sending telemetry message
-            # tel_l_msg = String()
-            # tel_l_msg.data = f'Throttle_L:{left_throttle:.2f}'
-            # self.telemetry_message.publish(tel_l_msg)
-            
-            # tel_r_msg = String()
-            # tel_r_msg.data = f'Throttle_R:{right_throttle:.2f}'
-            # self.telemetry_message.publish(tel_r_msg)
-            
-            # # Convert to duty cycle (-1.0 to 1.0)
-            # left_duty = left_throttle / MAX_INPUT
-            # right_duty = right_throttle / MAX_INPUT
+            else:
+                left_throttle, right_throttle = self.arcade_drive(self.manual_throttle, self.manual_steer)
 
-            # right_duty *= -1
-            
-            # # Send duty cycle to motors
-            # self.motor.set_duty_cycle(right_duty)
-            # self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
+                print(f"Left Throttle: {left_throttle}, Right Throttle: {right_throttle}")
+                
+                ## Sending telemetry message
+                tel_l_msg = String()
+                tel_l_msg.data = f'Throttle_L:{left_throttle:.2f}'
+                self.telemetry_message.publish(tel_l_msg)
+                
+                tel_r_msg = String()
+                tel_r_msg.data = f'Throttle_R:{right_throttle:.2f}'
+                self.telemetry_message.publish(tel_r_msg)
+                
+                # Convert to duty cycle (-1.0 to 1.0)
+                left_duty = left_throttle / MAX_INPUT
+                right_duty = right_throttle / MAX_INPUT
 
-            self.motor.set_rpm(self.pp_right_omega)
-            self.motor.set_rpm(self.pp_left_omega, can_id=self.left_id)
+                right_duty *= -1
+                
+                # Send duty cycle to motors
+                self.motor.set_duty_cycle(right_duty)
+                self.motor.set_duty_cycle(left_duty, can_id=self.left_id)
+            
             
             return True
         except Exception as e:
@@ -213,12 +216,12 @@ def main():
         while rclpy.ok():
             node.send_speeds()
 
-            rpm_msg = Int64MultiArray()
-            left_rpm = int(node.motor.get_rpm())
-            right_rpm = int(node.motor.get_rpm(can_id=node.right_id))
-            print(f"Left RPM: {left_rpm}, Right RPM: {right_rpm}")
-            rpm_msg.data = [left_rpm, right_rpm]
-            node.rpm_pub.publish(rpm_msg)
+            # rpm_msg = Int64MultiArray()
+            # left_rpm = int(node.motor.get_rpm())
+            # right_rpm = int(node.motor.get_rpm(can_id=node.left_id))
+            # print(f"Left RPM: {left_rpm}, Right RPM: {right_rpm}")
+            # rpm_msg.data = [left_rpm, right_rpm]
+            # node.rpm_pub.publish(rpm_msg)
             
             time.sleep(0.1)
     except KeyboardInterrupt:

@@ -149,7 +149,7 @@ class PurePursuitNode(Node):
         self.y = coordinates[1]
         self.v = msg.speed
 
-        self.yaw = msg.track
+        self.yaw = math.radians(90 - msg.track)
         print(self.x, self.y, self.v, self.yaw)
 
     # Callback for speed data
@@ -179,7 +179,7 @@ class PurePursuitNode(Node):
         self.right_wheel_vel = float(self.right_rpm) * rpm_to_rad_per_sec
 
 
-    def latlon_to_meters(self, lat: float, lon: float) -> Tuple[float, float]:
+    def latlon_to_meters(self, lat: float, lon: float):
         """
         Convert lat/lon coordinates to X/Y meters relative to origin.
         
@@ -224,8 +224,8 @@ class PurePursuitNode(Node):
         
 
         for pose_stamped in self.path.poses:
-            x = pose_stamped.pose.position.x
-            y = pose_stamped.pose.position.y
+            x, y = self.latlon_to_meters(pose_stamped.pose.position.x, pose_stamped.pose.position.y)
+            
             self.points.append((x, y))
         
      
@@ -337,14 +337,20 @@ class PurePursuitNode(Node):
         print("------")
         omega_msg = Float64MultiArray()
         
-        omega_left_desired *= math.pi/60
-        omega_right_desired *= math.pi/60
+        omega_left_desired *= (60 / (2 * math.pi))
+        omega_right_desired *= (60 / (2 * math.pi))
 
         omega_left_desired = (omega_left_desired * 52) / 13
         omega_right_desired = (omega_right_desired * 52) / 13
 
         omega_left_desired = (omega_left_desired * 72) / 15
         omega_right_desired = (omega_right_desired * 72) / 15
+
+        print("adjusted speeds: ")
+        print(omega_left_desired)
+        print(omega_right_desired)
+        print("------")
+
 
         omega_msg.data = [omega_left_desired, omega_right_desired]
         self.pp_omega_pub.publish(omega_msg)
