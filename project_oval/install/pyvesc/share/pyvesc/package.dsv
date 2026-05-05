@@ -1,0 +1,6 @@
+source;share/pyvesc/hook/pythonpath.ps1
+source;share/pyvesc/hook/pythonpath.dsv
+source;share/pyvesc/hook/pythonpath.sh
+source;../../build/pyvesc/share/pyvesc/hook/pythonpath_develop.ps1
+source;../../build/pyvesc/share/pyvesc/hook/pythonpath_develop.dsv
+source;../../build/pyvesc/share/pyvesc/hook/pythonpath_develop.sh
