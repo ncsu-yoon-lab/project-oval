@@ -5,6 +5,7 @@ Publishes to /gemini/throttle and /gemini/steering so driver_node.py works uncha
 """
 
 import asyncio
+import json
 import threading
 from typing import Dict, List
 
@@ -66,18 +67,25 @@ class WolfwagenController:
         return {"status": "success", "summary": "Completed right turn."}
 
     async def go_straight(self) -> Dict:
-        self._publish(throttle=-20, steering=0)
+        self._publish(throttle=17, steering=0)
         await asyncio.sleep(2.0)
         self._publish(throttle=0, steering=0)
         return {"status": "success", "summary": "Went straight for 2 seconds."}
 
     async def go_back(self) -> Dict:
-        self._publish(throttle=20, steering=0)
+        self._publish(throttle=-17, steering=0)
         await asyncio.sleep(2.0)
         self._publish(throttle=0, steering=0)
         return {"status": "success", "summary": "Went back for 2 seconds."}
 
-    async def execute_sequence(self, steps: List[Dict]) -> Dict:
+    async def execute_sequence(self, steps) -> Dict:
+        # Model sometimes passes steps as a JSON string or comma-separated string
+        if isinstance(steps, str):
+            try:
+                steps = json.loads(steps)
+            except (json.JSONDecodeError, ValueError):
+                steps = [s.strip() for s in steps.split(",") if s.strip()]
+
         action_map = {
             "turn_left": self.turn_left,
             "turn_right": self.turn_right,
@@ -86,6 +94,9 @@ class WolfwagenController:
         }
         results = []
         for step in steps:
+            # Model sometimes returns steps as plain strings instead of dicts
+            if isinstance(step, str):
+                step = {"action": step}
             action_name = step.get("action")
             if action_name not in action_map:
                 results.append({"status": "error", "summary": f"Unknown: {action_name}"})

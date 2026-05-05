@@ -102,9 +102,7 @@ async def execute_tool_calls(
 
         # Send result back to LLM for follow-up response
         response = llm.send_tool_result(name, result)
-        return response
-
-    return {"content": "", "tool_calls": []}
+    return response
 
 
 # --- Main Loop ---

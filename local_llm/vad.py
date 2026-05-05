@@ -8,17 +8,24 @@ import webrtcvad
 import pyaudio
 import collections
 
-# Audio config
+# Audio config — processing rate for VAD and Whisper
 SAMPLE_RATE = 16000
 CHANNELS = 1
 FORMAT = pyaudio.paInt16
 
-# WebRTC VAD requires 10, 20, or 30ms frames
+# Hardware rate: many USB mics on Jetson only support 48kHz natively.
+# Audio is captured at HARDWARE_RATE then downsampled to SAMPLE_RATE.
+HARDWARE_SAMPLE_RATE = 48000
+DOWNSAMPLE_RATIO = HARDWARE_SAMPLE_RATE // SAMPLE_RATE  # 3
+
+# WebRTC VAD requires 10, 20, or 30ms frames — sized for the hardware rate
 FRAME_DURATION_MS = 30
-FRAME_SIZE = int(SAMPLE_RATE * FRAME_DURATION_MS / 1000)  # 480 samples at 16kHz
+FRAME_SIZE = int(HARDWARE_SAMPLE_RATE * FRAME_DURATION_MS / 1000)  # 1440 samples @ 48kHz
+
+# Input device index for the Jetson USB microphone
+MIC_DEVICE_INDEX = 24
 
 # VAD aggressiveness: 0 (least aggressive) to 3 (most aggressive)
-# Higher = more aggressive about filtering out non-speech
 VAD_AGGRESSIVENESS = 2
 
 # How many consecutive silent frames before speech ends (~800ms)
@@ -34,13 +41,18 @@ MAX_RECORDING_SECONDS = 30
 PRE_SPEECH_FRAMES = int(300 / FRAME_DURATION_MS)
 
 
+def _downsample(chunk_48k: np.ndarray) -> np.ndarray:
+    """Decimate 48kHz int16 chunk to 16kHz by taking every 3rd sample."""
+    return chunk_48k[::DOWNSAMPLE_RATIO]
+
+
 class VoiceActivityDetector:
     """
-    Listens to the microphone and returns audio when speech is detected.
-    Uses Google's WebRTC VAD.
+    Listens to the microphone and returns 16kHz audio when speech is detected.
+    Captures at HARDWARE_SAMPLE_RATE (48kHz) and downsamples for VAD/Whisper.
     """
 
-    def __init__(self, sample_rate: int = SAMPLE_RATE, device_index: int = None):
+    def __init__(self, sample_rate: int = SAMPLE_RATE, device_index: int = MIC_DEVICE_INDEX):
         self.sample_rate = sample_rate
         self.device_index = device_index
         self.vad = None
@@ -58,11 +70,14 @@ class VoiceActivityDetector:
     def listen_for_speech(self, pyaudio_instance: pyaudio.PyAudio) -> np.ndarray:
         """
         Block until the user speaks and finishes speaking.
-        Returns float32 audio normalized to [-1, 1].
+        Returns float32 audio at 16kHz normalized to [-1, 1].
         """
         stream = pyaudio_instance.open(
-            format=FORMAT, channels=CHANNELS, rate=48000,
-            input=True, input_device_index=24,
+            format=FORMAT,
+            channels=CHANNELS,
+            rate=HARDWARE_SAMPLE_RATE,
+            input=True,
+            input_device_index=self.device_index,
             frames_per_buffer=FRAME_SIZE,
         )
 
@@ -71,9 +86,8 @@ class VoiceActivityDetector:
         silence_count = 0
         speech_frame_count = 0
         pre_buffer = collections.deque(maxlen=PRE_SPEECH_FRAMES)
-        max_frames = int(MAX_RECORDING_SECONDS * self.sample_rate / FRAME_SIZE)
+        max_frames = int(MAX_RECORDING_SECONDS * HARDWARE_SAMPLE_RATE / FRAME_SIZE)
 
-        # Track voiced frames in a sliding window for more robust detection
         ring_buffer = collections.deque(maxlen=10)
 
         try:
@@ -81,16 +95,19 @@ class VoiceActivityDetector:
             for _ in range(max_frames):
                 raw = stream.read(FRAME_SIZE, exception_on_overflow=False)
 
-                # WebRTC VAD expects raw int16 bytes
-                is_speech = self.vad.is_speech(raw, self.sample_rate)
+                # Downsample to 16kHz for WebRTC VAD
+                chunk_48k = np.frombuffer(raw, dtype=np.int16)
+                chunk_16k = _downsample(chunk_48k)
+                raw_16k = chunk_16k.tobytes()
 
-                chunk = np.frombuffer(raw, dtype=np.int16).astype(np.float32)
+                is_speech = self.vad.is_speech(raw_16k, self.sample_rate)
+
+                chunk_float = chunk_16k.astype(np.float32)
 
                 if not speech_started:
-                    pre_buffer.append(chunk)
+                    pre_buffer.append(chunk_float)
                     ring_buffer.append(is_speech)
 
-                    # Require majority of recent frames to be speech before triggering
                     voiced_count = sum(ring_buffer)
                     if voiced_count >= 6:  # 6 out of 10 frames voiced
                         speech_started = True
@@ -101,7 +118,7 @@ class VoiceActivityDetector:
                         ring_buffer.clear()
                         print("[VAD] Speech detected!")
                 else:
-                    audio_buffer.append(chunk)
+                    audio_buffer.append(chunk_float)
                     if is_speech:
                         speech_frame_count += 1
                         silence_count = 0
@@ -121,10 +138,7 @@ class VoiceActivityDetector:
         audio = np.concatenate(audio_buffer)
         audio = audio / 32768.0
 
-        # Normalize audio level so Whisper gets a strong signal
         peak = np.abs(audio).max()
-        if peak > 0.001:
-            audio = audio / peak * 0.9
-            print(f"[VAD] Audio normalized (peak was {peak:.4f})")
+        print(f"[VAD] Captured {len(audio)/self.sample_rate:.2f}s of speech (peak={peak:.4f})")
 
         return audio

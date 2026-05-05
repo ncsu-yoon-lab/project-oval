@@ -62,11 +62,7 @@ class SpeechToText:
             audio,
             beam_size=5,
             language="en",
-            vad_filter=True,
-            vad_parameters=dict(
-                min_silence_duration_ms=500,
-                speech_pad_ms=300,
-            ),
+            vad_filter=False,  # WebRTC VAD already handled segmentation
         )
 
         text = " ".join(segment.text.strip() for segment in segments)
