@@ -19,7 +19,7 @@ class PathPoint2D:
         
         # cumulative distance the point is along the path
         self.cumulative_arc_length = cal
-    
+
     def set_arc_length(self, cal):
         self.cumulative_arc_length = cal
 
@@ -29,7 +29,9 @@ class PathPoint2D:
     def get_point(self):
         return self.point
 
+
 class PurePursuit:
+
     def __init__(self, lookahead_distance, velocity):
         self.lookahead_distance = float(lookahead_distance)   # current runtime value
         self.base_lookahead_distance = float(lookahead_distance)  # fixed base
@@ -53,7 +55,10 @@ class PurePursuit:
         self.velocity = velocity # maximum operating speed for pure pursuit
 
         # end condition tolerance (meters)
-        self.goal_tolerance = 0.10
+        self.goal_tolerance = 1.0
+
+        self.last_target_point = None
+
 
     def init_path(self, path):
         # init the path.
@@ -94,7 +99,7 @@ class PurePursuit:
 
         self.last_closest_index = 0
 
-   
+
     def update_state(self, robot_pose, yaw, velocity):
         # velocity value is not required, some pure pursuit implementations
         # use current velocity to choose lookahead distance, we can have that too.
@@ -130,6 +135,8 @@ class PurePursuit:
 
         #     return (0, self.velocity) # no, forward velocity, but angular velocity 
 
+        self.last_target_point = target_point
+
         kappa = self.curvature_from_target(robot_pose, yaw, target_point, self.lookahead_distance)
         print("Kappa: ", kappa)
 
@@ -153,7 +160,8 @@ class PurePursuit:
 
         # we will now take this value to a controller for robot control.
         return (vcmd, wcmd)
-    
+
+
     # When getting to the goal, the car occasionally overshoots the target due to momentum.
     # This method will be used for getting an estimation of how far along the path the car is.
     # This way, we can scale velocity down as the car gets closer to the goal.
@@ -180,7 +188,8 @@ class PurePursuit:
         distance_total = self.path[-1].get_arc_length()
 
         return distance_traveled, distance_total
-    
+
+
     def get_heading_error(self, yaw):
         seg_start = self.path[self.last_closest_index].get_point()
         seg_end = self.path[self.last_closest_index + 1].get_point()
@@ -192,6 +201,7 @@ class PurePursuit:
 
         heading_error = abs(yaw - segment_angle)
         return heading_error
+
 
     # compute the curbature
     def curvature_from_target(self, robot_pose, robotyaw, target, lookahead):
@@ -208,6 +218,7 @@ class PurePursuit:
         kappa = 2.0 * yprime / (lookahead * lookahead)
         return kappa
 
+
     # there are two ways to find the target point. 
     # One uses vector projection, and the other uses circle-line intersection
     # For this implementation I'm going to use vector circle-line intersection. This is how the original pure pursuit works.
@@ -221,7 +232,6 @@ class PurePursuit:
                 return target_points[0]
         return None
                 
-    
 
     def line_circle_intersection(self, robot_pose, segment_start, segment_end, lookahead):
 
@@ -279,6 +289,7 @@ class PurePursuit:
         else:
             print("[WARNING] line circle intersection returned an unusual value: " + str(discriminant))
             return None
+
 
     def reset(self):
         # reset progress

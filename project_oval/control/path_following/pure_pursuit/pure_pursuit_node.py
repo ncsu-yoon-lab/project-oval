@@ -5,7 +5,7 @@ import math
 import numpy as np
 
 from std_msgs.msg import Int64MultiArray
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float64MultiArray, Float64
 
 from .pure_pursuit import PurePursuit
 from .pure_pursuit import PathPoint2D
@@ -25,8 +25,6 @@ from geometry_msgs.msg import PointStamped
 # import the pure pursuit algorithm.
 from .pure_pursuit import PurePursuit
 
-# Import PID controller for pure pursuit.
-from .pure_pursuit_pid import PurePursuitPid
 
 '''
 Testing process on sim
@@ -42,8 +40,14 @@ ros2 topic pub --once /pure_pursuit/path nav_msgs/msg/Path "{header: {frame_id: 
 # center_line_distance = 0.27  # meters
 # wheel_radius = 0.18  # meters
 
-center_line_distance = 0.46  # meters
+center_line_distance = 0.46/2  # meters
 wheel_radius = 0.0762  # meters
+
+SIM = False
+RVIZ = False
+ORIGIN_LAT = 35.770730
+ORIGIN_LON = -78.674728
+MAX_TRACK_ERR = 10.0
 #############
 
 class PurePursuitNode(Node):
@@ -51,7 +55,7 @@ class PurePursuitNode(Node):
         super().__init__("pure_pursuit_node")
         # TODO: Added GPS and IMU to sim robot, subscribe to those and use them to provide state estimation to pure pursuit algorithm
         # lookahead will be modifiable parameters.
-        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 0.4), ("operating_velocity", 0.8),],)
+        self.declare_parameters(namespace="", parameters=[("lookahead_distance", 2.5), ("operating_velocity", 0.8),],)
 
         # State parameters for pure pursuit
         self.x = None
@@ -63,8 +67,6 @@ class PurePursuitNode(Node):
         self.right_wheel_omega = None
 
         self.pure_pursuit = None
-        self.pid_left = None
-        self.pid_right = None
 
         self.path = None
         self.path_points = None
@@ -72,25 +74,26 @@ class PurePursuitNode(Node):
         # For dynamic path changing
         self.path_changed = False
 
-       
         self.left_wheel_vel = None
-        
         self.right_wheel_vel = None
 
         # this is for dt (change in time) for 
         self.last_time = self.get_clock().now()
 
-        self.origin = [35.770730, -78.674728]
-        self.origin_lat = self.origin[0]
-        self.origin_lon = self.origin[1]
+        self.origin_lat = ORIGIN_LAT
+        self.origin_lon = ORIGIN_LON
 
         ## added to support physical car, wheel encoders
         self.left_rpm = None
         self.right_rpm = None
 
+        self.prev_yaw = None
+        self.alpha = 0.2
+
         # rviz params
-        self.trajectory_msg = Path()
-        self.trajectory_msg.header.frame_id = "map"
+        if RVIZ:
+            self.trajectory_msg = Path()
+            self.trajectory_msg.header.frame_id = "map"
        
         self.init_controller()
         self.init_publishers()
@@ -101,63 +104,72 @@ class PurePursuitNode(Node):
         lookahead_distance = float(self.get_parameter("lookahead_distance").value)
         operating_velocity = float(self.get_parameter("operating_velocity").value)
         self.pure_pursuit = PurePursuit(lookahead_distance, operating_velocity)
-
-        # optionally add paramters for he kp, ki, and kd constants in PID
-        self.right_pid = PurePursuitPid()
-        self.left_pid = PurePursuitPid()
     
 
     def init_publishers(self):
         self.pp_omega_pub = self.create_publisher(Float64MultiArray, "/pure_pursuit/omega", 10)
+        self.desired_heading_pub = self.create_publisher(Float64, "/pure_pursuit/desired_heading", 10)
 
         # For Rviz, so we can watch the path in real time
-        self.path_viz_pub = self.create_publisher(Path, "/viz/planned_path", 10)
-        self.trajectory_pub = self.create_publisher(Path, "/viz/trajectory", 10)
+        if RVIZ:
+            self.path_viz_pub = self.create_publisher(Path, "/viz/planned_path", 10)
+            self.trajectory_pub = self.create_publisher(Path, "/viz/trajectory", 10)
     
 
     def init_subscribers(self):
-        # GPS pose and speed data
-        # different data type
-        # in /gpsfix
-        self.sub = self.create_subscription(GPSFix, '/gpsfix', self.gps_callback, 10)
-        # self.create_subscription(PointStamped,"/gps", self.gps_callback, 10)
-        
-        # self.create_subscription(Float32, "/gps/speed", self.speed_callback, 10)
-        
-        # IMU data
-       
-        # self.create_subscription(Imu, "/imu", self.imu_callback, 10)
 
+        # GPS pose and speed data
+        if SIM:
+            # measured angular velocity
+            self.create_subscription(Float64, "/left_wheel/angular_velocity", self.left_wheel_vel_callback, 10)
+            self.create_subscription(Float64, "/right_wheel/angular_velocity", self.right_wheel_vel_callback, 10)
+
+            ## added to support physical car, wheel encoders
+            #TODO not sure where /gps is made, but it would be good to either make it like the actual RTK gps in sim or just call it position
+            self.create_subscription(Int64MultiArray, "/motors/rpm", self.rpm_callback, 10)
+            self.create_subscription(PointStamped,"/gps", self.position_callback, 10)
+            self.create_subscription(Float32, "/gps/speed", self.speed_callback, 10)
+
+            # IMU data
+            self.create_subscription(Imu, "/imu", self.imu_callback, 10)
+        else:
+            self.sub = self.create_subscription(GPSFix, '/gpsfix', self.gps_callback, 10)
+            
         # callback for path
         self.create_subscription(Path, "/pure_pursuit/path", self.path_callback, 10)
 
-        # measured angular velocity
-        self.create_subscription(Float64, "/left_wheel/angular_velocity", self.left_wheel_vel_callback, 10)
-        self.create_subscription(Float64, "/right_wheel/angular_velocity", self.right_wheel_vel_callback, 10)
 
-
-        ## added to support physical car, wheel encoders
-        self.create_subscription(Int64MultiArray, "/motors/rpm", self.rpm_callback, 10)
-
-    
     # Callback for gps data
     def gps_callback(self, msg):
-        # self.x = msg.point.x
-        # self.y = msg.point.y
+        """ GPS callback for RTK """
         coordinates = self.latlon_to_meters(msg.latitude, msg.longitude)
         self.x = coordinates[0]
         self.y = coordinates[1]
         self.v = msg.speed
 
-        self.yaw = math.radians(90 - msg.track)
+        if self.prev_yaw is None:
+            self.yaw = math.radians(90 - msg.track)
+        else:
+            self.yaw = (math.radians(90 - msg.track) * self.alpha) + (self.prev_yaw * (1- self.alpha))
+        self.prev_yaw = self.yaw
         print(self.x, self.y, self.v, self.yaw)
+
+    
+    def position_callback(self, msg):
+        """ Position callback for sim """
+        self.x = msg.point.X
+        self.y = msg.point.y
+
 
     # Callback for speed data
     def speed_callback(self, msg: Float32):
+        """ Velocity callback for sim """
         self.v = msg.data
+
 
     # Callback for imu data
     def imu_callback(self, msg: Imu):
+        """ IMU callback for sim """
         q = msg.orientation
         quat = [q.x, q.y, q.z, q.w]
 
@@ -168,6 +180,7 @@ class PurePursuitNode(Node):
     
     ## added to support physical car, wheel encoders
     def rpm_callback(self, msg):
+        """ RPM callback for sim """
         if msg.data is None or len(msg.data) < 2:
             return
 
@@ -177,63 +190,44 @@ class PurePursuitNode(Node):
         rpm_to_rad_per_sec = 2.0 * math.pi / 60.0
         self.left_wheel_vel = float(self.left_rpm) * rpm_to_rad_per_sec
         self.right_wheel_vel = float(self.right_rpm) * rpm_to_rad_per_sec
-
-
-    def latlon_to_meters(self, lat: float, lon: float):
-        """
-        Convert lat/lon coordinates to X/Y meters relative to origin.
-        
-        Args:
-            lat (float): Latitude in degrees
-            lon (float): Longitude in degrees
-            
-        Returns:
-            Tuple[float, float]: (x_meters, y_meters) relative to origin
-        """
-        if self.origin_lat is None or self.origin_lon is None:
-            return 0.0, 0.0
-        
-        # Constants for conversion
-        LAT_TO_METERS = 111320.0  # meters per degree latitude
-        
-        # Longitude conversion varies by latitude
-        lon_to_meters = LAT_TO_METERS * math.cos(math.radians(self.origin_lat))
-        
-        # Calculate relative position in meters
-        x_meters = (lon - self.origin_lon) * lon_to_meters
-        y_meters = (lat - self.origin_lat) * LAT_TO_METERS
-        
-        return x_meters, y_meters
     
+
     # callbacks for measured angular velocity
     def left_wheel_vel_callback(self, msg: Float64):
+        """ Left wheel velocity for sim """
         self.left_wheel_vel = msg.data
 
+
     def right_wheel_vel_callback(self, msg: Float64):
+        """ Right wheel velocity for sim """
         self.right_wheel_vel = msg.data
 
+
     def path_callback(self, msg):
+        """ Callback to sim """
+
         print("[SUCCESS] Path Recieved")
-        # send to rviz
-        self.path_viz_pub.publish(msg)
+        
+        if RVIZ:
+            self.path_viz_pub.publish(msg)
 
         # process
         self.path = msg
-        self.points = []
-
-        
+        points = []
 
         for pose_stamped in self.path.poses:
             x, y = self.latlon_to_meters(pose_stamped.pose.position.x, pose_stamped.pose.position.y)
             
-            self.points.append((x, y))
+            points.append((x, y))
         
-     
-        self.path_points = self.interpolate_path(self.points)
+        self.path_points = self.interpolate_path(points)
 
         self.path_changed = True
 
+
+    #TODO do we need this anymore?
     def init_timers(self):
+
         # 50 hz control loop
         self.control_timer = self.create_timer(0.02, self.control_loop)
 
@@ -251,8 +245,8 @@ class PurePursuitNode(Node):
             print("[WARNING] Pure Pursuit has not been provided a path")
             return
         
+        # Checks that the odom data is received properly
         odom_data = [self.x, self.y, self.yaw, self.v]
-
         if None in odom_data:
             for i in range(0, len(odom_data)):
                 if odom_data[i] is None:
@@ -260,12 +254,13 @@ class PurePursuitNode(Node):
             print("[WARNING] Pure pursuit has not recieved odom data from sensors")
             return
 
+        # Gets the wheel data if needed
+        if SIM:
+            wheel_data = [self.left_wheel_vel, self.right_wheel_vel]
        
-        wheel_data = [self.left_wheel_vel, self.right_wheel_vel]
-       
-        # if None in wheel_data:
-        #     print("[WARNING] Pure pursuit has not recieved wheel velocity data")
-        #     return
+            if None in wheel_data:
+                print("[WARNING] Pure pursuit has not recieved wheel velocity data")
+                return
 
         # if the path has been added/changed, all the init path method on the path points
         if self.path_changed:
@@ -287,46 +282,25 @@ class PurePursuitNode(Node):
         print("ROBOT POSE Velocity")
         print(self.v)
         
-        desired_velocity = self.pure_pursuit.update_state(robot_pose, self.yaw, self.v)
-        
-        velocity_linear_desired = desired_velocity[0]
-        omega_desired = desired_velocity[1]
+        # Get the desired velocity from pure pursuit algorithm
+        velocity_linear_desired, omega_desired = self.pure_pursuit.update_state(robot_pose, self.yaw, self.v)
 
-        # We have wheel encoders, yay!
 
-        # Pyvesc supports PID natively, so we may not need a PID controller at this level.
-        # Calculate dt, it should roughly equal the 1/frequency of the controol loop timer
-        # now = self.get_clock().now()
-        # dt = (now - self.last_time).nanoseconds * 1e-9
-        # self.last_time = now
-        # print("[DEBUG] Running PID")
-        # print(self.right_wheel_vel)
-        # print(self.left_wheel_vel)
-        # print("----------------------")
-        # print(omega_right_desired)
-        # print(omega_left_desired)
-        # print("----------------------")
-
-        # error_right = omega_right_desired - self.right_wheel_vel # rad/s
-        # error_left  = omega_left_desired  - self.left_wheel_vel # rad/s
-
-        # throttle_right = self.right_pid.update(error_right, dt)
-        # throttle_left  = self.left_pid.update(error_left, dt)
-
-        # # Publish throttle data to driver
-        # self.pp_use_throttle_pub.publish(Bool(data=True))
-        # self.pp_left_throttle_pub.publish(Float64(data=throttle_left))
-        # self.pp_right_throttle_pub.publish(Float64(data=throttle_right))
+        target = self.pure_pursuit.last_target_point
+        if target is not None:
+            desired_yaw = math.atan2(target[1] - self.y, target[0] - self.x)
+            self.desired_heading_pub.publish(Float64(data=desired_yaw))
 
         # For Rviz
-        pose = PoseStamped()
-        pose.header.frame_id = "map"
-        pose.header.stamp = self.get_clock().now().to_msg()
-        pose.pose.position.x = self.x
-        pose.pose.position.y = self.y
-        self.trajectory_msg.poses.append(pose)
-        self.trajectory_msg.header.stamp = self.get_clock().now().to_msg()
-        self.trajectory_pub.publish(self.trajectory_msg)
+        if RVIZ:
+            pose = PoseStamped()
+            pose.header.frame_id = "map"
+            pose.header.stamp = self.get_clock().now().to_msg()
+            pose.pose.position.x = self.x
+            pose.pose.position.y = self.y
+            self.trajectory_msg.poses.append(pose)
+            self.trajectory_msg.header.stamp = self.get_clock().now().to_msg()
+            self.trajectory_pub.publish(self.trajectory_msg)
 
         # send to controller
         omega_right_desired = (velocity_linear_desired + center_line_distance * omega_desired) / wheel_radius
@@ -365,6 +339,33 @@ class PurePursuitNode(Node):
             for t in np.linspace(0.0, 1.0, steps):
                 dense.append(tuple(p0 + t * (p1 - p0)))
         return dense
+
+    
+    def latlon_to_meters(self, lat: float, lon: float):
+        """
+        Convert lat/lon coordinates to X/Y meters relative to origin.
+        
+        Args:
+            lat (float): Latitude in degrees
+            lon (float): Longitude in degrees
+            
+        Returns:
+            Tuple[float, float]: (x_meters, y_meters) relative to origin
+        """
+        if self.origin_lat is None or self.origin_lon is None:
+            return 0.0, 0.0
+        
+        # Constants for conversion
+        LAT_TO_METERS = 111320.0  # meters per degree latitude
+        
+        # Longitude conversion varies by latitude
+        lon_to_meters = LAT_TO_METERS * math.cos(math.radians(self.origin_lat))
+        
+        # Calculate relative position in meters
+        x_meters = (lon - self.origin_lon) * lon_to_meters
+        y_meters = (lat - self.origin_lat) * LAT_TO_METERS
+        
+        return x_meters, y_meters
         
 
 
