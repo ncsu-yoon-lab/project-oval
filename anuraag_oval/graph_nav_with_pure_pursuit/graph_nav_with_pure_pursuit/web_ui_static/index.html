@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oval Control</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Oval Control</h1>
+      <p id="bridgeStatus">ROS bridge starting</p>
+    </div>
+    <button id="stopAll" class="danger">Stop All</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel controls">
+      <div class="section-title">Processes</div>
+      <div id="processGrid" class="process-grid"></div>
+      <div class="stdin-row">
+        <select id="stdinProcess"></select>
+        <input id="stdinText" type="text" placeholder="Input">
+        <button id="sendInput">Send</button>
+      </div>
+    </section>
+
+    <section class="panel map-panel">
+      <div class="map-header">
+        <div>
+          <div class="section-title">Map</div>
+          <div id="mapMeta" class="meta"></div>
+        </div>
+        <select id="poseSource">
+          <option value="odometry">/odometry/filtered</option>
+          <option value="zed_pose">/zed/zed_node/pose</option>
+        </select>
+      </div>
+      <canvas id="mapCanvas"></canvas>
+    </section>
+
+    <section class="panel status-panel">
+      <div class="section-title">Topics</div>
+      <div id="topicStatus" class="topic-grid"></div>
+    </section>
+
+    <section class="panel logs-panel">
+      <div class="logs-header">
+        <div class="section-title">Logs</div>
+        <select id="logProcess"></select>
+      </div>
+      <pre id="logs"></pre>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
