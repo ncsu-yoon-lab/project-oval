@@ -1,1 +1,0 @@
-/home/patchy/lab_work/lab_ros_ws/src/project-oval/build/project-oval/launch/car_sim_launch.py

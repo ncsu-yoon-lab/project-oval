@@ -1,9 +1,0 @@
-source;share/project-oval/hook/pythonpath.ps1
-source;share/project-oval/hook/pythonpath.dsv
-source;share/project-oval/hook/pythonpath.sh
-source;share/project-oval/hook/ament_prefix_path.ps1
-source;share/project-oval/hook/ament_prefix_path.dsv
-source;share/project-oval/hook/ament_prefix_path.sh
-source;../../build/project-oval/share/project-oval/hook/pythonpath_develop.ps1
-source;../../build/project-oval/share/project-oval/hook/pythonpath_develop.dsv
-source;../../build/project-oval/share/project-oval/hook/pythonpath_develop.sh
