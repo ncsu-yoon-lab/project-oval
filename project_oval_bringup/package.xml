@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>project_oval_bringup</name>
+  <version>0.0.1</version>
+  <description>Launch files, URDF, and Webots worlds that bring up Project OVAL, orchestrating the control, perception, telemetry, and navigation packages.</description>
+
+  <maintainer email="malinchc@gmail.com">malinchc</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>webots_ros2_driver</depend>
+
+  <exec_depend>project_oval_control</exec_depend>
+  <exec_depend>project_oval_perception</exec_depend>
+  <exec_depend>project_oval_telemetry</exec_depend>
+  <exec_depend>project_oval_navigation</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

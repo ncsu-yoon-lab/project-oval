@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>project_oval_control</name>
+  <version>0.0.1</version>
+  <description>Driving and actuation nodes for Project OVAL: VESC motor driver, pure pursuit and lane-following control, PID, Xbox controller input, and the Webots simulation driver.</description>
+
+  <maintainer email="malinchc@gmail.com">malinchc</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>gps_msgs</depend>
+  <depend>nmea_msgs</depend>
+  <depend>webots_ros2_driver</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

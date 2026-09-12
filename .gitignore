@@ -1,27 +1,25 @@
-
 .vscode/
 .idea/
-robotLocalization
-*.pth
-*.pt
+.DS_Store
 
-project-oval/onnx_segmentation/test_images
-project-oval/onnx_segmentation/__pycache__
-project-oval/sidewalk_segmentation/__pycache__
-dataset
-log
-models
-trt_cache
+# colcon build artifacts
+build/
+install/
+log/
 
-.venv/
-project_oval.egg-info/
+# Python
 __pycache__/
-
+*.pyc
+*.egg-info/
+*.egg-link
+.ipynb_checkpoints/
 .venv/
-
 .env
 
-__pycache__/
-.ipynb_checkpoints/
-project_oval.egg-info/*
-.DS_Store
+# model/training artifacts
+*.pth
+*.pt
+dataset
+models
+trt_cache
+robotLocalization

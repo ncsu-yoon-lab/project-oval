@@ -1,0 +1,35 @@
+# Pip dependencies for the project_oval_* ROS2 packages in this repo.
+#
+# colcon build only builds/installs your Python code — it does NOT install
+# the pip dependencies listed in each package's setup.py. Install these once
+# into the same Python that has rclpy (system Python on the Jetson/dev
+# machine; do NOT create an isolated venv unless it's made with
+# --system-site-packages, or rclpy won't be importable inside it):
+#
+#   python3 -m pip install -r requirements.txt
+#
+# PyVESC itself is vendored in this repo (PyVESC/) and built by colcon as
+# its own package, so it's not listed here — but its dependency, crccheck,
+# has to come from pip like everything else below.
+
+crccheck
+
+# project_oval_control / project_oval_perception / project_oval_telemetry
+numpy
+opencv-python
+
+# project_oval_perception (ML segmentation / object detection)
+onnxruntime
+torch
+torchvision
+ultralytics
+matplotlib
+transformers
+safetensors
+pillow
+
+# project_oval_telemetry (GPS mapping, radio link, cloud pub/sub)
+folium
+eventlet
+pyserial
+google-cloud-pubsub
