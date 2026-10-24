@@ -33,6 +33,57 @@ except ImportError:
 # Load environment variables from .env if present
 load_dotenv()
 
+# WOLFWAGEN_DEBUG=1 timestamps every log line and logs server events, mic levels and GUI updates
+DEBUG = os.getenv("WOLFWAGEN_DEBUG", "0") == "1"
+DEBUG_MIC_LOG_INTERVAL_S = 3.0
+
+if DEBUG:
+    import audioop
+    import builtins
+    from datetime import datetime
+
+    def print(*args, **kwargs):
+        builtins.print(
+            datetime.now().strftime("%H:%M:%S.%f")[:-3], *args, flush=True, **kwargs
+        )
+
+
+def describe_message(message) -> str:
+    """One-line summary of a Live API message, ignoring raw audio payloads."""
+    parts = []
+    if getattr(message, "setup_complete", None):
+        parts.append("setup_complete")
+    sc = getattr(message, "server_content", None)
+    if sc:
+        for flag in ("interrupted", "turn_complete", "generation_complete", "waiting_for_input"):
+            if getattr(sc, flag, None):
+                parts.append(flag)
+        if getattr(sc, "input_transcription", None) and sc.input_transcription.text:
+            parts.append(f"in_tx={sc.input_transcription.text!r}")
+        if getattr(sc, "output_transcription", None) and sc.output_transcription.text:
+            parts.append(f"out_tx={sc.output_transcription.text!r}")
+    tool_call = getattr(message, "tool_call", None)
+    if tool_call:
+        calls = ", ".join(f"{fc.name}({fc.args or {}})" for fc in tool_call.function_calls)
+        parts.append(f"tool_call=[{calls}]")
+    if getattr(message, "tool_call_cancellation", None):
+        parts.append(f"tool_call_cancellation={message.tool_call_cancellation.ids}")
+    if getattr(message, "go_away", None):
+        parts.append(f"go_away(time_left={message.go_away.time_left})")
+    if getattr(message, "session_resumption_update", None):
+        parts.append("resumption_update")
+    return " | ".join(parts)
+
+
+class LoggingQueue(queue.Queue):
+    """GUI queue that logs status/detail changes (transcript text is logged by recv_loop)."""
+
+    def put(self, item, *args, **kwargs):
+        kind, value = item
+        if kind in ("status", "detail"):
+            print(f"[Debug][GUI] {kind} -> {value!r}")
+        super().put(item, *args, **kwargs)
+
 SYSTEM_PROMPT = (
     "ROLE AND IDENTITY:\n"
     "- I am Wolfwagen, an autonomous small patrol vehicle built by Yoon' Lab in the NC State University Department of Computer Science.\n"
@@ -47,9 +98,14 @@ SYSTEM_PROMPT = (
     "- Sensors: LiDAR, cameras, and GPS.\n"
     "\n"
     "INTERACTION PROTOCOL:\n"
-    "1) Acknowledge movement commands before execution (e.g., 'Affirmative. Turning left.').\n"
-    "2) Await the system to execute the function.\n"
-    "3) Report completion (e.g., 'Maneuver complete. Awaiting next instruction.').\n"
+    "1) For ANY movement request you MUST call the matching function. The vehicle only moves when a function is called; "
+    "never describe or claim a maneuver without calling it.\n"
+    "   - forward / front / ahead / straight -> `go_straight`\n"
+    "   - back / backward / reverse -> `go_back`\n"
+    "   - left -> `turn_left`, right -> `turn_right`\n"
+    "   - more than one maneuver, or a repeated one (e.g. 'turn left twice', 'U-turn') -> `execute_sequence`\n"
+    "2) Briefly acknowledge the command (e.g., 'Affirmative. Turning left.') and call the function in the same response.\n"
+    "3) Only say a maneuver is complete after you receive the function's result.\n"
     "\n"
     "PERSONA GUARDRAILS:\n"
     "- Never reveal or claim to be an AI, LLM, or trained by Google.\n"
@@ -77,6 +133,21 @@ current_session_handle: str | None = None
 
 # Global event to signal shutdown to the async thread
 shutdown_event = threading.Event()
+
+# Set from the ROS joy callback (Xbox RB) to abandon the current session and listen fresh
+reset_requested = threading.Event()
+
+# Each primitive maneuver runs for 2s; anything well past that is treated as a failure
+TOOL_SECONDS_PER_STEP = 2.0
+TOOL_TIMEOUT_MARGIN_S = 3.0
+TOOL_RESPONSE_TIMEOUT_S = 5.0
+
+
+def tool_timeout_s(name: str, kwargs: dict) -> float:
+    steps = 1
+    if name == "execute_sequence":
+        steps = sum(max(int(s.get("repeat", 1) or 1), 1) for s in kwargs.get("steps", []))
+    return TOOL_SECONDS_PER_STEP * max(steps, 1) + TOOL_TIMEOUT_MARGIN_S
 
 
 # --- Voice Orb ---
@@ -570,8 +641,11 @@ def build_tools() -> List[types.Tool]:
 
 async def stream_microphone_and_handle(
     session: any, p: pyaudio.PyAudio, gui_queue: queue.Queue, handlers
-) -> None:
-    """Handles one full turn of conversation: user speaks, model replies, then exits."""
+) -> str:
+    """Handles one full turn of conversation: user speaks, model replies, then exits.
+
+    Returns "ok", "failed" (a tool call errored or timed out) or "reset" (RB pressed).
+    """
     global current_session_handle
     input_stream = None
     output_stream = None
@@ -600,12 +674,27 @@ async def stream_microphone_and_handle(
         print("\n[Wolfwagen] Listening... Speak now.")
 
         turn_ended = asyncio.Event()
+        turn_failed = asyncio.Event()
+        tool_tasks: List[asyncio.Task] = []
         is_speaking = False  # Flag to set "Speaking" status only once per turn
 
         async def recv_loop():
             nonlocal is_speaking
+            audio_chunks = 0
             try:
                 async for message in session.receive():
+                    if DEBUG:
+                        summary = describe_message(message)
+                        if summary:
+                            print(f"[Debug][Recv] {summary}")
+                        if getattr(message, "data", None) is not None:
+                            if audio_chunks == 0:
+                                print("[Debug][Recv] audio reply started")
+                            audio_chunks += 1
+                        sc = getattr(message, "server_content", None)
+                        if sc and getattr(sc, "turn_complete", None):
+                            print(f"[Debug][Recv] audio reply chunks this turn: {audio_chunks}")
+                            audio_chunks = 0
                     # A message can contain multiple parts; process all of them.
                     nonlocal input_text_accum, output_text_accum, input_printed
                     server_content = getattr(message, "server_content", None)
@@ -673,13 +762,16 @@ async def stream_microphone_and_handle(
 
                     if hasattr(message, "tool_call") and message.tool_call:
                         print(f"[Debug] Received tool_call object: {message.tool_call}")
-                        asyncio.create_task(
-                            handle_tool_calls(
-                                session,
-                                message.tool_call,
-                                gui_queue,
-                                turn_ended,
-                                handlers,
+                        tool_tasks.append(
+                            asyncio.create_task(
+                                handle_tool_calls(
+                                    session,
+                                    message.tool_call,
+                                    gui_queue,
+                                    turn_ended,
+                                    turn_failed,
+                                    handlers,
+                                )
                             )
                         )
 
@@ -700,11 +792,16 @@ async def stream_microphone_and_handle(
                         print("[Wolfwagen] Server indicates generation complete.")
                         if not (hasattr(message, "tool_call") and message.tool_call):
                             turn_ended.set()
-            finally:
-                pass
+            except Exception as e:
+                # e.g. the server closing the socket mid-reply; fail now instead of waiting out the turn timeout
+                if not turn_ended.is_set():
+                    print(f"[Wolfwagen][Error] Receive failed: {type(e).__name__}: {e}")
+                    turn_failed.set()
+                    turn_ended.set()
 
         async def send_loop():
             loop = asyncio.get_running_loop()
+            mic_peak, mic_chunks, mic_last_log = 0, 0, loop.time()
             try:
                 while not turn_ended.is_set():
                     data = await loop.run_in_executor(
@@ -713,6 +810,12 @@ async def stream_microphone_and_handle(
                             FRAMES_PER_BUFFER, exception_on_overflow=False
                         ),
                     )
+                    if DEBUG:
+                        mic_peak = max(mic_peak, audioop.rms(data, 2))
+                        mic_chunks += 1
+                        if loop.time() - mic_last_log >= DEBUG_MIC_LOG_INTERVAL_S:
+                            print(f"[Debug][Mic] peak_rms={mic_peak} chunks_sent={mic_chunks}")
+                            mic_peak, mic_chunks, mic_last_log = 0, 0, loop.time()
                     await session.send_realtime_input(
                         audio=types.Blob(
                             data=data, mime_type=f"audio/pcm;rate={INPUT_SAMPLE_RATE}"
@@ -720,22 +823,47 @@ async def stream_microphone_and_handle(
                     )
             except (asyncio.CancelledError, KeyboardInterrupt):
                 pass
+            except Exception as e:
+                if not turn_ended.is_set():
+                    print(f"[Wolfwagen][Error] Send failed: {type(e).__name__}: {e}")
+                    turn_failed.set()
+                    turn_ended.set()
             finally:
                 if input_stream and not input_stream.is_stopped():
                     input_stream.stop_stream()
                     input_stream.close()
 
+        async def reset_watch():
+            while not turn_ended.is_set():
+                if reset_requested.is_set():
+                    print("[Wolfwagen] Reset requested mid-turn.")
+                    turn_ended.set()
+                    return
+                await asyncio.sleep(0.05)
+
         recv_task = asyncio.create_task(recv_loop())
         send_task = asyncio.create_task(send_loop())
+        reset_task = asyncio.create_task(reset_watch())
 
         try:
             await asyncio.wait_for(turn_ended.wait(), timeout=60.0)
         except asyncio.TimeoutError:
             print("[Wolfwagen] Turn timed out.")
+            # A maneuver still running at this point is stuck, not idle
+            if any(not t.done() for t in tool_tasks):
+                turn_failed.set()
         finally:
-            if not recv_task.done():
-                recv_task.cancel()
-            await asyncio.gather(recv_task, send_task, return_exceptions=True)
+            # On a timeout nothing else sets this, and send_loop only exits once it's set
+            turn_ended.set()
+            for task in (recv_task, reset_task, *tool_tasks):
+                if not task.done():
+                    task.cancel()
+            results = await asyncio.gather(
+                recv_task, send_task, reset_task, *tool_tasks, return_exceptions=True
+            )
+            for res in results:
+                if isinstance(res, Exception):
+                    print(f"[Wolfwagen][Warn] Turn task error: {res!r}")
             try:
                 if output_stream:
                     try:
@@ -760,6 +888,12 @@ async def stream_microphone_and_handle(
             except Exception:
                 pass
             print("[Wolfwagen] Turn finished.")
+
+        if turn_failed.is_set():
+            return "failed"
+        if reset_requested.is_set():
+            return "reset"
+        return "ok"
     finally:
         pass
 
@@ -769,65 +903,81 @@ async def handle_tool_calls(
     tool_call: any,
     gui_queue: queue.Queue,
     turn_ended: asyncio.Event,
+    turn_failed: asyncio.Event,
     handlers: dict,
 ) -> None:
     responses: List[types.FunctionResponse] = []
 
     gui_queue.put(("status", "Executing Maneuver..."))
 
-    for fc in tool_call.function_calls:
-        name = fc.name
-        call_id = fc.id
-        print(f"[Tool] Model wants to call function: '{name}' (ID: {call_id})")
+    name = "tool call"
+    try:
+        for fc in tool_call.function_calls:
+            name = fc.name
+            call_id = fc.id
+            print(f"[Tool] Model wants to call function: '{name}' (ID: {call_id})")
 
-        detail_text = f"Action: {name}"
-        if name == "execute_sequence" and hasattr(fc, "args"):
-            steps = fc.args.get("steps", [])
-            step_summary = ", ".join(
-                [
-                    f"{step.get('action', 'N/A')}(x{step.get('repeat', 1)})"
-                    for step in steps
-                ]
-            )
-            detail_text = f"Sequence: [ {step_summary} ]"
-        gui_queue.put(("detail", detail_text))
-
-        handler = handlers.get(name)
-
-        if handler:
-            kwargs = {}
-            if hasattr(fc, "args") and isinstance(fc.args, dict):
-                kwargs = fc.args
-
-            try:
-                result = await handler(**kwargs) if kwargs else await handler()
-            except TypeError:
-                result = await handler()
-
-            responses.append(
-                types.FunctionResponse(id=call_id, name=name, response=result)
-            )
-        else:
-            responses.append(
-                types.FunctionResponse(
-                    id=call_id,
-                    name=name,
-                    response={
-                        "status": "error",
-                        "summary": f"Function '{name}' not found.",
-                    },
+            detail_text = f"Action: {name}"
+            if name == "execute_sequence" and hasattr(fc, "args"):
+                steps = fc.args.get("steps", [])
+                step_summary = ", ".join(
+                    [
+                        f"{step.get('action', 'N/A')}(x{step.get('repeat', 1)})"
+                        for step in steps
+                    ]
                 )
+                detail_text = f"Sequence: [ {step_summary} ]"
+            gui_queue.put(("detail", detail_text))
+
+            handler = handlers.get(name)
+
+            if handler:
+                kwargs = {}
+                if hasattr(fc, "args") and isinstance(fc.args, dict):
+                    kwargs = fc.args
+                timeout = tool_timeout_s(name, kwargs)
+
+                try:
+                    coro = handler(**kwargs) if kwargs else handler()
+                except TypeError:
+                    coro = handler()
+                result = await asyncio.wait_for(coro, timeout=timeout)
+
+                responses.append(
+                    types.FunctionResponse(id=call_id, name=name, response=result)
+                )
+            else:
+                responses.append(
+                    types.FunctionResponse(
+                        id=call_id,
+                        name=name,
+                        response={
+                            "status": "error",
+                            "summary": f"Function '{name}' not found.",
+                        },
+                    )
+                )
+
+        print(f"[Tool] Sending tool responses: {responses}")
+        if responses:
+            await asyncio.wait_for(
+                session.send_tool_response(function_responses=responses),
+                timeout=TOOL_RESPONSE_TIMEOUT_S,
             )
-
-    print(f"[Tool] Sending tool responses: {responses}")
-    if responses:
-        await session.send_tool_response(function_responses=responses)
-        print("[Tool] Tool responses sent.")
+            print("[Tool] Tool responses sent.")
+            gui_queue.put(("status", "Maneuver Complete"))
+    except Exception as e:
+        # Covers handler exceptions, maneuver timeouts and a failed tool response
+        print(f"[Tool][Error] '{name}' failed: {type(e).__name__}: {e}")
+        turn_failed.set()
+    finally:
         turn_ended.set()
-        gui_queue.put(("status", "Maneuver Complete"))
 
 
-async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
+async def run_async_logic(
+    gui_queue: queue.Queue, handlers: dict, controller=None
+) -> None:
+    global current_session_handle
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
         print("[Wolfwagen][Error] API key not set.")
@@ -864,17 +1014,43 @@ async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
                 f"\n[Session] Starting new connection. Resuming from handle: {str(current_session_handle)[:10]}..."
             )
             gui_queue.put(("status", "Connecting..."))
+            outcome = "ok"
             try:
                 async with client.aio.live.connect(
                     model=MODEL, config=base_config
                 ) as session:
                     print("[Session] Connection opened.")
-                    await stream_microphone_and_handle(session, p, gui_queue, handlers)
+                    outcome = await stream_microphone_and_handle(
+                        session, p, gui_queue, handlers
+                    )
             except Exception as e:
                 print(f"[Session] Connection error: {e}. Reconnecting in 2s...")
                 gui_queue.put(("status", "Connection Error"))
                 gui_queue.put(("detail", "Retrying in 2 seconds..."))
                 await asyncio.sleep(2)
+
+            if DEBUG:
+                print(f"[Debug][Turn] outcome={outcome}")
+            if outcome == "ok":
+                continue
+
+            # The old session may still be waiting on an unanswered tool call,
+            # so never resume it after a failure or reset.
+            current_session_handle = None
+            if controller:
+                controller.stop()
+
+            if outcome == "failed":
+                print("[Wolfwagen] Maneuver failed. Press RB to reset.")
+                gui_queue.put(("detail", "Timed out"))
+                gui_queue.put(("status", "Press RB to Reset"))
+                while not reset_requested.is_set():
+                    await asyncio.sleep(0.05)
+
+            print("[Wolfwagen] Resetting: starting a fresh session.")
+            reset_requested.clear()
+            gui_queue.put(("detail", ""))
+            gui_queue.put(("output", ""))
     finally:
         if p:
             p.terminate()
@@ -882,21 +1058,23 @@ async def run_async_logic(gui_queue: queue.Queue, handlers: dict) -> None:
 
 def main():
     """Sets up the GUI and runs the asyncio logic in a separate thread."""
-    gui_queue = queue.Queue()
+    gui_queue = LoggingQueue() if DEBUG else queue.Queue()
     root = tk.Tk()
     gui = WolfwagenGUI(root, gui_queue)
 
     robot_controller = None
     tool_handlers = {}
     if ROS2_AVAILABLE:
-        robot_controller = WolfwagenController()
+        robot_controller = WolfwagenController(on_reset=reset_requested.set)
         tool_handlers = get_handlers(robot_controller)
 
     def run_loop():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(run_async_logic(gui_queue, tool_handlers))
+            loop.run_until_complete(
+                run_async_logic(gui_queue, tool_handlers, robot_controller)
+            )
         finally:
             loop.close()
 

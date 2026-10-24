@@ -39,7 +39,7 @@ def generate_launch_description() -> LaunchDescription:
             "joy_node",
             "--ros-args",
             "-p",
-            "autorepeat_rate:=0.0",
+            "autorepeat_rate:=20.0",
         ],
         output="screen",
     )

@@ -58,6 +58,7 @@ Turns steering/throttle/lane-following decisions into motor commands, and reads 
 | `ros2 run project_oval_control driver` | Sends throttle/steering commands to the VESC motor controllers. |
 | `ros2 run project_oval_control lane_follower` | PID lane-centering control from a segmented edge-distance signal. |
 | `ros2 run project_oval_control xbox_controller` | Reads Xbox controller input (via `joy_node`) and republishes it as drive commands. |
+| `ros2 launch project_oval_control manual_control.launch.py` | Brings up `joy_node` + `xbox_controller` + `driver` together for manual/teleop driving. |
 
 Also included (not standalone nodes): `sim_driver_lib.py`/`sim_driver_node.py` (the `SimDriverNode` Webots plugin, wired up via `project_oval_bringup/urdf/my_robot.urdf` for simulation), `PIDController.py` (shared PID implementation), and `pursuitNode.py`/`test_lib.py` (older GPS-pursuit and manual test scripts, kept for reference — not registered as console scripts).
 
@@ -150,7 +151,17 @@ The Jetson Orin runs several ROS2 nodes to interface with the vehicle hardware. 
 Outputs joystick inputs from the XBox controller.
 
 ```bash
-ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0
+ros2 run joy joy_node --ros-args -p autorepeat_rate:=20.0
+```
+
+---
+
+### **Manual Driving (Joy + Xbox Controller + Driver)**
+
+Brings up `joy_node`, `xbox_controller`, and `driver` together in one command — the quickest way to get manual/teleop driving running.
+
+```bash
+ros2 launch project_oval_control manual_control.launch.py
 ```
 
 ---

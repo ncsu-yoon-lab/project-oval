@@ -17,6 +17,9 @@
   <depend>gps_msgs</depend>
   <depend>nmea_msgs</depend>
   <depend>webots_ros2_driver</depend>
+  <depend>joy</depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

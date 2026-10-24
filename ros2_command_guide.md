@@ -46,8 +46,8 @@ If nothing prints, the workspace isn't sourced in this shell. Note you can have 
 | Command | What it does |
 |---|---|
 | `ros2 run <package> <executable>` | Runs one node. E.g. `ros2 run project_oval_control driver`. |
-| `ros2 run <package> <executable> --ros-args -p <param>:=<value>` | Runs a node overriding a parameter. E.g. `ros2 run joy joy_node --ros-args -p autorepeat_rate:=0.0`. |
-| `ros2 launch <package> <file>.launch.py` | Runs a launch file (starts multiple nodes together). E.g. `ros2 launch project_oval_navigation rtk_control.launch.py`. |
+| `ros2 run <package> <executable> --ros-args -p <param>:=<value>` | Runs a node overriding a parameter. E.g. `ros2 run joy joy_node --ros-args -p autorepeat_rate:=20.0`. |
+| `ros2 launch <package> <file>.launch.py` | Runs a launch file (starts multiple nodes together). E.g. `ros2 launch project_oval_control manual_control.launch.py`. |
 | `ros2 launch <package> <file>.launch.py <arg>:=<value>` | Passes a launch argument. E.g. `ros2 launch project_oval_navigation localization.launch.py localization_config:=/path/to/file.yaml`. |
 
 ## Inspecting the running system
@@ -84,7 +84,11 @@ If nothing prints, the workspace isn't sourced in this shell. Note you can have 
 ## Project-specific examples
 
 ```bash
-# Bring up manual driving (Xbox controller -> motors)
+# Bring up manual driving (joy_node -> Xbox controller -> motors), one launch file
+ros2 launch project_oval_control manual_control.launch.py
+
+# ...or the same three nodes run individually
+ros2 run joy joy_node --ros-args -p autorepeat_rate:=20.0
 ros2 run project_oval_control xbox_controller
 ros2 run project_oval_control driver
 

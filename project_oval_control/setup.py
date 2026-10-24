@@ -1,3 +1,6 @@
+import os
+from glob import glob
+
 from setuptools import setup
 
 package_name = 'project_oval_control'
@@ -9,6 +12,7 @@ data_files = [
         'config/oval_points.json',
         'config/pursuit_log.json',
     ]),
+    (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
 ]
 
 setup(
